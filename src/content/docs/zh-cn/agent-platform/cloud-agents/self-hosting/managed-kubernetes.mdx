@@ -1,0 +1,42 @@
+---
+title: 托管：Kubernetes 后端
+description: >-
+  使用包含的 Helm chart 将 Oz 托管 worker 部署到 Kubernetes 集群中。每个 Agent 任务作为 Kubernetes Job 在您的集群中运行。
+sidebar:
+  label: "托管：Kubernetes"
+---
+
+使用包含的 Helm chart 将 `oz-agent-worker` 守护进程部署到 Kubernetes 集群中。每个 Agent 任务作为 **Kubernetes Job** 在您的集群中运行。Oz 端到端编排运行（Slack、Linear、计划、API、`oz agent run-cloud`）；您的集群提供计算、调度和策略执行。
+
+## 前提条件
+
+* 启用自托管的 Enterprise 计划
+* 带有 worker 进程能够访问 API 服务器的 Kubernetes 集群
+* 本地安装 [Helm](https://helm.sh/docs/intro/install/) 和 `kubectl`
+* 团队 API 密钥
+
+## 使用 Helm chart 安装
+
+```bash
+git clone https://github.com/warpdotdev/oz-agent-worker.git
+
+helm install oz-agent-worker ./oz-agent-worker/charts/oz-agent-worker \
+  --namespace warp-oz \
+  --set worker.workerId=oz-k8s-worker \
+  --set image.tag=<version>
+```
+
+### Pod 模板
+
+使用 `pod_template` 配置任务 Pod 调度、服务账户、镜像拉取密钥、资源和环境变量。
+
+```yaml
+pod_template:
+  serviceAccountName: agent-task-sa
+  containers:
+    - name: task
+      resources:
+        requests:
+          cpu: "2"
+          memory: 4Gi
+```

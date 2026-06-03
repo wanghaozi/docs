@@ -1,0 +1,45 @@
+---
+title: 托管：Direct 后端
+description: >-
+  使用 Direct 后端运行 Oz 托管 worker，以直接在主机上执行云 Agent 任务，无需 Docker 或 Kubernetes。
+sidebar:
+  label: "托管：Direct"
+---
+
+使用 **Direct 后端**运行 `oz-agent-worker` 守护进程——任务直接在 worker 主机上执行，无需 Docker 或 Kubernetes。Oz 仍然端到端编排运行（Slack、Linear、计划、API、`oz agent run-cloud`）；worker 只是在其自身文件系统上的每个任务工作区中运行 agent。
+
+## 何时使用 Direct 后端
+
+* worker 主机上既没有 Docker 也没有 Kubernetes 可用
+* 任务需要直接访问通过容器难以暴露的主机资源
+* 您希望托管编排（从 Slack、Linear、计划、API 触发）而无需容器运行时的运维开销
+
+## 前提条件
+
+* 启用自托管的 Enterprise 计划
+* 对 `workspace_root` 具有写权限的 worker 主机
+* 已安装并位于 `PATH` 中的 Oz CLI
+* 团队 API 密钥
+
+## 设置
+
+### 1. 设置您的 API 密钥
+
+```bash
+export WARP_API_KEY="your_team_api_key"
+```
+
+### 2. 使用 Direct 后端启动 worker
+
+```bash
+oz-agent-worker --api-key "$WARP_API_KEY" --worker-id "my-worker" --backend direct
+```
+
+或使用配置文件：
+
+```yaml
+worker_id: "my-worker"
+backend:
+  direct:
+    workspace_root: "/var/lib/oz/workspaces"
+```

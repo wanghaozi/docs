@@ -1,0 +1,96 @@
+---
+title: Agent Web 搜索
+sidebar:
+  label: "Web 搜索"
+description: >-
+  Warp 的 Web 搜索让 agent 在有助提高答案质量时拉取实时信息、文档和引用来源。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 包含针对支持第一方搜索工具的模型的原生 Web 搜索功能。启用后，agent 可以实时查找信息、查阅文档、检索当前版本号，并引用用于生成响应的来源。
+
+<VideoEmbed url="https://www.loom.com/share/06a4ba98f2e0446d80cb37aa4c23848c" />
+
+此页面涵盖 Web 搜索的工作方式、受支持的模型、在 Warp 中的预期体验、配置选项，以及这与直接将 URL 附加到提示的区别。
+
+---
+
+### Agent 何时使用 Web 搜索
+
+当能提高答案的质量或准确性时，模型会发起 Web 搜索。**常见场景包括：**
+
+* 检索官方文档或 API 参考
+* 获取库或工具的最新版本
+* 检查错误消息、GitHub Issue 或 StackOverflow 讨论
+* 查找正在发生的故障或近期更改
+* 回答时效性重要的问题（例如"2025 年做……的最佳方法"）
+
+当模型认为有用时，Web 搜索会自动触发。您不需要特殊语法。
+
+### Web 搜索在 Warp 中的工作原理
+
+**搜索发生时：**
+
+1. Warp 在对话中显示"正在搜索 Web…"指示器。
+2. 您可以展开搜索结果以查看：
+   * 发出的查询
+   * 检索到的页面
+3. **模型读取结果并生成有依据的响应。**
+   * Claude 模型在引用页脚中引用来源。
+   * OpenAI 模型使用内联引用，并在页脚中显示引用。
+
+### 受支持和不受支持的模型
+
+Web 搜索仅适用于提供原生 Web 搜索集成且可与其他自定义工具协同工作的模型。
+
+**支持 Web 搜索的模型**
+
+* Anthropic：`Claude 4.6 系列`、`Claude 4.5 系列`、`Claude 4 系列`
+* OpenAI：
+  * `GPT-5.4`、`GPT-5.3 Codex`、`GPT-5.2 Codex`、`GPT-5.2`
+
+Warp 使用各供应商的官方工具：
+
+* **Claude Web 搜索**：https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool
+* **OpenAI Web 搜索**：https://developers.openai.com/api/docs/guides/tools-web-search
+
+:::note
+**注意**：我们计划在其 API 完全支持后为其他模型添加原生 Web 搜索。我们将继续随供应商推出更广泛的工具更新支持搜索的模型列表。我们也在探索将适用于所有模型的自定义 Web 搜索工具。
+:::
+
+### 查看搜索结果
+
+您可以随时检查 Web 搜索 UI：
+
+* 展开 agent 响应中的 **Web 搜索**部分
+* 您可以查看：
+  * 获取的页面列表
+  * 用于回答您问题的文本
+  * 引用和参考元数据
+
+![Warp 中的一个 agent 对话，显示展开的 Web 搜索部分，包含查询"Stripe API latest version 2025"和 10 个检索到的 URL 列表](../../../../../assets/agent-platform/web-search-results.png)
+
+这使您可以轻松验证准确性、审计推理过程和验证来源。
+
+### 启用或禁用 Web 搜索
+
+Web 搜索按[配置文件与权限](/agent-platform/capabilities/agent-profiles-permissions/)控制。
+
+要配置：
+
+1. 在 Warp 应用中，导航到**设置** > **Agent** > **配置文件**。
+2. 在 agent 配置文件旁边，点击**编辑**。
+3. 滚动到**调用 Web 工具**并切换设置。
+
+![Warp 设置中的配置文件页面，配置文件编辑器打开，调用 Web 工具开关已启用](../../../../../assets/agent-platform/web-search-settings.png)
+
+禁用它可防止 agent 执行搜索，即使模型通常会使用它们。
+
+### 积分使用
+
+Web 搜索会产生两种类型的积分使用：
+
+1. 每次搜索调用的小额固定费用
+2. 与检索内容成比例的额外费用，因为检索到的文本会传递给模型
+
+您将在对话的积分使用页脚中看到这些细项，与模型调用、规划调用和其他工具使用并列。

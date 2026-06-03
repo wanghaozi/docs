@@ -1,0 +1,43 @@
+---
+title: 访问、计费和身份权限
+description: >-
+  了解个人和团队如何访问云 Agent、计费和积分如何适用，以及 Warp 如何跨集成映射用户身份。
+sidebar:
+  label: "访问、计费和身份"
+---
+
+此页面说明个人用户和团队的云 Agent 访问如何工作、计费和积分如何适用，以及 Warp 如何跨集成映射用户身份。
+
+---
+
+## 概述：个人 vs 团队访问
+
+**个人用户**（无团队）：
+* 可以通过 CLI 或 API 运行云 Agent
+* 可以使用 Warp 积分，包括云 Agent 积分
+* Agent 在 Warp 托管的基础设施上运行
+* 不能使用集成（Slack、Linear）或自托管 Agent
+
+**团队**（所属[Warp 团队](/knowledge-and-collaboration/teams/)的用户）：
+* 所有个人功能，加上：
+* 可以使用集成（Slack、Linear）触发 Agent
+* 可以在自己的基础设施上自托管 Agent（仅 Enterprise）
+* 共享团队级配置（环境、密钥、集成）
+* 团队必须在 Build、Max 或 Business 计划上，并至少有 20 个积分用于云 Agent 和集成
+
+## 团队 GitHub 授权
+
+默认情况下，云 Agent 使用触发运行的用户的个人令牌向 GitHub 认证。团队 GitHub 授权为您提供备选方案：改为使用 **Oz by Warp** GitHub 应用进行认证，以便 Agent 无需依赖任何个人的令牌即可克隆仓库和打开拉取请求。
+
+这对于使用[团队 API 密钥](/reference/cli/api-keys/)的完全自动化工作流很有用，如 CI/CD 流水线、计划 Agent 和 SDK 触发的运行。
+
+### 设置团队 GitHub 授权
+
+1. **安装 Oz by Warp GitHub 应用。** 在 GitHub 组织上具有管理员权限的用户安装 [Oz by Warp](https://github.com/apps/oz-by-warp) GitHub 应用。
+2. **为您的 Warp 团队启用 GitHub 组织。** Warp 团队管理员打开管理面板并添加 GitHub 组织。
+3. **使用团队 API 密钥。** 使用团队 API 密钥启动的任务现在使用来自 GitHub 应用安装的令牌。
+
+## 数据与权限
+
+### Slack / Linear - 安装 Oz 应用授予 Warp 访问已安装应用的 Slack 频道或 Linear 团队的权限
+### GitHub - Warp 在 GitHub 中的行为由两个控制层定义：Warp GitHub 应用安装范围和触发用户的权限

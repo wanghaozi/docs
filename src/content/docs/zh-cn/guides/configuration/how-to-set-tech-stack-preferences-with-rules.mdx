@@ -1,0 +1,66 @@
+---
+title: "使用规则设定技术栈偏好"
+description: >-
+  在 Warp 规则中定义你偏好的框架和技术栈，使代理始终使用 Astro、SvelteKit、Vite 或你选择的工具。
+sidebar:
+  label: "使用规则设定技术栈偏好"
+tags:
+  - "rules"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+了解如何引导 Warp 的 AI 在搭建新应用或生成代码时使用你偏好的技术栈。
+
+<VideoEmbed url="https://youtu.be/W5B6MhZsZ_4?si=Bd9AT0cnW6uiMhKO" />
+
+---
+
+## 介绍
+
+本教程将引导你教会 Warp 的 AI 你**偏好的技术**，使其始终使用你关心的框架和技术栈。
+
+通过设置技术栈规则，你确保每个新项目都遵循你的约定——无论你偏好 **Astro**、**SvelteKit**、**Next.js** 还是其他。
+
+---
+
+## 问题
+
+当你要求 AI 搭建一个新的 Web 应用时，它通常默认使用 **React** 和 **Express** 或其他较旧的技术栈。\
+如果你的工作流基于现代工具或特定的框架，这会带来摩擦。
+
+Warp 通过让你**直接将技术栈偏好存储为规则**来解决这个问题。
+
+---
+
+## 规则设置
+
+创建一个简单的规则，为每种项目类型定义你偏好的框架。
+
+### 示例规则
+
+```
+Rule: Tech Stack Preferences
+- Use Astro for websites.
+- Use SvelteKit for desktop apps.
+- Prefer Vite for build tooling.
+- Avoid legacy stacks like Create React App or Express.
+```
+
+一旦添加，Warp 的 AI 在生成新项目或更新现有项目时会自动应用这些默认值。
+
+:::note
+可以将其视为为代理设置默认的编码个性。
+:::
+
+---
+
+## 为什么这很重要
+
+:::tip
+定义你的技术栈偏好有助于 AI：
+
+* 生成**一致的样板代码**
+* 遵循你的**当前技术标准**
+* 跳过过时或不相关的依赖
+:::

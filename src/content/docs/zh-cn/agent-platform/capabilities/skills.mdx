@@ -1,0 +1,448 @@
+---
+title: Agent 技能
+sidebar:
+  label: "技能"
+description: >-
+  创建可重用的指令集，教导 Agent 特定任务并在团队中分享专业知识。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { FileTree } from '@astrojs/starlight/components';
+
+技能（Skills）允许您创建可重用、可共享的指令，Agent 在执行任务时可以调用。您无需重复详细的提示，可以将常见工作流、编码模式或领域专业知识封装到技能文件中，Agent 会自动发现和使用这些文件。
+
+## 主要特性
+
+* **可重用指令** - 定义一次任务，让 Agent 在相关时使用
+* **项目和全局作用域** - 创建特定于项目的技能或跨所有项目可用的技能
+* **自动发现** - Agent 知道所有可用技能并在适当时调用
+* **简单的 Markdown 格式** - 技能只是带有少量元数据的 Markdown 文件
+* **支持文件** - 在技能指令旁包含脚本、模板或其他资源
+* **斜杠命令调用** - 使用 `/{skill-name}` 直接调用任何技能
+* **参数化技能** - 使用参数占位符创建动态、可重用的技能模板
+
+## 技能如何工作
+
+当您开始 [Agent 对话](/agent-platform/local-agents/interacting-with-agents/)时，Agent 会收到所有可用技能的列表，包括它们的名称和描述。
+
+当 Agent 确定某个技能有助于完成您的任务时，它会加载技能的完整指令并按照它们完成任务。
+
+:::caution
+技能发现基于您当前的工作目录。对于 Git 仓库，Warp 包括从当前目录到仓库根目录的所有技能。如果您在项目 A 中工作，您将无法访问项目 B 的技能。
+:::
+
+:::note
+技能补充规则，后者提供 Agent 始终遵循的持久指导方针。使用规则进行约束和偏好；使用技能进行特定任务工作流。
+:::
+
+### 技能名称冲突
+
+如果您在多个目录中有相同名称的技能，Warp 根据技能的调用方式不同处理冲突：
+
+* **自然语言** - Agent 收到所有作用域内技能的列表，包括它们的名称、描述和文件路径。Agent 可以看到所有可用选项并基于路径选择适当的技能。
+* **斜杠命令** - 当多个技能共享相同名称时，Warp 在菜单中显示所有匹配的技能。您根据描述选择使用哪一个。
+* **后台解析** - 当 Warp 自动解析技能名称（无需用户直接选择）时，它优先考虑主目录（全局）技能，然后是来自更高级别目录（更接近仓库根目录）的技能。
+
+### 示例交互
+
+您可以通过两种方式调用技能：
+
+**使用自然语言** - 描述您想要完成的事情：
+
+* "使用部署技能推送到 staging"
+* "检查文档中的断链"（调用链接检查技能）
+* "用我项目的 README 内容创建一个 DOCX 文件"
+* "基于此 PR 为新的 API 端点起草文档"
+
+**使用斜杠命令** - 使用 `/{skill-name}` 直接调用技能：
+
+* `/deploy` - 调用部署技能
+* `/add-feature-flag` - 调用添加功能标记技能
+
+Agent 识别您的请求何时匹配技能的目的，加载技能指令，并按照它们完成任务。
+
+## 技能文件格式
+
+技能是带有 YAML 前置元数据的 Markdown 文件。每个技能必须包含：
+
+* **name** - 技能的唯一标识符（通常使用短横线命名法）
+* **description** - 技能的作用及何时使用的简要说明
+
+### 基本结构
+
+```markdown
+---
+name: your-skill-name
+description: 简要描述此技能的作用及何时使用
+---
+
+# 您的技能名称
+
+## 指令
+为 agent 提供清晰、逐步的指导。
+您可以在正文中使用参数占位符，如 $ARGUMENTS 或 $0（请参阅[技能参数](#skill-arguments)）。
+
+## 示例
+展示使用此技能的具体示例。
+```
+
+### 示例技能文件
+
+以下是一个完整的示例，演示帮助创建功能标记的技能：
+
+```markdown
+---
+name: add-feature-flag
+description: 使用正确的配置和文档向代码库添加新的功能标记
+---
+
+# 添加功能标记
+
+## 指令
+1. 询问用户功能标记名称和默认值
+2. 将标记定义添加到 `config/feature_flags.yaml`
+3. 在 `src/utils/flags.ts` 中创建辅助函数
+4. 更新 `docs/FEATURE_FLAGS.md` 中的功能标记文档
+
+## 配置格式
+功能标记应在 YAML 文件中遵循此格式：
+
+feature_name:
+  default: false
+  description: "此标记控制什么"
+  owner: "team-name"
+
+## 示例
+- "为新的结账流程添加功能标记"
+- "创建标记以为 Beta 用户启用暗黑模式"
+```
+
+## 技能参数
+
+技能可以包含参数占位符，这些占位符会在您调用技能时自动替换为您提供的值。这使您可以创建可重用的参数化技能模板。
+
+<VideoEmbed url="https://www.loom.com/share/4cb0a80e567c41788816cd9b5acbc7ed" title="在 Warp 中使用技能参数" />
+
+### 参数语法
+
+支持三种占位符格式：
+
+* **`$ARGUMENTS`** — 替换为完整的原始参数字符串（技能名称后的所有内容）。
+* **`$ARGUMENTS[N]`** — 替换为第 N 个空格分隔的参数（从 0 开始索引）。例如，`$ARGUMENTS[0]` 是第一个参数，`$ARGUMENTS[1]` 是第二个，依此类推。
+* **`$N`** — `$ARGUMENTS[N]` 的简写。例如，`$0` 等同于 `$ARGUMENTS[0]`。
+
+### 参数替换如何工作
+
+当您调用技能时，您在技能名称后键入的任何文本都被视为参数字符串。参数字符串按空格分割以生成单个索引参数。
+
+**如果技能包含参数占位符**（`$ARGUMENTS`、`$ARGUMENTS[N]` 或 `$N`），占位符会被替换为相应的参数值，然后将技能指令发送给 agent。
+
+**如果技能不包含任何参数占位符**，您提供的额外文本会作为独立的用户消息与技能指令一起传递给 agent。这意味着无论技能是否使用参数占位符，您在调用技能时始终可以添加上下文。
+
+:::note
+如果占位符引用了未提供的参数索引（例如只提供了两个参数时使用了 `$2`），占位符会在技能内容中保持不变。
+:::
+
+### 示例：带参数的技能
+
+以下是一个使用参数为特定受众解释主题的技能：
+
+```markdown
+---
+name: explain-topic
+description: 以特定语气为特定受众解释主题
+---
+
+# 解释主题
+
+向 $0 为 $1 专业人士解释 $0。
+
+使用 $2 语气。
+
+完整请求：$ARGUMENTS
+```
+
+使用以下方式调用此技能：
+
+```
+/explain-topic 熊 工程 有趣
+```
+
+为 agent 生成以下指令：
+
+```
+向熊为工程专业人士解释熊。
+
+使用有趣的语气。
+
+完整请求：熊 工程 有趣
+```
+
+### 示例：不带参数的技能
+
+如果技能没有参数占位符：
+
+```markdown
+---
+name: greet
+description: 用澳大利亚风格的问候语问候用户
+---
+
+# 问候
+
+用澳大利亚风格热情问候用户。
+```
+
+使用额外文本调用：
+
+```
+/greet 用法语说
+```
+
+技能指令首先发送，然后"用法语说"作为后续用户消息传递。Agent 看到两者并可以结合——在这种情况下，用法语以澳大利亚风格问候。
+
+## 技能位置
+
+技能可以存储在两个级别：项目级（仅在该项目中可访问）和用户级（从任何项目可访问）。
+
+### 项目技能
+
+项目技能存在于您的仓库中，当您在该项目中工作时可用。我们建议将它们存储在项目根目录，但子目录中的技能也会在您在该子目录中工作时被发现。这对于具有独立 `./frontend` 和 `./backend` 目录的单仓库很有用。
+
+将它们存储在以下任何目录中：
+
+* **`.agents/skills/`**（推荐）
+* **`.warp/skills/`**
+* **`.claude/skills/`**
+* **`.codex/skills/`**
+* **`.cursor/skills/`**
+* **`.gemini/skills/`**
+* **`.copilot/skills/`**
+* **`.factory/skills/`**
+* **`.github/skills/`**
+* **`.opencode/skills/`**
+
+每个技能必须放在自己的子目录中，并带有一个 `SKILL.md` 文件。任何支持文件（脚本、模板、配置）应在 `SKILL.md` 中引用，以便 Agent 知道它们的存在：
+
+<FileTree>
+- your-project/
+  - .agents/
+    - skills/
+      - add-feature-flag/
+        - SKILL.md
+      - run-migrations/
+        - SKILL.md
+  - .claude/
+    - skills/
+      - review-code/
+        - SKILL.md
+  - .github/
+    - skills/
+      - create-release/
+        - SKILL.md
+</FileTree>
+
+:::note
+Warp 扫描项目根目录中所有受支持的技能目录名称，允许您在同一个仓库中维护与多个 AI 编码工具兼容的技能。
+:::
+
+### 根目录技能（全局）
+
+根目录技能存储在您的主目录中，可在您机器上的所有项目中访问。这些对于个人工作流、编码模式或无论特定项目如何都使用的过程非常有用。
+
+将全局技能存储在主文件夹中的以下任何目录中：
+
+* **`~/.agents/skills/`**（推荐）
+* **`~/.warp/skills/`**
+* **`~/.claude/skills/`**
+* **`~/.codex/skills/`**
+* **`~/.cursor/skills/`**
+* **`~/.gemini/skills/`**
+* **`~/.copilot/skills/`**
+* **`~/.factory/skills/`**
+* **`~/.github/skills/`**
+* **`~/.opencode/skills/`**
+
+目录结构与项目技能相同：
+
+<FileTree>
+- `~/.agents/`
+  - skills/
+    - git-workflow/
+      - SKILL.md
+    - code-review/
+      - SKILL.md
+</FileTree>
+
+### 项目 vs 根目录技能
+
+了解何时使用每个级别：
+
+**项目技能最适合：**
+
+* 项目特定的工作流（部署、测试、迁移）
+* 团队共享的流程和标准
+* 仓库特定的自动化和工具
+* 该代码库的领域特定模式
+
+**根目录技能最适合：**
+
+* 个人编码偏好和模式
+* 跨所有项目使用的通用工作流
+* 跨项目自动化（git 工作流、文档模板）
+* 您在处处应用的专业标准
+
+## 创建技能
+
+### 第 1 步：选择位置
+
+决定您的技能应该是：
+
+* **项目特定** - 将其放在项目的技能目录之一中（`.agents/skills/`、`.warp/skills/`、`.claude/skills/` 等）
+* **全局** - 将其放在主目录的技能文件夹之一中（`~/.agents/skills/`、`~/.warp/skills/`、`~/.claude/skills/` 等）
+
+### 第 2 步：创建目录结构
+
+为您的技能创建具有描述性名称的子目录：
+
+```bash
+mkdir -p .agents/skills/my-new-skill
+```
+
+### 第 3 步：编写技能文件
+
+在技能目录中创建 `SKILL.md`：
+
+```bash
+touch .agents/skills/my-new-skill/SKILL.md
+```
+
+### 第 4 步：添加内容
+
+使用清晰的指令编写您的技能：
+
+```markdown
+---
+name: my-new-skill
+description: 此技能功能的一行描述
+---
+
+# 我的新技能
+
+## 何时使用
+解释此技能有帮助的场景。
+
+## 指令
+1. Agent 应采取的第一步
+2. 带有具体细节的第二步
+3. 继续使用清晰、可操作的步骤
+
+## 重要说明
+- 任何约束或要求
+- 要避免的常见陷阱
+```
+
+## 带支持文件的技能
+
+技能可以包含支持文件，如脚本、模板或配置文件。将这些文件放在与 `SKILL.md` 相同的目录中：
+
+<FileTree>
+- .agents/skills/
+  - check-broken-links/
+    - SKILL.md
+    - `check_links.py` 支持脚本
+    - config.yaml 配置文件
+</FileTree>
+
+在技能指令中，使用相对路径引用这些文件。例如，在您的 `SKILL.md` 中：
+
+```
+## 运行检查
+
+从项目根目录：
+
+python3 .agents/skills/check-broken-links/check_links.py --internal-only
+```
+
+此模式对于以下场景很有用：
+
+* **自动化脚本** - 执行复杂任务的 Python、Shell 或 Node 脚本
+* **模板** - Agent 可以复制和定制的样板文件
+* **配置** - 技能引用的默认设置或架构
+
+## 管理技能
+
+### 查看可用技能
+
+询问 Agent 有哪些技能可用：
+
+```
+我有哪些技能？
+```
+
+Agent 列出所有发现的技能及其名称和描述。这包括当前项目和主目录中所有受支持目录的技能。
+
+### 编辑技能
+
+使用 [`/open-skill`](/agent-platform/capabilities/slash-commands/) 斜杠命令修改现有技能：
+
+```
+/open-skill
+```
+
+这将打开一个交互式菜单，您可以在其中：
+
+* 浏览项目和根目录技能
+* 查看每个技能所在的目录
+* 在编辑器中打开技能文件
+
+### 最佳实践
+
+* **编写清晰的描述** - 描述是 Agent 决定是否使用您的技能的依据
+* **指令要具体** - 包括确切的文件路径、命令语法和预期格式
+* **包含示例** - 展示具体用例以帮助 Agent 理解意图
+* **保持技能专注** - 每个技能应将一件事情做好
+* **使用一致的命名** - 遵循像 `动词-名词` 这样的命名约定（例如 `add-feature-flag`、`run-migrations`）
+* **版本控制您的技能** - 将项目技能提交到您的仓库，以便整个团队受益
+
+## 预制技能
+
+Warp 在 [warpdotdev/oz-skills](https://github.com/warpdotdev/oz-skills) 仓库中维护了一个公开的即用技能集合。您可以浏览这些技能以获取灵感，将它们直接复制到项目的 `.agents/skills/` 目录中，或调整它们以适合您团队的工作流。
+
+这些相同的技能也会作为建议的 agent 出现在 [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)中，您可以直接在云端运行它们。
+
+## 来自 Agent Memory 的建议技能
+
+将来自 [Agent Memory](/agent-platform/agent-memory/) 的重复模式提升为可审查的技能草稿正在作为研究预览的一部分进行设计。请参阅 Agent Memory 页面以获取当前状态。
+
+## 使用提示调用技能
+
+在使用斜杠命令调用技能时，您可以传递额外的上下文或指令。
+
+**使用提示的斜杠命令：**
+
+* `/deploy 将最新更改推送到 staging` — 调用部署技能并附加针对 staging 的指令
+* `/code-review 专注于错误处理和边界情况` — 调用代码审查技能并指明优先关注什么
+
+当您想重用技能的工作流但根据特定情况定制执行而不修改技能本身时，这很有用。
+
+## 从技能运行 Agent
+
+技能可以与[本地](/agent-platform/local-agents/overview/)和[云 agent](/agent-platform/cloud-agents/overview/) 一起使用，以创建可重用的自动化工作流。通过 CLI、Web 应用或 API 运行 agent 时，您可以指定技能以为 agent 提供基本指令。
+
+有关运行基于技能的 agent 的完整指南——包括 CLI 用法、Oz Web 应用、调度、技能发现和 API 集成——请参阅[技能作为 Agent](/agent-platform/cloud-agents/skills-as-agents/)。
+
+## 相关功能
+
+* [**规则**](/agent-platform/capabilities/rules/) - 为 Agent 行为设置持久指导方针和约束
+* [**MCP 服务器**](/agent-platform/capabilities/mcp/) - 向 Agent 暴露外部数据源和工具
+* [**云 Agent**](/agent-platform/cloud-agents/overview/) - 按计划或触发器在云端运行 Agent
+* [**Agent 配置文件**](/agent-platform/capabilities/agent-profiles-permissions/) - 控制 Agent 权限和自主性
+
+---
+
+## 后续步骤
+
+当您自动化和共享技能时，技能变得更加强大。
+
+* **[计划 Agent 快速入门](/agent-platform/cloud-agents/triggers/scheduled-agents-quickstart/)** - 在重复的 cron 计划上运行技能，用于每周依赖检查或每日代码清理等任务。
+* **[集成快速入门](/agent-platform/cloud-agents/integrations/quickstart/)** - 从 Slack 或 Linear 触发技能，以便您的团队可以从他们已经在使用的工具中调用 agent 工作流。

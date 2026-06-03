@@ -1,0 +1,76 @@
+---
+title: 工件
+description: >-
+  使用 `oz artifact` 子命令获取元数据并下载代理运行产生的文件。
+sidebar:
+  label: "工件"
+---
+
+工件是代理在运行期间产生并上传到 Oz 的文件——截图、生成的报告、构建输出、日志或代理在对话之外保存的任何其他文件。使用 `oz artifact` 从运行外部检查这些文件并将其拉取到您的机器上。
+
+## 何时使用工件
+
+当您需要在代理运行完成后检索其产生的文件，而无需重新运行代理或抓取对话输出时，请使用工件。
+
+* **运行之间的交接** - 定时代理生成报告；后续工作流下载并处理它。
+* **本地检查** - 将生成的文件（HTML、图像、CSV）拉取到笔记本电脑上查看。
+* **CI 集成** - 从代理完成后的流水线步骤中获取代理生成的构建工件。
+
+工件通过工件 UID 引用。您可以在代理的运行详情视图、[`oz run get`](/reference/cli/) 返回的 JSON 或 [Oz API](/reference/api-and-sdk/) 的响应中找到 UID。
+
+## `oz artifact get`
+
+打印工件的元数据，但不下载它。
+
+```sh
+oz artifact get <ARTIFACT_UID>
+```
+
+输出描述工件（文件名、内容类型、大小、关联的运行或会话，以及上传时提供的描述）。使用 `--output-format json` 获取结构化响应，便于从脚本中解析：
+
+```sh
+oz artifact get <ARTIFACT_UID> --output-format json
+```
+
+此命令用于确认工件存在并在决定下载之前检查其大小。
+
+## `oz artifact download`
+
+下载工件的文件内容。
+
+```sh
+oz artifact download <ARTIFACT_UID> [--out <PATH>]
+```
+
+### 标志
+
+* **`<ARTIFACT_UID>`** - 要下载的工件的 UID。必需的位置参数。
+* **`--out <PATH>`** (`-o`) - 将下载的工件写入特定文件路径。省略时，文件使用工件存储的文件名写入当前目录。
+
+### 示例
+
+将工件下载到当前目录，保留其原始名称：
+
+```sh
+oz artifact download <ARTIFACT_UID>
+```
+
+下载到特定路径：
+
+```sh
+oz artifact download <ARTIFACT_UID> --out ./reports/nightly.html
+```
+
+通过组合 `oz run get` 和 `oz artifact download` 在流水线中使用工件：
+
+```sh
+# 拉取定时代理的最新运行，获取其第一个工件
+RUN_ID=$(oz run list --limit 1 --output-format json | jq -r '.[0].uid')
+ARTIFACT_UID=$(oz run get "$RUN_ID" --output-format json | jq -r '.artifacts[0].uid')
+oz artifact download "$ARTIFACT_UID" --out ./latest-report.html
+```
+
+## 相关
+
+* [Oz API & SDK](/reference/api-and-sdk/) - 通过 HTTP 以编程方式检索工件。
+* [定时代理](/agent-platform/cloud-agents/triggers/scheduled-agents/) - 下游工具使用的定期工件的常见生产者。

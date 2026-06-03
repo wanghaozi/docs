@@ -1,0 +1,83 @@
+---
+title: AI 集成对象
+description: >-
+  在 Warp Drive 中访问规则、MCP 服务器、技能和提示，为代理提供个性化上下文。
+---
+
+Warp Drive 包含多种与 Warp 代理集成的对象类型，以提供个性化、上下文感知的协助。这些对象帮助代理理解你的编码标准、连接到外部工具以及遵循你偏好的工作流程。
+
+## 规则
+
+规则是可重复使用的指南，用于告知代理如何响应你的提示。它们帮助定制响应以匹配你的编码标准、项目约定和个人偏好。
+
+**从 Warp Drive 访问：** **个人** > **规则**
+
+Warp 支持两种类型的规则：
+
+* **全局规则** - 适用于所有项目和上下文
+* **项目规则** - 存在于你的代码库中（作为 `AGENTS.md` 或 `WARP.md` 文件），并在操作该项目时自动应用
+
+:::note
+关于创建和管理规则的完整文档，请参见[规则](/agent-platform/capabilities/rules/)。
+:::
+
+## MCP 服务器
+
+MCP（模型上下文协议）服务器通过标准化接口为 Warp 的代理扩展自定义工具和数据源。它们充当插件，让代理可以访问 GitHub、Sentry、Linear、Slack 等外部服务。
+
+**从 Warp Drive 访问：** **个人** > **MCP 服务器**
+
+MCP 服务器可以是：
+
+* **基于 CLI 的** - Warp 启动和管理的本地命令
+* **基于 URL 的** - 使用 Streamable HTTP 或 SSE 的远程端点
+
+:::note
+关于配置和使用 MCP 服务器的完整文档，请参见[模型上下文协议（MCP）](/agent-platform/capabilities/mcp/)。
+:::
+
+## 技能
+
+技能是可重复使用的指令集，教导代理如何执行特定任务。与规则（提供指南）不同，技能定义了代理可以在相关时调用的完整工作流。
+
+技能是基于文件的（作为 `SKILL.md` 文件存储在你的项目或主目录中），而不是云同步对象，但它们与 Warp Drive 工作流紧密集成。
+
+* **项目技能** - 存在于你的仓库中的 `.agents/skills/`、`.warp/skills/` 或类似目录中
+* **全局技能** - 存在于你的主文件夹中的 `~/.agents/skills/` 或类似目录中
+
+:::note
+关于创建和使用技能的完整文档，请参见[技能](/agent-platform/capabilities/skills/)。
+:::
+
+## 提示
+
+提示是参数化的自然语言查询，你可以保存并在代理模式中重复使用。你可以保存复杂的 AI 工作流并通过命令面板快速执行。
+
+**从 Warp Drive 访问：** 点击 **+** 并选择"Prompt"，或浏览个人或团队工作空间中的现有提示。
+
+:::note
+有关提示的完整文档，请参见[提示](/knowledge-and-collaboration/warp-drive/prompts/)。
+:::
+
+## 代理如何使用这些对象
+
+当你开始代理对话时，Warp 会自动从你的 Warp Drive 对象中提供相关上下文：
+
+* **规则** 根据你的偏好指导代理行为和响应
+* **MCP 服务器** 让代理访问外部工具和数据源
+* **技能** 提供代理可以调用的任务特定指令
+* **提示** 让你快速触发预定义的工作流
+
+当某个对象被用作上下文时，它会出现在对话中的"引用"或"源自"下方。
+
+:::note
+关于 Warp Drive 内容如何作为代理上下文的更多详情，请参见[Warp Drive 作为代理模式上下文](/knowledge-and-collaboration/warp-drive/agent-mode-context/)。
+:::
+
+## 相关
+
+* [规则](/agent-platform/capabilities/rules/) - 创建代理行为的指南
+* [MCP 服务器](/agent-platform/capabilities/mcp/) - 连接外部工具和数据源
+* [技能](/agent-platform/capabilities/skills/) - 定义可重复使用的任务工作流
+* [提示](/knowledge-and-collaboration/warp-drive/prompts/) - 保存和重复使用参数化的代理提示
+* [代理配置文件与权限](/agent-platform/capabilities/agent-profiles-permissions/) - 控制代理自主性和工具访问

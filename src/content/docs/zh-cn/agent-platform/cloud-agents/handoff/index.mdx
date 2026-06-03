@@ -1,0 +1,55 @@
+---
+title: 本地与云 Agent 之间的交接
+description: >-
+  了解 agent 交接如何在本地 Warp 会话和云 agent 运行之间移动工作，包括每个方向延续的上下文。
+sidebar:
+  label: "交接概述"
+---
+
+交接在本地 Warp 会话和云 agent 运行之间移动 agent 工作，无需您重新启动任务。根据方向，Warp 会延续对话历史、工作区更改和附件，以便接收方 agent 可以从先前会话继续，而不是从头开始。
+
+<figure style={{ maxWidth: "350px" }}>
+![本地 Warp Agent 对话中的交接控制。](../../../../../../assets/agent-platform/local-to-cloud-handoff-chip.png)
+<figcaption>本地对话中的交接控制。</figcaption>
+</figure>
+
+## 交接方向
+
+交接支持三个方向：
+
+* **本地到云端** - 当您需要更多计算、更长时间运行的工作或同一任务的并行变体时，将本地 Warp Agent 对话提升为云 agent 运行。云 agent 从您的对话历史和工作区未提交更改的快照开始。请参阅[本地到云端交接](/agent-platform/cloud-agents/handoff/local-to-cloud/)。
+* **云端到云端** - 在云运行的会话结束后向其发送后续指令。运行在相同的对话中继续，并恢复先前会话的工作区状态。请参阅[云端到云端交接](/agent-platform/cloud-agents/handoff/cloud-to-cloud/)。
+* **云端到本地** - 使用**继续本地**或 `/continue-locally` 将云对话分叉到本地 Warp 会话。请参阅[查看云 agent 运行](/agent-platform/cloud-agents/viewing-cloud-agent-runs/#5-fork-the-session-to-your-local-warp)。
+
+### 第三方 agent 运行时覆盖范围
+
+交接覆盖范围取决于运行对话的 agent：
+
+* **云端到云端**适用于 Warp Agent 和 Oz 中当前支持的[第三方云 harness](/agent-platform/cloud-agents/harnesses/)：Claude Code 和 Codex。对于 Claude Code 和 Codex 运行，点击**继续**，然后输入后续提示。Warp Agent 运行使用精简的后续输入。
+* **本地到云端**适用于 Warp Agent。它不适用于第三方 CLI agent 会话。
+
+## 延续的内容
+
+交接保留足够的状态，以便接收方 agent 可以恢复工作，而不仅仅是阅读工作内容。
+
+* **对话历史** - 接收方 agent 看到先前会话的完整记录。本地到云端会分叉对话，因此源不被修改；云端到云端在相同的对话中继续。
+* **工作区状态** - 本地到云端和云端到云端会捕获先前会话的仓库更改（已跟踪和未跟踪），并在接收方运行中应用它们，然后 agent 回答下一个提示。云端到本地方向目前不将工作区补丁应用到您的本地检出；请检查云 agent 的分支或拉取请求制品以检查这些更改。
+* **对话附件** - 先前会话期间附加的文件对接收方 agent 仍然可用。
+
+交接是尽力而为的。当接收方 agent 可以干净地应用先前会话的更改时，它会从先前 agent 中断的地方继续。当不能时，agent 会报告哪些更改应用失败，并继续处理已成功应用的更改。
+
+## 何时使用交接
+
+每个方向都有明确的激励工作流。
+
+* **本地到云端** - 当本地对话已发展到更适合在云端完成的工作时使用：长时间运行的任务（您不希望笔记本电脑一直醒着）、同一任务的并行变体，或在运行后从另一台设备引导工作。
+* **云端到云端** - 当云 agent 完成且您希望发送后续指令而不丢失先前工作区状态时使用。当 Slack 触发或计划运行完成且团队中某人希望进一步推进时也很有用。
+* **云端到本地** - 当云 agent 已完成了繁重工作且您希望本地接管以进行验证、迭代或润色后再交付时使用。
+
+## 相关页面
+
+* [云 Agent 概述](/agent-platform/cloud-agents/overview/) - 什么是云 agent，何时使用它们，以及它们如何融入 Oz Platform。
+* [管理云 Agent](/agent-platform/cloud-agents/managing-cloud-agents/) - 从 Warp 应用中的 Agent 管理面板或 Oz Web 应用中的 Runs 页面检查交接运行，与本地对话一同。
+* [查看云 agent 运行](/agent-platform/cloud-agents/viewing-cloud-agent-runs/) - 使用**继续本地**或 `/continue-locally` 打开并继续云运行本地。
+* [云同步对话](/agent-platform/local-agents/cloud-conversations/) - 对话如何在本地和云端之间同步，以便交接可以找到它们。
+* [环境](/agent-platform/cloud-agents/environments/) - 交接后云 agent 运行的运行时上下文。

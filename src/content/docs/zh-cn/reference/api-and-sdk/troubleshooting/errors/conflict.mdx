@@ -1,0 +1,58 @@
+---
+title: "错误：conflict (409)"
+sidebar:
+  label: "conflict"
+description: >-
+  请求与资源的当前状态冲突。等待资源达到预期状态后重试。
+---
+
+`conflict` 错误发生在请求无法完成，因为资源处于与请求操作冲突的状态时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `409 冲突`
+* **可重试：** 是
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 您尝试取消一个仍然处于 **pending** 状态的任务（该任务尚未被工作节点领取）
+
+一旦资源转换到预期状态，操作通常可以成功。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/conflict/",
+  "title": "待处理的代理运行无法取消，请稍后重试。",
+  "status": 409,
+  "instance": "/api/v1/agent/tasks/abc123/cancel",
+  "error": "待处理的代理运行无法取消，请稍后重试。",
+  "retryable": true
+}
+```
+
+---
+
+## 解决方法
+
+1. 等待片刻，让资源转换到预期状态。
+2. 重试请求。
+
+对于任务取消，请等待任务从 **pending** 转换到 **in progress** 后再尝试取消。
+
+---
+
+## 相关
+
+* [管理云端代理](/agent-platform/cloud-agents/managing-cloud-agents/) — 查看和管理代理任务
+* [Oz API & SDK](/reference/api-and-sdk/) — 管理代理任务的 API 参考

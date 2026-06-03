@@ -1,0 +1,931 @@
+---
+title: "更新日志 — 2026"
+description: >-
+  Warp 2026 年发布说明。更新每周发布，通常在周四。
+---
+
+在我们的 [GitHub 面板](https://github.com/warpdotdev/Warp/issues/new/choose)上提交错误和功能请求！
+
+### 2026.05.27 (v0.2026.05.27.15.44)
+
+**新功能**
+
+* 在代码审查窗格中添加了 git 操作。([#11716](https://github.com/warpdotdev/warp/pull/11716))
+
+**改进**
+
+* 一个新的、更快的查找实现现在可作为可选的设置，位于设置 → 功能 → 异步查找，可在大型输出上保持 UI 响应。([#11555](https://github.com/warpdotdev/warp/pull/11555))
+* 自定义推理端点现在在智能体模式中显示带有友好别名名称的令牌用量。([#11496](https://github.com/warpdotdev/warp/pull/11496))
+* 在模型选择器中为 Bedrock 启用的模型添加了 AWS Bedrock 指示器。([#11358](https://github.com/warpdotdev/warp/pull/11358))
+* Oz CLI 现在具有操作可复用智能体的命令。([#11286](https://github.com/warpdotdev/warp/pull/11286))
+* 添加了在智能体对话中查看附加图像的功能。([#11426](https://github.com/warpdotdev/warp/pull/11426))
+* 从远程 SSH 会话打开的 Markdown 文件现在在 Markdown 查看器中渲染，并支持渲染/原始切换。([#11427](https://github.com/warpdotdev/warp/pull/11427))
+* 为远程控制会话添加了二维码流程。([#11435](https://github.com/warpdotdev/warp/pull/11435))
+* 笔记本中的 Mermaid 图表现在可以通过点击渲染的图表在灯箱中打开。([#11548](https://github.com/warpdotdev/warp/pull/11548))
+* 富文本编辑器换行现在渲染为换行符而不是段落分隔符，修复了异常大的间距。([#10293](https://github.com/warpdotdev/warp/pull/10293))
+* 编排子智能体标签现在按状态排序，需要关注的项目优先显示。([#11363](https://github.com/warpdotdev/warp/pull/11363))
+* 编排器标签现在在子智能体运行时显示进行中状态。([#11367](https://github.com/warpdotdev/warp/pull/11367))
+* 添加了远程 SSH 会话断开连接时的断开横幅。([#11565](https://github.com/warpdotdev/warp/pull/11565))
+* 改进了 GitHub 认证错误消息，提供更详细的信息。([#11248](https://github.com/warpdotdev/warp/pull/11248))
+* Warp 现在在终端会话环境中暴露一个聚焦 URL，以便外部通知工具可以将焦点返回到原始窗格。([#11130](https://github.com/warpdotdev/warp/pull/11130))
+* 为 warpify 子 shell 添加了 podman exec/run 支持。([#9831](https://github.com/warpdotdev/warp/pull/9831))
+* 添加了基于大小的会话内轮转，用于 warp.log，以便日志在会话内不会无限增长。([#11000](https://github.com/warpdotdev/warp/pull/11000))
+
+**Bug 修复**
+
+* 停止了每次状态转换时拆除和重新打开编排连接，减少了重新连接开销。([#11574](https://github.com/warpdotdev/warp/pull/11574))
+* 修复了免费独立用户看到旧的结算和使用设置页面而不是 V2 页面的问题。([#11434](https://github.com/warpdotdev/warp/pull/11434))
+* 修复了当创建和删除目标同一路径时的文件编辑差异应用问题。([#11516](https://github.com/warpdotdev/warp/pull/11516))
+* 修复了可能阻止 AI 查询及其输出显示的问题。([#11494](https://github.com/warpdotdev/warp/pull/11494))
+* 修复了在与远程服务器断开连接时发送命令执行请求的问题。([#11558](https://github.com/warpdotdev/warp/pull/11558))
+* 修复了 URL 重定向不正确工作的问题。([#11353](https://github.com/warpdotdev/warp/pull/11353))
+* 修复了 Linux 文件监视器 bug，某些 git 事件未被发送。([#11464](https://github.com/warpdotdev/warp/pull/11464))
+* 修复了在多个标签页中打开同一远程 SSH 仓库时代码审查面板显示"无法加载文件内容"的问题。([#11418](https://github.com/warpdotdev/warp/pull/11418))
+* 修复了远程控制按钮错误地出现在云对话记录中的问题。([#11292](https://github.com/warpdotdev/warp/pull/11292))
+* 修复了收件箱面板隐藏时通知点未出现在垂直标签上的问题。([#11611](https://github.com/warpdotdev/warp/pull/11611))
+* 修复了远程 SSH 会话的本地到云交接，此前已损坏。([#11453](https://github.com/warpdotdev/warp/pull/11453))
+* 修复了粘贴原始图像数据到 CLI 智能体的问题。([#11627](https://github.com/warpdotdev/warp/pull/11627))
+* 修复了在代码库索引期间 gitignore 规则未被嵌套目录正确继承的问题。([#11698](https://github.com/warpdotdev/warp/pull/11698))
+* 修复了在 Windows 上某些终端程序中 Ctrl+C 错误地关闭整个会话的问题。([#10976](https://github.com/warpdotdev/warp/pull/10976))
+* 修复了 Intel HD Graphics 2500 集成 GPU 上的渲染问题。([#11454](https://github.com/warpdotdev/warp/pull/11454))
+* 修复了使用 oh-my-zsh 和 allexport 选项时命令可能重复的 zsh 引导问题。([#11673](https://github.com/warpdotdev/warp/pull/11673))
+* 修复了在某些平台上 warpify 使用错误路径分隔符用于 shell 配置文件的问题。([#10584](https://github.com/warpdotdev/warp/pull/10584))
+* 标签页的工作目录和 git 分支指示器现在在进程发出 OSC 7 转义序列报告新 CWD 时更新（例如 worktrunk 的 wt switch）。([#9279](https://github.com/warpdotdev/warp/pull/9279))
+* 编排子智能体现在在重启后保持不变，以便智能体名称和子标签正确恢复。([#10794](https://github.com/warpdotdev/warp/pull/10794))
+
+**Oz 更新**
+
+* 为 Oz 云 API 密钥设置页面添加了搜索功能。([#11307](https://github.com/warpdotdev/warp/pull/11307))
+* 修复了 Oz 云智能体 GitHub CLI 认证，方法是将刷新的凭据写入 gh 预期的 hosts.yml 文件。([#11492](https://github.com/warpdotdev/warp/pull/11492))
+* 添加了一个执行配置文件权限，用于控制智能体是否可以使用 run_agents。([#11225](https://github.com/warpdotdev/warp/pull/11225))
+
+### 2026.05.20 (v0.2026.05.20.09.21)
+
+**改进**
+
+* 添加了对双击窗格分隔线以均匀重新分配分屏中窗格的支持。([#11293](https://github.com/warpdotdev/warp/pull/11293))
+* 新标签页工作树菜单现在将主目录缩写为 ~，左侧截断长路径以使尾部仓库名称保持可见，并在悬停时显示完整绝对路径 (#10862)。([#10958](https://github.com/warpdotdev/warp/pull/10958))
+* 在编排环境选择器中添加了创建环境流程。([#10857](https://github.com/warpdotdev/warp/pull/10857))
+* 添加了一项设置，通过 OSC 52 控制终端剪贴板访问，在访问被阻止时显示警告横幅。
+* 将 OSC 52 剪贴板写入访问限制在一个新的用户可配置设置后面。
+* 在团队离开或成员移除流程中重新加载信用时添加了确认对话框。([#11366](https://github.com/warpdotdev/warp/pull/11366))
+* 在稳定版上启用了 AI 模型的自定义推理端点配置。([#11450](https://github.com/warpdotdev/warp/pull/11450))
+* 自定义 AI 模型选择不再可用于云智能体运行；自定义端点仍可用于本地智能体和非云对话。([#11219](https://github.com/warpdotdev/warp/pull/11219))
+* 启用了独立用户自带密钥（BYOK）支持，并推出了重新设计的结算和使用页面。([#11437](https://github.com/warpdotdev/warp/pull/11437))
+* 更新了团队设置页面上的席位限制消息，引导用户前往升级页面。([#11288](https://github.com/warpdotdev/warp/pull/11288))
+* 在代码审查中为远程仓库和文件显示添加了主机标签；移除了远程会话的"打开仓库"按钮。([#11423](https://github.com/warpdotdev/warp/pull/11423), [#11299](https://github.com/warpdotdev/warp/pull/11299))
+* 在分支切换器中添加了"创建新分支"选项。([#10610](https://github.com/warpdotdev/warp/pull/10610))
+* 添加了用于管理 API 密钥的 CLI 命令。([#10998](https://github.com/warpdotdev/warp/pull/10998))
+* 添加了切换代码审查中文件导航的键位。([#11077](https://github.com/warpdotdev/warp/pull/11077))
+* 在远程 SSH 会话中启用了 `CMD+O` 快捷键和 `@` 上下文菜单。([#11295](https://github.com/warpdotdev/warp/pull/11295))
+* 在远程 SSH 会话中为差异标签添加了差异统计信息。([#11214](https://github.com/warpdotdev/warp/pull/11214))
+
+**Bug 修复**
+
+* 修复了在 macOS 上使用绿色标题栏平铺按钮后 Warp 可能被恢复为 1px 宽窗口的 bug (#10083)。([#10855](https://github.com/warpdotdev/warp/pull/10855))
+* 修复了在编排期间代码审查评论被路由到不可见的子智能体终端的问题。([#11340](https://github.com/warpdotdev/warp/pull/11340))
+* 修复了编排配置选择器菜单与其选择器字段不匹配的问题。([#11289](https://github.com/warpdotdev/warp/pull/11289))
+* 修复了进入仓库时 git diff 提示符标签闪烁，以及离开仓库时提示符标签和代码审查按钮上的 git diff 状态过时的问题。([#11242](https://github.com/warpdotdev/warp/pull/11242))
+* 修复了 tmux warpification 流程中出现未插值的会话 ID 占位符的问题。
+* 修复了 DCS 序列验证错误地拒绝了来自会话查看器的输入。
+* 修复了已启用自动充值但剩余信用为零的用户 AI 不可用的问题。([#11420](https://github.com/warpdotdev/warp/pull/11420))
+* 修复了秘密涂抹中的死锁问题，可能导致 Warp 变得无响应。([#11428](https://github.com/warpdotdev/warp/pull/11428))
+* 修复了关闭标签页后标签页焦点激活右侧下一个标签页的问题。([#11197](https://github.com/warpdotdev/warp/pull/11197))
+* 修复了新的 API 密钥创建弹窗中智能体模型下拉菜单的渲染问题。([#11187](https://github.com/warpdotdev/warp/pull/11187))
+* 修复了由过时的 Claude 插件版本导致的 Oz 通知损坏问题。([#11204](https://github.com/warpdotdev/warp/pull/11204))
+* 修复了智能体详情面板中损坏的技能链接。([#11231](https://github.com/warpdotdev/warp/pull/11231))
+* 修复了 WASM 构建中的资源加载错误。([#11195](https://github.com/warpdotdev/warp/pull/11195))
+
+**Oz 更新**
+
+* Oz 现在在任务运行期间刷新 GitHub 凭据，以保持 Git 操作认证状态。([#11338](https://github.com/warpdotdev/warp/pull/11338))
+* 在编排子智能体标签菜单中添加了"在 Oz 中查看"操作。([#11309](https://github.com/warpdotdev/warp/pull/11309))
+* 添加了 macOS 设置，在睡眠前自动将活动的本地 Warp 智能体会话切换到云模式。([#11049](https://github.com/warpdotdev/warp/pull/11049))
+
+### 2026.05.18 (v0.2026.05.18.05.32)
+
+**新功能**
+
+* 你现在可以将本地 Warp 智能体对话交接给云端。([#10910](https://github.com/warpdotdev/warp/pull/10910))
+
+**改进**
+
+* 云对话现在可通过 `/conversations` 访问。([#10800](https://github.com/warpdotdev/warp/pull/10800))
+* 刷新了云智能体视图入口块的元数据和图标。([#11088](https://github.com/warpdotdev/warp/pull/11088))
+* 块列表搜索现在异步运行，以获得更快的命令建议。([#9618](https://github.com/warpdotdev/warp/pull/9618))
+* 打开云智能体对话现在在可用时附加到其现有会话。([#11097](https://github.com/warpdotdev/warp/pull/11097))
+* 显示云智能体环境名称和设置状态，以及垂直标签页的 pwd。([#11006](https://github.com/warpdotdev/warp/pull/11006))
+* 在设置 → 团队的邀请标题上方添加了"你的团队已满"提示。([#10705](https://github.com/warpdotdev/warp/pull/10705))
+* 云模式初始运行现在在完成 GitHub 认证后自动重试。([#10973](https://github.com/warpdotdev/warp/pull/10973))
+* [标签页配置] 标签页配置现在顺序运行其命令。([#10698](https://github.com/warpdotdev/warp/pull/10698))
+* 在配额限制错误中显示服务器提供的 `user_display_message` 文本。([#10279](https://github.com/warpdotdev/warp/pull/10279))
+* 在终端右键上下文菜单中添加了"清除"操作，以便在不使用键盘快捷键的情况下发现清除终端输出的方式。([#10612](https://github.com/warpdotdev/warp/pull/10612)) — @wzc520pyfm ✨
+* 添加了一个 `warp://tab_config/<name>` 深度链接，在活动窗口中打开已保存的标签页配置（或使用 `?new_window=true` 在新窗口中打开）。([#9379](https://github.com/warpdotdev/warp/pull/9379)) — @haha1903 ✨
+* 在不支持的远程平台上跳过了 SSH 扩展安装。([#10950](https://github.com/warpdotdev/warp/pull/10950))
+* 在启动时跳过了仓库菜单 git 统计信息以改善启动性能。([#10937](https://github.com/warpdotdev/warp/pull/10937))
+* 在代码审查面板关闭时减少了启动时不必要的 git 操作。([#10934](https://github.com/warpdotdev/warp/pull/10934))
+
+**Bug 修复**
+
+* 修复了 Mermaid 图表文本在 Web 版 Warp 中不渲染的问题。([#11141](https://github.com/warpdotdev/warp/pull/11141))
+* 裁剪了内联菜单标题以防止在分屏窗格中溢出。([#10811](https://github.com/warpdotdev/warp/pull/10811)) — @SagarSDagdu ✨
+* [Windows] Inno Setup 现在在迷你转储服务器进程退出失败时终止它。([#10766](https://github.com/warpdotdev/warp/pull/10766))
+* [Linux] 修复了树莓派上的 Warp。([#10688](https://github.com/warpdotdev/warp/pull/10688))
+* 停止等待我们从未尝试启动的基于文件的 MCP 服务器。([#10969](https://github.com/warpdotdev/warp/pull/10969))
+* 修复了关闭 SSH 会话后已恢复的命令历史记录。([#10713](https://github.com/warpdotdev/warp/pull/10713)) — @fatsolko ✨
+* 修复了本地仓库会话检测。([#11019](https://github.com/warpdotdev/warp/pull/11019))
+* 修复了套接字路径超过 sun_path 限制时的远程服务器连接失败。([#11009](https://github.com/warpdotdev/warp/pull/11009))
+* 云智能体运行的详情面板现在显示获取智能体元数据的任何失败 ([#10765](https://github.com/warpdotdev/warp/pull/10765))
+* 通过在刷新令牌之前创建已认证客户端，修复了 MCP OAuth 问题。([#10984](https://github.com/warpdotdev/warp/pull/10984))
+* 修复了云智能体对话的错误任务状态报告。([#10977](https://github.com/warpdotdev/warp/pull/10977))
+* 在 AppKit 中设置了最小窗口尺寸，以便窗口不再能被恢复为 1px 宽。([#10965](https://github.com/warpdotdev/warp/pull/10965))
+* 通过在远程下载失败时回退到缓存的客户端 tarball 上传，提高了远程服务器安装的可靠性。([#10925](https://github.com/warpdotdev/warp/pull/10925))
+* 在打开 Markdown 文件链接时遵守 Markdown 查看器偏好设置。([#9483](https://github.com/warpdotdev/warp/pull/9483)) — @maro20066600 ✨
+
+**Oz 更新**
+
+* 在云端运行任何智能体框架。使用 Oz 在云端启动 Claude Code 或 Codex 智能体；Oz 将帮助你跟踪和引导这些智能体。
+* 多智能体编排。Warp 智能体现在将编排子智能体群，使你能够并行化任务。
+
+### 2026.05.14 (v0.2026.05.13.09.15)
+
+**新功能**
+
+* 垂直标签页的摘要模式提供标签内容的紧凑概览 ([#10793](https://github.com/warpdotdev/warp/pull/10793))
+* 你现在可以将颜色与目录关联，以便在标签页的工作目录匹配时自动采用配置的颜色。在**设置** > **外观**中配置。([#10284](https://github.com/warpdotdev/warp/pull/10284))
+
+**改进**
+
+* vim ctrl-d / ctrl-u 在普通模式和可视化模式下将代码编辑器滚动半页 ([#10582](https://github.com/warpdotdev/warp/pull/10582)) — @bradleyjames ✨
+* 当智能体使用"向用户提问"工具时添加了自主减速带 ([#10433](https://github.com/warpdotdev/warp/pull/10433))
+* 查看对话记录时，你现在可以查看 shell 命令的运行持续时间，悬停时查看开始/结束时间戳 ([#10423](https://github.com/warpdotdev/warp/pull/10423))
+* 远程服务器二进制文件在安装后现在用 `--version` 验证 ([#10687](https://github.com/warpdotdev/warp/pull/10687))
+* SSH 扩展现在支持 amd64 架构，并在遥测中跟踪安装来源 ([#10534](https://github.com/warpdotdev/warp/pull/10534))
+* vim zz 在代码编辑器中垂直居中光标所在行 ([#10581](https://github.com/warpdotdev/warp/pull/10581)) — @bradleyjames ✨
+* 改进了 SSH 扩展安装的可靠性——网络故障现在通过 SCP 回退自动重试 ([#10533](https://github.com/warpdotdev/warp/pull/10533))
+* WSL 会话现在优先使用 Linux 端的 git 和 gh 二进制文件而非 Windows 互操作 ([#10137](https://github.com/warpdotdev/warp/pull/10137)) — @JonRC ✨
+* 为笔记本、计划文档和渲染的 Markdown 视图中的 Mermaid 代码块添加了原始和渲染显示控件。([#10431](https://github.com/warpdotdev/warp/pull/10431))
+* 统一了会话管理面板中的智能体状态图标 ([#10518](https://github.com/warpdotdev/warp/pull/10518))
+* 标签页配置仓库选择器现在将主目录缩写为 `~`，左侧截断长路径以使尾部仓库名称保持可见，并在悬停时显示完整绝对路径，以便深度嵌套的已保存仓库保持可区分。([#9451](https://github.com/warpdotdev/warp/pull/9451)) — @saucy-tech ✨
+* 在稳定版上启用了 Oz OIDC 认证 ([#10468](https://github.com/warpdotdev/warp/pull/10468))
+* 在代码窗格溢出菜单中添加了"在 Finder 中显示"选项 ([#10334](https://github.com/warpdotdev/warp/pull/10334)) — @wzc520pyfm ✨
+* 智能体模式现在可以帮助你重新映射 Warp 键盘快捷键——要求它更改快捷键，它将为你编辑 keybindings.yaml。([#9415](https://github.com/warpdotdev/warp/pull/9415)) — @sebryu ✨
+* 智能体模式项目规则现在在应用启动时重新索引 ([#10377](https://github.com/warpdotdev/warp/pull/10377))
+* 在包含大量文件的项目中打开命令面板时的性能改进。([#10332](https://github.com/warpdotdev/warp/pull/10332))
+* 上下文窗口大小现在可为自定义模型端点配置 ([#10386](https://github.com/warpdotdev/warp/pull/10386))
+* 在设置中添加了"循环最近使用的标签页"作为第三个 Ctrl+Tab 行为选项 ([#9658](https://github.com/warpdotdev/warp/pull/9658)) — @Akeuuh ✨
+* 重命名窗格现在可通过设置 → 键盘快捷键作为可重新映射的绑定 (`workspace:rename_active_pane`) 访问，除了现有的右键上下文菜单。感谢 @lonexreb！([#9712](https://github.com/warpdotdev/warp/pull/9712)) — @lonexreb ✨
+* 在 Windows 注册表中添加了安装路径 ([#10607](https://github.com/warpdotdev/warp/pull/10607)) — @Cocodrulo ✨
+
+**Bug 修复**
+
+* 修复了共享会话回滚未正确恢复的问题 ([#10780](https://github.com/warpdotdev/warp/pull/10780))
+* 修复了恢复云模式对话时重复命令渲染的问题 ([#10776](https://github.com/warpdotdev/warp/pull/10776))
+* 修复了在应用多行替换时文件编辑差异丢弃部分尾部上下文行结尾的问题。([#9623](https://github.com/warpdotdev/warp/pull/9623))
+* 修复了文件监视器初始化失败时的恐慌 ([#10682](https://github.com/warpdotdev/warp/pull/10682))
+* 在云智能体会话中隐藏了共享者的光标 ([#10480](https://github.com/warpdotdev/warp/pull/10480))
+* 修复了 CLI 智能体会话中富输入捕获方向键的问题 ([#10556](https://github.com/warpdotdev/warp/pull/10556)) — @SagarSDagdu ✨
+* 云智能体运行详情现在在"已使用信用"总数中包含平台成本（并且不再在某个成本桶为空时完全丢弃该字段）。([#10672](https://github.com/warpdotdev/warp/pull/10672))
+* 修复了在访问令牌 TTL 过期后 MCP OAuth 服务器断开连接的问题；现在在过期前使用刷新令牌获取新的访问令牌 (#8863)。([#9460](https://github.com/warpdotdev/warp/pull/9460)) — @david-engelmann ✨
+* 修复了同时提供工具和资源的 MCP 服务器由于非对称能力处理有时无法启动的问题 (#6798)。([#9436](https://github.com/warpdotdev/warp/pull/9436)) — @david-engelmann ✨
+* 代码审查面板现在在离开并返回多仓库工作空间中的智能体会话时记住手动选择的 Git 仓库。([#10599](https://github.com/warpdotdev/warp/pull/10599)) — @wzc520pyfm ✨
+* 修复了环境智能体会话未从管理视图正确重新打开的问题 ([#10510](https://github.com/warpdotdev/warp/pull/10510))
+* 在共享会话快照页脚中右对齐了"在 Warp 中打开"按钮。([#10667](https://github.com/warpdotdev/warp/pull/10667))
+* 修复了取消智能体发起的长时间运行命令和 MCP 工具调用后的响应控件和已停止任务页脚可见性问题。([#9695](https://github.com/warpdotdev/warp/pull/9695))
+* 修复了运行命令执行器中的竞态条件 ([#10666](https://github.com/warpdotdev/warp/pull/10666))
+* 修复了云对话有时加入时为空的 bug。([#10670](https://github.com/warpdotdev/warp/pull/10670))
+* [Windows/Linux] 修复了软换行行的文本选择。([#10445](https://github.com/warpdotdev/warp/pull/10445))
+* 修复了僵尸迷你转储服务器进程阻止 Windows 自动更新的问题 ([#10528](https://github.com/warpdotdev/warp/pull/10528))
+* 修复了 MCP 安装/更新弹窗按钮文本颜色 ([#10166](https://github.com/warpdotdev/warp/pull/10166))
+* 子智能体窗格现在在重新打开父智能体对话时懒加载。([#10371](https://github.com/warpdotdev/warp/pull/10371))
+* 修复了 'open .command' 文件启动失败的问题 ([#10543](https://github.com/warpdotdev/warp/pull/10543)) — @Jackie-Tang ✨
+* 修复了在亮暗主题之间切换后代码审查窗格中仓库切换器文本不可读的问题。([#10601](https://github.com/warpdotdev/warp/pull/10601)) — @wzc520pyfm ✨
+* 停止了 GitHub PR 提示符标签在无变化时每 30 秒轮询 `gh pr view` 的操作，防止耗尽用户的 GitHub GraphQL 速率限制。([#10307](https://github.com/warpdotdev/warp/pull/10307)) — @croaky ✨
+* 修复了 tmux 状态行颜色泄漏到备用屏幕背景渲染中的问题。([#10132](https://github.com/warpdotdev/warp/pull/10132)) — @MeteorSkyOne ✨
+* 为 Windows/Linux 上的右侧窗口控件预留了标题栏空间 ([#10178](https://github.com/warpdotdev/warp/pull/10178)) — @gabrimatic ✨
+* 修复了 Mermaid 图表在渲染失败或超时时显示无限渲染占位符的问题。([#10432](https://github.com/warpdotdev/warp/pull/10432))
+* 修复了远程文件树未随本地文件更改更新 ([#10514](https://github.com/warpdotdev/warp/pull/10514))
+* 修复了代码审查查找栏关闭时未清理的问题 ([#10451](https://github.com/warpdotdev/warp/pull/10451)) — @EdenBendheim ✨
+* 修复了 WSL 会话中的 CLI 智能体通知，方法是将所需的 Warp 环境变量转发到 WSL 中。([#10174](https://github.com/warpdotdev/warp/pull/10174)) — @gabrimatic ✨
+* 修复了云对话背景和状态样式 ([#10511](https://github.com/warpdotdev/warp/pull/10511))
+* 修复了在 Windows 上使用 Unikey 或 EVKey 的 Telex/VNI 模式打字时越南语字符被静默丢弃的问题。([#10442](https://github.com/warpdotdev/warp/pull/10442))
+* 斜杠命令现在在执行时正确遵守启用检查 ([#10466](https://github.com/warpdotdev/warp/pull/10466))
+* 修复了以 Unicode/CJK 标点符号为前缀的文件路径检测 ([#10250](https://github.com/warpdotdev/warp/pull/10250)) — @SagarSDagdu ✨
+* 修复了在允许 Arch Linux 自动更新之前的 pacman 签名密钥验证 ([#9706](https://github.com/warpdotdev/warp/pull/9706)) — @Naveen-Boddepalli ✨
+* 插件支持的 CLI 智能体（例如通过 claude-code-warp 的 Claude Code）的标签标题在会话完成后不再继续显示过时的权限提示文本。感谢 @lonexreb！([#9671](https://github.com/warpdotdev/warp/pull/9671)) — @lonexreb ✨
+* 修复了在链接工作树中签出的分支的提示分支选择器点击问题。感谢 @JasonLovesDoggo (#9264)、@tkshsbcue (#9440) 和 @lonexreb (#9560) 之前的修复和调查。([#9905](https://github.com/warpdotdev/warp/pull/9905)) — @kranthik10 ✨
+* 修复了远程服务器 SSH 包装器无法在 macOS 远程上安装 Oz 智能体的问题，其 `bash -s` 解析为 Apple bash 3.2（默认），表现为"初始化：在收到回复之前响应通道已关闭"和二进制文件被放置在 `~/"/Users/.../"` 下。([#10317](https://github.com/warpdotdev/warp/pull/10317)) — @lucasdoell ✨
+* 子智能体初始提示（来自编排器）不再出现在智能体输入补全历史中。([#10304](https://github.com/warpdotdev/warp/pull/10304))
+* 修复了过时智能体运行的无限 SSE 重试循环 ([#10383](https://github.com/warpdotdev/warp/pull/10383))
+* 修复了渲染笔记本中的 Markdown 目录锚点链接。([#10143](https://github.com/warpdotdev/warp/pull/10143)) — @haikomatt ✨
+* 修复了重启 Warp 后云对话记录窗格卡在加载状态的问题 ([#10385](https://github.com/warpdotdev/warp/pull/10385))
+* 当当前分支没有 PR 时，停止代码审查窗格在每次文件系统事件时重新运行 `gh pr view`。([#10361](https://github.com/warpdotdev/warp/pull/10361)) — @croaky ✨
+* 修复了 tree 命令输出文件名未被检测为可点击文件链接的问题 ([#10004](https://github.com/warpdotdev/warp/pull/10004)) — @princepal9120 ✨
+* 在 Linux/Wayland 上启用了 IME 输入 ([#9602](https://github.com/warpdotdev/warp/pull/9602)) — @anshul-garg27 ✨
+* 焦点窗格通知现在在 Warp 窗口重新聚焦时标记为已读 ([#10082](https://github.com/warpdotdev/warp/pull/10082))
+* 修复了点击显示/隐藏富输入页脚标签有时会退出智能体视图的问题。([#10303](https://github.com/warpdotdev/warp/pull/10303))
+* 修复了 Debian/Ubuntu 上 .sources 文件存在时的重复 apt 源条目 ([#10011](https://github.com/warpdotdev/warp/pull/10011))
+* 修复了第三方智能体会话的 RowIterator 崩溃 ([#10305](https://github.com/warpdotdev/warp/pull/10305))
+* 修复了终端视图渲染中可能冻结 UI 的死锁 ([#10308](https://github.com/warpdotdev/warp/pull/10308))
+* 修订了标签摘要模式的布局和行为 ([#10067](https://github.com/warpdotdev/warp/pull/10067))
+* 修复了 git 分支/差异统计提示符标签初始化中的竞态条件 ([#10265](https://github.com/warpdotdev/warp/pull/10265))
+* 修复了可能永久丢失活动规则文件的竞态条件 ([#10238](https://github.com/warpdotdev/warp/pull/10238))
+* 修复了云智能体 CLI 轮询中的 429 速率限制 ([#10275](https://github.com/warpdotdev/warp/pull/10275))
+* 修复了导致已接受命令被自动取消的竞态条件 ([#10241](https://github.com/warpdotdev/warp/pull/10241))
+* macOS：修复了第三方 IME（例如 超注音 / Yahoo Bopomofo）在组合期间每次按箭头键时候选选择前进 2 个的问题。([#9711](https://github.com/warpdotdev/warp/pull/9711)) — @maxmilian ✨
+
+**Oz 更新**
+
+* 环境智能体对话现在可以恢复到云模式窗格中 ([#10426](https://github.com/warpdotdev/warp/pull/10426))
+* 在环境智能体会话中隐藏通知标签 ([#10299](https://github.com/warpdotdev/warp/pull/10299))
+* 智能体 `/compact` 现在为更好的摘要发送技能和环境上下文 ([#10274](https://github.com/warpdotdev/warp/pull/10274))
+
+### 2026.05.06 (v0.2026.05.06.15.42)
+
+**新功能**
+
+* 添加了一个 `/set-tab-color` 斜杠命令，用于从输入栏设置或清除当前标签页的颜色。
+
+**改进**
+
+* 添加了标签上下文菜单操作，用于在可用时复制可见标签和窗格元数据。
+* 对话详情面板现在可以使用可配置的键盘快捷键打开和关闭。
+* 对话详情侧面板现在可用于本地 Warp 智能体对话，而不仅仅是云 Oz 运行。点击窗格头部中的信息按钮，可为任何活动的 AI 对话打开它。
+* 在对话流式传输期间，减少了智能体运行管理视图中的内存使用和 CPU 工作。
+* 添加了将图像文件拖放到活动 CLI 智能体会话（例如 Claude Code）中的支持。感谢 @SagarSDagdu！
+* 识别 Mistral Vibe（vibe / vibe-acp）为终端中的已知 CLI 智能体，带有品牌颜色的工具栏图块。感谢 @lonexreb！
+* Warp 现在在智能体块输出中渲染内联本地图像和 Mermaid 图表。
+* 在预构建的远程服务器二进制文件不兼容（例如 glibc &lt; 2.31）的远程主机上，Warp 现在静默回退到常规 SSH 会话，而不是尝试执行会在运行时失败的安装。
+* 收紧编排事件订阅范围，使 SSE 仅针对活动的父和子智能体运行。
+* 使用 .htm 扩展名的 HTML 文件现在在 Warp 的编辑器中以 HTML 语法高亮打开。
+* 识别 Block 的 goose CLI 智能体——运行 goose 现在可以激活 CLI 智能体工具栏、状态、品牌颜色和图标，就像其他已识别的第三方智能体一样。感谢 @webdevtodayjason！
+* 添加了一个 `/continue-locally` 斜杠命令，用于在本地继续云对话。
+* 在点击检测到的文件链接时出现的工具提示中添加了"在 Finder 中显示"（macOS）/ "显示包含文件夹"（Linux/Windows）选项。
+
+**Bug 修复**
+
+* 当当前分支没有 PR 时，停止代码审查窗格在每次文件系统事件时重新运行 `gh pr view`。感谢 @croaky！
+* 修复了 `/feedback` 在打包构建中记录"Unknown"而不是已安装的 Warp 版本的问题。感谢 @SagarSDagdu！
+* 修复了查找（`⌘+F`）选择在新输出流入活动块时跳转到不同匹配项的问题。感谢 @amazansky！
+* 修复了在 Linux 上通过外部编辑器打开文件时的命令注入漏洞。
+* 修复了日语 IME 在 macOS 上在标点符号前结束的短语丢失最后一个字符的问题。感谢 @s-zaizen！
+* 修复了 SSH 会话连接时本地文件树闪烁/重新排列的问题。
+* 修复了文本选择在拖拽超出边界时不自动滚动的问题。
+* 修复了 `Ctrl+G` 在 Linux 上编辑器聚焦时未关闭 CLI 智能体富输入的问题（修复了 #9286）。感谢 @nihalxkumar！
+* 在智能体视图中缓冲区为空时按退格键不再重置对话。
+* 减少了系统休眠后远程 SSH 会话不必要的重新连接尝试，降低了错误噪声。
+* 修复了 CLI 智能体在终端窗格调整大小时重复 TUI 重绘的问题。
+* 修复了标签面板位于标题工具栏右侧时新会话"+"下拉菜单的对齐问题。
+* 复制键位现在在输入中的选中文本和选中的块同时活动时优先选择输入中的文本。
+* [Windows] 修复了热键窗口。
+* [Windows] 修复了符号链接遍历。
+* 修复了在 Windows 上将 Web 对话交接给原生客户端时的崩溃（"Grid received input but did not receive Reset Grid OSC"）。
+* 修复了多个'打开技能'按钮共享悬停状态的 bug。
+* 修复了从提示符按 Page Up 和 Page Down 在建议菜单关闭时可以滚动终端输出的问题；快捷键出现在键盘快捷键下作为可编辑的滚动操作（terminal:scroll_up_one_page / terminal:scroll_down_one_page）。感谢 @fadexadex！
+* 修复了 OSS Linux 桌面条目，使 WarpOss 通过打包的 warp-terminal-oss 命令启动。感谢 @lonexreb！
+* 修复了在 Windows 上非拉丁键盘布局活动时 Ctrl/Cmd 快捷键（例如复制、粘贴）失败的问题。
+* 修复了 macOS IME 候选弹窗在代码编辑器窗格中的定位，使其锚定到编辑器插入符号而不是过时的终端/输入位置。感谢 @qubaitian！
+* 修复了 `/open-file` 对相对 WSL 路径的处理，以便在 Windows 主机上打开文件前保留 Unix 分隔符。
+* 修复了备用屏幕程序（例如 delta、diff-so-fancy）中的背景颜色渗透问题，当彩色区域占主导地位时会错误填充整个视口。感谢 @JamieMcMillan！
+* 将 warp 指示器的操作标签（例如"隐藏响应"、"接管"、自动批准、队列下一个提示、停止）在窄窗格中截断到新行，而不是溢出到相邻窗格上。
+* 智能体块输出中的内联 .bmp、.tiff / .tif 和 .ico 图像现在正确渲染，而不是回退到纯文本。感谢 @anshul-garg27！
+* 来自社区维护的 pi-mono 插件（Pi CLI 智能体）的通知和会话 UI 现在通过 Warp 的默认会话监听器进行连接。感谢 @lonexreb！
+* 修复了在块输入中附加图像时未能立即锁定到智能体模式的问题，这可能导致 NLD 分类器引入不确定性。
+* 当暂存目录清理在二进制文件已经移入后遇到"目录非空"竞态条件时，远程服务器安装不再失败。
+* .command shell 脚本现在在 Warp 的编辑器中以 shell 语法高亮打开。
+* 修复了在存在未跟踪文件时 git diff 标签在仅跟踪和所有文件计数之间闪烁的问题。
+* 打开文件 → 默认应用现在在正在运行的 Warp 频道中打开文件，而不是路由到另一个已安装的 Warp。
+* 修复了垂直标签设置弹窗项目（查看方式、密度、窗格标题作为）不可点击的问题。感谢 @leozeli！
+* 修复了 macOS 上 Warp 枚举系统字体或构建字体回退链时发生的内存泄漏。
+* 从 file:// URL 打开的可执行 shell 脚本现在在终端中运行，而不是在编辑器中打开。感谢 @amriksingh0786！
+* 修复了 Option+Enter、Option+Tab 和 Option+Escape 发送文字键名而不是正确转义序列的问题。感谢 @oliver-ni！
+* 修复了当 LLM 请求超出文件末尾的行范围时 read_files 工具显示空框的问题。
+* 修复了 Linux WarpOSS 应用菜单启动器指向不存在的 warp-oss 二进制文件的问题；.desktop Exec 行现在匹配已安装的 warp-terminal-oss 启动器。感谢 @lonexreb！
+* 防止 Warp 在识别长块输出中的文件路径时消耗过多内存。
+* 在 Warp 以无头 SDK/CLI 模式运行时，不触发智能体入门教程。
+* 在 Oz CLI 中添加了 `--version` 标志支持。
+* 修复了过渡到 SSH 远程会话时文件树闪烁的问题。
+* 修复了滚动到选中块的开始/结束键位（macOS 上为 `⌘+Shift+↑`/`⌘+Shift+↓`，Windows/Linux 上为 `Ctrl+Shift+↑`/`Ctrl+Shift+↓`）在输入聚焦时无法工作的问题。
+* 修复了水平标签模式下终端窗格背景在活动主题具有背景图像或自定义窗口不透明度时显得更暗的问题。
+* 标记为 vue、xml、dockerfile、jsx、tsx、objective-c 或 starlark 的 AI 代码块现在以语法高亮渲染。常用别名如 rs、py、js、ts、yml、kt、rb、golang、terraform 和 docker 也被识别。
+* 重新打开已关闭的会话现在可通过 Linux 和 Windows 上的新会话菜单访问。
+* 修复了使用 .hpp、.hxx 或 .H 扩展名的 C++ 头文件缺少语法高亮的问题。
+
+**Oz 更新**
+
+* 添加 Codex 作为本地子智能体支持的框架。
+* 每个配置文件可配置的最大上下文窗口。
+
+### 2026.04.29
+
+**改进**
+
+* 新的 AI 设置，用于控制 Oz 是否在它创建的提交消息和拉取请求中添加归属合作作者行。
+* Git 操作按钮现在显示工具提示，解释它们为何被禁用（例如"没有要提交的更改"、"输入提交消息"）。
+* 长时间运行的 shell 命令指示器现在显示到智能体下一次快照的倒计时（例如"下次检查在 12 秒后"），而不是自上次检查以来的时间。
+
+**Bug 修复**
+
+* warp://action/new_tab?path=~/foo（和 /new_window）现在将 ~ 扩展为你的主目录。
+* + 菜单和默认会话模式下拉菜单中的标签页配置现在按名称字母顺序排序，而不是以随机顺序出现。
+* 修复了当智能体仍在响应时发送的斜杠命令被静默丢弃的问题。现在，像 /pr-comments 这样的斜杠命令作为后续问题运行，就像输入的消息一样。
+* 在 git 操作对话框中进行 git 提交时禁用了提交消息编辑器。
+* 项目范围的基于文件的 MCP 服务器现在默认从仓库根目录生成（全局的从 ~ 生成），因此带有相对命令/参数（以及 pnpm/npm 等工作空间启动器）的配置无需显式的 working_directory 即可工作。
+* 停止在 WASM 共享会话查看器上泛滥智能体运行元数据获取，消除了对 `/api/v1/agent/runs/{id}` 的一连串 403 响应。
+* 修复了从排队/预输入命令启动的命令块中按键被丢弃的问题。
+* 修复了所有面板排列中工作空间面板之间的双线视觉假象。
+* 修复了 macOS 上一个小的内存泄漏，可能在文本渲染期间积累 Core Graphics 对象。
+* 修复了设置弹窗项目（查看方式 / 密度）不可点击的问题（感谢 @leozeli！）。
+
+**Oz 更新**
+
+* 将 oz CLI tarball 下载大小在 macOS 和 Linux 上均减少了约 60%。
+* 模型选择器不再显示通过你自己的 API 密钥（BYOK）路由的模型的促销折扣，因为这些折扣仅适用于 Warp 计费的使用量。
+
+### 2026.04.27
+
+**新功能**
+
+* Warp 现已开源。
+* Warp 现在可通过 TOML 设置文件进行配置。从设置页面访问该文件，或让 Warp 的智能体为你更新设置。
+
+**改进**
+
+* 添加了禁用建议规则的设置。
+* 添加了一个 `/feedback` 斜杠命令，用于提交关于 Warp 的反馈。
+* `oz run get` 和 `oz run list` 命令现在支持 JSON 输出，以及通过 `--jq` 标志进行过滤。
+* 来自用户菜单、帮助菜单、资源中心页脚和命令面板的反馈现在打开 `/feedback` 流程。
+* 鼠标中键点击垂直标签页现在关闭它，与水平标签页保持一致。
+* 终端中的斜杠命令现在即使在 AI 被禁用时也可用。
+* 网络日志查看器现在作为应用内只读窗格打开，由 50 项内存缓冲区支持，而不是将 `warp_network.log` 写入磁盘。
+* 在长时间运行命令的"智能体上次查看"指示器旁边添加了"立即检查"按钮，让用户无需等待智能体的轮询定时器即可立即向智能体提供新的快照。
+* 智能体模式输入占位符现在反映对话状态：新对话显示"Warp 任何事情"，流式传输时显示"引导正在运行的智能体"，完成后显示"提出后续问题"。
+* 将绝对文件路径（例如从代码审查窗格中的"复制文件路径"）粘贴到命令面板文件选择器中现在正确找到并打开该文件。
+
+**Bug 修复**
+
+* 修复了块列表响应中宽的 Markdown 表格滚动条渲染在终端输入之上的问题。
+* 修复了当面板位于右侧时垂直标签页关闭按钮出现在左侧的问题。
+* 入门引导中的自主性选择（完全 / 部分 / 无）现在正确应用于默认执行配置文件，现有用户的已存储云配置文件在入门引导结束时登录时被保留。
+* 修复了在文件树元数据更新时项目浏览器中可能发生的崩溃。
+* 修复了垂直标签设置面板中点击被忽略的问题。
+* 修复了对话详情面板中的"在 Oz 中查看"按钮无法响应点击的问题。
+* [Windows] 恢复的会话中的 WSL 窗格具有你退出时的相同 PWD。
+* 恢复了智能体 > Oz 设置子页面中的 API 密钥（BYOK）和 AWS Bedrock 部分。
+* 修复了 macOS 上读取或写入用户偏好时的一个小内存泄漏。
+* 包含撇号的用户名不再破坏 PowerShell 会话。
+* 修复了启用远程服务器功能后退出 SSH 会话时可能发生的挂起。
+* 修复了终端输出包含非常长的零宽度字符序列（例如嵌入在通过终端传输的 HTML 中的隐写 ZWJ/ZWNJ 序列）时触发的崩溃，如果违规输出已持久化到块中，此问题也可能在启动时通过会话恢复重现。
+* 修复了在其默认 macOS 应用中打开文件时触发的每次调用小内存泄漏。
+* 修复了运行备用屏幕 CLI 智能体（例如 OpenCode）时 CLI 智能体富输入中的文本不可读问题，增加了与背景的对比度。
+* 修复了 macOS 服务子菜单设置中的一次性启动内存泄漏。
+* 修复了 macOS ObjC 桥接（window.m）中窗口委托的每个窗口内存泄漏。
+* 修复了文件树侧边栏错误地在本地标签页中显示远程 SSH 会话目录的问题。
+* 修复了 macOS ObjC 桥接（keycode.m）中按桶过度保留的键码字典问题。
+* 修复了 macOS ObjC 桥接（host_view.m）中的一个小的每窗口内存泄漏。
+* 修复了在 macOS 上注册全局热键时每次热键的内存泄漏。
+* 标签标题不再在智能体验证步骤期间更改为智能体执行的命令名称（例如 cargo）。
+* [macOS] 修复了图像粘贴和应用图标更改时的内存泄漏。
+* 在撤销关闭的宽限期内重新打开已关闭的云模式标签页，现在将恢复云对话的实时视图，而不是带有"会话已结束"横幅的冻结快照。
+* 修复了未登录用户的隐私设置未持久化到设置文件的问题。
+
+**Oz 更新**
+
+### 2026.04.22 (v0.2026.04.22.08.46)
+
+**新功能**
+
+* 工具栏标签现在可以通过右键点击顶部栏的任何位置并选择"重新排列工具栏项目"来重新排列。
+* Mermaid 图表现在在 Markdown 笔记本中渲染。
+
+**改进**
+
+* 添加了在富输入编辑器中粘贴图像到 CLI 智能体（如 Claude Code 或 Codex）的支持。
+* 在代码审查或富文本评论中输入 `_text_` 或 `__text__` 现在渲染为斜体或粗体，与现有的 `*text*`/`**text**` 行为匹配。
+* [Windows] 在**设置** > **功能** > **通用**下添加了"登录时启动 Warp"开关，注册 Warp 在你登录 Windows 时自动启动。
+* 为 macOS 上的全局搜索和智能体对话左侧面板项目添加了视图菜单条目（带键盘快捷键）。
+* [Windows] 添加了 408 个新的 PowerShell cmdlet 补全，并提高了现有 PowerShell 补全的建议质量。
+* 为 `pprof` 添加了补全。
+* `/fork` 现在按 Enter 在新窗格中打开分叉对话，按 Cmd+Enter 在新标签页中打开。
+* 右键单击 AI 响应中的 URL 或文件路径链接，通过上下文菜单直接复制。
+* 添加了从代码审查按钮在标签栏中隐藏添加/删除行数的设置。
+* 将设置重新组织为智能体、代码和云平台的子页面；改进了设置搜索。
+* 将分支补全连接到 `git log` 参数位置。
+* 为 OpenCode 的"向用户提问"工具添加了通知。
+* 在模型选择器中显示具有活跃促销的模型的折扣标签。
+* 每次查询图像限制提升至 20 张（从 5 张），每次对话图像限制提升至 200 张（从 20 张）。
+* 性能改进：防止在登录后拥有许多 Warp Drive 对象时的卡顿。
+* 添加了对智能体对话中文件制品的支持，具有下载功能和筛选选项。
+
+**Bug 修复**
+
+* [Windows] 修复了粘贴图像到 CLI 编码智能体（Claude Code、OpenCode 等）的问题。
+* 修复了当服务器有多个标签时 MCP 服务器标签溢出屏幕的问题（例如 GitHub MCP 具有多个仓库范围）。
+* 修复了 MCP 画廊项目在 MCP 服务器设置页面中未按字母顺序一致排序的问题。
+* 修复了制品卡片在窄窗格上裁剪"在本机继续"按钮的问题。
+* 修复了当终端的工作目录大小写与磁盘上仓库路径不匹配时，macOS 上代码审查提交按钮被错误禁用的问题。
+* 修复了从非登录幻灯片入口点完成入门引导幻灯片后注册时，新账户在服务器上未标记为已入门引导的问题。
+* 修复了连接到远程 SSH 会话后打开项目浏览器时卡在加载状态的问题。
+* 修复了智能体的 `read_files` 工具将无扩展名的文本文件（如 shell 脚本）作为二进制内容返回的 bug。
+* 修复了 MCP 设置页面基于文件的服务器徽章无限增长并错误地将 Warp 范围的服务器标记为".warp"而不是"global"的问题。
+* 修复了当 shell 命令正在运行但尚未发送智能体消息时智能体窗格中缺少进行中指示器的问题。
+* 修复了 MCP OAuth 认证在强制执行严格重定向 URI 匹配的提供商（例如 Hydra/ORY）上失败的问题。
+* 修复了由于序列化为浮点数而导致整数类型参数的 MCP 工具调用失败的问题。
+* 修复了当 LLM 的搜索块以部分行匹配结尾时，文件编辑工具丢弃行尾的问题。
+* 使用 vim 模式的代码编辑器时，第一个查找匹配项现在被正确选中。
+* 修复了在使用 Ctrl+C 取消正在运行的智能体命令后发送代码审查评论被静默丢弃的问题。
+* 运行备用屏幕 CLI 智能体（如 OpenCode）时，编码智能体页脚中的工具栏标签不再难以阅读。
+* 修复了 MCP 服务器（例如 Figma）需要在每次应用重启时重新认证的问题。
+* [Windows] 修复了在 Warp 完全退出之前安装程序运行导致文件正在使用错误，从而导致自动更新失败的竞态条件。
+* 提高了 Copilot CLI 的富输入提交流程的可靠性。
+* [Windows] 修复了使用不包含 CJK 字体的主要字体渲染大量 CJK 文本时无界内存增长的问题。
+* 修复了设置搜索栏文本在输入长查询时溢出的问题。
+* 修复了网络不可用时 Oz CLI 在命令完成后挂起的问题。
+* 修复了关闭期间 Ctrl+C 未终止 Oz CLI 的问题。
+* 修复了 `/open-file` 斜杠命令中 `~`（波浪号）未展开为主目录的问题。
+* 修复了 CLI 子智能体活动时编排事件破坏工具调用顺序的问题。
+
+**Oz 更新**
+
+* 添加了一个捆绑的 Claude API 技能，用于 Claude API 和 Anthropic SDK 开发指导。
+* 添加了对 `--share public:{access_level}` 的支持，用于 oz CLI 设置 oz 云运行的公共访问级别。
+* `start_agent` 在省略 `environment_id` 时不再拒绝远程子智能体；在远程父智能体内，子智能体自动继承父智能体的环境。
+
+### 2026.04.15 (v0.2026.04.15.08.45)
+
+**改进**
+
+* 智能体模式现在为长时间运行的命令显示"智能体上次查看于"指示器，以便你了解智能体最近何时收到新输出。
+* 为 npm 包搜索、nx、brew、aws s3、tree、awk、sort、ip、uv 和 nmap 添加了补全，并添加了 pnpm 工作空间筛选器支持。
+* 技能调用现在在输入和提示视图中以与斜杠命令相同的紫色高亮文本显示。
+* 为 `timedatectl`、`ack`、`watch`、`lsof`、`systemctl`、`ros2`、`nextflow`、`tsh`、`codex`、`asdf`、`sdk`、`pass`、`az`、`oc`、`scp`、`claude`、`git show`、`git rm`、`gsutil`、`aws ec2`、`docker-compose`、`yarn` 和 `docker run` 添加了补全；改进了 `git switch`、`git diff`、`aws` 静态标志、`gt`、`kubectl`、`tf`、`pnpm`、`kubectl` 和 SSH 主机补全；添加了 `apt` 仓库包生成器。
+* 代码审查评论按钮在 AI 禁用时保持可见；评论可以发送到 CLI 智能体终端（例如 Claude Code）。
+* 审查评论现在可以发送到标签中的任何可用终端，而不仅仅是聚焦的终端。如果聚焦的终端正忙，Warp 将自动将评论路由到同一仓库中的另一个空闲终端。
+* 技能现在可从智能体模式中的 @-上下文菜单搜索，将 `/{skill_name}` 插入到提示中。
+* 基于文件的 MCP 服务器现在可通过 `~/.agents/.mcp.json`（全局）或 `.agents/.mcp.json`（项目本地）进行配置。
+
+**Bug 修复**
+
+* 修复了在 Warp 中使用富输入时，Claude Code 的较长提示未完全提交的问题。
+* 修复了当未登录用户创建新账户时设置被重置为默认值的问题。
+* 更新了 openh264 依赖项以解决堆溢出安全漏洞（GHSA-5pmw-9j92-3c4c）。
+* 在智能体对话因传输或服务器错误失败时显示"恢复对话"快捷键。
+* 修复了 `-n`/`--namespace` 或其他标志放在子命令之前时 kubectl 资源补全中断的问题。
+* 修复了包含动画 GIF 和 WebP 的 Markdown 文件通过将其渲染为第一帧预览而使用过多内存的问题。
+* 修复了 shell 引导完成后自动建议和补全未出现的问题。
+* 修复了在同一仓库中打开多个终端标签页时因冗余的 `git status` 进程导致 CPU 使用率过高的问题。
+* 修复了长时间运行命令在用户控制时完成导致对话停滞的 bug。
+* 修复了思考块标题（"思考了 X >"）的点击区域扩展到窗格整个宽度的问题；现在只有文本和 V 形图标可点击。
+* 修复了全局搜索在匹配具有极长行的文件（例如最小化的 JavaScript）时使用过多内存的问题。
+* 窗口标题现在遵守自定义标签名称，而不是始终显示生成的名称。
+* 修复了 `git push` 强制推送和引用规范前缀的分支补全、补全规范中的 HTML 实体渲染以及 `npm i` 短格式命令优先级的问题。
+* 修复了索引大型代码库时重复出现 403 错误的问题。
+* 修复了提问选项行在悬停在选项文本上时光标形状变化的问题。
+
+**Oz 更新**
+
+* 本地子智能体现在继承父智能体的 AI 配置文件（模型和权限）。
+
+### 2026.04.08 (v0.2026.04.08.08.36)
+
+**新功能**
+
+* 垂直标签页现已可用，提供一种在侧边栏布局中组织终端标签页的新方式。
+* 标签页配置允许你将工作区设置保存和分享为可自定义的配置。
+* 你可以使用自动生成的分支名称轻松创建新的工作树。这些保存为标签页配置，以便稍后自定义和编辑。
+* 第三方 CLI 智能体（例如 Claude Code、Codex、Gemini CLI、OpenCode 等）中的新富输入。这允许你使用 Warp 的富输入功能与这些编码智能体配合使用。
+* 发布了改造后的通知 UI，以及对 Claude Code 和 OpenCode 的通知支持。
+* 为 auggie 和 pie 添加了编码智能体工具栏支持。
+* 为提问工具添加了设置条目，用于配置何时暂停等待用户输入。
+
+**改进**
+
+* 对话搜索现在显示它正在搜索的内容及其当前活动。
+* 添加了 `warp://settings/appearance` 深度链接，直接打开外观设置。
+* 改进了 AI @上下文菜单，优先显示来自活动终端会话的块并按最近使用对项目排序。
+* 添加了在笔记本和 Warp 内置的 Markdown 查看器中渲染 Markdown 表格的支持。
+* 命令面板文件打开器现在在搜索文件时支持 `~`（波浪号）展开到主目录。
+* 为 `timedatectl`、`ack`、`watch`、`lsof`、`systemctl`、`ros2`、`nextflow`、`tsh`、`codex`、`asdf`、`sdk`、`pass`、`az`、`oc`、`scp`、`claude`、`git show`、`git rm`、`gsutil`、`aws ec2`、`docker-compose`、`yarn` 和 `docker run` 添加了补全。
+* 改进了 `git switch`、`git diff`、`gt`、`kubectl`、`tf`、`pnpm`、`apt` 和 SSH 主机的动态补全。
+
+**Bug 修复**
+
+* 添加了提示更改，以避免智能体在完整终端使用中卡在导航分页器上。
+* 移除了 web 非活动注销功能，该功能可能在不必要时将已认证用户登出，同时会话 cookie 过期工作仍在进行中。
+* 在智能体模式下启用自动批准时跳过提问提示。
+* 修复了 `git push` 强制推送和引用规范前缀的分支补全。
+* 修复了补全规范中的 HTML 实体渲染。
+* 修复了 `npm i` 短格式命令优先级。
+
+**Oz 更新**
+
+* 添加了一个 `oz whoami` 命令以获取用户信息。
+
+### 2026.04.01 (v0.2026.04.01.08.39)
+
+**新功能**
+
+* [macOS] 在 Finder 中右键点击文本文件允许在 Warp 的代码编辑器中打开。
+* 将代码审查评论、差异块作为上下文附加，以及子字符串作为上下文（`cmd L`）发送到第三方 CLI 工具，如 Claude Code、Codex、Opencode 等。
+* 智能体现在可以在智能体模式交互期间向用户提出澄清问题。
+* Warp 的智能体现在在完成时建议后续问题。
+
+**改进**
+
+* 将子 shell 和 SSH 会话的 warpify 横幅替换为页脚，用于 warpify 或标记智能体。
+* 改进了通过 CLI `--share` 标志会话共享超时时的错误消息，现在提示它可能已被团队管理员禁用。
+* 在代码和 Markdown 文件查看器的溢出菜单中添加了"复制文件路径"选项。
+* 为未登录用户在设置齿轮菜单中添加了"注册"选项。
+* 由智能体编辑的 MCP 配置文件现在在代码差异标题中显示'打开配置'按钮，使用户可以轻松直接跳转到配置文件。
+* 在 CLI 智能体富输入中添加了 `/skills` 支持，用于浏览和调用特定于智能体的技能。
+* 沙盒智能体现在具有专用的自主设置，而不是继承团队级别的默认值。
+* 更新了设置信息图标工具提示，以澄清它们打开文档。
+* 提高了提示建议和建议代码差异的质量和延迟。
+* 云智能体现在可以接受图像和文件附件作为上下文。
+
+**Bug 修复**
+
+* 修复了过时的回退模型消息在新用户查询中持续存在的问题。
+* 修复了编辑代码审查评论时的滚动行为，以正确显示评论编辑器。
+* 修复了 WebSocket 代理连接在代理监听端口 80 时超时的问题。
+* 修复了 PowerShell 别名和函数的大小写不敏感匹配，以匹配 PowerShell 的原生行为。
+* 修复了 Windows 上对话搜索临时目录路径使用混合分隔符的问题。
+* 修复了首次通过搜索导航到键盘快捷键设置面板时为空的问题。
+* 修复了 `@` 上下文菜单在输入约 6 个字符后筛选类别时关闭的问题。
+* 修复了从标准输入读取的 Oz CLI 命令的崩溃。
+* 修复了生产 WebAssembly 崩溃，原因是从共享 Wasm 调用路径访问了原生仓库检测代码。
+* 修复了块列表代码审查评论中的链接在点击时未打开的问题。
+* 修复了用户提供自己的 API 密钥时"信用不足"提示未关闭的问题。
+* 修复了在对话摘要或隐藏的推理块后 AI 对话中链接检测偏移的问题。
+* 简化了文件资源管理器中懒加载文件夹的处理，并修复了独立文件夹和已索引 git 仓库之间的过渡。
+* 修复了在笔记本中切换编辑器主题时内联代码片段颜色和下划线颜色未更新的问题。
+* [Windows] 修复了另一组较旧的 Intel iGPU 驱动上的渲染问题。
+* 修复了 web 认证流程，使会话 cookie 认证的客户端无需 Authorization 标头即可调用已认证的服务器 API。
+
+**Oz 更新**
+
+* 修复了在端口 80 的 HTTP 代理后 Oz 会话共享失败的问题。
+* `OZ_RUN_ID` 环境变量现在在智能体终端会话中可用，设置为当前任务 ID。
+* 改进了智能体会话共享失败时的错误消息，删除了重复文本并提供了更清晰的指导。
+* 智能体现在可以在智能体模式交互期间向用户提出澄清问题。
+
+### 2026.03.25 (v0.2026.03.25.08.24)
+
+**新功能**
+
+* 你现在可以使用 `/pr-comments` 技能获取 GitHub 的拉取请求评论。
+* Warp 现在支持 Kitty 键盘协议。
+
+**改进**
+
+* 入门引导现在以禁用状态显示高级模型层级，并为免费用户提供升级路径。
+* 所有内联菜单现在可调整大小，某些内联菜单现在有标签页。
+* 添加了新的内置 `edit-figma-design` 技能，可由安装了 Figma 远程 MCP 服务器的用户调用。
+* MCP 服务器模板现在可以对枚举使用下拉选择器。
+* 为智能体输入页脚添加了可自定义的工具带——拖放以重新排列上下文标签和控件。
+* [macOS] 迁移到 Apple 最新的图标格式。这将使 Warp 的图标在选择了默认图标时能够适应所选"图标和小部件样式"偏好。
+* 代码审查评论现在可以直接从代码审查面板发送到正在运行的 CLI 智能体（Claude Code、Gemini CLI 等）。
+* 按 `esc` 现在关闭空的代码审查评论编辑器。
+* 添加了始终显示或始终隐藏智能体思考块的功能。访问**设置** > **AI** > **其他**以更改。
+* 添加了一个 `/changelog` 命令，用于重新打开最新的更新日志，并保持更新提示可见直到关闭。
+* 在文件编辑器中为 Dockerfile 添加了语法高亮。
+* 添加了从 shell 历史中隐藏智能体执行命令的设置，现在默认启用。
+* 从第三方智能体（Claude、Codex）检测到的 MCP 服务器现在可见且可从 Warp 的 AI 设置中的 MCP 服务器页面启动。有关更多信息，请参阅我们的基于文件的 MCP 服务器[文档](/agent-platform/capabilities/mcp/#file-based-mcp-servers)。
+
+**Bug 修复**
+
+* 修复了打开富输入编辑器时智能体工具带的视觉抖动。
+* 澄清了 `/fork` 斜杠命令描述。
+* MCP 资源读取现在遵守自主设置，而不是始终提示批准。
+* 现在当标志/值对使用 `=` 分隔时（例如 `--flag=value`），你可以获得补全、语法高亮和悬停描述。
+* 修复了使用代码审查和多个标签页时过时的转到定义和符号大纲。
+* 修复了在禁用自动检测的智能体模式中从命令搜索（`cmd-r`）选择 shell 命令时，将该命令视为智能体提示而不是作为 shell 命令执行的问题。
+* 修复了对话搜索期间 `ctrl-c` 不工作的问题。
+* 修复了在摘要失败或被取消时 `/compact-and` 和 `/fork-and-compact` 中的后续提示被静默丢失的问题。
+* 修复了建议单元测试横幅上的关闭按钮和 `ctrl-c` 不工作的问题。
+* Git diff 标签现在出现在远程和子 shell 会话中。
+* 修复了输入滚动 bug，点击有时会应用到上一行而不是点击的行。
+* 修复了共享会话中（如 Claude Code）使用同步输出 VT 扩展的程序的渲染问题。
+
+**Oz 更新**
+* 使用最新的上游版本更新了 `create-skill` 捆绑技能，添加了评估/迭代工作流、基准测试和描述优化功能。
+* AI 输入模式中为 GitHub 拉取请求添加了新标签，当你的当前分支有打开的拉取请求时显示。
+
+### 2026.03.18 (v0.2026.03.18.08.24)
+
+**新功能**
+
+* Warp 现在自动检测使用 `claude` 或 `codex` 配置的全局和项目范围的 MCP 服务器。在**设置** > **AI** 中切换**基于文件的 MCP 服务器**，以基于你的本地配置自动生成服务器。有关更多信息，请参阅[文档](/agent-platform/capabilities/mcp/#file-based-mcp-servers)。
+* 在代码编辑器中添加了转到行对话框（`CTRL-G`），支持行:列格式。
+
+**改进**
+
+* 添加了"保持智能体思考展开"设置，在流式传输后保持智能体思考块展开。
+* 向内联对话菜单添加了"全部"和"当前目录"标签页。
+* 更新了设置文案，在 MCP 服务器和规则部分中使用"Oz"而不是"智能体"。
+* 改进了加载和渲染大型 AI 对话的性能。
+* 为具有多个计划的对话添加了内联计划选择器。
+* [macOS] 窗口交通灯按钮现在在不同缩放级别下看起来正确。
+* Kitty 键盘协议支持现在在 Preview 构建中可用。
+* Warp 智能体管理视图现在为云智能体链接到关联的技能。
+* `Ctrl-R` 命令搜索现在包括来自所有过去对话的 AI 查询历史，而不仅仅是当前打开的。
+* 在开发构建中启用了 Kitty 键盘协议支持。
+* 通过考虑最近使用次数改进了 @ 上下文中项目的排序。
+* 添加了新的内置技能 `generate-figma-content` 和 `pull-figma-content`，可由安装了 Figma 远程 MCP 服务器的用户调用。
+* 隐藏目录和文件（以 `.` 开头）现在出现在项目资源管理器的顶部，与大多数编辑器使用的约定一致。
+* 更新了设置命令占位符以显示 `cd my-repo &&` 示例。
+
+**Bug 修复**
+
+* 修复了窗格标题中"用于终端"文本在禁用时变为粗体导致布局偏移的问题。
+* 修复了笔记本查找栏显示 `?/n` 而不是正确匹配计数器的问题。
+* 修复了编辑标签标题时始终以窗格标题开头（而不是标签的自定义标题，如果存在的话）的 bug。
+* 修复了"查看最新更新日志"操作未出现在命令面板中的问题。
+* 修复了云智能体运行的制品未在对话详情窗格中实时更新的问题。
+* 修复了后台计划自动保存遇到瞬态失败时出现间歇性"更新计划失败"提示的问题。
+* 修复了代码审查面板中分支名称的工具提示覆盖截断文本的问题——现在显示在分支名称上方。
+* 修复了 `Ctrl+G` 在代码编辑器中默认未绑定"转到行"的问题。
+* 修复了 `cmd-O` 文件面板在再次按下时未关闭的问题。
+* 修复了代码审查面板在切换标签页时不必要地重置滚动位置和缓存状态的问题。
+* 修复了某些已保存的提示在使用单个字符搜索时未出现在斜杠命令菜单中的问题。
+* 修复了使用 shell 别名进行 SSH 命令时 SSH warpification 未触发的问题。
+* 修复了智能体运行的 SSH 会话错误地触发 warpification UI 的 bug。
+* 修复了在使用全局热键窗口时 macOS 上新建窗口/新建标签页菜单项和键位偶尔被禁用的问题。
+* 修复了代码审查分支下拉菜单在关闭并重新打开面板后仅显示"未提交的更改"的问题。
+* 修复了环境设置中"新建环境"按钮未打开设置模式选择器弹窗的问题。
+* 修复了入门引导幻灯片在窗口太短时裁剪导航按钮的问题——内容区域现在可滚动。
+* [Windows] 修复了导致代码库无法索引的路径不一致问题。
+* 在代码库索引切换被管理员策略禁用时显示工具提示，解释为什么不能更改该设置。
+* [Windows] 修复了旧款 Intel UHD 集成 GPU 上的渲染问题。
+* 修复了恢复具有多个计划的对话时仅显示第一个计划的问题。
+* 修复了在长时间运行命令子智能体活动时恢复对话键位不工作的问题。
+* 修复了智能体提示、设置和入门引导内容中的文档链接损坏问题。
+* 修复了 `Ctrl-R` 历史中的 AI 查询未按时间排序的问题。
+
+**Oz 更新**
+
+* 对话搜索现在使用真实的文件工具进行更快、更准确的历史搜索。
+* 添加了 `/open-repo` 斜杠命令，用于在已索引的代码库之间切换。
+* 在向上箭头历史菜单中添加了标签页，用于过滤到命令或提示。
+* `oz agent run` 现在打印运行 ID，并带有指向 Oz 仪表板的链接。
+
+### 2026.03.11 (v0.2026.03.04.08.20)
+
+**Bug 修复**
+
+* 终端输入现在自动检测对 Figma 的引用，并鼓励使用 Figma MCP。从 Figma 导出的图像也被检测到。
+
+### 2026.03.05 (v0.2026.03.04.08.20)
+
+**新功能**
+
+* 为新的 Warp 提示符添加了提示自定义功能。
+
+**改进**
+
+* 添加了新的内置技能 `generate-figma-content` 和 `pull-figma-content`，可由安装了 Figma 远程 MCP 服务器的用户调用。
+* 选中的文本不再自动附加为智能体上下文以防止意外附加，而是需要右键单击 > 附加为智能体上下文。
+* 云对话现在显示在 @conversations 上下文菜单中。
+* 当设置 > MCP 服务器 > 基于文件的 MCP 服务器切换为打开时，我们现在自动检测并生成通过 `codex` 安装的全局和项目范围的 MCP 服务器。
+* 全局搜索现在预填充来自代码、终端、笔记本和计划视图的活动文本选择。
+* Warp 提示符现在具有用于 git 分支和 git diff 统计信息的单独标签。
+* 在使用 `/fork-and-compact` 或 `/compact-and` 并附带后续提示时显示待处理提示指示器。
+* Oz 权限通知现在使用"Oz"品牌而不是"智能体模式"。
+* [macOS] 窗口交通灯按钮现在在不同缩放级别下看起来正确。
+* 在计划文档溢出菜单中添加了"复制计划 ID"选项。
+
+**Bug 修复**
+
+* 修复了从提示符标签下拉菜单更改目录时清除了终端输入的问题。
+* 修复了 LSP 错误诊断（下划线）在工作空间重新分析后在有效符号上持续存在的问题。
+* 解决了跨多个提供商目录安装的重复技能（例如 `.claude` 和 `.agents`）出现两次的问题。
+* 修复了 git diff 统计标签在非 git 目录中错误显示的问题。
+* 修复了在固定到特定显示器时，系统休眠/唤醒后全局热键窗口在错误屏幕上打开的问题。
+* 修复了通过 tmux 控制模式（`-CC`）连接时光标位置查询（`ESC[6n`）不工作的问题，这导致某些 TUI 应用程序在 SSH 中 Warpified 时挂起（例如 Codex CLI）。
+* 修复了网络故障时智能体驱动程序未等待自动错误重试的问题。
+* 修复了 Adeberry 主题中不正确的 ANSI 颜色。
+* 修复了由于不支持的 `resources/list` 方法导致某些 MCP 服务器无法连接的 bug。
+* CLI 现在在凭据无效时立即退出并显示错误，而不是在同步 Warp Drive 时超时。
+* 修复了在快速终端输出期间选择文本时可能发生的崩溃。
+* 修复了临时 MCP 服务器未包含在多智能体 API 请求中的问题。
+* 修复了设置页面在认证状态更改后未更新头像的问题。
+* 修复了"在 Warp 中打开"按钮在恢复和分叉的 AI 对话中不适用于代码片段的问题。
+* 在共享会话和 WASM 构建上隐藏免费云信用横幅。
+* 修复了智能体创建的最新计划不会在视觉上替换先前打开的计划的情况。
+* "计划已同步到 Warp Drive"提示在同步的计划位于不同标签页时不再出现。
+* 修复了代码审查差异视图中的"打开文件"按钮在窗格最大化时不工作的问题。
+* 修复了终端关闭后的 git 元数据后台操作。
+* 移动软键盘现在在 LRC 中可用。
+* 智能体现在报告关于会话共享失败的更详细信息。
+
+**Oz 更新**
+
+* 智能体任务现在向服务器报告结构化错误代码，支持更好的错误跟踪和重试处理。
+* 修复了网络故障时云智能体未等待自动错误重试的问题。
+* 添加了向技能调用传递参数（`$ARGUMENTS`、`$N`）以及随调用包含用户查询的支持。
+
+### 2026.02.25 (v0.2026.02.25.08.24)
+
+**新功能**
+
+* Warp 现在在我们的原生代码编辑器中具有语言服务器支持。有关我们支持的语言和功能的详细信息，请查看 [https://docs.warp.dev/code/code-editor/language-server-protocol](https://docs.warp.dev/code/code-editor/language-server-protocol)
+
+**改进**
+
+* 重新引入了对 Warp 提示符的自定义支持。
+* 最大化代码审查面板现在打开文件列表。
+* 环境设置中的 Docker 镜像输入现在在可用时显示指向 Docker Hub 页面的链接。
+* 添加了 `/compact-and` 斜杠命令，用于触发对话压缩并在完成时自动发送后续提示。
+* 添加了一个新的 `/profile` 命令，允许你使用内联菜单在配置文件之间切换。
+* Oz CLI 现在在生成云智能体时输出指向 Oz webapp 运行页面的直接链接。
+
+**Bug 修复**
+
+* 修复了 Oz CLI 打开 Warp GUI 应用而不是打印帮助输出的 bug。
+* 修复了推荐设置页面和 AI 设置页面上的文档链接损坏问题。
+* 修复了当命令以环境变量赋值作为前缀时的 CLI 智能体页脚检测问题。例如 `OPENCODE_EXPERIMENTAL_PLAN_MODE=1 opencode`。
+* 修复了恢复对话时代码库搜索工具调用的渲染问题。
+* 仅限本地的斜杠命令（如 `/open-file`）现在在远程会话中自动禁用。
+* 修复了"查看所有云运行"按钮链接到特定运行而不是运行列表页面的问题。
+* 通过使用固定宽度制表位修复了等宽文本块中的标签对齐问题。
+* 改进了并发限制与信用不足状态的云模式模态路由。
+* 修复了云模式信用不足模态闪烁和紧凑 CTA 对齐问题。
+* [Linux] `oz` CLI 包现在名为 `oz-stable`。
+
+**Oz 更新**
+
+* 添加"新会话的默认模式"设置，默认在新标签页和窗格中打开智能体视图。
+
+### 2026.02.18 (v0.2026.02.18.08.22)
+
+**新功能**
+
+* 智能体现在可以直接从你查询中提供的 URL 获取和读取内容。
+
+**改进**
+
+* 在笔记本和代码编辑器中启用了多选。
+* 在 `外观 > 标签页` 下添加了一项新设置，用于在创建新标签页时保留活动标签页的颜色。
+
+**Bug 修复**
+
+* 修复了在 vim 插入模式下 Escape 键关闭向上箭头菜单而不是切换到普通模式的问题。
+* 修复了 Option-left 和 Option-right 键在代码审查评论编辑器中不适用于单词导航的问题。
+
+### 2026.02.11 (v0.2026.02.11.08.23)
+
+**改进**
+
+* 更新了标签页 UI，使其更简洁、更易读，并使标签焦点更清晰。
+
+**Bug 修复**
+
+* 无论全局 AI 设置如何，显示输入类型设置（Warp/PS1）。
+
+### 2026.02.10 (v0.2026.02.10.11.37)
+
+**新功能**
+
+#### 推出 Oz：云端智能体编排平台
+
+![介绍 Oz 图像，显示新的 Oz 徽标和 oz.warp.dev 站点的预览](https://releases.warp.dev/changelog_images/v0.2026.02.09.06.06.stable.png)
+
+Oz 是 Warp 的云端智能体编排平台：启动并行智能体，自动化重复性工程工作，并在具有完全可见性和控制力的智能体之上构建应用。
+
+[阅读发布文章 →](https://www.warp.dev/blog/oz-orchestration-platform-cloud-agents)
+
+#### 云智能体
+
+* **从任何地方运行云智能体并内置跟踪** — 从 Warp 或通过 CLI、触发器或计划启动智能体。每次运行均可审计和引导。[云智能体文档 →](https://docs.warp.dev/agent-platform/cloud-agents/overview)
+* **一致的执行环境** — 配置基于 Docker 的环境（无限制的仓库 + 设置命令），并在隔离的云沙箱中运行智能体。[环境文档 →](https://docs.warp.dev/agent-platform/cloud-agents/environments)
+* **从 Web 跟踪智能体** — 在任何浏览器上管理运行、创建计划、配置环境和设置集成，网址为 [oz.warp.dev](https://oz.warp.dev)。
+* **基于技能的计划智能体** — 按 cron 计划自动运行智能体，用于代码清理、依赖更新和问题分类。[计划智能体文档 →](https://docs.warp.dev/agent-platform/cloud-agents/triggers/scheduled-agents)
+* **默认可编程** — 通过 CLI 编排智能体，并通过 API/SDK 将 Oz 集成到工具和服务中。[API 和 CLI 参考 →](https://docs.warp.dev/reference)
+
+#### Warp 升级
+
+* **智能体模态** — 两种不同的模式：一个干净的终端用于命令，以及一个专用的对话视图用于多轮智能体工作流，具有完整的控制（模型选择、语音、附件）。
+* **云端同步的对话** — 你的智能体对话同步到云端并跨设备持久化。通过链接与团队成员分享，在 Web 上查看，或在本地继续。
+
+#### 智能体能力
+
+* **技能** — 可重用的指令集，智能体会从你的项目或主目录自动发现。使用 `/{skill-name}` 调用，或作为计划的云智能体运行以实现可重复的自动化。[技能文档 →](/agent-platform/capabilities/skills/)
+* **计算机使用** — 智能体可以在沙盒云容器中与桌面环境交互——截图、点击、输入和测试 UI 更改。[计算机使用文档 →](/agent-platform/capabilities/computer-use/)
+
+### 2026.02.04 (v0.2026.02.04.08.20)
+
+**新功能**
+
+* 添加了对 Kitty 键盘增强协议的完整支持，使 OpenCode 等 TUI 应用程序能够检测和使用增强的键盘输入。
+* 支持运行 Copilot CLI 时的智能体页脚。
+* 添加了新的付费计划 **Max**，月度信用额度是 Build 计划的 12 倍。在 `设置 > 结算和使用` 中升级。
+
+**改进**
+
+* 改进了环境更新处理，具有更好的时间戳跟踪和编辑后立即刷新 UI。
+* `@` 菜单现在在 NLD 禁用时显示函数定义。
+* 对话深度链接现在在新标签页中打开，而不是新窗口。
+* 将 `edit` 斜杠命令重命名为 `open`。
+* 修复了使用 Oz CLI 的 API 密钥时的竞态条件。
+* 改进了 MCP 连接的稳健性（特别是使用传统 SSE 传输）。"传输已关闭"错误现在会触发重新连接到服务器。
+* 添加了一项新设置，用于保持工具面板的打开/关闭状态在同一窗口的各个标签页之间一致（"工具面板可见性在标签页之间保持一致"）。
+
+**Bug 修复**
+
+* 修复了智能体响应期间"在 Warp Drive 中共享"入门引导块出现在中间的问题。
+* 在非智能体运行命令上禁用了代码库索引。
+* 修复了在长时间运行命令中打字时的滚动行为——光标现在滚动到视图中。
+* 修复了分享对话框复制链接图标略大于文本的问题。
+* 修复了当同一标签页中打开多个仓库时代码审查面板卡在"正在加载打开的更改"上的问题。
+* 修复了终端网格中孤立宽字符标志导致的崩溃。
+* 修复了终端消息栏中的裁剪问题。
+
+### 2026.01.28 (v0.2026.01.28.08.14)
+
+**改进**
+
+* 从代码审查面板、项目浏览器和全局搜索打开的文件现在遵守你的外部编辑器设置。
+* 在窗格最大化时切换计划现在恢复布局以显示计划。
+* 在代码审查面板的文件标题中添加了"复制路径"按钮。
+* 将图像粘贴到输入中现在进入智能体模式，与拖放行为匹配。
+
+**Bug 修复**
+
+* 修复了智能体从目录读取大图像时对话可能中断的问题。
+* 修复了窄布局中输入按钮溢出到相邻窗格的问题。
+* 修复了 MCP 工具调用详情中的文本不可复制的问题。
+* 修复了标签标题中空对话状态指示器错误显示的问题。
+* 修复了 Drive 团队部分标题以全大写显示的问题。
+* 修复了 MCP 安装弹窗中 Enter 键不工作的问题。
+* 修复了斜杠命令文本在某些情况下未正确高亮的问题。
+* 修复了输入模式检测偶尔意外切换的问题。
+* 修复了文件名有尾随空格时 /edit 命令失败的问题。
+
+### 2026.01.21 (v0.2026.01.21.08.14)
+
+**新功能**
+
+* 在你当前目录的文件中进行全局搜索。使用 `CMD-F`/`CTRL-SHIFT-F` 打开。
+* 将网络搜索支持扩展到更多模型。
+
+**改进**
+
+* 通过上下文菜单将 AI 提示保存为智能体模式工作流。
+* `/init` 现在生成 AGENTS.md 而不是 WARP.md。
+* 在跳转到行/列时添加了水平自动滚动。
+* 更好的语法高亮语言检测。
+
+**Bug 修复**
+
+* 修复了发出智能体模式请求时发生的内存泄漏。
+* 修复了启动某些终端应用（如 neovim）时"等待密码"通知可能被错误触发的问题。
+* 修复了 Slack 触发的对话在智能体管理视图中出现重复条目的问题。
+* 修复了别名扩展在 AI 输入中被触发的问题——它应仅适用于 shell 命令。
+* 修复了在同一请求批次中多个 shell 命令可能进入长时间运行模式的问题。
+* 当 AI 禁用时，隐藏命令面板中的 AI 选项。
+* 停止在推理块中高亮搜索匹配项。
+* 修复了智能体运行命令时会话查看器输入被清除的问题。
+
+### 2026.01.14 (v0.2026.01.14.08.15)
+
+**新功能**
+
+* 为第三方 CLI 添加了页脚。
+* 为新用户添加了入门引导流程。
+
+**改进**
+
+* 修复了关闭和保存时重复的规则建议。
+* @-上下文搜索现在对笔记本、规则和工作流同时匹配名称和内容。
+* 更新了复选框勾选标记以使用前景色，以获得更好的主题一致性。
+* 云智能体管理视图中的筛选选项现在在应用重启后持久化。
+* 如果之前在桌面应用中已认证，带有 OAuth 认证的 MCP 服务器现在可以在 warp agent run 中使用。
+
+**Bug 修复**
+
+* 修复了 MCP 工具调用详情中的文本不可选择的 bug。
+* 修复了较小屏幕上的智能体线程横幅文本溢出问题。
+
+### 2026.01.07 (v0.2026.01.07.08.13)
+
+**新功能**
+
+* 在 warp 指示器下添加了智能体提示。
+
+**改进**
+
+* 用户现在可以创建团队范围的 API 密钥。
+* 智能体提示在提到项目范围规则文件时现在以 `WARP.md` 作为引导。
+* `oz agent run-cloud` 命令现在可以创建与团队成员共享的云智能体任务。
+* 更新了智能体配置文件切换提示，以更好地解释用户为什么要切换配置文件。
+* 代码审查流程中的评论在评论数为 4 条或更少时现在渲染为全宽，提高了可读性。
+* 当补全菜单打开（tab）时，默认不选择任何补全项。在没有选择任何补全的情况下按回车直接运行当前输入中的命令。选择补全后，它会自动显示在输入中。这更接近传统终端中的行为。
+* `oz agent run-cloud` 命令现在支持已保存的提示。
+* 我们在智能体配置文件页面中添加了一个新的完整终端使用模型选择器，以便你可以为完整终端使用工作选择特定模型。
+
+**Bug 修复**
+
+* 改进了云智能体的内存不足处理。
+* 修复了创建团队范围的 Warp 管理密钥的配置错误。
+* 修复了当用户启用 setopt nounset 时 zsh 中出现 'parameter not set' 错误的问题。
+* 修复了退出或重启 Warp 时向上箭头历史记录可能排序不正确的问题。

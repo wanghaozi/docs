@@ -1,0 +1,47 @@
+---
+title: 自动建议
+description: >-
+  Warp 会根据 shell 历史和可能的补全，在您输入时自动建议命令。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何访问
+
+* 从 [命令面板](/terminal/command-palette/) 中，输入"自动建议"进行切换。
+
+:::note
+**终端技巧**
+
+您可以将接受自动建议的快捷键更改为 `Tab`。在 **设置** > **功能** > **终端输入** 中的"Tab 键行为"设置中配置。_注意：这将打开补全菜单的快捷键更新为 `CTRL-SPACE`。您也可以在 **设置** > **功能** > **终端输入** 中启用"输入时打开补全菜单"，以便补全菜单自动打开。_
+:::
+
+## 如何使用
+
+<Tabs>
+  <TabItem label="macOS">
+    有几种方法可以接受自动建议，可以完全接受或部分接受：
+
+    * 使用 `RIGHT` 箭头或 `CTRL-F` 完成自动建议。
+    * `CTRL-E` 也可在光标位于缓冲区末尾时完成自动建议。
+    * 使用 `CTRL-RIGHT` 可以一次部分完成自动建议的一个组件。
+  </TabItem>
+  <TabItem label="Windows">
+    有几种方法可以接受自动建议，可以完全接受或部分接受：
+
+    * 使用 `RIGHT` 箭头或 `CTRL-F` 完成自动建议。
+    * `END` 跳转到输入编辑器中的最后一个字符，然后 `RIGHT` 完成自动建议。
+    * 使用 `CTRL-SHIFT-RIGHT` 可以一次部分完成自动建议的一个组件。
+  </TabItem>
+  <TabItem label="Linux">
+    有几种方法可以接受自动建议，可以完全接受或部分接受：
+
+    * 使用 `RIGHT` 箭头或 `CTRL-F` 完成自动建议。
+    * `CTRL-E` 跳转到输入编辑器中的最后一个字符，然后 `RIGHT` 完成自动建议。
+    * 使用 `CTRL-SHIFT-RIGHT` 可以一次部分完成自动建议的一个组件。
+  </TabItem>
+</Tabs>
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/5e87c52ae855486ab88ffb2f89aeaf73?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="自动建议演示" />

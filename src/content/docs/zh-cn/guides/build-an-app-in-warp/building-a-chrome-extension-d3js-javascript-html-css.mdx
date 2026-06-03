@@ -1,0 +1,165 @@
+---
+title: 构建 Chrome 扩展（D3.js + JavaScript + HTML + CSS）
+description: >-
+  使用 Warp 构建一个 D3.js Sankey 图 Chrome 扩展——搭建框架、调试、协调多个代理并发布到 Chrome 网上应用店。
+sidebar:
+  label: "构建 Chrome 扩展"
+tags:
+  - "build-app"
+  - "frontend"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::tip
+本教学模块将逐步教你如何复现视频中展示的过程——使用 **D3.js** 构建**Sankey 图 Chrome 扩展**、调试、协调**多个代理**并部署到 **Chrome 网上应用店**。
+:::
+
+<VideoEmbed url="https://youtu.be/xbvE_aoZ508?si=a3-4iKaSr8nn-esx" />
+
+<Steps>
+
+1. #### 设置环境并创建新的 Chrome 扩展项目
+
+   我们的目标：构建一个名为 **"Sankey Stone"** 的 Chrome 扩展，使用 **D3.js** 可视化流程。
+
+   设置过程中创建的文件
+
+   * `manifest.json`
+   * `popup.html`
+   * `popup.css`
+   * `popup.js`
+   * 图标图片（`icon16.png`、`icon32.png`、`icon48.png` 等）
+
+   在 Chrome 中启用开发者模式并加载项目：
+
+   chrome://extensions → 开发者模式 → 加载已解压的扩展 → 选择项目文件夹
+
+   :::caution
+   如果看到类似"加载扩展失败"或"无法加载 icon 16.png"的错误，请仔细检查 manifest 路径和图标文件名。视频记录中明确展示了这些初始调试步骤。
+   :::
+
+2. #### 测试初始 D3.js 渲染
+
+   修复缺失图标后，扩展加载成功，但最初只显示"正在加载图表"。\
+   \
+   通过截图并将其提供给代理作为上下文来调试，询问：
+
+   ```
+   It says loading diagram — why isn't the chart appearing?
+   ```
+
+   代理审查错误并使用 **D3.js** 重新生成 `popup.js`，使 Sankey 图表正常显示。
+
+   结果：扩展弹出窗口内呈现了一个可交互的图表。
+
+3. #### 版本控制和 GitHub 设置
+
+   初始化 Git 仓库并提交：
+
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial Sankey Stone extension"
+   ```
+
+   开发人员要求代理创建一个 GitHub 仓库并推送代码。\
+   \
+   代理处理身份验证、创建远程仓库并自动推送所有文件。
+
+4. #### 添加本地测试页面和动态数据
+
+   启动一个简单的本地 Web 服务器，带有一个输出流量数据的测试页面。扩展读取这些数据并动态更新 Sankey 图。
+
+   视频记录中的示例提示：
+
+   ```
+   Update the test data page so that it generates random labels and different contexts when I hit the regenerate button.
+   ```
+
+   代理编辑测试页面，使点击**重新生成测试页面**按钮时实时更新图表。
+
+5. #### 并行协调多个代理
+
+   该视频演示了**并行运行多个代理**。每个代理接收不同的任务：
+
+   | 代理 | 任务 |
+   | ----- | ----------------------------------------------------------------------------- |
+   | #1    | 更新测试数据页面以随机化标签和值 |
+   | #2    | 将刷新页面按钮改为以不同样式重新生成图表 |
+   | #3    | 为项目生成有用的 README 文件 |
+
+   你可以启用**自动批准所有代理操作**，以便后台更新无需手动确认即可运行。
+
+   :::note
+   并行运行多个代理类似于拥有一个小团队：一个代理专注于数据生成，另一个负责 UI 更改，第三个负责文档。
+   :::
+
+6. #### 优化样式和交互
+
+   数据层正常工作后，现在可以迭代外观：
+
+   ```
+   Apply new color themes and improve the layout.
+   ```
+
+   应用的更改：
+
+   * 支持多种颜色主题和改进的节点布局。
+   * 悬停在链接上会高亮显示连接的节点。
+   * 用户可以拖拽节点重新排列布局。
+   * 添加了"切换样式"按钮以在主题之间循环。
+
+   为了支持导出图表，你可以询问：
+
+   ```
+   Add a button to download this image as a PNG.
+   ```
+
+   Warp 代理编写了 PNG 导出的 JS 逻辑，并验证点击按钮能保存图表的截图。
+
+7. #### 添加 API 密钥设置界面
+
+   创建一个设置页面，用户可以在其中存储 API 密钥：
+
+   ```
+   Add a settings page to enter the Anthropic API key and test it.
+   ```
+
+   * 该页面允许测试密钥以确保其工作正常。
+   * API 密钥存储在浏览器的本地存储中，不会发送到服务器。
+
+8. #### 发布到 Chrome 网上应用店
+
+   打包并提交扩展：
+
+   ```bash
+   zip -r sankey_stone.zip *
+   ```
+
+   将 ZIP 文件上传到 [https://chrome.google.com/webstore/devconsole](https://chrome.google.com/webstore/devconsole) 并按照提示操作。
+
+   :::note
+   审核可能需要几周时间。
+   :::
+
+</Steps>
+
+---
+
+### 总结
+
+通过学习这些基于视频记录的步骤，你可以重现相同的工作流：
+
+* 使用 D3.js 搭建 Chrome 扩展框架。
+* 调试 manifest 和图标问题。
+* 使用代理生成和优化代码。
+* 引入多代理并行任务处理 UI、数据和文档。
+* 添加交互性、主题和导出选项。
+* 创建 API 密钥设置界面。
+* 打包并发布到 Chrome 网上应用店。
+
+:::tip
+你可以用同样的模式实现自己的想法：从小处着手，用 AI 提示搭建框架，使用并行代理进行迭代，然后从 Warp 内部部署到生产环境。
+:::

@@ -1,0 +1,58 @@
+---
+title: resource_not_found
+description: >-
+  请求的资源（任务、环境、调度、代理等）不存在或已被删除。
+---
+
+`resource_not_found` 错误发生在引用的资源无法找到时。这通常意味着资源 ID 不正确、资源已被删除或属于其他团队。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `404 未找到`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 任务 ID、环境 UID、调度 ID 或其他资源标识符与任何现有资源不匹配
+* 引用的资源已被删除
+* 资源存在但属于其他团队或用户（且您没有访问权限）
+
+响应中的 `detail` 字段将描述哪个资源未找到。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/resource-not-found/",
+  "title": "请求的资源未找到。",
+  "status": 404,
+  "detail": "环境 abc123 未找到",
+  "instance": "/api/v1/agent/tasks",
+  "error": "请求的资源未找到。(环境 abc123 未找到)",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 验证资源 ID 是否正确且格式正确。
+2. 检查资源是否未被删除（例如，通过 [Oz web 应用](https://oz.warp.dev) 或 CLI）。
+3. 确认资源属于您的团队或您有访问权限。
+
+---
+
+## 相关
+
+* [环境](/agent-platform/cloud-agents/environments/) — 管理云端代理环境
+* [管理云端代理](/agent-platform/cloud-agents/managing-cloud-agents/) — 查看和管理代理任务

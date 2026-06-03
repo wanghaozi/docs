@@ -1,0 +1,326 @@
+---
+title: 已知问题和解决方法
+sidebar:
+  label: "已知问题"
+description: >-
+  Warp 的已知问题及解决方法，包括 SSH、Shell 和不兼容工具。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+:::note
+要查看 Warp 问题和功能请求的完整列表，请访问我们的 [GitHub Issues 页面](https://github.com/warpdotdev/Warp/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-desc)。
+
+请注意，存在一些与 Warp 不兼容的工具，如下[所列](/support-and-community/troubleshooting-and-support/known-issues/#list-of-incompatible-tools)。您可以在本[部分](/support-and-community/troubleshooting-and-support/known-issues/#debugging)找到调试信息。
+:::
+
+## 常规
+
+### SSH
+
+为了在 SSH 上启用块功能，Warp 使用了 SSH 包装函数；如果需要禁用它，请导航至设置 > 功能。更多关于 SSH 问题解决的信息，请参阅[SSH 传统模式故障排查](/terminal/warpify/ssh-legacy/#troubleshooting-ssh)，或查看[新的 SSH 页面](/terminal/warpify/ssh/)了解更多即将推出的功能。
+
+### 在线功能无法使用
+
+存在一个已知问题，可能导致在线功能中断（[代理](/agent-platform/local-agents/overview/)、[生成](/agent-platform/local-agents/overview/)、[块共享](/terminal/blocks/block-sharing/)、[推荐好友](/support-and-community/community/refer-a-friend/)）。这是由于登录令牌过期导致的，通常是由于密码更改所致，可以通过以下步骤解决：
+
+<Tabs>
+  <TabItem label="macOS">
+    1. 使用以下命令移除 Warp 用户登录：
+
+    ```bash
+    sudo security delete-generic-password -l "dev.warp.Warp-Stable" $HOME/Library/Keychains/login.keychain
+    ```
+
+    2. [登录 Warp](/getting-started/quickstart/installation-and-setup/#log-in-to-warp-optional)
+  </TabItem>
+  <TabItem label="Windows">
+    1. 使用以下命令移除任何用户文件：
+
+    ```powershell
+    Remove-Item $env:LOCALAPPDATA\warp\Warp\data\*-User
+    ```
+
+    2. [登录 Warp](/getting-started/quickstart/installation-and-setup/#log-in-to-warp-optional)
+  </TabItem>
+  <TabItem label="Linux">
+    1. 使用您的密钥管理器（gnome-keyring、kwallet 等）移除 Warp 用户登录。搜索 `dev.warp.Warp` 并删除 `User` 密码/密钥。
+    2. 使用以下命令移除任何用户文件：
+
+    ```bash
+    rm -f ${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/*-User
+    ```
+
+    3. [登录 Warp](/getting-started/quickstart/installation-and-setup/#log-in-to-warp-optional)
+  </TabItem>
+</Tabs>
+
+### 仅英文界面
+
+2021 年 11 月：我们已添加对中文、韩文和日文字符的支持，但我们的界面目前仅支持英文。
+
+### 中文字符显示异常
+
+如果您注意到终端渲染中文字符时出现问题（如 [#3366](https://github.com/warpdotdev/Warp/issues/3366)），请尝试在您的 rc 文件中添加以下行。
+
+```
+export LC_ALL=zh_CN.UTF-8
+export LANG=zh_CN.UTF-8
+```
+
+### Warp 无法渲染窗口
+
+这很可能是因为本地 sqlite 数据库损坏所致。您可能会在[日志](/support-and-community/#gathering-warp-logs)中看到类似的错误：
+
+```
+[WARN] SQLite error 283 (A WAL mode database file was recovered): recovered 383 frames from WAL file /home/xxxxx/.local/state/warp-terminal/warp.sqlite-wal
+```
+要尝试解决 Warp 无法渲染窗口的问题，请重命名位于[以下位置](/terminal/sessions/session-restoration/#session-restoration-database)的 SQLite 数据库。
+
+### 其他
+
+* 当您 [SSH](/support-and-community/troubleshooting-and-support/known-issues/#ssh) 时，我们在远程主机上启动一个 bash shell。我们构建了一个围绕 SSH 的包装器，以使 Warp 的功能成为可能。
+* 如果您的默认 shell 是 zsh，您的别名通常不会转移过来。其他 shell 目前也不支持。
+* 当您打开一个[非基于 shell 的子 shell（REPL）](https://github.com/warpdotdev/Warp/issues/4082)时，Warp 不会修改环境——它表现得像标准的终端会话。
+* 如果 Warp 没有访问文件夹的权限，它可能会变得无响应。
+* [不支持触摸输入](https://github.com/warpdotdev/Warp/issues/5347)
+
+## 代理模式
+
+* 请注意，代理模式块在[会话共享](/knowledge-and-collaboration/session-sharing/)期间不可共享。参与者将能够共享运行的常规 shell 命令，但无法共享 AI 交互（请求的命令、AI 块等）。
+* 诸如[块共享](/terminal/blocks/block-sharing/)之类的块操作在代理模式 AI 块上不可用。
+* 代理没有多个命令补全规范的最新信息。
+* 代理模式在 Warp 的默认提示设置下效果更好（提示从新行开始），优于同行的提示。如果您使用的是同行提示，切换到代理模式时光标将从单行末尾跳转到输入框的开头。
+
+## Shell
+
+### fish shell `read` 命令
+
+在 fish shell 3.6 及以下版本中存在一个问题，导致 `read` 内置命令会破坏 Warp 与 fish 的集成。这意味着直接在 Warp 中使用 `read` 或任何调用 `read` 的 fish 脚本将无法按预期工作。该问题已在 fish 仓库中解决，因此应该在 fish 的下一个版本中得到修复。我们建议将 fish 升级到最新版本以解决此问题。
+
+### Warp shell 因 EDR 加载缓慢
+
+如果您注释掉 rc 文件（即 `~/.zshrc`、`~/.bashrc`、`~/.config/fish/config.fish`），但仍然发现 shell 加载缓慢，很可能是端点检测和响应（EDR）系统（如 Sentinel One、CrowdStrike、Carbon Black）导致的问题。请重新启动系统，查看问题是否仍然存在。如果是，请[向我们发送反馈](/support-and-community/)并提供您的 EDR、操作系统、shell 等详细信息。
+
+### 配置和调试 RC 文件
+
+为支持块（[自定义钩子](https://www.warp.dev/blog/how-warp-works/#implementing-blocks)）、原生输入编辑器体验、AI 块等功能，我们为部分 shell 功能构建了自定义支持（将功能与 shell 解耦并迁移到终端）。这导致 Warp 与各种工具和插件不兼容。请查看[不兼容工具列表](/support-and-community/troubleshooting-and-support/known-issues/#list-of-incompatible-tools)以找到已知无法与 Warp 配合使用的工具。
+
+与传统终端（本质上是连续字符网格）不同，Warp 的每个部分都是其自己的（独立的）UI 元素。请参阅我们的[提示](/terminal/appearance/prompt/)页面了解更多关于自定义提示的信息。
+
+#### 调试
+
+如果 Warp 无法与您的 dotfile 配置一起工作，您可以使用以下示例在 Warp 中以干净配置运行 shell：
+
+<Tabs>
+  <TabItem label="bash">
+    您可以通过移动或注释掉您的 `.bashrc` 来为 Bash（Bourne Again SHell）设置干净配置。\
+    \
+    如果 Warp 开始正常工作，则 Warp 与当前 dotfiles 中的某些内容不兼容。我们可以通过迭代禁用 dotfiles 的部分内容并使用 `WarpTerminal` 标志来隔离不兼容的内容，直到找到问题所在。查看下方的不兼容工具列表，并使用以下条件语句将它们仅对 Warp 注释掉：
+
+    ```bash
+# bash（参见 ~/.bashrc）
+    if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+    ##### 要针对 WARP 禁用的内容 - 以下
+        # 不支持的插件/提示代码写在这里，例如
+    ##### 要针对 WARP 禁用的内容 - 以上
+    fi
+```
+  </TabItem>
+  <TabItem label="zsh">
+    您可以通过移动或注释掉您的 `.zshrc` 来为 Zsh（Z SHell）设置干净配置。\
+    \
+    如果 Warp 开始正常工作，则 Warp 与当前 dotfiles 中的某些内容不兼容。我们可以通过迭代禁用 dotfiles 的部分内容并使用 `WarpTerminal` 标志来隔离不兼容的内容，直到找到问题所在。查看下方的不兼容工具列表，并使用以下条件语句将它们仅对 Warp 注释掉：
+
+    ```bash
+    # zsh（参见 ~/.zshrc）
+    if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+    ##### 要针对 WARP 禁用的内容 - 以下
+        # 不支持的插件/提示代码写在这里
+    ##### 要针对 WARP 禁用的内容 - 以上
+    fi
+    ```
+  </TabItem>
+  <TabItem label="fish">
+    您可以通过移动或注释掉您的 `config.fish` 来为 Fish（Friendly Interactive SHell）设置干净配置。\
+    \
+    如果 Warp 开始正常工作，则 Warp 与当前配置文件中的某些内容不兼容。我们可以通过迭代禁用配置文件的部分内容并使用 `WarpTerminal` 标志来隔离不兼容的内容，直到找到问题所在。查看下方的不兼容工具列表，并使用以下条件语句将它们仅对 Warp 注释掉：
+
+    ```bash
+    # fish（参见 ~/.config/fish/config.fish）
+    if test "$TERM_PROGRAM" != "WarpTerminal"
+        ##### 要针对 WARP 禁用的内容 - 以下
+        # 不支持的插件/提示代码写在这里
+        ##### 要针对 WARP 禁用的内容 - 以上
+    end
+    ```
+  </TabItem>
+  <TabItem label="pwsh">
+    您可以通过移动或注释掉您的 `$PROFILE` 来为 pwsh（PowerShell）设置干净配置。
+
+    如果 Warp 开始正常工作，则 Warp 与当前配置文件中的某些内容不兼容。我们可以通过迭代禁用配置文件的部分内容并使用 WarpTerminal 标志来隔离不兼容的内容，直到找到问题所在。查看下方的不兼容工具列表，并使用以下条件语句将它们仅对 Warp 注释掉：
+
+    ```powershell
+# pwsh（参见 $PROFILE）
+    if ($env:TERM_PROGRAM -ne "WarpTerminal") {
+        ##### 要针对 WARP 禁用的内容 - 以下
+        # 不支持的插件/提示代码写在这里
+        ##### 要针对 WARP 禁用的内容 - 以上
+    }
+```
+  </TabItem>
+</Tabs>
+
+#### 不兼容工具列表
+
+以下是不完整列表，这些插件、提示或工具可能在 Warp 中导致潜在问题：
+
+* oh-my-fish、oh-my-bash 或其他不支持的 shell 提示。请参阅我们的[自定义提示兼容性表](/terminal/appearance/prompt/#custom-prompt-compatibility-table)。
+* [iterm shell 集成](https://iterm2.com/documentation-shell-integration.html)
+  * `test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true`
+* [Termium](https://codeium.com/blog/termium-codeium-in-terminal-launch)
+  * `eval "$(termium shell-hook show pre)"`
+  * `eval "$(termium shell-hook show post)"`
+* [thefuck 实验性即时模式](https://github.com/nvbn/thefuck?tab=readme-ov-file#experimental-instant-mode)
+  * `eval $(thefuck --alias --enable-experimental-instant-mode)`
+* [fubectl](https://github.com/kubermatic/fubectl)
+  * `[ -f ${HOME}/bin/fubectl.source ] && source ${HOME}/bin/fubectl.source`
+* [BIND 键](https://github.com/warpdotdev/Warp/issues/537)
+  * `bindkey '^j' down-line-or-beginning-search`，导致用户必须按两次 ENTER 才能运行命令。
+  * `bindkey 'tab' autosuggest-accept`，导致自动补全行为不正确。
+* `z`、`compdef`、`compinit`、[prezto 工具模块](https://github.com/sorin-ionescu/prezto/blob/master/modules/utility/README.md)、[bash-it](https://github.com/Bash-it/bash-it)、CodeWhisperer 或其他[基于 shell 的补全](https://github.com/warpdotdev/Warp/discussions/434)插件。
+* OH-MY-ZSH 主题
+  * 例如 avit、spaceship 等，可能还有更多...
+* OH-MY-ZSH 插件
+  * 例如 zsh-autosuggestions、zsh-autocomplete 等，可能还有更多...
+* Oh-My-Tmux
+* zsh4h（ZSH for Humans）
+* znap
+* FZF
+* `[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && "/usr/local/etc/profile.d/bash_completion.sh"`
+* `eval "$(rbenv init -)"`
+* `grml-zsh-config`
+* Python 虚拟环境 PS1 [设置](https://github.com/warpdotdev/Warp/issues/2713#issuecomment-1447129449)
+* [Starship 设置](/terminal/appearance/prompt/#starship-settings)
+* `zle-line-init`
+* 可能还有更多——这是一个不完整的列表。如果您发现不兼容的工具，请发送邮件至 [feedback@warp.dev](mailto:feedback@warp.dev)
+
+## 操作系统
+
+<Tabs>
+  <TabItem label="macOS">
+    **macOS 上 SSH 到本地网络设备被拒绝**
+
+    在 macOS 上，您可能会[被拒绝从 Warp SSH](https://github.com/warpdotdev/Warp/issues/5550) 到本地网络中的其他设备，并看到如下错误：`ssh: connect to host <host_name> port 22: Undefined error: 0`。\
+    要解决此问题，请前往  > **系统设置** > **隐私与安全性** > **本地网络**，然后添加 Warp。
+
+    <figure>
+    ![macOS SSH 权限错误](../../../../../assets/support-and-community/mac-ssh-permission.png)
+    <figcaption>macOS 上的 SSH 权限错误。</figcaption>
+    </figure>
+
+    **macOS 上意外权限丢失**
+
+    在 macOS 上，当尝试在已被授予 macOS 权限的目录（文档、下载、桌面等）中运行命令时，您可能会看到 `Operation not permitted` 错误。目前最好的解决方法是[应用任何待处理的更新](/support-and-community/troubleshooting-and-support/updating-warp/)，以便新的 Warp 二进制文件具有正确的权限。我们正在[此处](https://github.com/warpdotdev/Warp/issues/3009)跟踪此问题。
+
+    <figure>
+    ![macOS 上的权限错误](../../../../../assets/support-and-community/permission-error-macos.png)
+    <figcaption>macOS 上的文件权限错误对话框。</figcaption>
+    </figure>
+
+    **macOS 上的自动更新错误**
+
+    Warp 在 macOS Ventura 上自动更新后可能无法打开。此问题已在 Warp 的当前和未来版本中得到解决。为避免此问题，请在升级到 macOS Ventura **之前** [更新 Warp](/support-and-community/troubleshooting-and-support/updating-warp/)。\
+    \
+    如果您在打开 Warp 时遇到错误，请尝试以下步骤：
+
+    * 前往 macOS 应用程序文件夹，右键点击 Warp，选择"打开"，然后在'"Warp"已损坏'对话框中点击"打开"按钮。
+
+    <DemoVideo src="/assets/support-and-community/open-warp-mac.mp4" label="右键点击 macOS 应用程序文件夹中的 Warp 并选择打开以绕过损坏的应用对话框" />
+
+    * 如果上述方法不行，请[卸载 Warp](/support-and-community/troubleshooting-and-support/logging-out-and-uninstalling/)，然后[重新安装 Warp](/getting-started/quickstart/installation-and-setup/)。
+
+    **在 macOS 上运行 x86 命令**
+
+    在某些情况下，CLI 应用程序只能在 x86 上工作，因此您可以在 macOS 上通过 Rosetta 运行 Warp 来使用它们，具体操作如下。
+
+    * 前往 **Finder** > **应用程序** 并搜索 Warp。
+    * 右键点击并选择"显示简介"。
+    * 然后勾选"使用 Rosetta 打开"复选框。
+  </TabItem>
+  <TabItem label="Windows">
+    **Windows 版 Warp 不支持**
+
+    以下功能在 Windows 版 Warp 中不支持。请跟踪下方链接的相关 GitHub Issues 以了解任何变化：
+
+    * [cmd.exe](https://github.com/warpdotdev/Warp/issues/5882) 或 [fish](https://github.com/warpdotdev/Warp/issues/6060) shell
+
+    **Warp 无法在 Windows 上运行**
+
+    我们正在跟踪 Windows 上的一些问题，例如 [Warp 启动时崩溃](https://github.com/warpdotdev/Warp/issues/5840) 或不渲染，以下是可能的解决方法。如果这些解决方法都没有帮助，请创建一个[新的 GitHub Issue](https://github.com/warpdotdev/warp/issues/new/choose)，并附上[日志](/support-and-community/#gathering-warp-logs)、安装方式（裸机或虚拟机，x86\_64 或 ARM64）以及您遇到的问题。
+
+    * 图形
+      * 您可以在设置菜单中**功能** > **系统** > **首选图形后端**下选择用于渲染新 Warp 窗口的图形后端。
+      * 您也可以选择使用集成 GPU 渲染新 Warp 窗口，在**功能** > **系统** > **优先使用集成 GPU（低功耗）渲染新窗口**下设置。
+
+    **在 Windows 上打开启动配置时崩溃或无法透明**
+
+    当用户拥有 NVIDIA 572.xx 或 AMD 23.10.x 及以上驱动时，Warp 可能会在[尝试打开启动配置时崩溃](https://github.com/warpdotdev/Warp/issues/5875)，或者 [Warp 无法变为透明](https://github.com/warpdotdev/Warp/issues/5903)（透明度设置不生效）。这些是图形驱动的已知限制。我们正在调查这些问题，并将在上述 GitHub Issues 中更新。您可以通过强制将图形后端设置为 Vulkan 或 OpenGL 来解决此问题，从另一个终端运行以下命令，并将 GPU 驱动 Vulkan/OpenGL 渲染方法设置设为"Prefer Native"，或使用 [DX12 后端](/support-and-community/troubleshooting-and-support/known-issues/#warp-wont-run-or-render-on-windows)：
+
+    ```powershell
+    # 如果 Windows 版 Warp 是为单个用户安装的
+    $env:WGPU_BACKEND="vulkan,gl"; & "$env:LOCALAPPDATA\Programs\Warp\warp.exe"
+
+    # 如果 Windows 版 Warp 是为所有用户安装的
+    $env:WGPU_BACKEND="vulkan,gl"; & "$env:PROGRAMFILES\Warp\warp.exe"
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    **Warp 无法在 Linux 上运行**
+
+    我们正在跟踪 Linux 上的一些问题，例如 [Warp 窗口不显示/渲染](https://github.com/warpdotdev/Warp/issues/4215) 以及无法在[虚拟机](https://github.com/warpdotdev/Warp/issues/4476)、[远程桌面](https://github.com/warpdotdev/Warp/issues/4435)或 [WSL](https://github.com/warpdotdev/Warp/issues/4240) 上运行。以下是可能的解决方法。如果这些解决方法都没有帮助，请创建一个[新的 GitHub Issue](https://github.com/warpdotdev/warp/issues/new/choose)，并附上[日志](/support-and-community/#gathering-warp-logs)、您的 Linux 发行版、安装方式（WSL、裸机或虚拟机，x86\_64 或 ARM64）以及您遇到的问题。
+
+    :::note
+    * 许多软件包安装示例针对 Ubuntu 使用 `apt`，您的发行版可能使用不同的命令（`dnf`、`pacman`、`zypper`）或软件包名称。
+    * GPU 驱动和默认 GPU/图形 API 环境变量取决于系统，例如 AMD vs NVIDIA 和 OpenGL vs Vulkan。
+    :::
+
+    * 系统
+      * 安装或更新 [Xorg](https://www.x.org/wiki/) / [Wayland](https://wayland.freedesktop.org/)：`sudo apt install xserver-xorg` / `sudo apt install wayland`
+      * 在 WSL 和虚拟机上安装 [Hack 字体](https://sourcefoundry.org/hack/)：`sudo apt install fonts-hack`
+      * 安装 [WSL 工具](https://github.com/wslutilities/wslu)：`sudo apt install wslu`
+      * 安装 Mesa 工具：`sudo apt install mesa-utils`
+      * 安装 Mesa Vulkan 驱动：`sudo apt install mesa-vulkan-drivers`
+      * 如果无法使用文件选择器：`sudo apt install xdg-desktop-portal xdg-desktop-portal-gtk zenity`
+      * 如果无法复制粘贴：`sudo apt install wl-clipboard`
+    * 图形
+      * 安装或更新您的 GPU 驱动：例如 [NVIDIA](https://github.com/warpdotdev/Warp/issues/4215#issuecomment-1969750786) 535.x 或以下驱动
+        * Ubuntu：`sudo ubuntu-drivers install`
+        * Fedora：`sudo dnf install akmod-nvidia`
+        * Arch Linux：`sudo pacman -S nvidia`
+        * openSUSE：`sudo zypper install x11-video-nvidiaG05`
+      * 在 `~/.config/warp-terminal/user_preferences.json` 文件中使用[低功耗（集成）GPU](https://github.com/warpdotdev/Warp/issues/4215#issuecomment-1967500574)：`{"prefs":{"PreferLowPowerGPU": "true",}}`。如果您在 warp.log 中看到 [`Unrecognized device error ERROR_INITIALIZATION_FAILED`](https://github.com/warpdotdev/Warp/issues/4390#issuecomment-1989493913)，低功耗解决方法尤其有用。
+    * 环境变量
+      * 在命令前添加变量（可以同时使用多个），确认它们有效后，在您的 `.profile`/`.zprofile` 中 `export` 它们以[在启动时加载](https://github.com/warpdotdev/Warp/issues/4240#issuecomment-1968228029)：
+        * [默认使用 Wayland](https://github.com/warpdotdev/Warp/issues/4240#issuecomment-1961993281)：`WARP_ENABLE_WAYLAND=1`
+        * 为 WSL 设置[默认 GPU](https://docs.mesa3d.org/drivers/d3d12.html#utilities)：例如 `MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA`
+        * 设置[图形 API](https://github.com/gfx-rs/wgpu?tab=readme-ov-file#environment-variables)：例如 `WGPU_BACKEND=gl`
+
+    **升级 Linux 后更新失败**
+
+    某些 Linux 发行版可能在操作系统升级期间修改 Warp 的软件包仓库。我们知道 Ubuntu 上存在此问题，但其他 Linux 发行版也可能受到影响。我们在 GitHub [此处](https://github.com/warpdotdev/Warp/issues/5201)跟踪此问题。\
+    \
+    要解决此问题，请手动添加仓库以更新 Warp。以下是 Ubuntu 的示例：
+
+    ```
+    sudo apt-get install wget gpg
+    wget -qO- https://releases.warp.dev/linux/keys/warp.asc | gpg --dearmor > warpdotdev.gpg
+    sudo install -D -o root -g root -m 644 warpdotdev.gpg /etc/apt/keyrings/warpdotdev.gpg
+    sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/warpdotdev.gpg] https://releases.warp.dev/linux/deb stable main" > /etc/apt/sources.list.d/warpdotdev.list'
+    rm warpdotdev.gpg
+    sudo apt update && sudo apt install warp-terminal
+    ```
+
+    其他 Linux 发行版的说明请参阅我们的[快速入门指南](/getting-started/quickstart/installation-and-setup/#linux)。
+  </TabItem>
+</Tabs>

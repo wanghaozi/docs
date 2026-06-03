@@ -1,0 +1,38 @@
+---
+title: 终端块查找
+description: >-
+  从底部向上搜索所有块，支持正则表达式、区分大小写和按块过滤选项。
+sidebar:
+  label: "块查找"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## 什么是查找
+
+查找功能从底部向上在所有块中搜索匹配项，甚至可以限定在特定块中。
+
+:::note
+由于命令输出包含在块内，您在调用查找时仍然可以使用输入编辑器。
+:::
+
+## 如何访问
+
+<Tabs>
+  <TabItem label="macOS">
+    1. 按 `CMD-F` 打开查找视图，该视图在整个终端中搜索（限定在当前窗格内）。
+    2. 在查找模态框内，您还可以启用正则表达式切换、在选定的块上查找，或切换区分大小写搜索。
+  </TabItem>
+  <TabItem label="Windows">
+    1. 按 `CTRL-SHIFT-F` 打开查找视图，该视图在整个终端中搜索（限定在当前窗格内）。
+    2. 在查找模态框内，您还可以启用正则表达式切换、在选定的块上查找，或切换区分大小写搜索。
+  </TabItem>
+  <TabItem label="Linux">
+    1. 按 `CTRL-SHIFT-F` 打开查找视图，该视图在整个终端中搜索（限定在当前窗格内）。
+    2. 在查找模态框内，您还可以启用正则表达式切换、在选定的块上查找，或切换区分大小写搜索。
+  </TabItem>
+</Tabs>
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/find.mp4" label="使用查找视图在 Warp 的终端块中搜索" />

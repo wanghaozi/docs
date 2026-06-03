@@ -1,0 +1,44 @@
+---
+title: 输入位置
+description: >-
+  Warp 允许您配置输入的位置，包括提示符和命令行。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+您可以从三种不同的输入位置中选择，每种位置对输入/输出块的流动都有不同的行为模式。
+
+<table><thead><tr><th>输入位置</th><th>行为</th><th data-hidden></th></tr></thead><tbody><tr><td>从顶部开始（经典模式）</td><td>当您选择"从顶部开始"时，提示符和输入将显示在视图的顶部，并随您输入命令而向下移动。输入/输出块将堆叠在提示符和命令输入的上方。您可以向上滚动或导航以查看以前的命令。您可以随时输入 <code>CTRL-L</code> 或 <code>clear</code> 命令，将输入返回到屏幕顶部，同时保留滚动历史。</td><td></td></tr><tr><td>固定在顶部（反向模式）</td><td>当您选择"固定在顶部"时，提示符和输入将固定在终端视图的顶部显示。分组的输入/输出块将以相反的顺序向下流动，最新的结果位于顶部。您可以向下滚动或导航以查看以前的命令。对于长时间运行的命令，您也可以单击"在块底部锁定滚动"以继续跟踪标准输出。</td><td></td></tr><tr><td>固定在底部（Warp 模式）</td><td>Warp 模式将输入固定在终端视图的底部。分组的输入/输出块向上流动并移出视图。您可以向上滚动或导航以查看以前的命令。</td><td></td></tr></tbody></table>
+
+## 如何访问
+
+* 您可以通过导航至 **设置** > **外观** > **输入** 来配置输入位置。
+* 您也可以从 [命令面板](/terminal/command-palette/) 选择和设置模式。
+
+:::note
+输入位置的更改会立即生效，并应用于所有打开的窗格。
+:::
+
+### 相关命令
+
+<Tabs>
+  <TabItem label="macOS">
+    * `CMD-K` 将清除整个输入/输出块列表以获得干净的视图
+    * `CTRL-L` 将输入/输出块列表移出视图并超出滚动范围，使您拥有清晰的视图，同时能够轻松查看以前的命令
+    * 对于较长的块，您可以按 `SHIFT-CMD-UP`/`SHIFT-CMD-DOWN` 滚动到所选块的顶部/底部。
+  </TabItem>
+  <TabItem label="Windows">
+    * `CTRL-SHIFT-K` 将清除整个输入/输出块列表以获得干净的视图
+    * `CTRL-L` 将输入/输出块列表移出视图并超出滚动范围，使您拥有清晰的视图，同时能够轻松查看以前的命令
+    * 对于较长的块，您可以按 `CTRL-SHIFT-UP`/`CTRL-SHIFT-DOWN` 滚动到所选块的顶部/底部。
+  </TabItem>
+  <TabItem label="Linux">
+    * `CTRL-SHIFT-K` 将清除整个输入/输出块列表以获得干净的视图
+    * `CTRL-L` 将输入/输出块列表移出视图并超出滚动范围，使您拥有清晰的视图，同时能够轻松查看以前的命令
+    * 对于较长的块，您可以按 `CTRL-SHIFT-UP`/`CTRL-SHIFT-DOWN` 滚动到所选块的顶部/底部。
+  </TabItem>
+</Tabs>
+
+## 工作原理
+
+<VideoEmbed url="https://www.youtube.com/watch?end=147&start=37&v=z1rDVPxaNCo" title="输入位置演示" />

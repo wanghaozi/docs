@@ -1,0 +1,26 @@
+---
+title: "演示：使用 SDK 进行 Sentry 监控"
+description: >-
+  构建一个 Sentry webhook 处理器，触发代理调查错误并创建草稿 PR。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+### 使用云端代理 + TypeScript SDK 将生产错误转化为草稿 PR
+
+<VideoEmbed url="https://www.youtube.com/watch?feature=youtu.be&v=fHQXLg9ybi4" />
+
+:::note
+示例仓库：[**https://github.com/warpdotdev/warp-agents-sdk-demo-sentry-monitor**](https://github.com/warpdotdev/warp-agents-sdk-demo-sentry-monitor)
+:::
+
+在这个演示中，Ben 构建了一个小型 TypeScript "Sentry 监控器"服务，监听特定的 Sentry 告警（如 Go 空指针解引用），并触发一个 Warp 云端代理进行调查。该服务器验证 webhook，提取堆栈跟踪，并将其注入到 Warp 环境中的代理运行中，以便代理可以检查仓库并提出修复建议。
+
+他还介绍了 TypeScript SDK 中的任务生命周期基础知识（运行代理、轮询任务状态以获取会话链接进行调试），并展示了最终结果：从 Sentry 事件创建的 GitHub 草稿 PR，供维护者审查。
+
+**Ben 介绍的内容**
+
+* 使用 Warp 的 TypeScript SDK 触发代理运行并获取运行详情。
+* 处理运行生命周期状态（排队 → 运行中）以可靠地获取会话链接。
+* 在 Warp 环境中运行代理，使其能够调查真实代码、运行测试和验证修复。
+* 构建一个轻量级的 Sentry webhook 服务器，筛选、验证并仅将正确的错误路由到代理。
+* 创建一个人工审查的草稿 PR 工作流，而非静默的自主更改。

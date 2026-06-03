@@ -1,0 +1,133 @@
+---
+title: 部署模式
+description: >-
+  部署云 agent 的常见架构，包括纯 CLI、Oz 托管和自托管执行模式。
+sidebar:
+  label: "部署模式"
+---
+
+团队采用云 agent 的方式有几种可重复的模式。此页面概述了最常见的架构、它们的适用场景以及它们如何组合在一起。
+
+#### 快速心理模型
+
+云 agent 设置通常涉及四个移动部分：
+
+1. **触发器**：某事发生（CI 步骤、Webhook、cron、Slack 提及）。
+2. **编排**：决定运行什么并进行跟踪（Oz 编排器、GitHub Actions、您的内部系统）。
+3. **执行**：agent 实际运行的位置（您的运行器、Oz 托管环境或自托管 worker）。
+4. **可见性**：团队监控和干预的方式（Oz 仪表板、会话共享、API）。
+
+---
+
+### 模式 1：纯 CLI agent（自带编排器）
+
+当您已有调度工作的系统（CI、开发机、内部编排器）并且需要可靠、云端连接的 agent 运行器时使用此模式。
+
+#### 样子
+
+* **触发器**：GitHub Actions / CI、脚本、开发机操作或内部编排器
+* **编排**：您现有的系统
+* **执行**：该系统运行的位置
+* **Warp 添加**：云连接、共享上下文、可见性、会话共享和跟踪
+
+#### 团队选择它的原因
+
+* 您希望作为其他基于 CLI/SDK 的 agent（Claude Code、Codex CLI、Gemini CLI/SDK 风格流程）的**即插即用替代品**。
+* 您希望在任何地方运行 agent，无需 Warp 桌面。
+* 即使执行发生在"Warp 外部"，您仍然希望拥有**团队级可观测性**。
+
+#### 常见示例
+
+* **CI PR 助手**：运行格式检查、生成审查评论、建议修复、打开 PR。
+* **远程开发机 agent**：在预先配置的机器中运行重构或调试任务。
+* **内部编排器集成**：将 Warp 视为与模型提供商并列的一个 agent 选项。
+
+#### 即使没有 Warp 编排，您仍然可以获得
+
+* 访问您的共享 Warp 上下文（例如 MCP 配置、Warp Drive 上下文、规则/提示）。
+* Agent 会话共享以监控/引导运行。
+* 用于跟踪和报告的只读 API。
+* 通向"交接"工作流的路径（可以在更丰富的界面中继续或检查运行）。
+
+#### 最小设置清单
+
+* Warp 团队
+* 一个 [agent 身份](/agent-platform/cloud-agents/agents/)（推荐用于自动化）
+* 在运行器/机器上安装 Oz CLI
+* 任何所需的凭据（通常通过密钥 + 环境变量）
+
+---
+
+### 模式 2：Oz 托管的 agent + Oz 编排（托管云执行）
+
+当您希望 Oz 在 Warp 管理的基础设施上运行 agent 工作负载时使用此模式，通常在可重现的 Docker 环境中，并具有内置生命周期管理。
+
+![Warp 企业 SaaS 架构显示客户基础设施、隔离的租户沙箱、Warp 后端和 LLM 提供商](../../../../../assets/agent-platform/cloud-agents-infra.png)
+
+#### 样子
+
+* **触发器**：第一方集成、cron 计划、API/SDK 调用或按需命令
+* **编排**：Oz 编排器
+* **执行**：Oz 托管环境（基于 Docker）
+* **可见性**：Oz 仪表板 + 会话共享 + API/SDK
+
+#### 团队选择它的原因
+
+* 您希望以最简单的路径实现可重现、可扩展的云执行。
+* 您希望并行运行许多任务，而无需构建自己的沙箱和扩展层。
+* 您希望通过标准化环境和集中配置实现一致的"生产"设置。
+
+#### 常见触发方式
+
+* **第一方集成（Slack、Linear 等）**，从外部事件自动创建任务。
+* **计划 agent**，用于重复性工作（类似 cron 的自动化）。
+* **自定义触发器**，使用 Warp 的 API/SDK 从您自己的系统触发。
+* **按需云作业**，使用如 `oz agent run-cloud` 等 CLI 命令。
+
+#### 示例配方：每日死代码清理
+
+1. 定义包含仓库 + 工具链的 Oz 环境。
+2. 创建具有固定清理提示的计划。
+3. Oz 按节奏运行 agent。
+4. 您的团队在 Oz 仪表板中监控运行、审查制品（PR、计划）并在需要时干预。
+
+#### 示例配方：通过 Sentry Webhook 进行故障分类
+
+1. 定义包含目标仓库的 Oz 环境。
+2. 将 Sentry Webhook 注册到您的处理程序（服务器、云函数、Zapier/n8n）。
+3. 处理程序提取故障详情、构建提示并调用 Oz 编排器 API/SDK 启动任务。
+4. Warp 在环境中启动运行，您通过 UI/API 监控进度。
+
+#### 示例配方：扇出并行工作（分片）
+
+当任务自然可分割时，使用[多 agent 编排](/agent-platform/cloud-agents/orchestration/)从单个父运行中每个分片生成一个子 agent。父级负责协调和聚合结果；子级并行执行，每个有自己的仓库子集、提示和（可选）模型。参见[运行编排 agent](/agent-platform/cloud-agents/orchestration/multi-agent-runs/) 获取斜杠命令、CLI、Web 应用和 API 示例。
+
+#### 示例配方：跨多个模型的相同任务
+
+* 启动 N 个具有相同提示但映射到不同模型的不同配置文件的运行。
+* 比较结果并选择最佳输出（或合并）。
+
+---
+
+### 模式 3：自托管执行
+
+当您需要控制 agent 执行的位置，同时仍然使用 Oz 编排和可见性时使用此模式。仓库仅在您的基础设施上克隆和存储；编排元数据、会话记录和 LLM 推理通过 Warp 的后端在 [ZDR](/enterprise/security-and-compliance/security-overview/#zero-data-retention-zdr) 下路由。
+
+将自托管执行视为**客户托管的执行与 Warp 托管的编排**，而非完全离线的 agent 堆栈。代码仓库、构建制品、运行时密钥和执行工作区保留在您的基础设施上。代码上下文仍可能出现在 agent 工作时的会话记录和 LLM 提示中。
+
+:::note
+**企业功能**：自托管执行仅对 Enterprise 计划上的团队可用。
+:::
+
+自托管有两种架构，区别在于**谁编排 agent 运行**（两者都将代码和执行保留在您的基础设施上）：
+
+* **[托管](/agent-platform/cloud-agents/self-hosting/#managed-architecture)** — Oz 编排。您运行 `oz-agent-worker` 守护进程；Oz 从 Slack、Linear、计划、API 或 `oz agent run-cloud` 向其路由运行。任务在 Docker 容器、Kubernetes Job 中或直接在主机上执行。
+* **[非托管](/agent-platform/cloud-agents/self-hosting/unmanaged/)** — 您编排。直接从您的 CI、Kubernetes 或开发环境调用 `oz agent run`。Warp 提供会话跟踪和可观测性；它不启动或停止 agent。
+
+团队选择自托管执行的原因：
+
+* 代码和执行必须留在您的网络边界内，以符合合规或安全要求。
+* Agent 需要访问 VPN 后的服务或自托管 SCM 如 GitLab 或 Bitbucket。Warp 托管的 agent 也可以通过公共互联网访问 GitLab 和 Bitbucket——参见 [GitLab](/agent-platform/cloud-agents/integrations/gitlab/) 和 [Bitbucket](/agent-platform/cloud-agents/integrations/bitbucket/) 设置指南。
+* 您的环境（多服务平台、重资源需求）不适合单个 Docker 容器。
+
+有关设置、决策指南和快速入门，请从[自托管](/agent-platform/cloud-agents/self-hosting/)开始。

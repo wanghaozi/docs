@@ -1,0 +1,133 @@
+---
+title: Agent 规则
+sidebar:
+  label: "规则"
+description: >-
+  创建可重用的全局或项目规则，确保 Warp 的 agent 遵循您的编码标准、项目约定和个人偏好。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { FileTree } from '@astrojs/starlight/components';
+
+Warp 的**规则**功能让您创建可重用的指导方针，告知 agent 如何响应您的提示。规则有助于定制响应以匹配您的编码标准、项目约定和个人偏好，使 agent 交互更智能、更一致。
+
+Warp 支持两种类型的规则：**全局规则**和**项目规则**。
+
+<VideoEmbed url="https://youtu.be/fDr0-3bLxMQ" />
+
+## 全局规则
+
+全局规则适用于所有项目和上下文。它们适用于：
+
+* 编码标准和最佳实践
+* 工作区范围的指导方针
+* 您希望在所有地方应用的工具配置或偏好
+
+Warp 还可能会根据您的使用模式建议全局规则，以使未来的交互更智能、更一致。
+
+## 项目规则
+
+项目规则存在于您的代码库中，并在该项目中工作时自动应用。它们存储在 `AGENTS.md` 文件（或为向后兼容而保留的 `WARP.md`）中，可以：
+
+* 放置在仓库的根目录
+* 添加到子目录中以获得更有针对性的指导
+
+:::note
+Warp 使用 `AGENTS.md` 作为默认项目规则文件。现有的 `WARP.md` 文件仍然完全支持——如果您有 `WARP.md`，它将按预期继续工作。您也可以随时将 `WARP.md` 重命名为 `AGENTS.md`，无需额外更改。
+
+如果同一目录中同时存在 `WARP.md` 和 `AGENTS.md`，则 `WARP.md` 优先。
+:::
+
+:::caution
+文件名必须为**全大写**，Warp 才能识别（例如 `AGENTS.md`，而不是 `agents.md` 或 `Agents.md`）。对于新项目，我们建议创建 `AGENTS.md`。
+:::
+
+**当您在目录中时：**
+
+* Warp 自动应用根目录和当前目录中的 `AGENTS.md`（或 `WARP.md`）。
+* 如果您在另一个子目录中编辑文件，Warp 会尽力尝试包含该子目录的规则文件。
+
+示例项目结构：
+
+<FileTree>
+- project/
+  - api/
+    - AGENTS.md API 特定规则
+  - ui/
+    - AGENTS.md UI 特定规则
+  - AGENTS.md 项目范围规则
+</FileTree>
+
+Warp 如何应用这些项目规则：
+
+* **如果当前目录是 `ui/`**
+  * 自动应用：`project/AGENTS.md` 和 `project/ui/AGENTS.md`
+  * 尽力：如果在其中编辑文件，则 `project/api/AGENTS.md`
+* **如果当前目录是 `api/`**
+  * 自动应用：`project/AGENTS.md` 和 `project/api/AGENTS.md`
+  * 尽力：如果在其中编辑文件，则 `project/ui/AGENTS.md`
+
+### **规则优先级**
+
+当多个规则适用时，Warp 遵循以下优先级顺序：
+
+1. 当前子目录的项目规则文件中的规则
+2. 根目录的项目规则文件中的规则
+3. 全局规则
+
+这确保最具体、最项目相关的规则优先于更广泛的规则。
+
+---
+
+## 如何访问规则
+
+* 从 [Warp Drive](/knowledge-and-collaboration/warp-drive/)：**个人** > **规则**
+* 从[命令面板](/terminal/command-palette/)：搜索"Open AI Rules"
+* 从设置面板：**设置** > **Agent** > **知识** > **管理规则**
+  * 在这里，您可以管理全局规则和项目规则。
+* 从 macOS 菜单：`AI > Open Rules` &#x20;
+* 从斜杠命令菜单：`/open-project-rules` 直接在 Warp 的代码编辑器中打开项目规则
+
+<figure>
+![在规则窗格中打开的项目规则 UI](../../../../../assets/agent-platform/project-scoped-rules-pane.png)
+<figcaption>在规则窗格中打开的项目规则 UI。</figcaption>
+</figure>
+
+## 如何创建、编辑或删除规则
+
+#### 全局规则
+
+* **从 Warp Drive 规则窗格：** **个人** > **规则** > **全局**\
+  添加、编辑或删除任意数量的规则。每个规则可以包括：
+  * 名称（可选）
+  * 描述（规则的作用及何时应用）
+* **从斜杠命令菜单：** 在自动或 Agent 输入模式下使用 `/add-rule` 创建新的全局规则（自动打开 Warp Drive 规则窗格）。
+
+<VideoEmbed url="https://www.loom.com/share/3a49462c01e149cf9c040130cebe1184?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="仅包含全局规则的规则演示（旧版）。项目规则也可在其中找到。" />
+
+#### 项目规则
+
+* **在目录中时，使用斜杠命令设置项目规则：** 在自动检测或 Agent 模式下使用 `/init`：
+  * 开始索引您的代码库或显示索引状态
+  * 生成带有初始上下文的 `AGENTS.md` 文件，或
+  * 将现有规则文件链接到 `AGENTS.md`
+    * Warp 目前支持链接以下外部规则文件：`CLAUDE.md`、`.cursorrules`、`AGENT.md`、`GEMINI.md`、`.clinerules`、`.windsurfrules`、`.github/copilot-instructions.md`&#x20;
+
+要查看所有项目规则并在 Warp 中打开它们，请通过 Warp Drive 规则窗格访问：**个人** > **规则** > **基于项目**
+
+### 规则作为 Agent 上下文
+
+当相关时，Agent 会自动引入适用规则来指导其响应。交互中使用的规则将出现在对话的**引用**下或标记为源自特定规则。
+
+<figure>
+![源自记忆的上下文](../../../../../assets/agent-platform/context-derived-from-memory.png)
+<figcaption>显示应用了哪些规则的 agent 响应。</figcaption>
+</figure>
+
+<figure>
+![源自记忆的上下文](../../../../../assets/agent-platform/context-references-memory.png)
+<figcaption>在 agent 对话中列为引用的规则。</figcaption>
+</figure>
+
+### 规则隐私
+
+请参阅我们的[隐私页面](/support-and-community/privacy-and-security/privacy/)了解更多关于我们如何处理规则相关数据的信息。

@@ -1,0 +1,85 @@
+---
+title: 桌面通知
+description: >-
+  在长时间运行的命令完成或需要您的输入时接收桌面通知。
+sidebar:
+  label: "桌面通知"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是通知
+
+当命令在可配置的秒数后完成，或正在运行的命令需要您输入密码才能继续时，可以发送通知。对于这两种触发方式，Warp 仅会在触发时您正在使用其他应用时向您发送桌面通知。
+
+:::note
+有关来自编码代理（Warp 内置代理和第三方 CLI 代理，如 Claude Code 和 OpenCode）的通知，请参见 [代理通知](/agent-platform/capabilities/agent-notifications/)。
+:::
+
+## 自定义通知钩子（OSC 9 / OSC 777）
+
+Warp 支持通过终端转义序列触发的可插拔通知，因此脚本和工具可以引发桌面通知，而无需额外的依赖。
+
+- OSC 9（仅正文）：发送仅包含正文的通知。
+  - 格式：`ESC ] 9 ; <body> BEL`
+  - 示例（bash/zsh）：`printf '\033]9;Build complete\007'`
+- OSC 777（标题 + 正文）：发送包含标题和正文的通知。
+  - 格式：`ESC ] 777 ; notify ; <title> ; <body> BEL`
+  - 示例（bash/zsh）：`printf '\033]777;notify;Deploy;Success on prod\007'`
+
+注意：
+- 在允许 Warp 显示通知的 macOS、Windows 和 Linux 上均可使用。
+- 在数据中应避免或转义换行符和分号。
+- 此功能在 Warp 当前版本中默认启用。
+
+## 如何访问
+
+### 通知
+
+* 通知默认启用，需要系统权限才能显示。
+* 如果您之前关闭了通知，可以通过前往 **设置** > **功能** > **会话** 重新打开，或使用 [命令面板](/terminal/command-palette/) 快速切换通知。
+* 通过前往 **设置** > **功能** > **通知** 为长时间运行的命令或密码提示自定义通知触发方式。
+
+:::note
+在 macOS 上，您需要 **允许** 或 **接受** 请求，以便 Warp 可以向您发送桌面通知。如果您不小心拒绝了请求或想要稍后重新启用通知，请查看下面的 [故障排除指南](/terminal/more-features/notifications/#troubleshooting-notifications)。
+:::
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/65967f43a7fa432b98cf3e94766a8e79?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="通知演示" />
+
+## 通知故障排除
+
+<Tabs>
+  <TabItem label="macOS">
+    Warp 需要两个不同的通知设置才能工作。macOS 系统设置位于 > **系统设置** > **通知与专注**，以及 Warp 应用设置位于 **设置** > **功能** > **会话** 必须同时启用，通知才能显示。\
+    \
+    如果您已在系统和 Warp 中启用了通知，但仍然没有收到桌面通知，请尝试以下操作：
+
+    * 确保您期望接收通知时已离开 Warp。
+    * 确保 **勿扰模式** 已关闭，关闭路径 > **系统设置** > **通知** > **通知与专注** > **专注**。
+    * 前往 > **系统设置** > **通知与专注** > **通知**，在列表中选择 Warp。确保选择了横幅样式或提醒样式的通知，然后退出并重启 Warp。
+    * 要让 macOS 通知提示重新显示在 Warp 中，运行 `defaults delete dev.warp.Warp-Stable Notifications`，然后重启 Warp 并打开 **设置** > **功能** > **接收来自 Warp 的桌面通知**。
+    * 完成以上所有操作后，请重启 macOS 以应用更改，这将有助于恢复 Warp 中的通知。
+  </TabItem>
+  <TabItem label="Windows">
+    Warp 需要两个不同的通知设置才能工作。Windows 系统设置位于 **设置** > **系统** > **通知** > **Warp**，以及 Warp 应用设置位于 **设置** > **功能** > **会话** 必须同时启用，通知才能显示。
+
+    如果您已在系统和 Warp 中启用了通知，但仍然没有收到桌面通知，请尝试以下操作：
+
+    * 确保您期望接收通知时已离开 Warp。
+    * 确保 **勿扰模式** 或 **专注** 已关闭。
+    * 前往 **系统** > **通知**，在列表中选择 Warp。确保通知已打开，然后退出并重启 Warp。
+  </TabItem>
+  <TabItem label="Linux">
+    Warp 需要两个不同的通知设置才能工作。Linux 系统设置位于 **设置** > **通知** > **Warp**，以及 Warp 应用设置位于 **设置** > **功能** > **会话** 必须同时启用，通知才能显示。
+
+    如果您已在系统和 Warp 中启用了通知，但仍然没有收到桌面通知，请尝试以下操作：
+
+    * 确保您期望接收通知时已离开 Warp。
+    * 确保 **勿扰模式**（如果您的发行版支持）已关闭。
+    * 前往 **设置** > **通知**，在列表中选择 Warp。确保通知已打开，然后退出并重启 Warp。
+  </TabItem>
+</Tabs>
+
+如果您有其他问题，请 [联系我们](/support-and-community/troubleshooting-and-support/sending-us-feedback/#sending-warp-feedback)。

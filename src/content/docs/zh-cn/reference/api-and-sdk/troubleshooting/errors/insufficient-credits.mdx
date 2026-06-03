@@ -1,0 +1,77 @@
+---
+title: insufficient_credits
+description: >-
+  为此运行计费的主体没有剩余积分。为触发用户或团队所有者的积分池充值以继续使用。
+---
+
+`insufficient_credits` 错误发生在为云端代理运行计费的主体没有剩余积分可扣除时。
+
+在自助计划（Build、Max、Business）中，计费主体取决于运行的触发方式：
+
+* **用户触发的运行**从触发用户的积分池中扣除：首先使用计划包含的积分，然后使用其用户范围的附加积分。
+* **团队 API 密钥和定时运行**从团队所有者的积分池中扣除：首先使用所有者的计划包含积分，然后是所有者的附加积分。
+
+当两个池都已耗尽且[自动充值](/support-and-community/plans-and-billing/add-on-credits/)关闭时，新运行会返回此错误。在企业计划中，运行根据您的合同从团队范围的积分池中扣除——当池耗尽时，请联系您的客户经理。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 用户触发的运行耗尽了用户的计划包含积分和用户范围的附加积分。
+* 团队 API 密钥或定时运行耗尽了团队所有者的计划包含积分和所有者的附加积分。
+* 自动充值关闭，或自动充值开启但团队范围的月消费上限已达到。
+
+有关完整的积分瀑布流程，请参见[定价常见问题](/support-and-community/plans-and-billing/pricing-faqs/#how-are-cloud-agent-runs-on-team-plans-billed-when-no-individual-user-triggered-them)中的"团队计划上的云端代理运行在没有个人用户触发时如何计费？"。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/insufficient-credits/",
+  "title": "此运行计费的主体没有剩余积分。购买附加积分或提高团队范围的消费上限以继续使用。",
+  "status": 403,
+  "instance": "/api/v1/agent/tasks",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+修复方法取决于哪个主体被计费。
+
+**对于用户触发的运行（您自己的积分池已耗尽）：**
+
+1. 在**设置** > **计费和使用**中购买[附加积分](/support-and-community/plans-and-billing/add-on-credits/)，或等待月度积分刷新。
+2. 或者，在团队月度消费上限范围内启用自动充值。
+3. 重试失败的操作。
+
+**对于团队 API 密钥或定时运行（团队所有者的积分池已耗尽）：**
+
+1. 团队所有者为其积分池充值：购买附加积分或等待月度刷新。
+2. 如果自动充值已开启但团队范围的消费上限已达到，管理员可以在**设置** > **计费和使用**中提高上限。
+3. 重试失败的操作。
+
+如果您不是团队管理员或团队所有者，请联系他们为正确的积分池充值。
+
+---
+
+## 相关
+
+* [访问、计费和身份权限](/agent-platform/cloud-agents/team-access-billing-and-identity/) — 个人和团队 API 密钥运行的积分计费。
+* [附加积分](/support-and-community/plans-and-billing/add-on-credits/) — 购买额外积分并配置自动充值。
+* [平台积分](/support-and-community/plans-and-billing/platform-credits/) — 与 AI 积分和计算积分并列的第三个积分桶。
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理的计费和计划要求。

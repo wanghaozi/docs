@@ -1,0 +1,35 @@
+---
+title: 自托管 worker 监控
+sidebar:
+  label: "监控"
+description: >-
+  使用 OpenTelemetry 指标监控自托管 Oz worker。导出到 Prometheus、OTLP 或控制台以跟踪 worker 健康、任务吞吐量和饱和度。
+---
+
+`oz-agent-worker` 守护进程通过 [OpenTelemetry](https://opentelemetry.io/) 导出基础设施级指标，为您的团队提供对 worker 健康、任务吞吐量和容量的实时可见性。
+
+## 启用 Prometheus 抓取
+
+```bash
+export OTEL_METRICS_EXPORTER=prometheus
+export OTEL_EXPORTER_PROMETHEUS_HOST=0.0.0.0
+export OTEL_EXPORTER_PROMETHEUS_PORT=9464
+oz-agent-worker --api-key "$WARP_API_KEY" --worker-id "my-worker"
+```
+
+## 启用 OTLP 推送
+
+```bash
+export OTEL_METRICS_EXPORTER=otlp
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector.observability.svc:4318
+oz-agent-worker --api-key "$WARP_API_KEY" --worker-id "my-worker"
+```
+
+## 指标目录
+
+所有指标使用 `oz_worker_` 前缀：
+* `oz_worker_connected` — 1 当有活跃 WebSocket 连接时
+* `oz_worker_tasks_active` — 当前正在执行的任务
+* `oz_worker_tasks_claimed_total` — 自启动以来接受的任务
+* `oz_worker_tasks_completed_total{result}` — 已完成任务
+* `oz_worker_task_duration_seconds{result}` — 任务持续时间直方图

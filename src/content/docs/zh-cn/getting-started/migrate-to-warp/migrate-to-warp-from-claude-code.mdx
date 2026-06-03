@@ -1,0 +1,89 @@
+---
+title: 从 Claude Code 迁移到 Warp
+description: >-
+  继续在 Warp 中使用 Claude Code——支持富输入、代码审查和通知——或者从 Claude Code 切换到 Warp 的智能体模式作为你的主要编码智能体。
+---
+
+Claude Code 与本部分中的其他来源不同：它不是终端模拟器，而是一个在任何终端内运行的 CLI 智能体。Warp 是一个智能体开发环境，内置了[代码编辑器](/code/code-editor/)、[代码审查](/code/code-review/)、[团队协作](/knowledge-and-collaboration/warp-drive/)和 [MCP](/agent-platform/capabilities/mcp/) 支持——因此你有两条路径可选：
+
+* **[在 Warp 中使用 Claude Code](#在-warp-中使用-claude-code)** - 你想继续使用 Claude Code 作为编码智能体，并在 Warp 的终端中运行它。
+* **[从 Claude Code 切换到智能体模式](#从-claude-code-切换到智能体模式)** - 你想用 Warp 内置的[智能体模式](/agent-platform/local-agents/overview/)取代 Claude Code。
+
+## 在 Warp 中使用 Claude Code
+
+Warp 通过其[第三方 CLI 智能体](/agent-platform/cli-agents/overview/)集成为 Claude Code 提供了一流的支持。打开一个新标签页并运行：
+
+```bash
+claude
+```
+
+Warp 会自动检测 Claude Code，并在 TUI 基础上解锁 IDE 级别的功能：
+
+* **[富输入编辑器](/agent-platform/cli-agents/rich-input/)** (`Ctrl+G`) - 使用 `@` 提及、语音输入和斜杠命令编写多行提示。
+* **[智能体通知](/agent-platform/capabilities/agent-notifications/)** - 当 Claude Code 需要你的输入时，应用内和桌面会发出提醒。需要一次性安装插件（Warp 会提示你）。
+* **内联代码审查** - 直接从 Warp 的[代码审查](/code/code-review/)面板向智能体发送审查评论。
+* **[带智能体元数据的垂直标签页](/terminal/windows/vertical-tabs/)** - 通过状态指示器跨标签页跟踪多个 Claude Code 会话。
+* **[远程控制](/agent-platform/cli-agents/remote-control/)** - 从另一台设备共享或引导 Claude Code 会话。
+* **[标签页配置](/terminal/windows/tab-configs/)** - 保存并重新打开 Claude Code 会话布局。
+
+有关完整的设置步骤（通知插件、生产力技巧、故障排除），请参阅[Warp 中的 Claude Code](/agent-platform/cli-agents/claude-code/)和[如何设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/)指南。
+
+### 提示
+
+* **在[终端模式](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/)下运行 Claude Code**，而不是智能体模式。如果不小心进入了智能体模式，按 `⌘+I`（macOS）或 `Ctrl+I`（Linux/Windows）切换模式。
+* **`Shift+Enter` 用于换行。** 使用 `Shift+Enter` 在 Claude Code 的提示中插入换行。如果它提交了消息而不是换行，请检查你是否在终端模式（而非智能体模式）以及是否使用了最新的 Warp 版本。
+* **复制/粘贴处理。** Warp 默认启用括号粘贴，因此多行内容粘贴到 Claude Code 无需额外配置。
+* **重启 Warp 后恢复会话。** Warp 的[会话恢复](/terminal/sessions/session-restoration/)会保留标签页和窗格，但不会保留正在运行的 CLI 进程——关闭 Warp 会结束 Claude Code 的会话。使用 Claude Code 内置的恢复选项（例如 `claude --resume`）在重新打开 Warp 后继续对话。
+
+### API 密钥和认证
+
+Claude Code 的认证（API 密钥或 Anthropic 账户）由 Claude Code 自身处理，而非 Warp。Warp 不会代理或修改 Claude Code 的网络调用。通过 [Warp Drive 环境变量](/knowledge-and-collaboration/warp-drive/environment-variables/)配置你的 `ANTHROPIC_API_KEY` 环境变量，以便跨会话共享，无需将其提交到 shell 配置文件中。
+
+## 从 Claude Code 切换到智能体模式
+
+如果你准备用 Warp 内置的智能体取代 Claude Code，核心工作流程如下：
+
+1. 在 Warp 中打开一个新标签页。
+2. 在终端模式下，按 `⌘+Enter`（macOS）或 `Ctrl+Shift+Enter`（Linux/Windows）切换到[智能体模式](/agent-platform/local-agents/overview/)。
+3. 用自然语言描述你想要做什么。
+
+Warp 的智能体读取你的代码库、运行命令和编辑文件，与 Claude Code 的方式相同。
+
+### 哪些内容会转移：上下文和规则
+
+Claude Code 用户经常问的一个问题是：**Warp 的智能体会自动读取哪些文件和上下文？** Warp 从仓库根目录的 `AGENTS.md`（或 `WARP.md`）文件中获取项目规则——这是 Claude Code 的 `CLAUDE.md` 的直接对应文件。在智能体模式下运行 `/init` 生成一个，或将你现有的规则文件重命名即可——无需重写。
+
+Warp 的智能体还会从以下几个显式来源获取上下文：
+
+* **[代码库上下文](/agent-platform/capabilities/codebase-context/)** - 当你打开一个目录时，Warp 会索引你的 Git 跟踪文件，以便智能体可以搜索和引用你的代码，无需你粘贴代码片段。
+* **[规则](/agent-platform/capabilities/rules/)** - 全局和项目范围规则。`AGENTS.md` 和 `WARP.md` 在项目根目录自动被识别；其他规则保存在 Warp Drive 中。
+* **[Warp Drive](/knowledge-and-collaboration/warp-drive/)** - 你保存的笔记本、工作流和环境变量可作为上下文供智能体使用。
+* **[智能体模式上下文](/knowledge-and-collaboration/warp-drive/agent-mode-context/)** - 将特定文件或笔记本固定到对话中，以便智能体始终将其纳入范围。
+* **[MCP](/agent-platform/capabilities/mcp/)** - 你配置的任何 MCP 服务器都能让智能体访问外部工具和数据。
+
+### 需要重新配置的内容
+
+* **迁移你的 `CLAUDE.md`。** 将其重命名为 `AGENTS.md`（或者如果你想在仓库范围之外使用，将其复制到 Warp [规则](/agent-platform/capabilities/rules/)中）。Warp 会将其自动应用于新的对话。
+* **设置你在 Claude Code 中依赖的 [MCP 服务器](/agent-platform/capabilities/mcp/)**。
+* **使用模型选择器为每个对话选择模型**。请参阅[模型选择](/agent-platform/inference/model-choice/)。Warp 支持 Claude、GPT、Gemini 和 Auto。
+* **配置[智能体配置文件和权限](/agent-platform/capabilities/agent-profiles-permissions/)**，以控制智能体可以自动执行哪些操作。
+
+### 与 Claude Code 的主要区别
+
+* **紧密的终端集成。** 智能体模式在 Warp 内部运行，可以看到终端会话的完整状态——打开的文件、命令历史、环境变量——无需你粘贴上下文。
+* **并行智能体。** Warp 可以在多个标签页中同时运行多个智能体对话，每个对话都有自己的状态，你可以在智能体管理面板中跟踪它们。
+* **内置代码审查。** 智能体生成的差异对比会在 Warp 的[代码审查](/code/code-review/)面板中打开，而非终端。
+* **云端编排。** 长时间运行或计划性的智能体工作可以卸载到 [Oz](/agent-platform/cloud-agents/overview/)。
+
+## Warp 原生等效功能
+
+使用此表查找 Claude Code 概念在 Warp 中的最接近对应项：
+
+| Claude Code 中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| `CLAUDE.md` | 项目根目录下的 `AGENTS.md`（或 `WARP.md`），自动识别为[规则](/agent-platform/capabilities/rules/) |
+| Claude Code 斜杠命令 | Warp 自己的[斜杠命令](/agent-platform/capabilities/slash-commands/)（`/init`、`/plan`、`/model` 等）；将自定义命令保存为 [Warp Drive 提示](/knowledge-and-collaboration/warp-drive/prompts/) |
+| 工具定义 | [MCP](/agent-platform/capabilities/mcp/) |
+| 恢复对话 | Warp 每个标签页持久保存智能体对话；结合[标签页配置](/terminal/windows/tab-configs/)可重新打开相同的项目布局 |
+
+如需更深入地了解智能体模式，请参阅[在 Warp 中编码](/getting-started/quickstart/coding-in-warp/)和 [Warp 智能体文档](/agent-platform/local-agents/overview/)。

@@ -1,0 +1,154 @@
+---
+title: 设置 Gemini CLI
+description: >-
+  在 Warp 中设置 Google 的 Gemini CLI，为你的项目进行配置，并学习实现更快 AI 辅助编码工作流的生产力技巧。
+sidebar:
+  label: "设置 Gemini CLI"
+tags:
+  - "third-party-tools"
+
+---
+
+Gemini CLI 是 Google 的开源编码代理。它将 Gemini 直接带入你的终端，内置文件操作、shell 命令、网络搜索和 MCP 支持工具。本指南将带你在大约 5 分钟内从安装到在 Warp 中运行一个可用的 Gemini CLI 会话，然后展示如何充分利用它。
+
+## 先决条件
+
+* **一个 Google 账户**——Gemini CLI 的免费层级包括每分钟 60 次请求和每天 1000 次请求，适用于个人 Google 账户。或者，使用 Gemini API 密钥或 Vertex AI。有关所有选项，请参阅 [Gemini CLI 身份验证指南](https://geminicli.com/docs/get-started/authentication/)。
+* **Node.js 20+**——安装需要。使用 `node -v` 检查。
+* **macOS、Linux 或 Windows**——有关推荐的规格，请参阅 [Gemini CLI 系统要求](https://geminicli.com/docs/get-started/installation/)。
+
+## 1. 安装 Gemini CLI
+
+按照 Google 的[官方安装指南](https://geminicli.com/docs/get-started/installation/)安装 Gemini CLI。最常见的两种方法：
+
+**npm：**
+
+```bash
+npm install -g @google/gemini-cli
+```
+
+**Homebrew（macOS/Linux）：**
+
+```bash
+brew install gemini-cli
+```
+
+验证安装：
+
+```bash
+gemini --version
+```
+
+你也可以使用 `npx @google/gemini-cli` 无需安装即可运行。
+
+当你在 Warp 中启动 Gemini CLI 时，Warp 会自动检测代理会话并显示集成控件，包括富文本输入、代码审查、垂直标签元数据等。
+
+## 2. 身份验证
+
+首次运行 Gemini CLI 时，它会提示你选择身份验证方法。
+
+```bash
+gemini
+```
+
+选择**使用 Google 登录**并完成浏览器身份验证流程。身份验证后，令牌会存储在本地，你无需再次登录。
+
+对于 API 密钥身份验证（适用于 CI/CD 或更高速率限制）：
+
+```bash
+export GEMINI_API_KEY=YOUR_API_KEY
+```
+
+对于使用 Vertex AI 的企业环境，推荐的方法是使用应用默认凭据（ADC）：
+
+```bash
+export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
+export GOOGLE_CLOUD_LOCATION=YOUR_LOCATION
+export GOOGLE_GENAI_USE_VERTEXAI=true
+gcloud auth application-default login
+```
+
+有关所有 Vertex AI 身份验证方法，请参阅 [Gemini CLI 身份验证指南](https://geminicli.com/docs/get-started/authentication/)。
+
+## 3. 启动你的第一个会话
+
+导航到任何项目目录并启动 Gemini CLI：
+
+```bash
+cd ~/your-project
+gemini
+```
+
+尝试给它一个任务，例如：
+
+```
+Explain the architecture of this project
+```
+
+或者更实际的任务：
+
+```
+Add error handling to the database connection module
+```
+
+Gemini CLI 读取相关文件，提议更改，并在修改任何内容之前征求确认。
+
+## 4. 为你的项目配置
+
+在项目根目录创建一个 `GEMINI.md` 文件，教会 Gemini CLI 你项目的约定。Gemini CLI 在每个会话开始时读取此文件。
+
+```markdown
+# My Project
+
+## Stack
+- Backend: Node.js, Express, TypeScript
+- Database: PostgreSQL with Prisma ORM
+- Testing: Vitest for unit tests, Playwright for e2e
+
+## Commands
+- `npm run dev` starts the dev server
+- `npm test` runs the test suite
+- `npm run lint` checks code style
+
+## Conventions
+- Use ESM imports (no require())
+- All API endpoints need Zod input validation
+- Run `npm test` before committing
+```
+
+这可以防止 Gemini CLI 猜测你的约定，并确保它从第一个提示就遵循你的团队标准。
+
+## 5. 选择模型
+
+Gemini CLI 默认使用最新的 Gemini 模型。要使用特定模型：
+
+```bash
+gemini -m MODEL_NAME
+```
+
+你也可以在会话期间使用 `/model` 命令切换模型。请参阅 [Gemini CLI 文档](https://github.com/google-gemini/gemini-cli)获取当前模型列表。
+
+:::note
+Gemini CLI 目前不支持 Warp 中的代理通知。当 Gemini CLI 需要输入时，你不会收到桌面提醒，因此在较长的任务期间请保持标签可见或定期回来查看。所有其他 Warp 代理功能（富文本输入、代码审查、垂直标签）均可完全使用。
+:::
+
+## 生产力技巧
+
+* **使用语音提示 Gemini CLI**——口述复杂指令而不是输入。Warp 支持适用于任何 CLI 代理（包括 Gemini CLI）的[语音转录](/agent-platform/local-agents/interacting-with-agents/voice/)。
+* **附加图像作为上下文**——将错误、设计或错误消息的截图粘贴到你的提示中。Warp 的[图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)功能让 Gemini CLI 看到你所看到的。
+* **可视化审查差异**——Gemini CLI 做出更改后，打开 Warp 的[代码审查面板](/code/code-review/)（`⌘+Shift++`）查看可视化差异。你可以留下内联评论并发送回 Gemini CLI 进行修正。
+* **将 Gemini CLI 与其他代理并排运行**——使用[垂直标签](/terminal/windows/vertical-tabs/)在相同任务上并排运行 Gemini CLI 和 Claude Code 或 Codex。比较它们的方法并选择最佳输出。
+* **编写更丰富的提示**——按 `Ctrl+G` 打开 Warp 的富文本输入编辑器用于 Gemini CLI，为你提供完整的文本编辑器体验，而不是原始 CLI 输入。
+* **使用内置的 Google 搜索**——Gemini CLI 可以通过实时网络搜索来接地响应。在处理代码时，让它研究当前的最佳实践或查找文档。
+
+## 后续步骤
+
+你已经安装了 Gemini CLI、使用你的 Google 账户进行了身份验证、启动了第一个会话并为你的项目进行了配置。Gemini CLI 现在在 Warp 中作为一个可工作的编码代理设置完成。
+
+探索相关指南和功能：
+
+* [设置 Ollama 用于本地模型](/guides/external-tools/how-to-set-up-ollama/)将 Gemini CLI 与本地模型工作流配对
+* [代码审查面板](/code/code-review/)——审查和完善代理生成的代码
+* [Warp 中的 Gemini CLI](https://www.warp.dev/agents/gemini-cli)——Warp 中 Gemini CLI 支持概述
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和 Warp 的通用代理功能
+* [Gemini CLI 文档](https://github.com/google-gemini/gemini-cli)——Google 的官方参考

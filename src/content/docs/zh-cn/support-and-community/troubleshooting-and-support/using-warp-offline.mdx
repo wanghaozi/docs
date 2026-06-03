@@ -1,0 +1,32 @@
+---
+title: 离线使用 Warp
+description: >-
+  离线使用 Warp 以及支持哪些功能。
+---
+
+首次下载并打开 Warp 时，您需要联网进行初始设置。初始设置完成后，Warp 的核心终端功能在离线时也能正常工作，无论您是已登录还是已登出。
+
+要求所有用户（已登录或已登出）在首次访问 Warp 时联网，是为了允许使用 Warp 的 AI 和云功能。当您首次打开应用时，我们会创建一个唯一的用户 ID 来计量 AI 使用量，并将云对象关联到特定账户。如果您选择登出使用 Warp，此唯一 ID 会关联到一个匿名用户账户。
+
+:::note
+当您未连接到互联网，或在网络上阻止了对 `app.warp.dev` 的调用时，Warp 处于"离线"状态。Warp 中没有显式的离线模式。
+:::
+
+### 基于云的功能需要在线访问
+
+Warp 的基于云的功能需要互联网连接，在离线模式下将无法使用。这些功能包括：
+
+* [Warp Drive](/knowledge-and-collaboration/warp-drive/#using-warp-drive-offline)（某些文件在离线模式下可能为只读）
+* [代理](/agent-platform/local-agents/overview/)
+  * [代理模式](/agent-platform/local-agents/interacting-with-agents/)
+  * [生成](/agent-platform/local-agents/overview/)
+  * [AI 自动填充](/knowledge-and-collaboration/warp-drive/workflows/#warp-ai-autofill)
+  * [提示](/knowledge-and-collaboration/warp-drive/prompts/)
+  * [活跃 AI 推荐](/agent-platform/local-agents/active-ai/)
+  * [语音](/agent-platform/local-agents/interacting-with-agents/voice/)
+  * [规则](/agent-platform/capabilities/rules/)
+  * [模型上下文协议](/agent-platform/capabilities/mcp/)
+* [团队](/knowledge-and-collaboration/teams/)
+* [会话共享](/knowledge-and-collaboration/session-sharing/)
+* [块共享](/terminal/blocks/block-sharing/)
+* [推荐好友](/support-and-community/community/refer-a-friend/)

@@ -1,0 +1,262 @@
+---
+title: 发送反馈和日志
+description: >-
+  发送 Warp 反馈、错误报告和功能请求，并收集日志、崩溃报告、CPU 样本和 AI 对话 ID 附在其中。
+sidebar:
+  label: "发送反馈和日志"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+### 发送 Warp 反馈
+
+* 在 Warp 中使用 [`/feedback`](#using-feedback-in-warp) 斜杠命令打开静态反馈体验。
+* 在我们的 [GitHub 仓库](https://github.com/warpdotdev/warp/issues/new/choose)中打开新的错误或功能请求。
+* 加入我们的 [Warp 社区 Slack](https://go.warp.dev/join-preview)，在 **#feedback-general** 中分享反馈，如果与 [Warp Preview](/support-and-community/community/warp-preview-and-alpha-program/) 相关则在 **#feedback-preview** 中分享。
+* 安全问题或疑问，请发送邮件至 [security@warp.dev](mailto:security@warp.dev)。
+* 隐私相关问题，请发送邮件至 [privacy@warp.dev](mailto:privacy@warp.dev)。
+
+#### 订阅者和企业
+
+* 订阅者技术问题或疑问（错误、积分等），请发送邮件至 [support@warp.dev](mailto:support@warp.dev)。
+* 订阅者账单问题或疑问（退款、取消等），请发送邮件至 [billing@warp.dev](mailto:billing@warp.dev)。
+* 企业用户，请将所有反馈和问题指向您指定的 Slack 频道。
+
+## 在 Warp 中使用 `/feedback`
+
+`/feedback` [斜杠命令](/agent-platform/capabilities/slash-commands/)是在终端内报告 Warp 错误、标记回归或提交功能请求的最快方式。它打开反馈表单，而不会启动代理对话或消耗积分。
+
+### 应包含的内容
+
+无论您是使用 `/feedback` 斜杠命令还是手动提交问题，一份好的反馈报告都应直接回答以下问题：
+
+* **发生了什么？** 用一两句话描述观察到的行为。
+* **您期望什么？** 描述您期望的行为。
+* **如何复现？** 尽可能列出编号步骤。如果您无法可靠地复现问题，也请说明。
+* **您使用的 Warp 版本是什么？** `/feedback` 会自动填写此项；手动报告请从**设置** > **账户**中复制。
+* **日志、截图或对话 ID。** 请参阅下方的[收集 Warp 日志](#gathering-warp-logs)、[在 macOS 上收集崩溃报告](#collecting-crash-reports-on-macos)或[收集 AI 对话 ID](#gathering-ai-conversation-id)。
+
+有关 Warp 中可用命令的完整列表，请参阅[斜杠命令参考](/agent-platform/capabilities/slash-commands/)。
+
+## 收集 Warp 日志
+
+按照下方适用于您平台的说明检索 Warp 的日志。找到日志文件并将其附加到您的 GitHub Issue 或邮件中。
+
+:::note
+Warp 的日志和崩溃报告_**不**_包含任何控制台输入或输出。更多关于我们如何处理[崩溃报告和遥测](/support-and-community/privacy-and-security/privacy/#what-telemetry-data-are-you-collecting-and-why)的信息。
+:::
+
+<Tabs>
+  <TabItem label="macOS">
+    Warp 日志文件位于 `~/Library/Logs/`。
+
+    **macOS 上的 Warp 日志**
+
+    运行以下命令将 Warp 日志压缩到桌面：
+
+    ```bash
+    zip -j ~/Desktop/warp-logs.zip ~/Library/Logs/warp.log*
+    ```
+
+    **macOS 上的 Warp Preview 日志**
+
+    运行以下命令将 Warp Preview 日志压缩到桌面：
+
+    ```bash
+    zip -j ~/Desktop/warp_preview-logs.zip ~/Library/Logs/warp_preview.log*
+    ```
+
+    :::caution
+    如果您的问题是图形相关（例如窗口不显示）或崩溃，请使用以下命令运行 Warp 以捕获更多日志信息：
+
+    ```bash
+    # 如果 macOS 上安装了 Warp
+    RUST_LOG=wgpu_core=info,wgpu_hal=info /Applications/Warp.app/Contents/MacOS/stable
+
+    # 如果 macOS 上安装了 Warp Preview
+    RUST_LOG=wgpu_core=info,wgpu_hal=info /Applications/WarpPreview.app/Contents/MacOS/preview
+    ```
+    :::
+  </TabItem>
+  <TabItem label="Windows">
+    Warp 日志文件位于 `$env:LOCALAPPDATA\warp\Warp\data\logs\`。
+
+    **Windows 上的 Warp 日志**
+
+    关闭 Warp 并从另一个终端运行以下命令将日志压缩到桌面：
+
+    ```powershell
+    Compress-Archive -Path "$env:LOCALAPPDATA\warp\Warp\data\logs\warp.log*" -DestinationPath "$([Environment]::GetFolderPath('Desktop'))\warp-logs.zip"
+    ```
+
+    **Windows 上的 Warp Preview 日志**
+
+    关闭 Warp Preview 并从另一个终端运行以下命令将日志压缩到桌面：
+
+    ```powershell
+    Compress-Archive -Path "$env:LOCALAPPDATA\warp\WarpPreview\data\logs\warp_preview.log*" -DestinationPath "$([Environment]::GetFolderPath('Desktop'))\warp_preview-logs.zip"
+    ```
+
+    :::caution
+    如果您的问题是图形相关（例如窗口不显示）或崩溃，请使用以下命令运行 Warp 以捕获更多日志信息：
+
+    ```powershell
+    # 如果 Windows 上 Warp 是为单个用户安装的
+    $env:RUST_LOG="wgpu_core=info,wgpu_hal=info"; & "$env:LOCALAPPDATA\Programs\Warp\warp.exe"
+
+    # 如果 Windows 上 Warp 是为所有用户安装的
+    $env:RUST_LOG="wgpu_core=info,wgpu_hal=info"; & "$env:PROGRAMFILES\Warp\warp.exe"
+
+    # 如果 Windows 上 Warp Preview 是为单个用户安装的
+    $env:RUST_LOG="wgpu_core=info,wgpu_hal=info"; & "$env:LOCALAPPDATA\Programs\WarpPreview\preview.exe"
+
+    # 如果 Windows 上 Warp Preview 是为所有用户安装的
+    $env:RUST_LOG="wgpu_core=info,wgpu_hal=info"; & "$env:PROGRAMFILES\WarpPreview\preview.exe"
+    ```
+    :::
+  </TabItem>
+  <TabItem label="Linux">
+    Warp 日志文件位于 `~/.local/state/warp-terminal/`。
+
+    **Linux 上的 Warp 日志**
+
+    运行以下命令将 Warp 日志压缩到主目录：
+
+    ```bash
+    (cd ~/.local/state/warp-terminal && tar -czf ~/warp-logs.tar.gz warp.log*)
+    ```
+
+    **Linux 上的 Warp Preview 日志**
+
+    运行以下命令将 Warp Preview 日志压缩到主目录：
+
+    ```bash
+    (cd ~/.local/state/warp-terminal-preview && tar -czf ~/warp_preview-logs.tar.gz warp_preview.log*)
+    ```
+
+    :::caution
+    如果您的问题是图形相关（例如窗口不显示）或崩溃，请使用以下命令运行 Warp 以捕获更多日志信息：
+
+    ```bash
+    # 如果 Linux 上安装了 Warp
+    RUST_LOG=wgpu_core=info,wgpu_hal=info MESA_DEBUG=1 EGL_LOG_LEVEL=debug warp-terminal
+
+    # 如果 Linux 上安装了 Warp Preview
+    RUST_LOG=wgpu_core=info,wgpu_hal=info MESA_DEBUG=1 EGL_LOG_LEVEL=debug warp-terminal-preview
+    ```
+    :::
+  </TabItem>
+</Tabs>
+
+## 在 macOS 上收集崩溃报告
+
+如果 Warp 崩溃，macOS 可能会在 `~/Library/Logs/DiagnosticReports/` 中生成 `.ips` 崩溃报告文件。运行以下命令将所有 Warp 崩溃报告收集到桌面的 zip 文件中：
+
+```bash
+files=$(find ~/Library/Logs/DiagnosticReports -name "*.ips" -exec grep -l "dev\.warp" {} + 2>/dev/null) && [ -n "$files" ] && echo "$files" | xargs zip -j ~/Desktop/warp-crash-logs.zip || echo "未找到 Warp 崩溃报告。"
+```
+
+将生成的 `warp-crash-logs.zip` 附加到您的[错误报告](/support-and-community/troubleshooting-and-support/sending-us-feedback/#sending-warp-feedback)中。
+
+:::note
+此命令会在崩溃报告文件中搜索 Warp 的包标识符，因此它适用于所有 Warp 渠道（Stable、Preview）。
+:::
+
+## 在 Windows 上收集调试信息
+
+有时，Warp 团队可能会要求您在 Windows 操作系统上提供调试信息，特别是以下之一：
+
+```powershell
+# 如果 Warp 在 PATH 中，运行：
+warp --dump-debug-info
+
+# 否则您可能需要使用绝对路径，并且...
+# Windows 上 Warp 是为单个用户安装的，运行：
+& $env:LOCALAPPDATA\programs\Warp\warp.exe --dump-debug-info
+
+# Windows 上 Warp 是为所有用户安装的，运行：
+& $env:PROGRAMFILES\Warp\warp.exe --dump-debug-info
+```
+
+## 收集 CPU 样本
+
+某些情况可能导致 Warp 使用比预期更多的 CPU 或无响应。在问题发生时收集 CPU 样本是报告问题的最佳方式。样本提供了 Warp 团队识别和修复根本原因所需的信息。
+
+按照适用于您平台的步骤收集样本，并将其附加到新的 [GitHub Issue](https://github.com/warpdotdev/warp/issues/new/choose) 中。
+
+<Tabs>
+  <TabItem label="macOS">
+    1. 在 Warp 中复现高 CPU 使用或无响应的情况。
+    2. 在问题发生时，打开**活动监视器**，选择 **Warp** 进程，然后点击**采样进程**。
+
+    <figure>
+    ![在活动监视器中采样 Warp 进程](../../../../../assets/support-and-community/activity-monitor-sample-process.png)
+    <figcaption>在活动监视器中采样 Warp 进程。</figcaption>
+    </figure>
+
+    3. 保存生成的样本并附加到您的 GitHub Issue 中。
+  </TabItem>
+  <TabItem label="Windows">
+    安装 [`samply`](https://github.com/mstange/samply) 以记录 CPU 跟踪：
+
+    ```powershell
+    powershell -ExecutionPolicy Bypass -c "irm https://github.com/mstange/samply/releases/download/samply-v0.13.1/samply-installer.ps1 | iex"
+    ```
+
+    1. 查找 Warp 进程 ID：
+
+       ```powershell
+       Get-Process *warp*
+       ```
+
+    2. 开始记录，将 `<PID>` 替换为上一步的进程 ID：
+
+       ```powershell
+       samply record -p <PID>
+       ```
+
+    3. 复现导致高 CPU 使用或无响应的问题。
+    4. 按 `Ctrl+C` 停止记录。`samply` 会在浏览器中的 Firefox Profiler 中打开配置文件。点击右上角的上传图标生成可共享的链接，然后粘贴到您的 GitHub Issue 中。
+  </TabItem>
+  <TabItem label="Linux">
+    安装 [`samply`](https://github.com/mstange/samply) 以记录 CPU 跟踪：
+
+    ```bash
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/mstange/samply/releases/download/samply-v0.13.1/samply-installer.sh | sh
+    ```
+
+    :::caution
+    `samply` 需要访问 Linux perf 事件。如果收到权限错误，请运行：
+
+    ```bash
+    echo '-1' | sudo tee /proc/sys/kernel/perf_event_paranoid
+    ```
+    :::
+
+    1. 开始记录 Warp 进程：
+
+       ```bash
+       samply record -p $(pgrep -f warp-terminal)
+       ```
+
+    2. 复现导致高 CPU 使用或无响应的问题。
+    3. 按 `Ctrl+C` 停止记录。`samply` 会在浏览器中的 Firefox Profiler 中打开配置文件。点击右上角的上传图标生成可共享的链接，然后粘贴到您的 GitHub Issue 中。
+
+    :::note
+    如果您不想安装 `samply`，可以使用内置的 `perf` 工具代替：
+
+    ```bash
+    perf record -g -p $(pgrep -f warp-terminal) -- sleep 30
+    ```
+
+    将当前目录中生成的 `perf.data` 文件附加到您的 GitHub Issue 中。
+    :::
+  </TabItem>
+</Tabs>
+
+## 收集 AI 对话 ID
+
+要收集对话 ID，**右键点击**相关 AI 对话块并选择"复制对话 ID"，然后将其粘贴到您提交的[错误报告](/support-and-community/troubleshooting-and-support/sending-us-feedback/#sending-warp-feedback)中，以便我们的团队可以调查问题。
+
+每当代理对话中出现错误时，也会有一个选项可以直接复制错误报告的对话 ID。
+
+![代理模式错误消息，带有发送反馈按钮以及包含请求和对话 ID 的调试信息](../../../../../assets/support-and-community/send-feedback-debugging-information.png)

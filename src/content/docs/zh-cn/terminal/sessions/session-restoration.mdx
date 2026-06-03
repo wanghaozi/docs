@@ -1,0 +1,94 @@
+---
+title: 会话恢复
+description: >-
+  重新启动 Warp 时自动恢复您的窗口、标签、窗格和最近的块。
+sidebar:
+  label: "会话恢复"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## 什么是会话恢复
+
+会话恢复允许您快速从上一个终端会话中断的地方继续。
+
+## 如何访问会话恢复
+
+* 会话恢复在 Warp 中默认启用。
+
+:::note
+在 Linux 上，Wayland 不支持在特定位置打开窗口。
+:::
+
+* 您可以通过前往 **设置** > **功能**，然后关闭 `启动时恢复窗口、标签和窗格` 来禁用会话恢复。
+
+:::caution
+关闭会话恢复不会清除 [SQLite 数据库](/terminal/sessions/session-restoration/#session-restoration-database)；但是，Warp 将停止记录新的输出。
+:::
+
+## 会话恢复的工作原理
+
+<DemoVideo src="/assets/terminal/sessions-block_restoration.mp4" label="会话恢复演示" />
+
+#### 会话恢复数据库
+
+Warp 将上一个会话的窗口、标签和窗格数据保存到计算机上的 SQLite 数据库中，每次退出应用程序时，这些数据都会被您的最新会话覆盖。您可以像这样直接打开数据库并检查其全部内容：
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    sqlite3 "$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    sqlite3 $env:LOCALAPPDATA\warp\Warp\data\warp.sqlite
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    sqlite3 "${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/warp.sqlite"
+    ```
+  </TabItem>
+</Tabs>
+
+**如何清除会话恢复数据库**
+
+有时，您可能希望阻止敏感块保存在您的计算机上，或者您可能希望完全清除机器上的块。
+
+:::note
+这会干扰正在运行的会话保存内容的能力，并且可能需要您在运行数据库删除命令之前关闭 Warp。
+:::
+
+:::danger
+以下指南具有破坏性，将删除任何会话和块历史。
+:::
+
+有两种方法可以做到这一点：
+
+<Tabs>
+  <TabItem label="macOS">
+    * 使用 `CMD-K` 清除正在运行的 Warp 会话中的块。
+    * 使用以下命令完全删除 SQLite 文件：
+
+    ```bash
+    rm -f "$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/warp.sqlite"
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    * 使用 `CTRL-SHIFT-K` 清除正在运行的 Warp 会话中的块。
+    * 使用以下命令完全删除 SQLite 文件：
+
+    ```powershell
+    Remove-Item -Force $env:LOCALAPPDATA\warp\Warp\data\warp.sqlite
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    * 使用 `CTRL-SHIFT-K` 清除正在运行的 Warp 会话中的块。
+    * 使用以下命令完全删除 SQLite 文件：
+
+    ```bash
+    rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/warp.sqlite"
+    ```
+  </TabItem>
+</Tabs>

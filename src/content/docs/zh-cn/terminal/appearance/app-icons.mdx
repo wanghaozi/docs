@@ -1,0 +1,60 @@
+---
+title: 自定义应用图标
+description: >-
+  从内置应用图标调色板中选择，自定义 Warp 在 macOS 上的 Dock 外观。
+---
+import ImageGrid from '@components/ImageGrid.astro';
+import ImageGridItem from '@components/ImageGridItem.astro';
+import iconDefault from '../../../../../assets/terminal/moody-dev-default-icon.png';
+import iconWarp1 from '../../../../../assets/terminal/default-icon.png';
+import iconAurora from '../../../../../assets/terminal/aurora-icon.png';
+import iconClassic1 from '../../../../../assets/terminal/classic1-icon.png';
+import iconClassic2 from '../../../../../assets/terminal/classic2-icon.png';
+import iconClassic3 from '../../../../../assets/terminal/classic3-icon.png';
+import iconComets from '../../../../../assets/terminal/comets-icon.png';
+import iconGlassSky from '../../../../../assets/terminal/glass-sky-icon.png';
+import iconGlitch from '../../../../../assets/terminal/glitch-icon.png';
+import iconGlow from '../../../../../assets/terminal/glow-icon.png';
+import iconHolographic from '../../../../../assets/terminal/holographic-icon.png';
+import iconMono from '../../../../../assets/terminal/mono-icon.png';
+import iconNeon from '../../../../../assets/terminal/neon-icon.png';
+import iconOriginal from '../../../../../assets/terminal/original-icon.png';
+import iconStarburst from '../../../../../assets/terminal/starburst-icon.png';
+import iconSticker from '../../../../../assets/terminal/sticker-icon.png';
+
+:::note
+应用图标仅在 Warp for macOS 上可用。此功能不支持自定义 Dock 图标。
+:::
+
+## 如何更改应用图标
+
+* 导航至 **设置** > **外观** > **图标** > **自定义应用图标**
+* 从下拉菜单中选择所需的 Dock 图标
+
+<figure>
+![图标自定义下拉菜单](../../../../../assets/terminal/custom-dock-icon-dropdown.png)
+<figcaption>图标自定义下拉菜单。</figcaption>
+</figure>
+
+## Dock 图标
+
+默认情况下，Warp 附带了以下 Dock 图标：
+
+<ImageGrid>
+  <ImageGridItem src={iconDefault} label="默认" />
+  <ImageGridItem src={iconWarp1} label="Warp 1.0" />
+  <ImageGridItem src={iconAurora} label="极光" />
+  <ImageGridItem src={iconClassic1} label="经典 1" />
+  <ImageGridItem src={iconClassic2} label="经典 2" />
+  <ImageGridItem src={iconClassic3} label="经典 3" />
+  <ImageGridItem src={iconComets} label="彗星" />
+  <ImageGridItem src={iconGlassSky} label="玻璃天空" />
+  <ImageGridItem src={iconGlitch} label="故障" />
+  <ImageGridItem src={iconGlow} label="辉光" />
+  <ImageGridItem src={iconHolographic} label="全息" />
+  <ImageGridItem src={iconMono} label="单色" />
+  <ImageGridItem src={iconNeon} label="霓虹" />
+  <ImageGridItem src={iconOriginal} label="原始" />
+  <ImageGridItem src={iconStarburst} label="星爆" />
+  <ImageGridItem src={iconSticker} label="贴纸" />
+</ImageGrid>

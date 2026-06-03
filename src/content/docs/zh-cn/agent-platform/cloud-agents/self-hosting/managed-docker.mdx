@@ -1,0 +1,44 @@
+---
+title: 托管：Docker 后端
+description: >-
+  使用 Docker 后端运行 Oz 托管 worker 守护进程，以在您的隔离容器中执行云 Agent 任务。
+sidebar:
+  label: "托管：Docker"
+---
+
+使用 **Docker 后端**运行 `oz-agent-worker` 守护进程——默认的托管路径。每个 Agent 任务在由 worker 生成的隔离 Docker 容器中运行，由 Oz 完全编排（Slack、Linear、计划、API、`oz agent run-cloud`）。
+
+## 前提条件
+
+* 启用自托管的 Enterprise 计划
+* 运行 worker 的机器（推荐 Linux）
+* 已安装 Docker
+* 团队 API 密钥
+
+## 安装并运行 worker
+
+### 选项 1：Docker（推荐）
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/docker.sock \
+  -e WARP_API_KEY="$WARP_API_KEY" \
+  warpdotdev/oz-agent-worker --worker-id "my-worker"
+```
+
+### 选项 2：Go install
+
+```bash
+go install github.com/warpdotdev/oz-agent-worker@latest
+oz-agent-worker --api-key "$WARP_API_KEY" --worker-id "my-worker"
+```
+
+## Docker 后端配置
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/docker.sock \
+  -e WARP_API_KEY="$WARP_API_KEY" \
+  warpdotdev/oz-agent-worker \
+  --worker-id "prod-runner-1" \
+  --log-level debug \
+  --max-concurrent-tasks 4
+```

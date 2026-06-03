@@ -1,0 +1,38 @@
+---
+title: 自托管故障排除
+description: >-
+  诊断和修复 Docker、Kubernetes 和 Direct 后端自托管 Oz worker 守护进程的常见问题。
+sidebar:
+  label: "故障排除"
+---
+
+`oz-agent-worker` 守护进程及其任务执行的诊断指南。当 worker 无法启动、无法连接、任务保持排队或任务失败时使用此页面。
+
+## Worker 无法启动
+
+### Docker 后端 — 检查 Docker 是否运行，确认守护进程平台为 linux/amd64 或 linux/arm64
+### Kubernetes 后端 — 检查启动预检 Job，确认 RBAC 权限，确认允许 root init 容器
+### Direct 后端 — 确认 Oz CLI 已安装且在 PATH 上
+
+## Worker 无法连接
+
+确认 API 密钥有效、未过期并具有团队作用域。确保主机可以出站访问 `oz.warp.dev:443`。
+
+## 任务未被拾取
+
+确认 worker 正在运行且已连接。验证 `--host` 值与 worker 的 `--worker-id` 完全匹配。
+
+## 指标未出现
+
+验证在 worker 进程上正确设置了 `OTEL_METRICS_EXPORTER`。确认 Prometheus 抓取模式中的绑定地址为 `0.0.0.0`。
+
+## 任务失败
+
+检查所有后端：
+1. 在 Oz 仪表板中审查任务日志
+2. 使用 `--no-cleanup` 保留容器/Job/工作区
+3. 使用 `--log-level debug` 查看详细日志
+
+### Docker 后端 — 确认使用基于 glibc 的镜像（非 Alpine）
+### Kubernetes 后端 — 检查 Job 和 Pod 状态，确认 pod_template 中的资源
+### Direct 后端 — 验证 Oz CLI 可访问，验证工作区根目录写入权限

@@ -1,0 +1,59 @@
+---
+title: invalid_request
+description: >-
+  请求体格式错误、缺少必填字段或包含无效的参数值。
+---
+
+`invalid_request` 错误发生在 API 请求格式错误或包含无效参数时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `400 错误请求`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 请求体中缺少必填字段（例如 `prompt` 或 `schedule_id`）
+* 参数值无效或超出范围
+* 请求体无法解析（JSON 格式错误）
+* 引用的标识符格式错误
+* 团队拥有的任务引用了个人环境（团队任务需要团队范围的环境）
+
+响应中的 `detail` 字段将描述具体的验证问题。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/invalid-request/",
+  "title": "请求包含无效或缺失的参数。",
+  "status": 400,
+  "detail": "schedule_id 是必需的",
+  "instance": "/api/v1/agent/tasks",
+  "error": "请求包含无效或缺失的参数。(schedule_id 是必需的)",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 检查 `detail` 字段以了解具体的验证问题。
+2. 根据 [API 文档](/reference/api-and-sdk/) 更正请求参数。
+3. 重试请求。
+
+---
+
+## 相关
+
+* [Oz API & SDK](/reference/api-and-sdk/) — API 请求格式和参数

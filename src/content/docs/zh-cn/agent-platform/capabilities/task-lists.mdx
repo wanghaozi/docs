@@ -1,0 +1,45 @@
+---
+title: Agent 任务列表
+description: >-
+  使用自动任务列表跟踪和管理复杂的 Agent 工作流，可将请求分解为清晰、可操作的步骤并实时更新进度。
+---
+
+任务列表让 Warp 的 agent 自动将复杂请求分解为清晰、可跟踪的步骤。当请求需要多个操作时，agent 创建结构化列表，按顺序执行每个步骤，并实时跟踪进度。无需配置——agent 会自动检测并创建任务列表。
+
+<figure>
+![一个进行中的任务列表示例。](../../../../../assets/agent-platform/in-progress-tasklist.png)
+<figcaption>一个进行中的任务列表示例。</figcaption>
+</figure>
+
+### 任务列表如何工作
+
+1. **自动任务创建** — 对于复杂请求，Agent 生成要完成的结构化任务列表。
+2. **逐步执行** — Agent 按顺序处理每个任务，实时更新状态。
+3. **摘要** — 所有任务完成后，Agent 提供已完成内容的简明摘要，包括输出、结果和相关上下文。如果有任何任务被跳过或无法完成，它会解释原因。
+
+每个步骤完成后，Agent 对话中还有一个完成标记。
+
+<figure>
+![每个任务完成后 Agent 对话中的完成标记。](../../../../../assets/agent-platform/completion-markers.png)
+<figcaption>对话中的任务完成标记。</figcaption>
+</figure>
+
+### 任务状态
+
+列表中的每个任务都有一个视觉指示器，以便您快速查看其进度。
+
+<table><thead><tr><th width="145.5">状态</th><th width="186.2265625">图标</th><th>含义</th></tr></thead><tbody><tr><td>当前任务</td><td>●（实心圆）</td><td>Agent 正在积极处理此任务。</td></tr><tr><td>已完成</td><td>✔︎</td><td>Agent 已成功完成此任务。</td></tr><tr><td>未开始</td><td>○（空心圆）</td><td>任务在队列中，但尚未开始工作。</td></tr><tr><td>已取消</td><td>■（实心方块）</td><td>任务在完成前被停止。</td></tr></tbody></table>
+
+![任务列表弹出窗口显示 4/6 任务已完成，每个步骤带有状态指示器](../../../../../assets/agent-platform/tasklist-small.png)
+
+### 任务列表访问
+
+在任何 Agent 对话期间，屏幕右下角会出现一个任务列表芯片（当输入固定在底部时；否则可能出现在右侧）。
+
+* 点击芯片以打开当前任务列表。
+* 您可以随时折叠或展开视图，不会中断 Agent。
+
+<figure>
+![在 Agent 对话中访问任务列表，通过对话中的任务列表芯片。](../../../../../assets/agent-platform/tasklist-popup.png)
+<figcaption>Agent 对话中的任务列表芯片。</figcaption>
+</figure>

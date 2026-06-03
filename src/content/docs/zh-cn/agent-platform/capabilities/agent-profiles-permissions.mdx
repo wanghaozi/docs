@@ -1,0 +1,141 @@
+---
+title: "配置文件与权限"
+description: >-
+  Agent 配置文件让您自定义 Agent 的行为，从模型和自主性到其可以使用的工具和权限。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Agent 配置文件让您配置 Warp 的 agent 在不同情况下的行为，包括自主级别、基础模型、工具访问和命令权限。为不同工作流程创建多个配置文件，控制哪些命令自动运行，并为每个配置文件设置 MCP 服务器访问规则。
+
+## Agent 配置文件
+
+Agent 配置文件让您配置 Agent 在不同情况下的行为。每个配置文件定义 Agent 的自主性、基础模型和工具访问。您可以创建多个配置文件，并直接在**设置** > **Agent** > **配置文件**中编辑它们。
+
+* **默认配置文件**：每个用户都从一个默认配置文件开始，您可以随时编辑它，新配置文件将复制其设置作为起点。
+* **其他配置文件**：为不同工作流程设置不同的配置文件（例如，"安全谨慎模式"、"YOLO 模式"等）。在配置文件设置菜单中管理它们。
+
+<figure>
+![设置中的 Agent 配置文件：定义 Agent 的运行方式。](../../../../../assets/agent-platform/agent-profiles.png)
+<figcaption>Agent 配置文件设置。</figcaption>
+</figure>
+
+**在每个 Agent 配置文件中，您可以配置：**
+
+* 配置文件的名称
+* **基础模型**：Agent 的核心引擎。它处理大多数交互，并在需要时调用其他模型（例如用于代码生成）。默认情况下，此模型也用于[规划](/agent-platform/capabilities/planning/)，不过您可以配置单独的规划模型。
+* Agent 自主性和权限
+
+<figure>
+![设置中的 Agent 配置文件：编辑配置文件。](../../../../../assets/agent-platform/agent-profiles-settings.png)
+<figcaption>编辑 Agent 配置文件。</figcaption>
+</figure>
+
+## Agent 权限
+
+Agent 权限让您定义特定配置文件中的 Agent 如何操作——控制其自主性，选择其可以访问哪些工具或 MCP 服务器，并设置何时应独立行动或请求批准。
+
+:::caution
+**仍然收到批准提示？** 如果 Agent 继续请求运行某些命令（如 `curl`、`rm` 或 `wget`）的权限，即使您已将权限设置为"始终允许"，请检查**设置** > **Agent** > **配置文件**中的**命令拒绝列表**。拒绝列表始终优先于其他权限设置。将命令从拒绝列表中移除以允许它们自动执行，或使用[运行至完成](#run-until-completion)绕过当前任务的拒绝列表。
+:::
+
+您可以在**设置** > **Agent** > **配置文件** > **权限**下控制 Agent 在执行不同类型操作时的自主程度。Agent 权限类型：
+
+* 应用代码差异
+* 读取文件
+* 创建计划
+* 执行命令
+* 与正在运行的命令交互（通过[完整终端使用](/agent-platform/capabilities/full-terminal-use/)）
+
+<div align="center">![精细控制 agent：此权限面板让用户自定义 Agent 在应用代码差异、读取文件、创建计划和执行命令时的自主程度。](../../../../../assets/agent-platform/agent-permissions-with-full-terminal-use.png)</div>
+
+**每个权限有不同的自主级别：**
+
+<table><thead><tr><th width="196.3369140625">自主级别</th><th>描述</th></tr></thead><tbody><tr><td>Agent 决定</td><td>Agent 在自信时自主行动，但在不确定时提示请求批准。此选项平衡了速度与控制，允许 Agent 继续处理常见工作流程，同时在更复杂或风险较高的步骤中让您参与。</td></tr><tr><td>始终询问</td><td>Agent 在执行任何操作前将请求明确用户批准。对于敏感操作选择此选项。</td></tr><tr><td>始终允许</td><td>Agent 将执行操作而无需请求明确确认。用于您完全信任 Agent 自行处理的任务。</td></tr><tr><td>从不</td><td>Agent 永远不会执行该操作（例如创建计划）。</td></tr></tbody></table>
+
+:::note
+对于**应用代码差异**，`Agent 决定`当前行为与`始终询问`相同——Agent 始终提示您在应用前审查差异。只有`始终允许`会跳过审查提示。
+
+当所有 Agent 权限设置为**始终允许**时，Agent 获得完全自主权（"YOLO 模式"）；但任何拒绝列表规则仍将覆盖这些设置。
+:::
+
+### 命令允许列表
+
+Agent 让您定义一个允许列表，其中包含自动运行而无需确认的命令。默认情况下为空，但用户经常添加只读命令，例如：
+
+* `which .*` - 查找可执行文件位置
+* `ls(\s.*)?` - 列出目录内容
+* `grep(\s.*)?` - 搜索文件内容
+* `find .*` - 搜索文件
+* `echo(\s.*)?` - 打印文本输出
+
+您可以在**设置** > **Agent** > **配置文件** > **命令允许列表**中向此列表添加自己的正则表达式。允许列表中的命令始终自动执行，即使它们不是只读操作。
+
+<figure>
+![作为 Agent 配置文件一部分的命令允许列表和拒绝列表。](../../../../../assets/agent-platform/agent-profiles-allow-and-denylists.png)
+<figcaption>作为 Agent 配置文件一部分的命令允许列表和拒绝列表。</figcaption>
+</figure>
+
+### 命令拒绝列表
+
+为安全起见，Agent 在执行潜在风险命令前始终提示确认。默认拒绝列表包含几个示例，例如：
+
+* `wget(\s.*)?` - 网络下载
+* `curl(\s.*)?` - 网络请求
+* `rm(\s.*)?` - 文件删除
+* `eval(\s.*)?` - Shell 代码执行
+
+拒绝列表优先于允许列表和 `Agent 决定`。如果命令匹配拒绝列表，始终需要用户权限，无论其他设置如何。您可以在**设置** > **Agent** > **配置文件** > **命令拒绝列表**中向此列表添加自己的正则表达式。
+
+### MCP 权限
+
+MCP 服务器让您通过标准化的插件式模块使用自定义工具和数据源扩展 Agent。
+
+在此设置菜单中，您可以配置允许 Agent 调用的 MCP 服务器：
+
+* 使用 **MCP 允许列表**授予 Agent 无需询问即可调用特定服务器的权限。
+* 使用 **MCP 拒绝列表**要求调用某些服务器前获得批准，即使它们也在允许列表中。
+* 或将 Agent 设置为"决定"——它在自信时自主行动，在不自信时请求确认。
+
+<figure>
+![通过在"Agent 决定"、允许列表或拒绝列表设置之间进行选择，自定义 Agent 与 MCP 服务器的交互方式。](../../../../../assets/agent-platform/MCP_servers_agent_permissions.png)
+<figcaption>Agent 配置文件中的 MCP 服务器交互设置。</figcaption>
+</figure>
+
+:::note
+要了解如何构建和配置自己的 MCP 服务器，请查看 [MCP 功能文档](/agent-platform/capabilities/mcp/)。
+:::
+
+## 运行至完成
+
+在 Agent 交互期间，您可以为当前任务赋予 Agent 完全自主权。当自动批准开启时，每个建议的命令立即执行，直到任务完成，或您使用 `Ctrl + C` 停止。
+
+<Tabs>
+  <TabItem label="macOS">
+    自动批准所有 Agent 操作：`CMD + SHIFT + I`
+  </TabItem>
+  <TabItem label="Windows">
+    自动批准所有 Agent 操作：`CTRL + SHIFT + I`
+  </TabItem>
+  <TabItem label="Linux">
+    自动批准所有 Agent 操作：`CTRL + SHIFT + I`
+  </TabItem>
+</Tabs>
+
+<figure>
+![右下角的一个按钮覆盖层让您可以启用自动批准或结束 Agent 交互。](../../../../../assets/agent-platform/run-until-completion.png)
+<figcaption>自动批准和接管控制。</figcaption>
+</figure>
+
+:::note
+_运行至完成_完全忽略拒绝列表。这是"YOLO"模式最纯粹的形式，本质上是 Agent 无需请求确认即可继续操作的完全"自主模式"。
+:::
+
+---
+
+## 后续步骤
+
+配置好 agent 的运行方式后，尝试给它一个更大的任务来规划和执行。
+
+* **[规划](/agent-platform/capabilities/planning/)** - 将复杂任务分解为结构化的可执行计划，agent 逐步执行。
+* **[代码差异](/agent-platform/local-agents/code-diffs/)** - 审查、优化和应用 agent 生成的代码更改。
+* **[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)** - 在 agent 生成的差异上留下内联评论，让 agent 处理您的反馈。

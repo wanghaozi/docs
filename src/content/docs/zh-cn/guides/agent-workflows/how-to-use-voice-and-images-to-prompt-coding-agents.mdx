@@ -1,0 +1,119 @@
+---
+title: 使用语音和图像提示编码代理
+description: >-
+  在 Warp 中使用语音和图像上下文更快地提示编码代理——适用于 Claude Code、Codex 和任何 CLI 代理。
+sidebar:
+  label: "使用语音和图像提示编码代理"
+tags:
+  - "agents"
+
+---
+
+为编码代理输入详细的提示词可能很慢。从截图中描述错误、口述复杂的重构计划或从设计稿中解释 UI 变化，这些任务使用语音和图像比纯文本更快。本指南展示了如何在 Warp 中使用多模态输入与任何 CLI 编码代理配合，约需 5 分钟。
+
+## 先决条件
+
+* **Warp**——语音和图像输入内置于 Warp 的代理界面中。从 [warp.dev](https://www.warp.dev) 下载。
+* **一个 CLI 编码代理**——语音和图像输入适用于任何受支持的代理：[Claude Code](/guides/external-tools/how-to-set-up-claude-code/)、[Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/)、OpenCode、Gemini CLI、Amp 或 Droid。完整列表请参阅[第三方 CLI 代理](/agent-platform/cli-agents/overview/)。
+* **一个可用的麦克风**（用于语音）——内置或外接，包括蓝牙音频设备。
+
+## 1. 启用语音输入
+
+语音转录在 Warp 的代理输入中可用。使用方法：
+
+1. 点击输入区域中的**麦克风图标**，或使用语音输入键盘快捷键。
+
+<figure>
+![Warp 输入区域显示用于语音转录的麦克风图标](../../../../../assets/guides/voice-input-microphone.png)
+<figcaption>输入区域中的麦克风图标用于语音转录。</figcaption>
+</figure>
+
+2. 自然地说话输入你的提示词。Warp 会将你的语音转录并将文本放入输入字段。
+3. 检查转录，必要时编辑，然后提交你的提示词。
+
+语音输入适用于 Warp 的内置代理和第三方 CLI 代理（当代理工具栏处于活动状态时）。
+
+:::note
+你可以在 Warp 应用的 **设置** > **代理** > **Warp Agent** > **语音** 中配置语音输入快捷键。默认使用 `fn` 键。
+:::
+
+## 2. 使用语音而非打字输入提示
+
+语音对于容易说但繁琐的提示词最为快捷，例如复杂的描述、多步骤计划或引用你正在查看内容的解释。
+
+尝试这样的提示词：
+
+```
+Refactor the authentication middleware to handle three cases: 
+valid token, expired token, and missing token. For expired tokens, 
+return a 401 with a refresh token hint. For missing tokens, return 
+a 403. Add unit tests for each case.
+```
+
+转录会出现在你的输入字段中，你可以在提交前查看和编辑。
+
+## 3. 附加截图作为上下文
+
+粘贴（`⌘+V`）或拖拽图像直接输入区域，为代理提供视觉上下文。这适用于：
+
+* **错误报告**——截取浏览器中的错误截图，让代理修复它。
+* **设计稿**——粘贴 Figma 截图，让代理实现 UI。
+* **错误消息**——截取堆栈跟踪截图，而不是复制和重新格式化。
+* **视觉差异**——向代理展示 UI 现在的样子与应有的样子。
+
+<figure>
+![Warp 输入区域中作为上下文附加的图像，旁边是文本提示](../../../../../assets/guides/image-as-context.png)
+<figcaption>以图像作为代理上下文。</figcaption>
+</figure>
+
+## 4. 结合语音和图像实现设计到代码的工作流
+
+多模态输入最强大的用途是结合语音和图像。例如：
+
+1. 从 Figma 截取设计稿的截图。
+2. 将其粘贴到输入区域。
+3. 使用语音描述你想要的内容：
+
+```
+This is the login page design. Implement it using React and Tailwind. 
+Match the spacing and colors exactly. The form should validate email 
+format on blur and show inline error messages.
+```
+
+代理同时看到设计并听到你的实现要求——比手动编写详细规范快得多。
+
+## 5. 将语音和图像与第三方代理配合使用
+
+语音和图像输入适用于 Warp 检测到的任何 CLI 代理，而不仅仅是内置代理。当你运行 Claude Code、Codex 或其他受支持的代理时，Warp 会显示带有语音、图像和文件控件的**代理工具栏**。
+
+与第三方代理一起使用：
+
+1. 在终端中启动代理（例如 `claude` 或 `codex`）。
+2. 当 Warp 检测到代理会话时，代理工具栏会自动出现。
+3. 使用麦克风图标进行语音输入或粘贴图像作为上下文。
+4. 按 `Ctrl+G` 打开富文本输入编辑器，用于编写带有附加图像的复杂提示词。
+
+语音转录和图像上下文会发送到正在运行的代理会话，就像你手动输入和粘贴一样。
+
+:::note
+如果看不到工具栏，请确保你使用的是最新版 Warp，并且代理在 Warp 内部运行（而非外部终端）。
+:::
+
+## 生产力技巧
+
+* **使用语音提供代码审查反馈**——与其输入内联评论，不如在查看[代码审查面板](/code/code-review/)中的差异时使用语音描述需要更改的内容。
+* **截取 UI 问题截图**——当你想更改 UI 组件时，只需截图、发送给代理，并描述你想要更改的内容。
+* **口述提交信息**——审查更改后，使用语音描述你做了什么。代理可以将其格式化为合适的提交信息。
+* **与规则配合使用以获得一致的结果**——将图像上下文与定义项目 UI 模式的[规则](/agent-platform/capabilities/rules/)结合。代理将在遵循现有设计系统的同时匹配设计稿。
+
+## 后续步骤
+
+你现在可以使用语音转录和图像上下文提示编码代理——无论你使用 Claude Code、Codex 还是 Warp 中的任何其他 CLI 代理。语音和图像使复杂提示词的创建更快、更准确，特别适用于设计到代码的工作流、错误复现和多步骤重构计划。
+
+探索相关指南和功能：
+* [设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) 或[设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/) 开始使用第三方代理
+* [如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)——审查代理生成的代码
+* [同时运行多个代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)——将语音/图像提示与并行代理结合
+* [语音输入](/agent-platform/local-agents/interacting-with-agents/voice/)——语音功能的完整参考
+* [图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)——图像输入的完整参考
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和通用功能

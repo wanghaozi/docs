@@ -1,0 +1,17 @@
+---
+title: Warp for Linux
+description: >-
+  特定于 Linux 的功能，包括原生 Wayland 支持和中止恢复。
+---
+
+## 原生 Wayland
+
+Warp Wayland 支持可以在 **设置** > **功能** > **系统** 中启用。如果您的窗口管理器启用了分数缩放，启用 Wayland 支持可能会修复文本模糊的问题。
+
+:::caution
+启用原生 Wayland 后，全局热键支持将被禁用。与 X11 不同，Wayland 协议不公开支持此功能所需的配置。
+:::
+
+## Wayland 中止恢复
+
+启用 Wayland 支持后，Warp 使用自定义中止恢复过程来检测使用 Wayland 时可能发生的任何中止。如果发生中止，Warp 将回退到使用 X11，以允许您继续使用应用程序。

@@ -1,0 +1,138 @@
+---
+title: 通过 MCP 工作流将开发者工具连接到代理
+description: >-
+  使用 MCP 服务器将 Warp 代理连接到开发者工具，如 GitHub、Linear、Sentry 和 Figma，适用于本地和云端代理工作流。
+sidebar:
+  label: "将代理连接到 MCP 服务器"
+tags:
+  - "mcp"
+featured: true
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+<VideoEmbed url="https://www.youtube.com/watch?v=8vn2brhJrF8" />
+
+MCP 服务器让 Warp 代理通过标准接口使用外部工具和数据源。当代理需要读取问题、检查拉取请求、查询事件、获取设计上下文、调用内部 API 或更新终端之外的系统时，添加一个 MCP 服务器。
+
+Warp 在两个地方支持 MCP：
+
+* **Warp 应用中的本地代理**使用在**设置** > **代理** > **MCP 服务器**、Warp Drive 或基于文件的配置中配置的 MCP 服务器。
+* **云端代理**使用通过 Oz CLI、代理配置文件或 Warp 共享的 MCP 服务器 UUID 传递的 MCP 服务器。
+
+使用本指南选择正确的设置路径，然后跳转到源文档查看确切的配置语法。
+
+## 选择本地或云端 MCP
+
+| 工作流 | 何时使用 | MCP 配置方式 | 源文档 |
+| -------- | ----------- | ------------------ | ----------- |
+| 本地 Warp 代理 | 你在 Warp 中交互式工作，希望代理使用你机器上的工具或桌面认证的服务。 | Warp MCP 设置、Warp Drive MCP 服务器、`.warp/.mcp.json` 或提供商配置文件。 | [模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/) |
+| Warp 中的第三方 CLI 代理 | 你在 Warp 中运行 Claude Code、Codex、OpenCode 或其他 CLI 代理，并希望跨工具共享 MCP 配置。 | 基于文件的 MCP 配置，Warp 可以检测并批准。 | [基于文件的 MCP 服务器](/agent-platform/capabilities/mcp/#file-based-mcp-servers) |
+| 云端代理运行 | 代理在云环境中从 Slack、Linear、定时任务、GitHub Actions、CLI 或 API 运行。 | `--mcp`、代理配置文件或 Warp 共享的 MCP UUID。 | [云端代理的 MCP 服务器](/agent-platform/cloud-agents/mcp/) |
+| 可重复的自动化 | 你每次定时代理、集成或 CI 工作流运行时都需要相同的 MCP 工具。 | 代理配置文件加上用于凭据的[代理密钥](/agent-platform/cloud-agents/secrets/)。 | [MCP 服务器（CLI 参考）](/reference/cli/mcp-servers/) |
+
+## 常见的 MCP 工作流
+
+### 将 GitHub 或 Linear 上下文拉入本地编码会话
+
+当你希望交互式代理在 Warp 中工作时理解问题、PR 或工单时，使用本地 MCP。
+
+示例工作流：
+
+1. 在 Warp 应用中，从**设置** > **代理** > **MCP 服务器**添加 GitHub 或 Linear MCP 服务器。
+2. 在仓库中启动一个本地代理对话。
+3. 要求代理获取问题、检查链接的上下文并制定计划。
+4. 在[代码审查面板](/code/code-review/)中审查更改。
+5. 如果队友需要检查代理上下文，使用[代理会话共享](/agent-platform/local-agents/session-sharing/)。
+
+有关设置详情，请参阅[模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/)。
+
+### 让云端代理访问开发者工具
+
+当无人值守或远程代理在远离你的机器运行时需要工具访问权限，使用云端 MCP。
+
+示例工作流：
+
+1. 创建或确定云端代理应使用的 MCP 服务器。
+2. 将所需凭据存储为[代理密钥](/agent-platform/cloud-agents/secrets/)，而不是在配置文件中硬编码令牌。
+3. 使用 `--mcp`、配置文件或 Warp 共享的 MCP UUID 附加 MCP 服务器。
+4. 从 Oz CLI、Slack、Linear、GitHub Actions、定时任务或 API 运行云端代理。
+5. 在 [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)或[云端代理会话共享](/agent-platform/cloud-agents/viewing-cloud-agent-runs/)中检查运行情况。
+
+有关模式和云特定限制，请参阅[云端代理的 MCP 服务器](/agent-platform/cloud-agents/mcp/)。
+
+### 与团队共享 MCP 服务器
+
+当多个队友或工作流需要相同的工具连接时，使用共享的 MCP 服务器。
+
+对于本地代理，从 MCP 设置页面共享服务器。Warp 会擦除敏感的环境值，并在队友安装时提示他们提供自己的值。
+
+对于云端代理，使用 Oz CLI 通过 UUID 引用 Warp 共享的 MCP 服务器：
+
+```sh
+oz mcp list
+```
+
+然后将 UUID 传递给代理运行：
+
+```sh
+oz agent run-cloud --mcp "<MCP_SERVER_UUID>" --prompt "Summarize the latest production incidents"
+```
+
+有关所有 `--mcp` 格式，请参阅 [MCP 服务器（CLI 参考）](/reference/cli/mcp-servers/)。
+
+## 本地 MCP 设置路径
+
+对于本地代理，选择以下路径之一：
+
+* **Warp 设置**——最适合一次性设置和交互式使用。在 Warp 应用中，从**设置** > **代理** > **MCP 服务器**添加服务器。
+* **Warp Drive**——最适合你想作为 Warp Drive 对象管理的 MCP 服务器。
+* **基于文件的配置**——最适合 MCP 配置应与仓库一起存在或跟随你在 Warp、Claude Code、Codex 和其他代理工具之间使用。
+* **`/agent-add-mcp` 技能**——最适合当你希望 Warp 的代理在你的批准下创建或更新 `.warp/.mcp.json`。
+
+基于文件的 MCP 对团队很有用，因为配置可以与项目一起版本化，但它也需要审查。Warp 要求在项目范围的服务器启动之前获得批准，这样克隆的仓库不能静默启动命令。
+
+## 云端 MCP 设置路径
+
+对于云端代理，选择以下路径之一：
+
+* **Warp 共享的 MCP UUID**——最适合服务器已在 Warp 中配置和共享的情况。
+* **内联 JSON**——最适合快速实验。
+* **JSON 文件**——最适合可复用的脚本。
+* **代理配置文件**——最适合生产工作流，其中模型、环境、提示和 MCP 服务器应放在一起。
+
+云端代理在远离你的桌面的环境下运行。MCP 工具所需的任何密钥应通过[代理密钥](/agent-platform/cloud-agents/secrets/)或执行环境在云端运行中可用，而不仅限于你的本地 shell。
+
+:::caution
+基于 OAuth 的 MCP 服务器目前不直接支持云端代理。如果服务器需要基于浏览器的 OAuth，请与本地代理一起使用，如果提供商支持，选择基于令牌/服务器端的配置，或通过其他方式传递相关工件作为上下文。
+:::
+
+## MCP 可以连接的工具示例
+
+Warp 支持许多开发者工具的 MCP 服务器，包括：
+
+* **GitHub**——读取问题、PR、文件和仓库元数据。
+* **Linear**——获取问题、更新工单并基于项目上下文进行推理。
+* **Sentry**——检查错误、追踪和发布上下文。
+* **Figma**——拉取 UI 工作的设计上下文。
+* **Notion**——检索文档、规格和项目笔记。
+* **内部工具**——通过自定义 MCP 服务器暴露你自己的 API。
+
+有关示例配置和演示，请参阅[模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/#mcp-server-configuration-examples)中的 MCP 服务器示例以及[指南页面中列出的 MCP 指南](/guides/)。
+
+## 安全检查清单
+
+在通过 MCP 向代理授予工具访问权限之前：
+
+* 使用能让工作流运行的最窄凭据和范围。
+* 对于团队或计划工作流，优先使用服务账户。
+* 将云端运行凭据存储在[代理密钥](/agent-platform/cloud-agents/secrets/)中。
+* 在批准之前审查基于文件的 MCP 配置，特别是命令、参数、环境变量和 URL。
+* 如果 MCP 日志包含 API 响应、令牌、请求头或私有数据，请将其视为敏感信息。
+* 对于云端代理，确认 MCP 服务器可以从云端环境或自托管的工作节点访问。
+
+## 后续步骤
+
+* [模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/)——在 Warp 应用中为本地代理配置 MCP 服务器。
+* [云端代理的 MCP 服务器](/agent-platform/cloud-agents/mcp/)——为云端运行和自动化配置 MCP 服务器。
+* [MCP 服务器（CLI 参考）](/reference/cli/mcp-servers/)——使用 `--mcp` 配合 UUID、内联 JSON 或文件。
+* [代理密钥](/agent-platform/cloud-agents/secrets/)——存储云端代理运行的凭据。

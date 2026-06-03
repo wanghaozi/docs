@@ -1,0 +1,162 @@
+---
+title: 文件和文件夹位置
+description: >-
+  Warp 在 macOS、Windows 和 Linux 上存储配置、主题、标签配置、设置、键位绑定、日志和其他文件的参考。
+sidebar:
+  label: "文件位置"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+此参考列出了 Warp 在磁盘上读取或写入的每个目录和文件，按平台和 Warp 发布渠道组织。当您想要备份配置、直接编辑文件、调试缺失的设置，或从另一个 shell（例如 [WSL](#symlinking-warps-config-from-wsl)）符号链接 Warp 的配置时使用它。
+
+## Warp 如何组织文件
+
+Warp 将其文件分为三类，每个类别映射到的目录取决于您的平台。了解类别后，您就能明白为什么两个感觉相关的文件（例如主题和设置）在 Windows 和 Linux 上位于不同的根目录，而在 macOS 上位于同一根目录。
+
+* **可移植用户数据** - 您想要复制到新机器的文件，如主题、标签配置、工作流和启动配置。
+* **不可移植配置** - 没有意义进行漫游的仅本地配置，例如 `settings.toml` 和 `keybindings.yaml`。
+* **不可移植状态** - 机器特定的状态，如日志、本地数据库和代码库上下文索引。
+
+此外，一小部分跨领域文件始终位于每个平台上的主目录中——目前是 MCP 服务器配置和捆绑的技能。Stable 和 Preview 共享相同的 `~/.warp/` 目录用于这些文件（Preview **不** 使用 `~/.warp-preview/` 用于 MCP 配置或技能，因此并排安装 Preview 和 Stable 共享相同的 MCP 服务器和技能）。其他发布渠道确实使用渠道后缀目录——例如，`~/.warp-oss/` 用于 OSS。这些文件位于主目录中，便于从 shell 配置、版本控制或其他工具引用。
+
+## 按平台的文件位置
+
+以下表格涵盖 **Stable** 渠道。对于 **Preview**，请参见 [Preview 渠道路径](#preview-channel-paths)。
+
+<Tabs>
+  <TabItem label="macOS">
+    在 macOS 上，Stable 将所有 Warp 创建的文件保存在 `~/.warp/` 下。Preview 使用 `~/.warp-preview/` 用于除跨平台 `~/.warp/` 部分之外的所有内容。
+
+    **可移植用户数据**
+
+    * **主题** - `~/.warp/themes/`
+    * **标签配置** - `~/.warp/tab_configs/`
+    * **默认标签配置**（已提供，用户可编辑） - `~/.warp/default_tab_configs/`
+    * **工作流**（本地） - `~/.warp/workflows/`
+    * **启动配置** - `~/.warp/launch_configurations/`
+
+    **不可移植配置**
+
+    * **设置文件** - `~/.warp/settings.toml`
+    * **键位绑定** - `~/.warp/keybindings.yaml`
+    * **用户偏好**（旧版） - macOS `defaults` 域 `dev.warp.Warp-Stable`
+
+    **不可移植状态**
+
+    * **日志** - `~/Library/Logs/warp.log*`
+    * **崩溃报告** - `~/Library/Logs/DiagnosticReports/`（Warp `.ips` 文件）
+    * **数据库、代码库上下文索引、MCP 日志** - `~/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/`
+
+    **跨平台（始终在主目录中）**
+
+    * **MCP 服务器配置** - `~/.warp/.mcp.json`
+    * **捆绑的技能** - `~/.warp/skills/`
+    * **代理配置** - `~/.agents/`
+  </TabItem>
+  <TabItem label="Windows">
+    在 Windows 上，Warp 遵循 [`directories`](https://docs.rs/directories) crate 使用的平台约定，将用户数据分割到 `%APPDATA%`（漫游）和 `%LOCALAPPDATA%`（本地）中。主题和标签配置是可移植的，位于漫游中，而设置、日志和本地数据库是机器特定的，位于本地中。因此存在两个单独的 `data\` 目录——每个根目录下一个——因此在定位文件时请检查完整路径。
+
+    **可移植用户数据**（`%APPDATA%\warp\Warp\data\`，漫游）
+
+    * **主题** - `%APPDATA%\warp\Warp\data\themes\`
+    * **标签配置** - `%APPDATA%\warp\Warp\data\tab_configs\`
+    * **默认标签配置**（已提供，用户可编辑） - `%APPDATA%\warp\Warp\data\default_tab_configs\`
+    * **工作流**（本地） - `%APPDATA%\warp\Warp\data\workflows\`
+    * **启动配置** - `%APPDATA%\warp\Warp\data\launch_configurations\`
+
+    **不可移植配置**（`%LOCALAPPDATA%\warp\Warp\config\`）
+
+    * **设置文件** - `%LOCALAPPDATA%\warp\Warp\config\settings.toml`
+    * **键位绑定** - `%LOCALAPPDATA%\warp\Warp\config\keybindings.yaml`
+    * **用户偏好**（旧版） - Windows 注册表键 `HKCU:\Software\Warp.dev\Warp`
+
+    **不可移植状态**（`%LOCALAPPDATA%\warp\Warp\data\`）
+
+    * **日志** - `%LOCALAPPDATA%\warp\Warp\data\logs\warp.log*`
+    * **数据库、代码库上下文索引、MCP 日志** - `%LOCALAPPDATA%\warp\Warp\data\` 下的其他子目录
+    * **缓存** - `%LOCALAPPDATA%\warp\Warp\cache\`
+
+    **跨平台（始终在主目录中）**
+
+    * **MCP 服务器配置** - `%USERPROFILE%\.warp\.mcp.json`
+    * **捆绑的技能** - `%USERPROFILE%\.warp\skills\`
+    * **代理配置** - `%USERPROFILE%\.agents\`
+  </TabItem>
+  <TabItem label="Linux">
+    在 Linux 上，Warp 遵循 [XDG 基础目录规范](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)。下面的每个路径使用标准 XDG 环境变量及其默认回退值。
+
+    **可移植用户数据**（`${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/`）
+
+    * **主题** - `${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/themes/`
+    * **标签配置** - `${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/tab_configs/`
+    * **默认标签配置**（已提供，用户可编辑） - `${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/default_tab_configs/`
+    * **工作流**（本地） - `${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/workflows/`
+    * **启动配置** - `${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/launch_configurations/`
+
+    **不可移植配置**（`${XDG_CONFIG_HOME:-$HOME/.config}/warp-terminal/`）
+
+    * **设置文件** - `${XDG_CONFIG_HOME:-$HOME/.config}/warp-terminal/settings.toml`
+    * **键位绑定** - `${XDG_CONFIG_HOME:-$HOME/.config}/warp-terminal/keybindings.yaml`
+
+    **不可移植状态**（`${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/`）
+
+    * **日志** - `${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/warp.log*`
+    * **数据库、代码库上下文索引、MCP 日志** - `${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/` 下的其他文件
+    * **缓存** - `${XDG_CACHE_HOME:-$HOME/.cache}/warp-terminal/`
+
+    **跨平台（始终在主目录中）**
+
+    * **MCP 服务器配置** - `~/.warp/.mcp.json`
+    * **捆绑的技能** - `~/.warp/skills/`
+    * **代理配置** - `~/.agents/`
+  </TabItem>
+</Tabs>
+
+## Preview 渠道路径
+
+Preview 使用一组单独的目录，因此它永远不会覆盖您的 Stable 配置：
+
+* **macOS** - 将上述 macOS 路径中的 `~/.warp/` 替换为 `~/.warp-preview/`，将 `Warp-Stable` 替换为 `Warp-Preview`。跨平台 `~/.warp/` 部分（MCP 配置、技能）与 Stable 共享，不会获得 `-preview` 后缀。
+* **Windows** - 将所有路径中的 `\warp\Warp\` 替换为 `\warp\WarpPreview\`。日志变为 `%LOCALAPPDATA%\warp\WarpPreview\data\logs\warp_preview.log*`。注册表键为 `HKCU:\Software\Warp.dev\WarpPreview`（无连字符——`Warp-Preview` 是 macOS 捆绑标识符，不是 Windows 应用名称）。跨平台 `%USERPROFILE%\.warp\` 部分（MCP 配置、技能）与 Stable 共享。
+* **Linux** - 为每个 `warp-terminal` 目录追加 `-preview`（例如 `~/.config/warp-terminal-preview/settings.toml`）。日志变为 `${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal-preview/warp_preview.log*`。跨平台 `~/.warp/` 部分（MCP 配置、技能）与 Stable 共享。
+
+## 从 WSL 符号链接 Warp 的配置
+
+如果您在 Windows 上运行 Warp 并且也使用 WSL，您可以将 Warp 的配置与 WSL `$HOME` 共享，以便在 WSL 中运行的工具可以读取相同的主题、标签配置、设置、MCP 服务器和代理配置。WSL `$HOME`（通常是 `/home/<wsl-user>/`）是与您的 Windows 配置文件（`%USERPROFILE%`，通常是 `C:\Users\<Windows-user>\`）分开的 Linux 文件系统，因此 WSL 内的 `~/.warp/` 和 `~/.agents/` **不** 自动与 Windows 端同名目录相同——您想要共享的每个 Warp 目录都需要其自己的符号链接，指向回 Windows 路径。
+
+您的 WSL Linux 用户名（`$USER`）通常也与您的 Windows 账户名不同，因此不要假设 `/mnt/c/Users/$USER` 解析为您的 Windows 配置文件。请通过 `cmd.exe` 解析 `%USERPROFILE%`，并使用 `wslpath` 进行转换，然后从 WSL shell 运行符号链接：
+
+```bash
+# 解析 Windows %USERPROFILE%（例如 C:\Users\Alex）为 WSL 路径
+# （例如 /mnt/c/Users/Alex）。避免硬编码 Windows 用户名或
+# 假设它与您的 WSL $USER 匹配。
+WIN_HOME=$(wslpath "$(cmd.exe /C 'echo %USERPROFILE%' 2>/dev/null | tr -d '\r')")
+
+# 可移植数据：主题、标签配置、工作流、启动配置（漫游 AppData）。
+ln -s "$WIN_HOME/AppData/Roaming/warp/Warp/data" ~/.warp-windows-data
+
+# 本地配置：settings.toml、keybindings.yaml（本地 AppData）。
+ln -s "$WIN_HOME/AppData/Local/warp/Warp/config" ~/.warp-windows-config
+
+# 位于 Windows %USERPROFILE% 下的跨平台部分：
+# MCP 服务器配置和捆绑的技能（Windows 端的 ~/.warp）。
+ln -s "$WIN_HOME/.warp" ~/.warp
+
+# 代理配置（Windows 端的 ~/.agents）。
+ln -s "$WIN_HOME/.agents" ~/.agents
+```
+
+如果 `~/.warp` 或 `~/.agents` 已在 WSL 中存在，请先删除或备份它们——否则 `ln` 将在现有目录内部创建链接而不是替换它。如果您更愿意硬编码 Windows 用户名而不是使用 `wslpath`，请从 WSL 使用 `cmd.exe /C 'echo %USERNAME%' 2>/dev/null | tr -d '\r'` 找到它，并将上面的 `$WIN_HOME` 替换为 `/mnt/c/Users/<your-windows-username>`。
+
+:::note
+Windows 上的 Warp 目前不加载来自 `~/.warp/tab_configs/` 或 `~/.warp/themes/` 的配置——这些路径仅适用于 macOS。如果您有来自不同机器的这些主目录路径中的配置文件，请先将其复制或符号链接到 Windows `%APPDATA%\warp\Warp\data\` 目录，然后才会生效。
+:::
+
+## 相关页面
+
+* [设置文件](/terminal/settings/) - `settings.toml` 的格式、热重载行为和常见示例。
+* [所有设置参考](/terminal/settings/all-settings/) - `settings.toml` 中每个可用设置，按部分组织。
+* [键盘快捷键](/getting-started/keyboard-shortcuts/) - 如何查看和重新映射快捷键，包括 `keybindings.yaml` 文件。
+* [标签配置](/terminal/windows/tab-configs/) - `tab_configs/` 中标签配置文件的 TOML 格式和模式。
+* [自定义主题](/terminal/appearance/custom-themes/) - `themes/` 中主题的 YAML 格式和图像约定。
+* [卸载 Warp](/support-and-community/troubleshooting-and-support/logging-out-and-uninstalling/) - 卸载时删除所有这些文件的命令。

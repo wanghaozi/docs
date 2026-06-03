@@ -1,0 +1,96 @@
+---
+title: 终端集成
+description: >-
+  Warp 的终端功能可扩展并与流行的开发工具集成。
+sidebar:
+  label: "终端集成"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## Docker
+
+:::note
+目前，Docker 扩展仅在 macOS 上可用。
+:::
+
+[Warp 的 Docker 扩展](https://hub.docker.com/extensions/warpdotdev/warp) 使得在 Warp 中打开 Docker 容器更加方便。使用该扩展，您可以点击在任何 Docker 容器中打开一个 [Warpified 子 shell](/terminal/warpify/subshells/)，无需手动运行 `docker exec` 或键入冗长的容器 ID。
+
+从列表中选择一个容器并指定 shell 类型。请注意，只有 `bash|zsh|fish` 是 Docker 容器支持的 shell。然后，选择一个用户（可选），最后点击"在 Warp 中打开"以在 Docker 容器中运行命令。
+
+<figure>
+![Warp 的 Docker 扩展列出可用容器](../../../../assets/terminal/docker-extension.png)
+<figcaption>Warp 的 Docker 扩展列出可用容器。</figcaption>
+</figure>
+
+## Raycast
+
+:::note
+目前，Raycast 扩展仅在 macOS 上可用。
+:::
+
+Warp + Raycast 扩展帮助您轻松打开新窗口、标签或启动配置，如 [tweet](https://twitter.com/warpdotdev/status/1678432353461637121) 所示。
+
+<VideoEmbed url="https://www.raycast.com/warpdotdev/warp" title="Warp + Raycast 扩展链接" />
+
+:::note
+**终端技巧**\
+在 `Raycast 设置 > 扩展 > 应用` 中搜索 Warp 并分配别名"terminal"，以便它在搜索时显示。
+:::
+
+<figure>
+![Raycast 终端技巧](../../../../assets/terminal/raycast-terminal-tip.png)
+<figcaption>Warp 与 Raycast 启动器的集成。</figcaption>
+</figure>
+
+## VSCode
+
+<Tabs>
+  <TabItem label="macOS">
+    在 [VSCode](https://code.visualstudio.com/docs/terminal/basics) 中按 `SHIFT-CMD-C` 在 Warp 中打开一个新会话。
+
+    <DemoVideo src="/assets/terminal/vscode_new_session.mp4" label="VSCode 新会话快捷键" />
+
+    要配置此项，请导航到 VSCode 中的设置并搜索 `Terminal › External: Osx Exec`。\
+    \
+    如果您将 Warp 安装在默认位置，请将其更改为 `Warp.app`。否则，输入可执行文件的完整路径。
+  </TabItem>
+  <TabItem label="Windows">
+    在 [VSCode](https://code.visualstudio.com/docs/terminal/basics) 中按 `CTRL-SHIFT-C` 在 Warp 中打开一个新会话。
+
+    要配置此项，请导航到 VSCode 中的设置并搜索 `Terminal › External: Windows Exec`。\
+    \
+    如果您为单个用户在默认位置安装了 Warp，请将其更改为 `%LOCALAPPDATA%\Programs\Warp\warp.exe`；如果您为所有用户在默认位置安装了 Warp，请更改为 `%PROGRAMFILES%\Warp\warp.exe`。否则，输入可执行文件的完整路径。
+  </TabItem>
+  <TabItem label="Linux">
+    在 [VSCode](https://code.visualstudio.com/docs/terminal/basics) 中按 `CTRL-SHIFT-C` 在 Warp 中打开一个新会话。
+
+    要配置此项，请导航到 VSCode 中的设置并搜索 `Terminal › External: Linux Exec`。\
+    \
+    如果您使用发行版的包管理器安装了 Warp，请将其更改为 `warp-terminal`。否则，输入可执行文件的完整路径（例如，如果是 AppImage）。
+  </TabItem>
+</Tabs>
+
+## JetBrains IDE
+
+:::note
+目前，JetBrains IDE 配置仅在 macOS 上可用。
+:::
+
+在 JetBrains IDE 中按选择的键盘快捷键，在 Warp 中打开一个新会话。
+
+要配置此项，请使用 Apple 菜单。点击 **偏好设置**，前往 `外部工具`，然后点击 **添加**。在此菜单中，输入以下信息：
+
+* _名称_: Open Warp
+* _程序_: `/Applications/Warp.app`
+* _参数_: `$ProjectFileDir$`
+* _工作目录_: `/Applications`
+
+然后按 `确定`。现在您可以从 Apple 菜单中，在 `工具` -> `外部工具` 下找到 `Open Warp`。
+
+<DemoVideo src="/assets/terminal/jetbrains_external_terminal_config.mp4" label="JetBrains 新会话快捷键" />
+
+要将此配置附加到键盘快捷键，您必须前往 Apple 菜单 -> `偏好设置`。然后前往 `键位图` -> `外部工具`。您会找到 `Open Warp`。右键点击它，然后选择 **添加键盘快捷键**。输入您想要的快捷键并点击保存！您已准备好用键盘快捷键打开 Warp。
+
+<DemoVideo src="/assets/terminal/jetbrains_external_window_keymap_config.mp4" label="JetBrains 配置键盘快捷键" />

@@ -1,0 +1,94 @@
+---
+title: 改善你的 Kubernetes 工作流（kubectl + Helm）
+description: >-
+  利用 Warp 的 AI 辅助、主动建议、自定义工作流和同步面板，简化 kubectl 和 Helm 工作流。
+sidebar:
+  label: "改善你的 Kubernetes 工作流"
+tags:
+  - "kubernetes"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解 Warp 的现代终端功能如何通过 AI 辅助、自动化和直观设计简化 Kubernetes 工作流。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=64TECXZiFb0" />
+
+## 概述
+
+本指南涵盖增强 Kubernetes 生产力的 6 个关键 Warp 功能：
+
+<Steps>
+
+1. #### 终端中的 AI 集成
+
+   Warp 的**代理模式**（`Cmd + I`）让你可以使用纯英语提示运行复杂的 Kubernetes 操作。
+
+   **示例**
+
+   ```
+   When does my wildcard TLS certificate expire?
+   ```
+
+   Warp 自动检测命名空间，运行 `kubectl` 命令，并输出过期详情。
+
+   ```
+   Generate a command to identify all pods running as root across all namespaces.
+   ```
+
+   Warp 构建并运行相应的 `kubectl` + `grep` 查询，返回安全报告。
+
+   :::note
+   非常适合在不离开终端的情况下进行即时调试或合规检查。
+   :::
+
+2. #### 构建 AI 辅助上下文
+
+   你可以将任何命令的输出作为上下文附加到后续提示中。\
+   例如，右键点击日志输出 → "作为代理上下文附加"，然后运行：
+
+   ```
+   I'm sending anonymous usage data in Traefik. How can I disable it?
+   ```
+
+   Warp 检测 Helm 图表并输出所需的 YAML 配置以禁用统计报告。
+
+3. #### 主动 AI 建议
+
+   Warp 自动建议下一步操作。\
+   建议操作示例：
+
+   *   在 `kubectl describe pod` 之后，它可能建议：
+
+       > "检查此 Pod 的日志。"
+   *   当运行 `sudo apt update` 时，它检测到可用的升级并提供：
+
+       > "运行 sudo apt upgrade 以更新包。"
+
+4. #### 自定义工作流
+
+   为常见操作创建可复用的参数化命令，例如：
+
+   ```bash
+   helm upgrade <chart> --namespace <namespace> -f <values.yaml>
+   ```
+   通过**命令面板（`Cmd + P`）** 访问，工作流使重复的 Kubernetes 任务变得快速且标准化。
+
+5. #### 同步面板和标签
+
+   链接多个终端面板或标签（例如主节点 + 工作节点）。\
+   当同步激活时，运行：
+
+   ```bash
+   sudo apt update
+   ```
+
+   会在所有链接的会话中同时执行。
+
+6. #### 现代文本编辑
+
+   Warp 支持**点击编辑**命令——不再需要箭头键操作。\
+   悬停会显示内联**工具提示**，解释标志和子命令（例如 Helm、kubectl 等），并为 400 多种 CLI 工具提供自动补全。
+
+</Steps>

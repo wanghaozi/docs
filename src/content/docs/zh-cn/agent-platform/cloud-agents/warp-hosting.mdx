@@ -1,0 +1,53 @@
+---
+title: Warp 托管的 Agent
+description: >-
+  在 Warp 的基础设施上运行云 Agent。Warp 处理 Agent 执行的扩展、隔离和性能。
+sidebar:
+  label: "Warp 托管的 Agent"
+---
+
+Warp 的管理基础设施让您的团队在快速、安全的沙箱中运行云 Agent 工作负载。
+
+使用 Warp 托管的 Agent 快速开始使用 Oz，无需配置计算资源或维护服务。
+
+## 沙箱环境
+
+所有 Warp 托管的 Agent 在完全隔离的沙箱中运行。Warp 使用混合基础设施提供商以确保可靠的沙箱启动。
+
+### 操作系统和架构
+
+Warp 托管的 Agent 使用您的[环境](/agent-platform/cloud-agents/environments/)中指定的容器镜像。它们与任何包含 `bash` shell 和核心工具如 `ls` 和 `mkdir` 的 Linux x86-64 镜像兼容。
+
+### 资源
+
+Warp 托管的 Agent 可用的资源取决于您的[计划](https://www.warp.dev/pricing)——请查看最新详情。
+
+在 [Enterprise](/enterprise) 计划上，资源可配置至 32 vCPU 和 64 GiB 内存。如果需要额外资源，请联系 Warp 支持关于自定义配置。
+
+### 并发
+
+为了公平地在所有 Warp 用户间分配资源，Warp 托管的 Agent 的并发性按团队限制。如果在达到并发限制时启动 Agent，它会自动排队并在另一个 Agent 完成时启动。
+
+### 网络
+
+Warp 托管的 Agent 默认启用网络出口。传出请求可能来自以下 IP 地址：
+
+* `64.6.38.192/26`
+* `64.6.39.192/26`
+* `104.128.70.192/26`
+* `104.128.71.192/26`
+* `216.176.224.192/26`
+* `185.212.186.0/24`
+* `50.31.178.128/26`
+* `50.31.146.192/26`
+* `75.102.37.208/28`
+* `44.253.165.189/32`
+* `16.145.188.113/32`
+* `16.145.133.251/32`
+
+---
+
+## 相关页面
+
+* [Oz Platform](/agent-platform/cloud-agents/platform/) - 了解 Warp 托管的 Agent 如何融入 Oz Platform。
+* [自托管](/agent-platform/cloud-agents/self-hosting/) - 当执行必须保留在您的网络内时，在您管理的基础设施上运行 Agent。

@@ -1,0 +1,85 @@
+---
+title: "文件、链接和脚本"
+description: >-
+  使用鼠标快速打开链接和文件或运行脚本。
+sidebar:
+  label: "文件、链接和脚本"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## 文件和链接
+
+Warp 支持打开块内的文件、文件夹和 URL 链接。支持多种 URL 协议，例如 `https`、`ftp`、`file` 等。Warp 可以在多种编辑器中打开文件和文件夹，并直接在默认浏览器中打开网页链接。Warp 还可以通过 [Markdown 查看器](/terminal/more-features/markdown-viewer/) 直接打开 markdown 文件。
+
+:::note
+Warp 在 macOS 和 Linux 上也支持 iTerm2 和 Kitty 图像协议。您需要使用 CLI 工具查看图像，在某些情况下，工具期望 `$TERM=kitty`，因此您可能需要通过在命令前设置 `TERM=kitty` 来解决此问题。我们正在努力更新流行的工具以原生识别 Warp。
+:::
+
+Warp 解析相对和绝对文件路径。Warp 还会尝试捕获附加到文件路径的行号和列号，支持的格式包括：
+
+* `file_name:line_num`
+* `file_name:line_num:column_num`
+* `file_name[line_num, column_num]`
+* `file_name(line_num, column_num)`
+* `file_name, line: line_num, column: column_num`
+* `file_name, line: line_num, in`
+
+<Tabs>
+  <TabItem label="macOS">
+    1. 将鼠标悬停在链接上后，按住 `CMD` 同时点击可直接打开它。
+    2. 正常点击链接将打开一个可点击的工具提示，显示"打开文件/文件夹/链接"。
+    3. 右键点击链接将打开一个上下文菜单，支持将绝对文件路径或 URL 复制到剪贴板。
+  </TabItem>
+  <TabItem label="Windows">
+    1. 将鼠标悬停在链接上后，按住 `CTRL` 同时点击可直接打开它。
+    2. 正常点击链接将打开一个可点击的工具提示，显示"打开文件/文件夹/链接"。
+    3. 右键点击链接将打开一个上下文菜单，支持将绝对文件路径或 URL 复制到剪贴板。
+  </TabItem>
+  <TabItem label="Linux">
+    1. 将鼠标悬停在链接上后，按住 `CTRL` 同时点击可直接打开它。
+    2. 正常点击链接将打开一个可点击的工具提示，显示"打开文件/文件夹/链接"。
+    3. 右键点击链接将打开一个上下文菜单，支持将绝对文件路径或 URL 复制到剪贴板。
+  </TabItem>
+</Tabs>
+
+* 您还可以将文件夹或文件拖放到 Warp 的 Dock 图标上，以在该目录中打开一个新标签。
+* 您还可以右键单击 Finder 中的文件夹或文件，然后选择服务，再选择"在此处打开新的 Warp 标签 | 窗口"。
+* 通过导航至 **设置** > **功能** > **通用** > **选择一个编辑器以打开文件链接** 来配置默认编辑器以打开文件。
+  * 选择"默认应用"将使用您系统上该文件类型的默认应用程序。
+
+#### 支持的编辑器列表
+
+以下为不完全列表，请在我们的 GitHub 上提交新的编辑器，请参阅 [发送反馈](/support-and-community/troubleshooting-and-support/sending-us-feedback/#sending-warp-feedback)。
+
+1. `$EDITOR`  &#x20;
+2. Visual Studio Code
+3. JetBrains IDE
+   * WebStorm
+   * PhpStorm
+   * GoLand
+   * PyCharm
+   * DataGrip
+   * DataSpell
+   * Rider
+   * RubyMine
+4. Zed 和 Zed Preview
+5. Cursor
+6. Windsurf
+7. Sublime Text
+8. Android Studio
+
+<DemoVideo src="/assets/terminal/files-links-demo.mp4" label="文件和链接演示" />
+
+## 脚本
+
+Warp 可以直接从 Finder 打开 `.command` 和 Unix 可执行文件。
+
+1. 在 Finder 中找到您想打开的 `.command` 或 Shell 脚本。
+2. 右键单击并使用 Warp 打开脚本。
+
+:::caution
+在 Warp 中运行文件之前，请确保文件具有适当的可执行权限。（例如 `chmod +x script.command`）
+:::
+
+<DemoVideo src="/assets/terminal/script-demo.mp4" label="脚本演示" />

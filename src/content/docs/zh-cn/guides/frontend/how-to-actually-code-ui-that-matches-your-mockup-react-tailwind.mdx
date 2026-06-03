@@ -1,0 +1,116 @@
+---
+title: "编写与设计稿匹配的 UI 代码"
+description: >-
+  提示 Warp 通过结构化规格和迭代优化，从设计稿生成像素级完美的 React + Tailwind 代码。
+sidebar:
+  label: "编写与设计稿匹配的 UI 代码"
+tags:
+  - "frontend"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何提示 Warp 的 AI 使用你偏好的框架生成准确、忠实于设计的 UI 代码。
+
+<VideoEmbed url="https://youtu.be/GA0OO_1o8LA?si=2BLIDNjL5Tr0Nixz" />
+
+---
+
+## 介绍
+
+本教程将引导你使用 Warp 生成像素级完美的前端代码。\
+\
+通过将 AI 视为**UI 工程师**，你可以更接近真实的实现精度——特别是在根据设计稿工作时。
+
+虽然此示例使用了 **React** 和 **Tailwind**，但相同的方法适用于 **Vue**、**Next.js** 或 **Svelte**。
+
+---
+
+<Steps>
+
+1. #### 问题
+
+   使用 AI 设计 UI 时，你预期的设计通常会在转换中丢失。\
+   AI 在视觉精度方面存在困难——但结构化的提示可以帮助解决这个问题。
+
+2. #### 提示词
+
+   步骤——生成完整的规格：
+
+   ```
+   Analyze this web design mockup as a senior UI engineer would. Create a complete technical specification:
+
+   1. DESIGN SYSTEM TOKENS:
+      - Extract the color palette with semantic naming (primary, secondary, surface, text)
+      - Identify the type scale (heading levels, body text sizes)
+      - Document the spacing scale pattern (4px, 8px, 16px, etc.)
+      - List border radius values used consistently
+
+   2. LAYOUT ARCHITECTURE:
+      - Describe the overall page structure using semantic HTML5 elements
+      - Identify CSS Grid vs Flexbox usage for each section
+
+   3. COMPONENT SPECIFICATIONS:
+      For each unique component, provide:
+      - Semantic HTML structure
+      - CSS layout method
+      - All visual states (default, hover, focus, active, disabled)
+      - Exact dimensions and spacing
+      - Animation/transition properties
+
+   4. RESPONSIVE BEHAVIOR:
+      - Describe how the layout adapts (even if only desktop is shown)
+      - Note which elements stack, hide, or resize
+      - Identify touch targets that need enlarging on mobile
+
+   5. ACCESSIBILITY REQUIREMENTS:
+      - Color contrast ratios for text/background combinations
+      - Interactive element sizes (minimum 44x44px touch targets)
+      - Focus indicator styles
+      - Screen reader considerations for decorative elements
+
+   Format as a structured spec that includes both the visual description AND implementation notes. Flag any ambiguous design decisions that need clarification.
+
+   ```
+
+   然后，给 Warp 正确的提示开始代码实现：
+
+   ```
+   Using this design specification, build a responsive React component with Tailwind CSS:
+
+   Requirements:
+   - Create reusable components for each element in the spec
+   - Use CSS variables for the design tokens
+   - Implement all interactive states
+   - Ensure mobile-first responsive design
+   - Add proper semantic HTML and ARIA labels
+   - Include Framer Motion for any animations mentioned
+   - Match the spacing system exactly using Tailwind's spacing scale
+
+   Create a pixel-perfect implementation that matches the original design.
+
+   ```
+
+3. #### 验证和迭代
+
+   Warp 输出组件文件和布局结构。\
+   你可以直接在预览中审查间距、字体粗细和响应行为。
+
+   如果细节有偏差，通过澄清再次提示：
+
+   ```
+   Tighten vertical spacing between header and subtext.
+   ```
+
+4. #### 总结
+
+   你学会了如何：
+
+   * 提示 AI 生成结构化的 UI 规格
+   * 生成 React + Tailwind 实现
+   * 通过视觉迭代实现设计一致性
+
+   > 将 AI 视为队友——而不是工具——最终能生成与你的愿景匹配的界面。
+
+</Steps>

@@ -1,0 +1,61 @@
+---
+title: "通过 Oz CLI 使用技能"
+sidebar:
+  label: "技能"
+description: >-
+  使用 Oz CLI 的"技能"功能，从存储在仓库中的可重用技能定义运行代理。
+---
+
+[技能](/agent-platform/capabilities/skills/)是可重用的指令集，教会代理如何执行特定任务。使用 `--skill` 标志从环境可访问的仓库中的技能运行代理。
+
+## 技能规范格式
+
+`--skill` 标志接受标识要使用哪个技能的技能规范：
+
+```sh
+# 完全限定（推荐）
+oz agent run-cloud -e <ENV_ID> --skill "owner/repo:skill-name" --prompt "部署到预发布环境"
+
+# 带完整路径
+oz agent run-cloud -e <ENV_ID> --skill "warpdotdev/warp-server:.warp/skills/deploy/SKILL.md" --prompt "部署到预发布环境"
+```
+
+支持的格式：
+
+* `owner/repo:skill-name` — 在特定仓库中按名称引用技能（推荐）
+* `owner/repo:path/to/SKILL.md` — 在仓库中按完整路径引用技能
+* `repo:skill-name` — 按名称引用技能（仅当仓库在您的环境中配置时有效）
+
+## 将技能与云端代理一起使用
+
+技能对于云端代理（`oz agent run-cloud`）特别有用，因为它们定义了跨环境一致运行的可重用工作流：
+
+```sh
+# 从特定仓库运行部署技能
+oz agent run-cloud \
+  --environment SVhg783GBFQHk1OfdPfFU9 \
+  --skill "myorg/backend:.warp/skills/deploy/SKILL.md" \
+  --prompt "部署到预发布环境"
+
+# 运行代码审查技能
+oz agent run-cloud \
+  --environment SVhg783GBFQHk1OfdPfFU9 \
+  --skill "myorg/backend:code-review" \
+  --prompt "审查最新的 PR"
+```
+
+:::note
+当您指定技能时，它为代理提供基础指令。`--prompt` 为特定运行添加额外的上下文或参数。
+:::
+
+当您从技能运行代理时，运行 `name` 会自动设置为技能名称——无需显式传递 `--name`。
+
+## 将技能与本地代理一起使用
+
+对于本地代理运行，来自当前仓库的技能会被自动发现。您也可以显式指定一个技能：
+
+```sh
+oz agent run --skill "owner/repo:skill-name" --prompt "额外的上下文"
+```
+
+有关创建和管理技能的更多信息，请参见[技能](/agent-platform/capabilities/skills/)。

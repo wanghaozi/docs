@@ -1,0 +1,58 @@
+---
+title: "设定编码最佳实践"
+description: >-
+  使用 Warp 规则在 AI 生成的代码中强制执行编码风格、TypeScript 约定和文档质量。
+sidebar:
+  label: "设定编码最佳实践"
+tags:
+  - "rules"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的规则来强制执行编码风格、文档质量和跨项目一致性。
+
+<VideoEmbed url="https://youtu.be/AuM2OIvXlnY?si=rxnQH5TH-5vj0LMf" />
+
+---
+
+## 介绍
+
+本教程教你如何创建编码规则，使 AI 自动遵循你团队的**最佳实践**。\
+\
+通过指定格式化、风格偏好和文档标准，Warp 确保跨仓库的一致、高质量代码。
+
+---
+
+<Steps>
+
+1. #### 问题
+
+   开发者通常有不同的习惯——格式化风格、TypeScript 约定或注释质量。\
+   没有明确的规则，AI 生成的代码可能不一致或难以维护。
+
+2. #### 规则设置
+
+   定义强制执行格式化、类型偏好和文档质量的规则。
+
+   **示例规则**
+
+   ```
+   Rule: Code Authoring Standards
+   - Always format and check work before returning results.
+   - Prefer `types` over `interfaces` in TypeScript.
+   - Apply concise, human-readable JS Docs using the Hemingway test.
+   ```
+
+   :::note
+   **海明威测试**确保代码注释简单清晰——短句、主动语态，没有不必要的复杂性。
+   :::
+
+3. #### 好处
+
+   * 鼓励可读、可维护的代码
+   * 提高文档清晰度
+   * 防止 AI 贡献之间的风格漂移
+
+</Steps>

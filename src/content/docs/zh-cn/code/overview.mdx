@@ -1,0 +1,98 @@
+---
+title: 代码概述
+description: >-
+  使用 Warp 的编码智能体生成和编辑代码，审查内联差异，并在你的代码库中应用更改。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的编码功能帮助你从提示到生产。它结合了一个专用的编码智能体——始终在 SWE-bench Verified 上位列前茅——与一个原生代码编辑器、内联差异审查、代码库上下文和项目级别的规则，用于准确、上下文感知的代码生成。
+
+:::note
+在 macOS 和 Linux SSH 会话中，Warp 的 [SSH 扩展](/terminal/warpify/ssh/#installing-the-ssh-extension)将文件树、原生文件读取和原生代码差异带到远程主机。请参阅[SSH 功能支持](/code/ssh-feature-support/)了解当前的支持矩阵。
+:::
+
+## 从提示到生产
+
+Warp Code 是一套功能，旨在帮助你将从智能体生成的代码从初始提示和项目设置一直带到部署和生产。它由 Warp 的专用编码智能体驱动，该智能体始终在 [SWE-bench Verified](https://www.swebench.com/#verified) 和 [Terminal-Bench](https://www.tbench.ai/leaderboard) 上位列前茅。
+
+除了 Warp 的现代化[原生代码编辑器](/code/code-editor/)，它还包括：
+
+* [代码库上下文](/agent-platform/capabilities/codebase-context/)用于准确、上下文感知的智能体响应
+* [项目规则](/agent-platform/capabilities/rules/)和命令用于按仓库定制智能体行为
+* 一个专用的[代码审查](/code/code-review/)体验，用于审查和编辑差异
+* [零状态和设置流程](/code/overview/#getting-started-with-coding-in-warp)用于快速启动新项目或初始化现有项目
+
+### 编码智能体
+
+Warp 的编码智能体旨在帮助你在[智能体开发环境](https://www.warp.dev/blog/reimagining-coding-agentic-development-environment)中直接生成、编辑和管理代码。它检测应用代码差异的机会并将其内联展示，让你无需切换到外部 IDE 即可审查和应用更改。当你需要手动编辑时，可以打开 Warp 的原生代码编辑器。
+
+### 工作原理
+
+* **提示驱动编码**：你编写自然语言提示，例如"为此 API 调用添加重试机制"或"修复 auth.test.ts 中失败的单元测试"。
+* **内联代码差异**：当智能体提出更改时，它会以你可以检查、修改或拒绝的差异形式展示。
+* **智能体引导**：你可以优化提示、中断和重试，或附加上下文（如文件、差异或选择）以引导智能体获得更好的结果。
+
+<VideoEmbed url="https://youtu.be/W8rCsznM5HA" title="编码功能概述" />
+
+:::note
+如果在远程 macOS 或 Linux 主机上安装了 [SSH 扩展](/terminal/warpify/ssh/#installing-the-ssh-extension)，编码智能体使用 Warp 的原生差异工具通过 SSH 应用编辑。当扩展未安装时，智能体回退到终端命令（即 `sed`、`grep`）来进行更改。
+:::
+
+### 编码能力示例
+
+代码会响应与代码生成、编辑和分析相关的提示。以下是一些示例：
+
+* **代码创建**
+  * "编写一个 JavaScript 函数来实现防抖输入"
+  * "生成一个使用 Redis 管理用户会话的 Python 类。"
+* **错误驱动的修复**
+  * "修复上次构建输出中显示的 TypeScript 错误。"
+  * "通过保留后端更改并相应更新测试来解决此合并冲突。"
+* **重构**
+  * "将此文件中所有 var 的实例更新为 let。"
+  * "将数据库逻辑从 app.js 提取到新的 db.js 模块并更新导入。"
+* **多文件和仓库级更改**
+  * "为此目录中的所有 .py 文件添加标头。"
+  * "将整个代码库中的 requests 替换为 httpx，更新导入和错误处理。"
+* **复杂工作流**（如下示例——实践中，提示应包含更多细节以获得最佳结果）
+  * "实现 OAuth2 认证，更新受影响的路径，并添加测试。"
+  * "识别没有测试覆盖的函数并为其创建 Jest 测试文件。"
+  * "优化 queries.sql 中的慢速 SQL 查询并重新生成迁移。"
+
+<VideoEmbed url="https://youtu.be/IuFSuOYstfg" title="如何启动编码任务" />
+
+<VideoEmbed url="https://youtu.be/dm-P63USsVg" title="如何解释和编辑 Warp 的编码输出" />
+
+## 开始使用 Warp 中的编码
+
+Warp 提供了多个入口点来开始使用智能体进行编码，无论你是开始新项目、打开现有项目还是从 GitHub 克隆。每个新标签页显示一个**零状态**，让你选择如何继续。
+
+<figure>
+![零状态标签页，包含 Warp 中智能体编码的 3 个起始点。](../../../../assets/terminal/code_mode.png)
+<figcaption>带有编码起始点的零状态标签页。</figcaption>
+</figure>
+
+#### 1. 开始新项目
+
+要开始新项目，从标签页中选择**创建新项目**。你可以直接从一个提示开始（Warp 会建议想法），或手动配置项目。Warp 设置仓库时包含一个 `AGENTS.md` 文件（文件名必须全部大写），其中包含[项目规则](/agent-platform/capabilities/rules/#project-rules)，并启用[代码库索引](/agent-platform/capabilities/codebase-context/)以为智能体提供完整的上下文。
+
+#### 2. 打开现有仓库
+
+选择**打开仓库**以使用你的计算机文件选择器。如果你选择了一个 Git 仓库，Warp 会自动切换到该目录，如果仓库尚未初始化，则运行 `/init` 设置命令（一个内置的"[斜杠命令](/agent-platform/capabilities/slash-commands/)"）。Warp 将检测到仓库，索引代码库，并准备进行编码。
+
+* 对于非 Git 文件夹，Warp 只是切换到该目录而不进行初始化。
+* 如果你有一个尚未初始化的现有项目，你可以手动运行 `/init`，以版本控制的 `AGENTS.md` 文件进行引导。
+* 此视图还显示你最近使用的三个仓库和 AI 对话的列表，以便快速访问，以及最近目录的列表（行为类似于运行 `cd`）。
+
+#### 3. 克隆仓库
+
+选择**克隆仓库**以粘贴仓库链接或直接从 GitHub 克隆。Warp 将你置于克隆的文件夹中，并自动运行 `/init` 流程以设置项目规则和索引。
+
+## 了解更多关于代码功能的信息：
+
+* [代码编辑器](/code/code-editor/) - Warp 内置的代码编辑器让你进行快速、上下文内的编辑，具备语法高亮、标签页、查找和替换、Vim 键位和文件树等基本功能。
+  * [语言服务器协议 (LSP)](/code/code-editor/language-server-protocol/) - Warp 与语言服务器集成，为 Rust、Go、Python、TypeScript/JavaScript 和 C/C++ 提供悬停信息、转到定义、查找引用、内联诊断和保存时格式化。
+* [代码库上下文](/agent-platform/capabilities/codebase-context/) - Warp 索引你的 Git 跟踪代码库，以帮助智能体理解你的代码并生成准确、上下文感知的响应。没有代码存储在 Warp 服务器上。
+* [代码审查](/code/code-review/) - 实时审查、编辑和管理 Git 差异，提供附加、还原或直接打开文件的选项。
+  * 你也可以进入[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)以对更改进行评论、引导智能体或随时调整单个编辑。
+* [代码差异](/agent-platform/local-agents/code-diffs/) - 了解如何使用内置的可视差异编辑器审查、优化和应用 Warp 智能体生成的代码更改。

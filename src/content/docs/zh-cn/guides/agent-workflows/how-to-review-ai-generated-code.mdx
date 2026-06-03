@@ -1,0 +1,134 @@
+---
+title: 审查 AI 生成的代码
+description: >-
+  在 Warp 中使用可视化差异和内联评论审查 AI 生成的代码——适用于 Claude Code、Codex 或任何 CLI 代理。
+sidebar:
+  label: "审查 AI 生成的代码"
+featured: true
+tags:
+  - "agents"
+  - "code-review"
+
+---
+
+编码代理可以在几秒内生成数百行代码，但在不审查的情况下发布这些代码是有风险的。本指南提供了一个实用的工作流程，用于在 Warp 中审查代理生成的代码、发现常见问题，并提供代理可以执行的结构化反馈。预计完成时间约 10 分钟。
+
+## 先决条件
+
+* **一个 Git 跟踪的项目**——Warp 中的代码审查适用于任何 Git 仓库。
+* **一个 AI 编码代理**——本工作流程适用于任何 CLI 代理：[Claude Code](/guides/external-tools/how-to-set-up-claude-code/)、[Codex](/guides/external-tools/how-to-set-up-codex-cli/)、OpenCode 或 Warp 的内置代理。有关设置，请参阅[第三方 CLI 代理](/agent-platform/cli-agents/overview/)。
+
+## 为什么审查很重要
+
+代理速度很快但并不完美。它们会幻觉导入、引入微妙的逻辑错误、做出糟糕的架构决策以及重复代码。审查代理输出是将代理开发从"氛围编码"转变为可信赖工作流程的关键步骤。
+
+AI 生成代码中的常见问题：
+
+* **幻觉导入**——引用了项目中不存在的包或模块
+* **冗余逻辑**——重复现有功能而不是复用
+* **可疑的架构决策**——添加新模式而不是遵循现有模式，或以与项目架构冲突的方式重构代码
+* **安全漏洞**——硬编码的凭据、缺少输入验证或权限过于宽松
+* **风格偏差**——忽略项目关于命名、错误处理或文件结构的约定
+* **不完整的错误处理**——仅在快乐路径上有效的代码，在边缘情况下会崩溃
+
+## 1. 给代理一个任务
+
+无论你使用 Claude Code、Codex 还是 Warp 的内置代理，首先给代理一个任务。例如：
+
+```
+修复身份验证中间件，使其能优雅地处理过期的令牌。
+```
+
+代理将修改一个或多个文件。
+
+## 2. 打开代码审查面板
+
+代理完成任务后，打开 Warp 的[代码审查面板](/code/code-review/)查看每个变更的文件。你可以通过多种方式打开它：
+
+* **键盘快捷键**：`⌘+Shift++`（macOS）或 `Ctrl+Shift++`（Windows/Linux）
+* **Git 差异标签**：点击终端输入中显示已修改文件和行更改的差异标签
+* **审查更改按钮**：在代理对话后，点击对话底部的 **Review changes**
+* **标签栏**：点击 Warp 右上角的代码审查按钮
+
+<figure style={{ maxWidth: "350px" }}>
+![Warp 标题栏右上角的代码审查按钮，显示文件和行变更数量](../../../../../assets/guides/code-review-button.png)
+<figcaption>代码审查按钮。</figcaption>
+</figure>
+
+该面板以可视化差异形式显示所有未提交的更改，并按文件分组。新增内容以绿色高亮显示并带有 `+` 前缀，删除内容以红色显示并带有 `-` 前缀。
+
+<figure style={{ maxWidth: "563px" }}>
+![代码审查面板显示分支之间的文件差异](../../../../../assets/guides/code-review-panel-with-diffs.png)
+<figcaption>带有差异的代码审查面板。</figcaption>
+</figure>
+
+## 3. 逐个文件审查差异
+
+使用代码审查面板，你可以逐个文件审查更改：
+
+* **浏览所有变更的文件**，使用文件侧边栏。
+* **切换差异视图**，与未提交的更改进行比较，或与 `main`/`master` 分支进行比较，以查看 PR 中将包含的全部变更范围。
+* **点击代码中的任意位置**，直接在面板中编辑差异。
+
+重点关注代理最可能出错的地方：导入、错误处理以及任何涉及安全或认证的内容。
+
+<figure style={{ maxWidth: "375px" }}>
+![带有文件导航侧边栏的代码审查面板，显示变更的文件](../../../../../assets/guides/code-review-file-sidebar.png)
+<figcaption>变更的文件侧边栏。</figcaption>
+</figure>
+
+## 4. 在问题处留下内联评论
+
+点击代码任意一行或一个代码块上的"添加评论"按钮，添加描述需要修改内容的评论。Warp 将每条评论锚定到确切的行号，因此任何代理都能准确理解需要修复什么。
+你可以在提交之前添加任意数量的评论——Warp 会批量处理，使代理一次性接收所有反馈，而不是逐个处理更改。
+
+<figure style={{ maxWidth: "563px" }}>
+![在代码审查面板的差异行上添加内联评论](../../../../../assets/guides/code-review-inline-comment.png)
+<figcaption>特定差异行上的内联评论。</figcaption>
+</figure>
+
+## 5. 将所有评论提交给代理
+
+审查完每个文件并留下评论后，提交整个批次。代理会接收你的所有反馈，一次性应用请求的更改，并返回更新后的差异。
+
+审查更新后的差异以验证修复。重复此循环，直到代码符合你的标准：评论、提交、审查。
+
+:::note
+本工作流程适用于**在 Warp 中运行的任何 CLI 代理**，而不仅仅是内置代理。你可以在 Claude Code、Codex 或 OpenCode 生成的差异上留下内联评论，并将其发送回正在运行的代理会话。
+:::
+
+## 6. 在提交前运行项目的检查
+
+在接受更改之前，运行项目的测试套件、linter 和类型检查器。代理生成的代码可能通过了视觉审查，但未通过自动化检查。
+
+```bash
+# 示例：运行测试和 lint
+npm test && npm run lint
+```
+
+如果检查失败，你可以在代码审查面板中手动修复问题，或将错误输出作为上下文发送回代理进行另一轮迭代。
+
+:::note
+**快速审查清单**：审查代理生成的更改时，检查导入是否可解析、新代码是否不重复现有功能、凭据是否未硬编码、错误处理是否涵盖失败情况、风格是否与项目匹配、测试是否仍通过、以及代理是否只更改了要求的内容。
+:::
+
+## 生产力技巧
+
+* **将差异作为上下文附加**——在代码审查面板中选择一个差异块，并将其附加到你的下一个提示词中。这将使代理的响应基于你实际的代码更改。详见[选择作为上下文](/agent-platform/local-agents/agent-context/selection-as-context/)。
+* **还原单个差异块**——不喜欢某个特定的更改？只需从代码审查面板还原该块，而不会撤销代理的其余工作。
+* **与 main 分支比较**——将差异视图切换为"与 main 的更改比较"，以查看代理的工作如何融入你的分支的完整范围，而不仅仅是最近的编辑。
+* **使用规则防止重复问题**——如果你注意到代理反复犯同样的错误（错误的导入路径、不正确的命名约定），添加一条[规则](/agent-platform/capabilities/rules/)让代理学习你项目的标准。
+
+## 后续步骤
+
+你现在拥有在 Warp 中审查 AI 生成代码的结构化工作流程：可视化差异审查、反馈回代理的内联评论以及批量反馈提交。此工作流程适用于任何 CLI 编码代理：Claude Code、Codex、OpenCode 或 Warp 的内置代理。
+
+探索相关指南和功能：
+
+* [设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) 或 [设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/) 开始使用 Warp 中的第三方代理
+* [将代理会话上下文附加到 GitHub PR](/guides/agent-workflows/how-to-attach-agent-session-context-to-github-prs/) 向审查者提供代理生成更改背后的提示词、计划、命令、日志和验证
+* [同时运行多个代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/) 比较不同代理在相同任务上的输出
+* [Warp 中的 Claude Code](https://www.warp.dev/agents/claude-code) | [Warp 中的 Codex](https://www.warp.dev/agents/codex) | [Warp 中的 Gemini CLI](https://www.warp.dev/agents/gemini-cli) | [Warp 中的 OpenCode](https://www.warp.dev/agents/opencode) —— Warp 营销网站上的代理特定概述
+* [代码审查面板](/code/code-review/) —— 所有代码审查功能的完整参考
+* [交互式代码审查](/agent-platform/local-agents/interactive-code-review/) —— 关于内联评论和批量反馈的详细文档
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/) —— 所有支持的代理和 Warp 的通用代理功能

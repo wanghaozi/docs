@@ -1,0 +1,31 @@
+---
+title: Agent 平台常见问题解答
+sidebar:
+  label: "Agent 常见问题解答"
+description: >-
+  关于 Warp AI 功能的常见问题，包括受支持的模型、隐私实践、积分限制、计费和使用指南。
+---
+
+关于 Warp Agent 的常见问题回答，包括受支持的模型、数据隐私、积分限制、计费和常见错误消息。
+
+## 通用
+
+### 在 Warp 中使用 Agent 时发送和/或存储了哪些数据？
+
+请参阅我们的[隐私页面](/support-and-community/privacy-and-security/privacy/)了解更多关于我们如何处理 Agent 使用的数据的信息。
+
+### 如何使用自己的 LLM API 密钥？
+
+Warp 支持[自带密钥 (BYOK)](/agent-platform/inference/bring-your-own-api-key/)，适用于付费计划（从 Build 开始）的用户。您可以连接自己的 Anthropic、OpenAI 或 Google API 密钥，通过您的账户直接路由请求。Enterprise 计划的组织可以额外启用管理的"自带 LLM"配置以满足严格的安全或合规要求。
+
+## 计费
+
+每个 Warp 计划包括每月每个用户一定数量的积分。请参阅[定价](https://www.warp.dev/pricing)比较计划。
+
+## 常见 AI 错误消息
+
+#### "消息令牌限制超出"错误 — 输入超出所选模型的上下文窗口
+#### "每月请求限制超出"或"每月积分限制超出"错误 — 超出每月积分限制
+
+#### 请求失败并出现错误：QuotaLimit — 超出 AI 令牌限制
+#### 请求失败并出现错误：ErrorStatus (403, "您的账户已被阻止使用 AI 功能") — 账户因违反服务条款被阻止

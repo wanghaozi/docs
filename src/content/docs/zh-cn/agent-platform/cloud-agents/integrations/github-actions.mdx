@@ -1,0 +1,78 @@
+---
+title: GitHub Actions
+description: >-
+  在 GitHub Actions 中运行 Agent，以自动化代码审查、问题分类和 CI 修复。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+使用 `oz-agent-action` 直接在 GitHub Actions 工作流中运行 Agent。Agent 无缝集成到您的 CI 流水线中，使用您的仓库上下文和 GitHub 权限自动化代码审查、问题分类、Bug 修复和维护等任务。此页面涵盖集成的工作原理、如何设置以及开发团队的常见自动化模式。
+
+:::note
+**开始入门？** 请参阅 [GitHub Actions 快速入门](/agent-platform/cloud-agents/integrations/quickstart-github-actions/)设置您的第一个工作流，或访问 [oz-agent-action 仓库](https://github.com/warpdotdev/oz-agent-action)获取详细设置说明和即用工作流模板。
+:::
+
+如果您正在比较 GitHub Actions 与计划、Slack、Linear、Oz CLI 或 API 触发的运行，请参阅[使用计划和触发器运行无人值守 Agent](/guides/agent-workflows/how-to-run-unattended-agents/)。
+
+观看此演示了解集成的实际操作：
+
+<VideoEmbed url="https://www.loom.com/share/534f88b6a98e43ca9769ca09de6424b5" />
+
+在此演示中：
+
+* 自动 PR 审查，包含摘要反馈和内联建议
+* 直接从 GitHub UI 一键批量和提交 agent 建议
+* 通过打开建议 PR 自动修复失败的 CI 检查
+* 无需本地检出代码即可建议小审查意见（"nit"）的修复
+
+---
+
+### GitHub Actions 集成的功能
+
+`oz-agent-action` 是一个包装 Oz CLI 的 GitHub Action，可以：
+
+* 在 Actions 作业中运行 agent
+* 缓存包安装以加快构建
+* 捕获 agent 的输出以供后续工作流步骤使用
+* 让您将工作流上下文、事件数据和先前步骤输出传递给 agent 提示
+* 允许 agent 通过 GitHub CLI 评论 PR、发布结果或打开分支
+* 支持可以批处理并直接从 GitHub 拉取请求 UI 提交的内联代码建议
+* 启用使用预制技能或自定义技能进行专门任务
+
+### 要求
+
+要在 GitHub Actions 中使用 Agent，您需要：
+
+* 一个 [**Warp API 密钥**](/reference/cli/#generating-api-keys)存储为 [GitHub 密钥](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)——用于向 Warp 认证 agent
+* 工作流权限与您的预期操作匹配（例如，如果 agent 应提交或评论 PR，需要 `pull-requests: write`）——agent 使用工作流可用的 GitHub 令牌代表您执行操作
+* 将 `oz-agent-action` 步骤添加到您的工作流
+* **对于使用 `@oz-agent` 提及工作流的私有仓库**：[`oz-agent`](https://github.com/oz-agent) GitHub 用户必须被[邀请为成员](https://docs.github.com/en/organizations/managing-membership-in-your-organization/inviting-users-to-join-your-organization)加入您的 GitHub 组织
+* 熟悉 GitHub Actions 概念——请参阅官方 [GitHub Actions](https://docs.github.com/en/actions) 文档
+
+### 使用技能
+
+技能为 Agent 提供可重用的指令。您可以使用 [oz-skills 仓库](https://github.com/warpdotdev/oz-skills)中的预制技能，或为特定工作流创建自定义[技能](/agent-platform/capabilities/skills/)。技能也可以作为[独立 Agent](/agent-platform/capabilities/skills/#skills-as-agents)部署，按计划或响应事件运行。
+
+#### 如何使用技能
+
+您可以使用 `skill` 输入参数指定技能，可以代替提示或与提示组合使用：
+
+```yaml
+- name: Run agent with a skill
+  uses: warpdotdev/oz-agent-action@v1
+  with:
+    skill: 'code-review'
+    warp_api_key: ${{ secrets.WARP_API_KEY }}
+```
+
+#### 常见用例
+
+`oz-agent-action` 支持 CI 中常用的几种自动化模式：
+
+1. **响应带有 @ 提及的评论** - 监听包含触发短语的评论
+2. **自动 PR 审查** - PR 打开时提供自动 agent 反馈
+3. **自动修复问题** - 应用 `oz-agent` 标签以触发自动修复
+4. **每日问题摘要** - 新开问题的计划摘要
+5. **修复失败的 CI 检查** - 在工作流失败时自动尝试修复
+6. **为审查评论建议修复** - 自动为小意见提出代码建议
+
+有关每个模式的详细示例，请参阅 [oz-agent-action 示例](https://github.com/warpdotdev/oz-agent-action/tree/main/examples)。

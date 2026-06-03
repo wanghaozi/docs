@@ -1,0 +1,59 @@
+---
+title: authentication_required
+description: >-
+  请求中的 API 密钥无效、已过期或缺失。生成一个新密钥并更新您的客户端配置。
+---
+
+`authentication_required` 错误发生在 API 请求缺少有效认证凭据时。
+
+:::note
+这被归类为**平台错误**（任务状态 → ERROR），而非用户错误，因为它通常表示 API 密钥的配置问题，而不是任务本身的问题。
+:::
+
+---
+
+## 详情
+
+* **HTTP 状态：** `401 未授权`
+* **可重试：** 否
+* **任务状态：** ERROR
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 请求中缺少 `Authorization` 标头
+* API 密钥已被吊销或已过期
+* API 密钥格式错误或无效
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/authentication-required/",
+  "title": "您的 API 密钥无效或已过期。请生成一个新密钥并重试。",
+  "status": 401,
+  "instance": "/api/v1/agent/tasks",
+  "error": "您的 API 密钥无效或已过期。请生成一个新密钥并重试。",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 从 [Oz web 应用](https://oz.warp.dev) 或通过 Oz CLI 生成一个新的 API 密钥。
+2. 使用新密钥更新您的客户端配置。
+3. 重试请求。
+
+---
+
+## 相关
+
+* [Oz API & SDK](/reference/api-and-sdk/) — API 认证
+* [Oz 平台](/agent-platform/cloud-agents/platform/) — API 密钥管理

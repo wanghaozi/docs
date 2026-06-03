@@ -1,0 +1,56 @@
+---
+title: budget_exceeded
+description: >-
+  您团队配置的消费预算上限已达到。增加预算或等待预算周期重置。
+---
+
+`budget_exceeded` 错误发生在您的团队已达到团队设置中配置的消费预算上限时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 您的团队设置了消费预算上限，当前周期的使用量已达到该上限
+* 云端代理任务、定时运行或集成触发的运行试图启动，但会超出预算
+
+响应中的 `title` 字段将描述具体的预算限制。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/budget-exceeded/",
+  "title": "每月 $50 的消费预算已达到。",
+  "status": 403,
+  "instance": "/api/v1/agent/tasks",
+  "error": "每月 $50 的消费预算已达到。",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 前往您的团队设置并增加消费预算，或者
+2. 等待预算周期重置（例如，下一个计费周期开始时）。
+
+如果您不是团队管理员，请联系您的团队管理员调整预算。
+
+---
+
+## 相关
+
+* [访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/) — 预算配置和计费详情

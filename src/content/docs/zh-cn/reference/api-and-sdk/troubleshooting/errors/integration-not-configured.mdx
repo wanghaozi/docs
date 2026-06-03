@@ -1,0 +1,67 @@
+---
+title: integration_not_configured
+description: >-
+  集成的设置不完整。访问设置 URL 以完成集成配置。
+---
+
+`integration_not_configured` 错误发生在任务需要一个设置未完成的集成时（例如，缺少 OAuth 令牌或未完成的配置步骤）。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `400 错误请求`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 集成（Slack、Linear 等）已部分设置但配置未完成
+* 集成所需的 OAuth 令牌或凭据缺失或已过期
+* 集成已安装但额外的设置步骤未完成
+
+---
+
+## 额外的元数据字段
+
+此错误包含超出标准响应格式的额外字段：
+
+* **`integration_name`** — 需要配置的集成名称
+* **`setup_url`** — 集成设置页面的 URL，您可以在其中完成配置
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/integration-not-configured/",
+  "title": "Slack 集成未配置",
+  "status": 400,
+  "instance": "/api/v1/agent/tasks",
+  "error": "Slack 集成未配置",
+  "retryable": false,
+  "integration_name": "slack",
+  "setup_url": "https://oz.warp.dev/integrations"
+}
+```
+
+---
+
+## 解决方法
+
+1. 访问响应元数据中提供的 `setup_url`（或前往 [Oz 集成页面](https://oz.warp.dev/integrations)）。
+2. 完成集成的所有设置步骤。
+3. 重试触发事件或任务。
+
+---
+
+## 相关
+
+* [集成](/agent-platform/cloud-agents/integrations/) — 集成设置指南
+* [Slack 集成](/agent-platform/cloud-agents/integrations/slack/) — Slack 特定设置
+* [Linear 集成](/agent-platform/cloud-agents/integrations/linear/) — Linear 特定设置

@@ -1,0 +1,118 @@
+---
+title: 块操作
+description: >-
+  使用内置操作复制、书签、分享、搜索和过滤块。
+sidebar:
+  label: "块操作"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 访问块操作
+
+有 2 种方式可以访问块操作。
+
+1. 将鼠标悬停在块上，点击右侧的烤肉串（三个点）按钮。
+2. 右键点击一个块。
+
+<VideoEmbed url="https://www.loom.com/share/3dec25e548d4484aa3dd6437869e2bbf?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="访问块操作" />
+
+## 复制块的输入/输出
+
+对于命令块，您可以 `右键单击` 一个块或点击上下文菜单，复制块的命令、输出或两者兼有。
+
+对于 AI 块，您可以 `右键单击` 复制提示符、输出、两者或整个对话。
+
+<VideoEmbed url="https://www.loom.com/share/9ad67eca0a8d47afb82cc1acba617f3c?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="复制块操作" />
+
+## 分享块
+
+通过创建网页永久链接，轻松与同事或队友分享块。这可以保留格式，使调试和共享输出变得容易。[参见块分享页面](/terminal/blocks/block-sharing/)。
+
+## 为块添加书签
+
+快速导航到重要的块，无论它们在终端历史中的位置如何。
+
+<Tabs>
+  <TabItem label="macOS">
+    为块添加书签的方法：
+
+    1. 在块上下文菜单中选择 **切换书签**
+    2. 使用 `CMD-B` 快捷键为选定的块添加书签
+
+    导航到已添加书签的块：
+
+    * 点击指示器。\
+      指示器的位置反映了该块在块历史中的大致位置。将鼠标悬停在指示器上会显示块的快照，包括其提示符、命令和最后两行输出。
+    * 按下 `OPTION-UP` 和 `OPTION-DOWN`
+  </TabItem>
+  <TabItem label="Windows">
+    为块添加书签的方法：
+
+    1. 在块上下文菜单中选择 **切换书签**
+    2. 使用 `CTRL-SHIFT-B` 快捷键为选定的块添加书签
+
+    导航到已添加书签的块：
+
+    * 点击指示器。\
+      指示器的位置反映了该块在块历史中的大致位置。将鼠标悬停在指示器上会显示块的快照，包括其提示符、命令和最后两行输出。
+    * 按下 `ALT-UP` 和 `ALT-DOWN`
+  </TabItem>
+  <TabItem label="Linux">
+    为块添加书签的方法：
+
+    1. 点击块右上角的书签图标
+    2. 在块上下文菜单中选择 **切换书签**
+    3. 使用 `CTRL-SHIFT-B` 快捷键为选定的块添加书签
+
+    导航到已添加书签的块：
+
+    * 点击指示器。\
+      指示器的位置反映了该块在块历史中的大致位置。将鼠标悬停在指示器上会显示块的快照，包括其提示符、命令和最后两行输出。
+    * 按下 `ALT-UP` 和 `ALT-DOWN`
+  </TabItem>
+</Tabs>
+
+:::note
+书签仅在会话打开期间持续存在，关闭会话后它们将丢失。如果您想保存命令和输出以备后用，请 [分享块](/terminal/blocks/block-sharing/)。
+:::
+
+<DemoVideo src="/assets/terminal/block-bookmarks.mp4" label="为块添加书签" />
+
+## 在块内搜索
+
+快速在块内查找重要信息。[参见查找页面](/terminal/blocks/find/)
+
+<Tabs>
+  <TabItem label="macOS">
+    选中块后，按"在块内查找"或使用 `CMD-F` 在块内搜索。
+  </TabItem>
+  <TabItem label="Windows">
+    选中块后，按"在块内查找"或使用 `CTRL-SHIFT-F` 在块内搜索。
+  </TabItem>
+  <TabItem label="Linux">
+    选中块后，按"在块内查找"或使用 `CTRL-SHIFT-F` 在块内搜索。
+  </TabItem>
+</Tabs>
+
+<VideoEmbed url="https://www.loom.com/share/7dda0e7a6ec144cfb6410d29a586ddd0?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="在块内搜索" />
+
+## 过滤块
+
+在 Warp 中原生过滤块的输出行，以快速聚焦于块的子集。[参见块过滤页面](/terminal/blocks/block-filtering/)。
+
+<Tabs>
+  <TabItem label="macOS">
+    * 默认使用快捷键 `OPT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+  <TabItem label="Windows">
+    * 使用快捷键 `ALT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+  <TabItem label="Linux">
+    * 使用快捷键 `ALT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+</Tabs>

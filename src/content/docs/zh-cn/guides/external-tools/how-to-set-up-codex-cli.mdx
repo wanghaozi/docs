@@ -1,0 +1,138 @@
+---
+title: 设置 Codex CLI
+description: >-
+  在 Warp 中设置 OpenAI 的 Codex CLI，为你的项目进行配置，并学习在 Warp 中实现更快 AI 辅助编码工作流的生产力技巧。
+sidebar:
+  label: "设置 Codex CLI"
+tags:
+  - "third-party-tools"
+
+---
+
+Codex CLI 是 OpenAI 的开源编码代理。它可以读取你的代码库、编辑文件并从自然语言提示执行命令。本指南将带你在大约 5 分钟内从安装到在 Warp 中运行一个可用的 Codex 会话，然后展示如何充分利用它。
+
+## 先决条件
+
+* **一个具有 Codex 访问权限的 ChatGPT 账户**——包含在付费 ChatGPT 计划中，或使用 OpenAI API 密钥。有关符合条件的计划，请参阅 [Codex CLI 文档](https://developers.openai.com/codex/cli/)。
+* **Node.js 18+**（用于 npm 安装）或 **Homebrew**（用于 macOS）——选择你喜欢的包管理器。
+* **macOS 或 Linux**——Windows 支持为实验性功能；要获得最佳 Windows 体验，请在 WSL 工作区中使用 Codex。
+
+## 1. 安装 Codex CLI
+
+使用 npm 或 Homebrew 全局安装 Codex CLI：
+
+**npm：**
+
+```bash
+npm install -g @openai/codex
+```
+
+**Homebrew（macOS）：**
+
+```bash
+brew install codex
+```
+
+验证安装：
+
+```bash
+codex --version
+```
+
+你也可以直接从 [GitHub 发布页面](https://github.com/openai/codex/releases)下载平台特定的二进制文件。
+
+## 2. 身份验证
+
+首次运行 Codex：
+
+```bash
+codex
+```
+
+选择**使用 ChatGPT 登录**并使用你的 ChatGPT 账户进行身份验证（推荐）。你的 Codex 使用量包含在你的 ChatGPT 计划中。
+
+对于 API 密钥身份验证（适用于 CI/CD 或自动化）：
+
+```bash
+export OPENAI_API_KEY=YOUR_API_KEY
+```
+
+## 3. 启动你的第一个会话
+
+导航到项目目录并启动 Codex：
+
+```bash
+cd ~/your-project
+codex
+```
+
+Codex 启动一个交互式终端会话。尝试给它一个任务，例如：
+
+```
+Explain the structure of this project
+```
+
+或者更实际的任务：
+
+```
+Add error handling to the database connection module
+```
+
+Codex 将读取相关文件，提议更改，并在修改任何内容之前征求你的确认。你可以在差异视图中审查更改并接受或拒绝每个更改。
+
+## 4. 配置模型和批准模式
+
+在会话期间使用 `/model` 命令在可用模型之间切换。请参阅 [Codex CLI 文档](https://developers.openai.com/codex/cli/)获取当前模型列表。
+
+Codex 有三种[批准模式](https://developers.openai.com/codex/cli/features#approval-modes)来控制其自主程度。
+* **自动**（默认）允许 Codex 在工作目录内读取、编辑和运行命令，但在超出该范围之前会询问。
+* **只读**保持 Codex 为顾问模式。
+* **完全访问**授予更广泛的自主权，包括网络访问。
+
+在会话中使用 `/permissions` 根据你的舒适度切换模式。
+
+## 5. 使用配置文件自定义
+
+在项目根目录创建一个 `codex.md` 或 `AGENTS.md` 文件，教会 Codex 你项目的约定：
+
+```markdown
+# My Project
+
+## Stack
+- Backend: Node.js, Express, TypeScript
+- Database: PostgreSQL with Prisma ORM
+- Testing: Vitest for unit tests, Playwright for e2e
+
+## Conventions
+- Use ESM imports (no require())
+- All API endpoints need Zod input validation
+- Run `npm test` before committing
+```
+
+Codex 在每个会话开始时读取此文件，并自动遵循你的约定。
+
+:::note
+Warp 支持 Codex 的代理通知。在 `~/.codex/config.toml` 的 `[tui]` 下添加 `notification_condition = "always"` 并重启 Codex。有关详细信息，请参阅 [Warp 中的 Codex（文档）](/agent-platform/cli-agents/codex/#setting-up-notifications)。如果未设置配置，Warp 会在终端中显示设置标签。
+:::
+
+## 生产力技巧
+
+* **使用语音提示 Codex**——口述复杂指令而不是输入。Warp 支持适用于任何 CLI 代理（包括 Codex）的[语音转录](/agent-platform/local-agents/interacting-with-agents/voice/)。
+* **附加图像作为上下文**——将错误、设计或错误消息的截图粘贴到你的提示中。Warp 的[图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)功能让 Codex 看到你所看到的。
+* **可视化审查差异**——Codex 做出更改后，打开 Warp 的[代码审查面板](/code/code-review/)（`⌘+Shift++`）查看可视化差异。你可以留下内联评论并发送回 Codex 进行修正。
+* **并排运行 Codex 和 Claude Code**——使用[垂直标签](/terminal/windows/vertical-tabs/)在相同任务上并排运行 Claude Code 和 Codex。比较它们的方法并选择最佳输出，或结合两者的元素。
+* **编写更丰富的提示**——按 `Ctrl+G` 打开 Warp 的富文本输入编辑器用于 Codex，为你提供完整的文本编辑器体验，而不是原始 CLI 输入。
+
+## 后续步骤
+
+你已经安装了 Codex CLI、进行了身份验证、启动了第一个会话并为你的项目进行了配置。Codex 现在在 Warp 中作为一个可工作的 AI 编码代理设置完成。
+
+探索相关指南和功能：
+
+* [设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) 在 Codex 旁边运行第二个代理
+* [如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)——审查代理输出的结构化工作流
+* [同时运行多个代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)——并排使用 Codex 和 Claude Code
+* [Codex CLI 文档](https://developers.openai.com/codex/cli/)——OpenAI 的官方参考
+* [Warp 中的 Codex](https://www.warp.dev/agents/codex)——Warp 中 Codex 支持概述
+* [Warp 中的 Codex（文档）](/agent-platform/cli-agents/codex/)——Codex 的 Warp 集成完整参考，包括通知设置
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和 Warp 的通用代理功能

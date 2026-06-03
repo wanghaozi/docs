@@ -1,0 +1,62 @@
+---
+title: 丰富输入编辑器
+description: >-
+  Warp 的丰富输入编辑器为任何受支持的 CLI 编码 agent 提供 IDE 风格的编辑、语音输入、上下文附件和斜杠命令。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的丰富输入编辑器让您为任何 CLI 编码 agent 编写提示，编辑体验与您在 IDE 中预期的相同——鼠标支持、上下文附件、语音等。按下 `Ctrl-G`（可配置）或点击 agent 实用栏中的**丰富输入**按钮以打开它。
+
+<VideoEmbed url="https://youtu.be/f1MqXDv0gFM" title="CLI agent 的丰富输入编辑器" />
+
+## 关键能力
+
+* **IDE 风格编辑** - 使用鼠标点击、选择和导航提示。复制、剪切、粘贴、撤销和单词级导航均有效。编写支持换行和软换行的多行提示。也支持 Vim 键绑定。请参阅[现代文本编辑](/terminal/editor/)获取完整快捷键列表。
+* **使用 @ 提及的丰富上下文** - 使用 `@` 提及引用文件、文件夹和代码符号。附加图像以提供视觉上下文。直接从编辑器搜索特定符号。请参阅 [Agent 上下文](/agent-platform/local-agents/agent-context/)了解详情。
+* **语音输入** - 口述提示，无需输入。请参阅[语音](/agent-platform/local-agents/interacting-with-agents/voice/)了解详情。
+* **斜杠命令和技能** - 使用 `/` 访问已保存的 `/prompts`、`/skills` 和 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 内容。编辑器显示特定于运行中 agent 提供商的技能（例如，运行 Claude Code 时显示 Claude 特定技能）。请参阅[斜杠命令](/agent-platform/capabilities/slash-commands/)了解详情。
+* **Agent 工具栏** - 从工具栏浏览文件、查看代码更改和管理 agent 会话。
+
+## 如何打开
+
+有两种方式打开丰富输入编辑器：
+
+1. **键盘快捷键** - 当受支持的 agent 在活动窗格中运行时，按下 `Ctrl-G`（可配置）。
+2. **丰富输入按钮** - 点击窗格底部 agent 实用栏中的**丰富输入**按钮。
+
+<figure>
+![窗格底部 agent 实用栏中的丰富输入按钮。](../../../../../assets/agent-platform/rich-input-button.png)
+<figcaption>agent 实用栏中的丰富输入按钮。</figcaption>
+</figure>
+
+当 agent 从阻塞状态恢复时（例如您批准命令后），丰富输入编辑器也会自动打开。这需要安装并支持 agent 的插件。在[丰富输入设置](#rich-input-settings)中切换**根据 agent 状态自动显示/隐藏**以控制此行为。
+
+当丰富输入编辑器激活时，Warp 会隐藏 CLI agent 内的光标并将焦点移到编辑器输入。从此处提交提示，提示将直接发送到正在运行的 agent。
+
+<figure>
+![丰富输入编辑器打开，正在编写提示。](../../../../../assets/agent-platform/rich-input-prompt.png)
+<figcaption>丰富输入编辑器。</figcaption>
+</figure>
+
+## 丰富输入设置
+
+在 Warp 应用中，前往**设置** > **Agent** > **第三方 CLI agent** 配置以下内容：
+
+* **根据 agent 状态自动显示/隐藏** - 当 agent 需要输入时自动打开丰富输入编辑器，当 agent 工作时自动隐藏。适用于已安装插件且具有插件支持的 agent（Claude Code 和 OpenCode）。
+* **会话开始时自动打开** - 当 CLI agent 会话开始时自动打开丰富输入编辑器。
+* **提交后自动关闭** - 发送提示后关闭编辑器。
+* **键盘快捷键** - 默认快捷键为 `Ctrl-G`。在**设置** > **键盘快捷键**中自定义。
+* **禁用丰富输入按钮** - 右键单击 agent 实用栏并移除**丰富输入**芯片，或在**设置** > **Agent** > **第三方 CLI agent** 中完全禁用页脚。
+
+<figure>
+![丰富输入设置面板。](../../../../../assets/agent-platform/rich-input-settings.png)
+<figcaption>Warp 中的丰富输入设置。</figcaption>
+</figure>
+
+## 相关页面
+
+* [第三方 CLI Agent 概述](/agent-platform/cli-agents/overview/)
+* [远程控制](/agent-platform/cli-agents/remote-control/)
+* [语音](/agent-platform/local-agents/interacting-with-agents/voice/)
+* [斜杠命令](/agent-platform/capabilities/slash-commands/)
+* [Agent 上下文](/agent-platform/local-agents/agent-context/)

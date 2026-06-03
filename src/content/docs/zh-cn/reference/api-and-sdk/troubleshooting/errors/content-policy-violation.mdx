@@ -1,0 +1,59 @@
+---
+title: content_policy_violation
+description: >-
+  任务提示或环境设置命令被平台的自动内容策略检查标记。
+---
+
+`content_policy_violation` 错误发生在任务提示或环境设置命令被平台的自动内容策略检查标记时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 任务提示包含违反 Warp 使用政策的内容
+* 环境设置命令包含被标记为潜在有害的模式
+* 自动内容分类器判定该任务应被阻止
+
+:::note
+出于安全原因，错误消息有意保持通用，不会描述具体被标记的内容。
+:::
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/content-policy-violation/",
+  "title": "无法启动云端代理。请重试，如果问题仍然存在请联系支持。",
+  "status": 403,
+  "instance": "/api/v1/agent/tasks",
+  "error": "无法启动云端代理。请重试，如果问题仍然存在请联系支持。",
+  "retryable": false,
+  "trace_id": "abc123..."
+}
+```
+
+---
+
+## 解决方法
+
+1. 检查您的任务提示和环境设置命令，确保它们符合 [Warp 的使用政策](https://www.warp.dev/terms-of-service)。
+2. 如果您认为这是误报，请联系 [Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)，并提供错误响应中的 `trace_id`。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理任务的工作原理
+* [环境](/agent-platform/cloud-agents/environments/) — 配置设置命令

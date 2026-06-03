@@ -1,0 +1,37 @@
+---
+title: Agent 语音输入
+sidebar:
+  label: "语音"
+description: >-
+  语音实现与 Warp 的自然语言交互，让您可以直接对终端说出命令和查询。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的语音功能改变了您与终端交互的方式，让您可以自然地说出命令和问题，而不是输入它们。与 Agent 模式结合使用时，对于复杂操作或需要解释更长场景时尤为强大。
+
+## 开始使用语音
+
+### 初始设置
+
+首次用户需要授予麦克风权限。
+
+### 使用语音
+
+有两种方式激活语音：
+1. **Agent 模式中的麦克风按钮** - 点击麦克风图标
+2. **热键方法** - 按住 `Fn` 键（macOS）/ `ALT-RIGHT`（Windows/Linux）
+
+### 示例用例
+
+语音输入使与 Agent 模式的复杂交互更自然、更高效。您可以描述多步骤系统任务，Agent 模式将其分解为必要命令。
+
+## 隐私与安全
+
+转录由 [Wispr Flow](https://wisprflow.ai/) 提供支持。语音数据由 Wispr Flow 实时处理，转录后不保留为录音。
+
+## 故障排除
+
+1. **未检测到麦克风** - 检查系统权限
+2. **转录质量差** - 最小化背景噪音，靠近麦克风
+3. **功能未激活** - 确认热键设置正确

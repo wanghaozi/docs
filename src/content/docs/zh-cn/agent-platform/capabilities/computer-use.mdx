@@ -1,0 +1,142 @@
+---
+title: Agent 的计算机使用
+sidebar:
+  label: "计算机使用"
+description: >-
+  让 agent 在沙盒化的云环境中与桌面 GUI 交互，用于自动化 UI 测试和验证。
+---
+
+Computer Use 是一项实验性功能，使 Warp 的 agent 能够与桌面环境交互。Agent 可以看到屏幕上显示的内容、点击和拖拽、输入文本、使用键盘快捷键以及执行其他 GUI 交互——全部在安全、隔离的沙箱中。
+
+一个关键用例是使用自包含的反馈循环**测试 UI 更改**，其中 agent 可以验证您的代码更改是否产生预期的视觉和行为结果，而无需手动测试。
+
+## 概述
+
+使用 Computer Use，agent 可以：
+
+* **截取屏幕截图** - 捕获和分析当前显示
+* **与应用程序交互** - 点击按钮、填写表单、导航界面
+* **输入和控制键盘** - 输入文本和使用键盘快捷键
+* **自动化测试工作流** - 无需人工干预即可端到端测试 UI 更改
+* **使用基于浏览器的界面** - 测试 Web 应用和浏览网页
+
+Computer Use 仅在 Warp 的沙盒化云环境中可用，不在本机交互式终端会话中可用。
+
+---
+
+## 启用 Computer Use
+
+Computer Use 是**可选**的，默认关闭。您可以通过多个入口点启用它：
+
+### Warp 应用设置
+
+要为[云 Agent](/agent-platform/cloud-agents/overview/) 启用 Computer Use，导航到**设置** > **Agent** > **Warp Agent** > **实验性** > **云 Agent 中的计算机使用**并切换启用。
+
+### CLI
+
+通过 CLI 在云端运行 agent 时，使用标志控制每次运行的 Computer Use：
+
+```bash
+oz agent run-cloud --computer-use --prompt "<task>"
+oz agent run-cloud --no-computer-use --prompt "<task>"
+```
+
+### API
+
+调用 Warp API 创建 agent 运行时，在请求中包含 `computer_use_enabled` 字段：
+
+```json
+{
+  "prompt": "构建一个匹配此设计的按钮组件，然后在浏览器中测试它",
+  "computer_use_enabled": true,
+  "environment_id": "optional-environment-id"
+}
+```
+
+有关完整 API 文档，请参阅 [Oz API & SDK](/reference/api-and-sdk/) 参考。
+
+### Web 应用
+
+在 Warp Web 应用中，您可以启用或禁用 Computer Use：
+
+* **新建 agent 运行** - 从 Web 应用启动新 agent 运行时配置 Computer Use
+* **计划 agent 运行** - 为从 Web 应用管理的计划 agent 启用 Computer Use
+* **集成** - 为 Slack、Linear 和其他集成触发的 agent 配置 Computer Use
+
+---
+
+## Computer Use 的工作原理
+
+### 设置和要求
+
+Computer Use 在容器化沙箱中运行，允许无头云环境渲染图形应用并与之交互。沙箱完全隔离——它无法访问您的本地机器、凭据或沙箱环境外的敏感数据。
+
+您的云环境必须包含您希望 agent 控制的任何应用程序。例如，要在浏览器中测试 Web 应用，在您的[环境配置](/agent-platform/cloud-agents/environments/)中安装 Chrome 或 Firefox。
+
+### 模型选择
+
+Computer Use 支持多个 Anthropic Claude 模型，包括 Claude 4.5 Sonnet、Claude 4.5 Opus、Claude 4.5 Haiku、Claude 4.6 Sonnet 和 Claude 4.6 Opus。Warp 使用自动模型选择器为每个 Computer Use 任务选择最合适的模型。
+
+---
+
+## 安全考虑
+
+Computer Use 是一项具有独特安全考虑的实验性功能。与互联网交互时这些风险更高。
+
+使用 Computer Use 时最小化风险：
+
+1. **避免敏感数据** - 不要向使用 Computer Use 的 agent 传递 API 密钥、身份验证令牌或个人身份信息
+2. **限制互联网访问** - 如果您的环境具有互联网访问权限，请考虑限制为已知安全域的允许列表
+3. **需要人工确认** - 对于具有现实世界后果的任务（例如金融交易、接受法律条款），在 agent 继续操作前请人工确认
+4. **审查 agent 操作** - 定期审查 agent 代表您执行的操作，特别是在测试新工作流时
+
+---
+
+## 示例工作流
+
+### 测试 UI 更改
+
+验证代码更改是否产生预期的视觉结果和行为：
+
+* **从模型构建** - 接收 Figma 设计或模型图片，构建 UI，并测试是否匹配
+* **视觉回归测试** - 代码更改后，验证 UI 是否正确渲染
+* **表单和交互测试** - 测试表单提交、验证、错误处理
+* **响应式设计验证** - 在不同屏幕尺寸上测试布局
+
+**示例：测试 React 组件**
+
+1. 您要求 agent："构建一个匹配此设计的 React 按钮组件，然后测试它"
+2. Agent 截取屏幕截图以查看当前状态
+3. Agent 在浏览器中打开您的开发服务器
+4. Agent 导航到组件，验证其是否正确渲染
+5. Agent 测试交互（悬停、点击）并报告
+
+**示例：测试 Web 表单**
+
+1. 您提供表单设计并要求 agent 构建并测试
+2. Agent 在浏览器中渲染表单
+3. Agent 使用有效和无效数据填写字段
+4. Agent 验证消息和提交行为
+5. Agent 报告哪些字段正确工作，哪些需要调整
+
+**示例：验证 UI 响应性**
+
+1. 您要求 agent 在不同屏幕尺寸上测试应用
+2. Agent 将浏览器窗口调整为移动、平板和桌面宽度
+3. Agent 在每个尺寸下截取屏幕截图并验证布局是否正确
+4. Agent 报告任何响应式设计问题
+
+### 浏览和 Web 交互
+
+Computer Use 还可以帮助处理一般的 Web 任务：
+
+* 浏览网站并与 Web 界面交互
+* 填写和提交 Web 表单
+* 在 Web 应用中导航多步骤工作流
+
+---
+
+## 相关能力
+
+* [图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/) - 传递设计模型和截图作为上下文
+* [完整终端使用](/agent-platform/capabilities/full-terminal-use/) - 让 agent 驱动交互式终端应用、查看实时输出并运行命令

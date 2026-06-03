@@ -1,0 +1,84 @@
+---
+title: Agent Memory（研究预览）
+description: >-
+  Agent Memory 为 Oz 中的 Agent 跨受支持的 harness（包括 Warp Agent、Claude Code 和 Codex）提供持久化记忆。
+sidebar:
+  label: "Agent Memory（研究预览）"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::caution
+Agent Memory 处于**研究预览**阶段，仅面向设计合作伙伴团队按团队启用。[加入候补名单](https://warp.dev/oz/agent-memory#waitlist)以为您的团队请求访问权限。
+:::
+
+Agent Memory 是一个驻留在 Oz 上的持久化记忆系统，可跨所有受支持的 agent harness（包括内置的 Warp Agent、Claude Code、Codex 以及其他后续添加的 harness）共享。Agent 在运行时读取和写入此记忆系统，因此来自一次对话的持久化事实、决策和结果可在下一次对话中使用——无论触发工作的 harness、机器或团队成员是谁。
+
+记忆的创建和检索是异步的，在后台运行，因此不会消耗 token 或增加活动任务的延迟。
+
+观看此简短预览，了解 Agent Memory 的实际应用。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=ED9g1shmiEE" title="Agent Memory" />
+
+[加入 Agent Memory 候补名单](https://warp.dev/oz/agent-memory#waitlist)。
+
+## 主要特性
+
+* **跨 harness 记忆** - 一个跨 Warp Agent、Claude Code、Codex 以及其他后续添加的 harness 共享的记忆系统。第三方 harness 在以云 agent 身份运行时同样适用。
+* **本地和云 agent 均支持** - 支持 Warp 中的交互式本地 agent 和后台云 agent。
+* **异步设计** - 记忆创建在对话结束后进行。记忆检索在运行期间后台进行。两者均不消耗 token 或增加活动任务的延迟。
+* **对话自动生成记忆** - 对话结束时，Oz 提取持久化事实、学习内容和结果，并将其写入为记忆。新知识与现有记忆合并，或在冲突时取代旧记忆。
+* **Agent 作用域、可共享的存储** - 默认情况下，每个 agent 拥有自己的记忆存储。当相同的知识需要随工作流转时，存储可跨多个 agent 或整个团队共享。
+* **按 agent 设置访问权限和指令** - 以只读或读写访问权限将存储附加到特定 agent。按存储的指令告诉每个 agent 如何使用以及何时使用该存储。
+* **完全可通过 API 访问** - 可通过 [Oz API](/reference/api-and-sdk/) 读取、创建、更新和删除记忆和存储。
+* **可追溯性** - 记忆检索被记录，因此团队可以检查哪些记忆促成了运行的上下文。
+* **可审计性** - 对记忆的每次更改都被记录，因此团队可以检查记忆随时间的变化。
+* **自托管支持** - 企业可以在[自托管的 Oz](/agent-platform/cloud-agents/self-hosting/) 实例上运行 Agent Memory，以满足安全、隐私和合规性要求。
+
+## Agent Memory 的运行位置
+
+Agent Memory 是 Oz 的一部分。存储、记忆创建和检索都在托管 agent 的同一 Oz 实例上运行。该实例可以是 Warp 托管的 Oz（默认），也可以是您的团队在其自有边界内运行的[自托管 Oz](/agent-platform/cloud-agents/self-hosting/) 实例。您在 Oz 上运行的任何 agent 均可访问同一记忆：
+
+* 本地 Warp Agent。
+* 通过 CLI、Web 应用、调度或集成触发的云 agent。
+* 作为云 agent 运行的第三方 harness：Claude Code、Codex 以及其他后续添加的。（研究预览期间不支持本地运行第三方 harness。）
+
+记忆绑定到其所有者（用户或团队），与哪个 harness 读取或写入无关。
+
+## 记忆存储
+
+记忆存储是一个命名的记忆集合。默认情况下，每个 agent 都有自己的存储，运行时写入其中。当多个 agent 需要相同的知识时，存储也可以跨 agent 共享；当知识应随团队流动时，也可以跨团队成员共享。
+
+* **个人存储** - 归用户所有。存储关于偏好、工作笔记和个人模式的记忆。
+* **团队存储** - 归团队所有。存储共享知识，如部署手册、代码审查约定或值班流程。每位团队成员以及团队授权的任何 agent 都可以读取同一个存储。
+
+使用多个存储可以保持上下文分离，并在需要时跨 agent 共享存储。例如，代码审查 agent 可以有自己的审查模式存储，而特定仓库的架构决策存储则在代码审查 agent 和 Sentry 分类 agent 之间共享，以便两者基于相同的代码库进行推理。
+
+## 对话自动生成记忆
+
+当对话结束时，Oz 从记录中提取持久化事实、学习内容和结果，并将其写入为记忆。记忆创建在对话结束后在后台运行，因此不会在该次运行中消耗 token 或增加延迟。
+
+* **记忆随时间演变** - 随着新信息的到来，Agent 会更新和取代自己的记忆，包括解决与先前记忆的矛盾。
+
+您也可以明确要求 agent 在对话中记住某事。Oz 将该记忆保存到相应的存储中。
+
+## Agent 如何使用记忆
+
+当 agent 开始任务时，Oz 搜索 agent 可访问的存储以查找相关记忆，并作为上下文注入。搜索在后台运行，因此 agent 只看到返回的记忆。Agent 也可以在对话中根据需要按需检索更多记忆，类似于其查询 [Rules](/agent-platform/capabilities/rules/) 或 [Codebase Context](/agent-platform/capabilities/codebase-context/) 的方式。您无需编写检索查询或预加载记忆。
+
+## 将记忆附加到您的 Agent
+
+以只读或读写访问权限将存储附加到 agent。每个附件可以包含按存储的指令，告诉 agent 如何以及何时使用该存储。例如，使用类似"参考此存储以获取团队命名约定"或"每次成功部署后写入新记忆"的指令。没有指令的情况下，agent 可以访问该存储但不知道何时读取或写入。
+
+## 加入候补名单
+
+Agent Memory 在研究预览期间正在向设计合作伙伴团队逐步推出。[加入候补名单](https://warp.dev/oz/agent-memory#waitlist)以请求访问权限。
+
+## 相关页面
+
+* [Codebase Context](/agent-platform/capabilities/codebase-context/) - 通过语义索引让 agent 理解您的代码库。
+* [Rules](/agent-platform/capabilities/rules/) - 定义塑造 agent 行为的全局和项目级指南。
+* [Skills](/agent-platform/capabilities/skills/) - 可重用、有作用域的指令，教导 agent 如何执行特定任务。
+* [Agent profiles and permissions](/agent-platform/capabilities/agent-profiles-permissions/) - 控制 agent 拥有的权限和自主权。
+* [Cloud agents overview](/agent-platform/cloud-agents/overview/) - 运行具有团队级可观测性的后台 agent。
+* [Self-hosting overview](/agent-platform/cloud-agents/self-hosting/) - 在您自己的基础设施上运行 Oz 以及 Agent Memory。
+* [Oz API and SDK](/reference/api-and-sdk/) - 以编程方式读取、创建、更新和删除记忆和存储。

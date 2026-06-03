@@ -1,0 +1,302 @@
+---
+title: 集成设置
+description: >-
+  了解如何设置环境和集成，以便从外部工具触发 Oz 代理。
+sidebar:
+  label: "集成设置"
+---
+
+本文介绍从 Slack 或 Linear 等外部工具触发代理之前所需的环境和集成设置。您将了解如何：
+
+* 创建和配置运行代理所需的环境
+* 将该环境连接到您的团队
+* 使用 Slack 或 Linear 触发代理
+
+:::note
+**每个 Warp 团队只需完成此设置一次**。集成创建后，团队中的任何人都可以使用它。例如，当队友首次通过 Slack 或 Linear 触发代理时，系统会提示他们用自己的账户授权 GitHub，以便代理可以写回仓库。
+
+注意：虽然云端代理可以通过 CLI 单独运行而无需团队，但集成（Slack、Linear）需要团队成员资格。
+:::
+
+:::note
+有关 Warp 集成的快速入门指南，请参见[集成概述](/agent-platform/cloud-agents/integrations/)。
+:::
+
+## 集成和环境的工作原理
+
+Warp 集成将 Slack 或 Linear 等外部工具与在后台运行您代码的代理连接起来。
+
+有三个主要组件需要了解：
+
+* **触发器**提供上下文，告诉 Warp _运行什么_。触发器可以是您 @Oz 的 Slack 消息，或者是 Linear 问题或评论。
+* [**集成**](/agent-platform/cloud-agents/integrations/)连接触发面（Slack、Linear）与 Warp。集成将触发器链接到您的 [Warp 团队](/knowledge-and-collaboration/teams/)，并将结果发布回原始工具，例如在 Slack 中回复。
+* **环境**定义代理如何以及在哪里运行您的代码。当代理被触发时，Warp 使用环境来启动容器、克隆仓库并执行代理的工作流。
+
+```
+Slack 或 Linear
+   (触发器)
+        →
+Warp 集成
+   (将工具连接到 Warp)
+        →
+环境
+   (Docker 镜像 + 仓库 + 设置)
+        →
+代理
+   (运行工作流、打开 PR、发布结果)
+```
+设置集成包括三个步骤。
+
+1. **创建一个环境**供代理运行您的代码。
+2. **授权 GitHub**，以便 Warp 可以克隆仓库、编写代码、调试问题、打开拉取请求等。
+3. **使用集成配置 Oz 应用**。
+
+:::tip
+如果设置失败，请使用返回的错误码缩小修复范围。常见错误包括：
+
+* [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/)（环境初始化问题）
+* [`external_authentication_required`](/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/)（缺少 GitHub 或外部服务授权）
+* [`integration_not_configured`](/reference/api-and-sdk/troubleshooting/errors/integration-not-configured/)（集成设置不完整）
+:::
+
+---
+
+## 第 1 步：创建环境
+
+在从 Slack 或 Linear 触发代理之前，您需要一个环境。环境定义 Warp 如何以及在哪里运行您的代码。
+
+至少，环境包括：
+
+* 一个 Docker 镜像
+* 一个或多个 GitHub 仓库
+* 可选的设置命令
+
+通常，您会为**每个代码库**（或密切相关的仓库组）创建一个环境，并在多个集成间重复使用。
+
+您可以通过引导式 Agent 流程或直接通过 CLI 创建环境。
+
+#### 开始之前
+
+确保您拥有：
+
+* 代理可以在其中工作的 GitHub 仓库（或多个仓库）。
+* 一个可以构建和运行您代码的公开可访问的 Docker 镜像。官方镜像如 `node`、`python` 或 `rust` 适用于许多项目。
+
+:::note
+您只需创建一次环境。它可以在 Slack、Linear 和终端触发器之间重复使用。
+:::
+
+### 选项 1：引导式环境设置（推荐）
+
+最快的入门方式是使用引导式环境设置。如果您希望 Warp 分析您的仓库并建议环境配置，请使用 `/create-environment` [斜杠命令](/agent-platform/capabilities/slash-commands/)。
+
+您可以在 Git 仓库目录中不带参数运行该命令，也可以带一个或多个仓库路径或 URL。例如，从 Warp 中：
+
+{/* TODO: 当仓库开源后，将 warp-internal 更新为 warp */}
+```bash
+# 文件路径
+/create-environment ./warp-internal ./warp-server
+
+# owner/repo
+/create-environment warpdotdev/warp-internal warpdotdev/warp-server
+
+# GitHub URL
+/create-environment https://github.com/warpdotdev/warp-internal.git
+```
+
+引导式流程将：
+
+1. 检测您希望代理处理的仓库，并识别语言、框架和工具
+2. 查找现有的 Dockerfile、推荐官方基础镜像或帮助构建自定义镜像（如果需要）
+3. 根据您的脚本和包管理器建议设置命令
+4. 通过 CLI 创建环境并返回环境 ID
+
+这将生成一个立即可用的环境，可以立即连接到 [Slack](/agent-platform/cloud-agents/integrations/slack/) 或 [Linear](/agent-platform/cloud-agents/integrations/linear/)。
+
+### 选项 2：使用 CLI 创建环境
+
+如果您已经知道如何配置环境，可以直接使用 CLI 创建。
+
+**在以下情况下使用此方法：**
+
+* 您已经有自定义 Docker 镜像
+* 您希望完全控制仓库和设置命令
+* 您正在编写脚本或自动化环境创建
+
+从 Warp 中：
+
+```sh
+oz environment create \
+  --name <name> \
+  --docker-image <image> \
+  --repo <owner/repo> \
+  --repo <owner/repo> \
+  --setup-command "<command1>" \
+  --setup-command "<command2>" \
+  --description "可选的描述"
+```
+
+关键标志：
+
+* `--name` (`-n`) – 环境的人类可读标签。
+* `--docker-image` (`-d`) – Docker Hub 上的镜像名称。如果未指定，系统会提示您从可用镜像中选择（参见 `oz environment image list`）。
+* `--repo` (`-r`) – 可对每个仓库重复。
+* `--setup-command` (`-c`) – 可重复；命令按提供的顺序运行。
+* `--description` – 可选的描述（最多 240 个字符）。
+
+您可以使用 `oz environment list` 检查现有环境。
+
+要删除环境，请使用 `oz environment delete <ID>`。添加 `--force` 跳过集成所用环境的确认检查。
+
+有关环境配置的更多详情，请参见 [Slack](/agent-platform/cloud-agents/integrations/slack/) 和 [Linear](/agent-platform/cloud-agents/integrations/linear/) 文章。
+
+#### 示例环境
+
+<table><thead><tr><th width="168.47265625">项目类型</th><th width="185.828125">Docker 镜像</th><th>仓库</th><th>示例设置命令</th></tr></thead><tbody><tr><td>Web 开发项目</td><td><code>node:20-bullseye</code></td><td>your-org/frontend-react<br /><br />your-org/backend-api</td><td><p><code>npm install -g pnpm</code></p><p><br /><code>cd frontend-react && pnpm install</code></p><p><br /><code>cd backend-api && pnpm install</code></p></td></tr><tr><td>Python 项目</td><td>基于 <code>python:3.11</code> 的自定义镜像</td><td>your-org/cool_python_project</td><td><code>cd cool_python_project && pip install -r requirements.txt</code></td></tr></tbody></table>
+
+---
+
+## 第 2 步：授权 GitHub
+
+Warp 需要 GitHub 访问权限，以便代理可以克隆您的仓库，并在允许时编写代码和打开拉取请求。
+
+#### GitHub 授权的工作原理
+
+当您创建环境或集成时，Warp 会提示您：
+
+* 安装或更新 Warp GitHub 应用
+* 授予对您环境中仓库的访问权限
+
+此授权使代理能够将仓库克隆到环境中、创建分支和提交以及打开拉取请求。
+
+**公共与私有仓库**
+
+* **公共仓库：** 代理无需授权即可读取代码，但无法写入或打开 PR。
+* **私有仓库：** Warp GitHub App 必须有访问权限，且触发用户必须具有写入权限。
+
+#### 持续权限
+
+根据 GitHub 应用在您组织中的安装方式：
+
+* 您可能需要随时间授予对新仓库的访问权限
+* 组织管理员可能需要更新应用的权限
+
+除非您的仓库访问权限发生变化，否则通常每个团队只需处理一次。
+
+#### 团队级 GitHub 授权
+
+对于使用[团队 API 密钥](/reference/cli/api-keys/)的自动化工作流（CI/CD 流水线、定时代理、SDK 触发的运行），您可以配置团队 GitHub 授权，以便代理使用 Oz by Warp GitHub App 认证，而不是个人的个人访问令牌。
+
+这需要 Warp 团队管理员在管理面板（**设置** > **管理面板** > **平台**）中启用 GitHub 组织。配置完成后，使用团队 API 密钥启动的任务可以使用 GitHub App 安装令牌克隆仓库和打开拉取请求。
+
+有关完整的设置说明，请参见[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)。
+
+:::note
+**使用 API 密钥：** 个人 API 密钥以您的身份认证，因此代理使用您的 GitHub 权限运行，代码更改归属于您的账户。配置了[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)的团队 API 密钥则使用 GitHub App 令牌。
+:::
+
+---
+
+## 第 3 步：设置集成
+
+在设置了至少一个环境后，您可以创建将其连接到 Slack 或 Linear 的集成。
+
+:::note
+为了更轻松地设置，请使用 [Oz web 应用](https://oz.warp.dev) 通过引导流程配置集成。
+:::
+
+或者，使用 CLI，其中 `<ENV_ID>` 是您的环境 ID：
+
+```bash
+oz integration create slack --environment <ENV_ID>
+# 或
+oz integration create linear --environment <ENV_ID>
+```
+
+:::note
+如果省略 `--environment`，CLI 将显示环境列表并提示您选择一个。
+:::
+
+CLI 然后：
+
+1. 将集成链接到您的 Warp 团队和环境。
+2. 打开浏览器流程，将 Oz 应用安装到您的 Slack 工作区或 Linear 工作区。
+3. 生成一个**集成 ID**，您以后可以列出或删除。
+
+**其他 `integration create` 标志：**
+
+* `--prompt` — 应用于此集成所有运行的自定义指令。
+* `--mcp <SPEC>` — 附加 MCP 服务器（内联 JSON、文件路径或 UUID）。可重复。
+* `--model <MODEL_ID>` — 覆盖默认模型。
+* `--host <WORKER_ID>` — 在特定的自托管工作节点上运行。
+* `--file <PATH>` (`-f`) — 从 YAML 或 JSON 文件加载配置。
+
+**使用自定义提示的示例：**
+
+```bash
+oz integration create slack \
+  --environment <ENV_ID> \
+  --prompt "始终在 PR 标题前添加 [WARP-AGENT] 并包含详细的测试步骤。"
+```
+
+### 更新集成
+
+您可以使用 `oz integration update` 修改现有集成：
+
+```bash
+oz integration update slack \
+  --environment <ENV_ID> \
+  --prompt "集成更新的指令。"
+```
+
+**更新专用标志：**
+
+* `--environment <ID>` — 更改环境。
+* `--remove-environment` — 从集成中移除环境。
+* `--prompt` — 更新自定义指令。
+* `--mcp <SPEC>` — 向集成添加 MCP 服务器。
+* `--remove-mcp <SERVER_NAME>` — 按名称移除 MCP 服务器。
+* `--model <MODEL_ID>` — 更新默认模型。
+* `--host <WORKER_ID>` — 更新执行主机。
+
+:::note
+更多详情，请参见 [Slack](/agent-platform/cloud-agents/integrations/slack/) 和 [Linear](/agent-platform/cloud-agents/integrations/linear/) 集成专用页面。
+:::
+
+## 运行时环境的使用方式
+
+当您从 Slack 或 Linear 触发代理时，Warp 使用您的环境遵循一个一致的、可重复的执行流程。
+
+在高层，每个运行的工作方式如下：
+
+1. **Warp 接收触发器**\
+   Warp 捕获消息内容（例如 Slack 线程或 Linear 问题），以及任何链接的上下文。
+2. **Warp 创建执行容器**\
+   Warp 从环境定义的 Docker 镜像启动一个新容器。
+3. **克隆仓库**\
+   与环境关联的 GitHub 仓库被克隆到容器中。
+4. **运行设置命令**\
+   您配置的任何设置命令，如安装依赖项，都会被执行。
+5. **代理工作流运行**\
+   代理使用提供的上下文、工具和权限执行任务。
+6. **结果发布回**\
+   进度更新、摘要和结果发布回 Slack 或 Linear。
+7. **容器被销毁**\
+   运行完成后，容器被拆除。每个运行从一个干净、隔离的环境开始。
+
+## 后续步骤
+
+您现在拥有了从团队工具触发代理所需的一切。接下来，您可以：
+
+* 添加或调整设置命令
+* 切换到自定义 Docker 镜像
+* 包含额外的仓库
+* 为一致的代理行为添加自定义提示
+* 为不同的工作流或团队创建单独的环境
+
+**更多阅读**
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/)
+* [Oz 平台](/agent-platform/cloud-agents/platform/)
+* [Slack](/agent-platform/cloud-agents/integrations/slack/)、[Linear](/agent-platform/cloud-agents/integrations/linear/) 和 [GitHub Actions](/agent-platform/cloud-agents/integrations/github-actions/) 集成
+* [故障排除](/reference/cli/troubleshooting/)

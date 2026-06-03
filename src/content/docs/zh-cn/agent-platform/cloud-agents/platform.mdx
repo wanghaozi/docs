@@ -1,0 +1,60 @@
+---
+title: Oz Platform 概述
+description: >-
+  Oz Platform 为云 Agent 提供 CLI、API/SDK、编排、环境和可观测性。
+sidebar:
+  label: "Oz Platform"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+云 Agent 在 **Oz Platform** 上运行。该平台为您提供一致的方式来**触发工作**、**编排和跟踪任务**、**执行 Agent**（在可选的[环境](/reference/cli/integration-setup/)中，在主机上），以及检查具有团队可见性的结果。第一方[集成](/agent-platform/cloud-agents/integrations/)将外部事件——如 Slack 消息、GitHub PR 或 CI 故障——自动连接到云 Agent。
+
+:::note
+**刚接触云 Agent？** 从[云 Agent 快速入门](/agent-platform/cloud-agents/quickstart/)开始，在大约 10 分钟内运行您的第一个 Agent。
+:::
+
+**大多数生产设置遵循相同的流程：**
+
+1. **触发器**触发（计划、集成事件、CI 步骤、Webhook、API 调用或手动运行）。
+2. Warp 的**编排层**创建云 Agent 任务并跟踪其生命周期。
+3. Agent 在**主机**上执行，可选在环境内，使用所需的配置和凭据。
+4. 任务产生**持久记录**（状态、元数据、记录、输出），您的团队可以审查和管理。
+
+## 关键概念
+
+* **触发器**：开始工作的事件。
+* **任务：** Warp 跟踪的工作单元。
+* **上下文**：附加到任务的额外输入。
+* **输出：** 任务产生的内容。
+
+## Oz CLI
+
+[Oz CLI](/reference/cli/) 是在非交互式模式下运行 Agent 的**无头界面**。它常用于 CI、脚本和没有交互式 UI 的服务器环境。
+
+## Warp 编排器
+
+编排层管理云 Agent 任务的生命周期。它创建任务、跟踪状态转换，并且是记录什么在运行和什么已经运行的系统。
+
+## 环境
+
+[环境](/agent-platform/cloud-agents/environments/)定义 Agent 应执行的上下文。
+
+## Oz API 和 SDK
+
+Oz [Agent API](/reference/api-and-sdk/) 是 Oz Platform 的 HTTP 接口。它让您从任何系统（CI、cron、后端服务、内部工具）创建和检查云 Agent 任务，无需 Warp 桌面应用。
+
+## 执行主机
+
+主机描述 Agent 实际执行的位置。Warp 支持多个执行模型：Warp 托管的执行和自托管执行。
+
+## 集成
+
+[集成](/agent-platform/cloud-agents/integrations/)将外部事件连接到云 Agent 任务。Warp 支持第一方集成和自定义集成。
+
+## 密钥
+
+云 Agent 通常需要凭据来访问外部系统。Warp 提供[密钥存储](/agent-platform/cloud-agents/secrets/)，可以在运行时注入密钥。
+
+## 管理和可观测性
+
+云 Agent 设计为使任务执行对团队可见。Warp 提供管理 UI、Agent 会话共享和 API/SDK 用于可观测性。

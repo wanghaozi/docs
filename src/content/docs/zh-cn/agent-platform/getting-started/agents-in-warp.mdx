@@ -1,0 +1,36 @@
+---
+title: Warp 中的 Agent
+description: >-
+  Warp 的 Agent 是强大的协作者，帮助您从自然语言提示编写代码、调试问题和完成终端工作流。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的 Agent 帮助您从自然语言提示编写代码、调试问题和完成终端工作流。它们以您代码库、Warp Drive 和连接工具的完整上下文运行，同时您控制它们的自主性、权限和模型选择。
+
+<VideoEmbed url="https://youtu.be/qiQtD1jPF6s" title="Agent 模式概述" />
+
+## Agent 能做什么
+
+* **编写和编辑代码** - 创建新文件、重构现有代码或跨多个文件进行更改
+* **调试和修复错误** - 分析堆栈跟踪、解释错误输出并应用修复
+* **运行命令** - 执行 shell 命令并使用输出来指导后续步骤
+* **从错误中恢复** - 自动重试失败操作并附加调整
+* **学习工具** - 通过读取 `--help` 或公共文档与任何 CLI 工具集成
+* **使用您的上下文** - 利用 [Warp Drive](/knowledge-and-collaboration/warp-drive/)、[MCP 服务器](/agent-platform/capabilities/mcp/)、[规则](/agent-platform/capabilities/rules/)和[代码库索引](/agent-platform/capabilities/codebase-context/)
+
+## Agent 自主性
+
+在**设置** > **Agent** > **配置文件** > **权限**下，您可以控制 Agent 执行不同类型操作时的自主程度。对于每个操作，设置自主级别为：让 Agent 决定、始终提示确认、始终允许或不。
+
+## Agent 配置文件
+
+配置文件让您为不同上下文定义不同的权限和模型配置。
+
+## 上下文和知识
+
+Agent 在有代码库和工作流上下文时表现最佳：
+* [代码库上下文](/agent-platform/capabilities/codebase-context/)
+* [规则](/agent-platform/capabilities/rules/)
+* [技能](/agent-platform/capabilities/skills/)
+* [MCP 服务器](/agent-platform/capabilities/mcp/)
+* [Warp Drive](/knowledge-and-collaboration/warp-drive/)

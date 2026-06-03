@@ -1,0 +1,127 @@
+---
+title: "Puppeteer MCP：抓取亚马逊网络评论"
+description: >-
+  在 Warp 中配置 Puppeteer MCP 服务器，以自动化浏览器任务，如导航网站、抓取产品数据和分析评论。
+sidebar:
+  label: "Puppeteer MCP：抓取亚马逊网络评论"
+tags:
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教程演示了如何在 Warp 中配置和使用 **Puppeteer MCP 服务器**来抓取亚马逊网络评论。
+:::
+
+<VideoEmbed url="https://youtu.be/rrxfS9u1XRA?si=Bzaxm6Qb00okv03t&t=134" />
+
+---
+
+### 🧠 概述
+
+**Puppeteer MCP** 将 Warp 的代理与浏览器集成，让你可以自动化导航、表单填写、截图和内容抓取等任务。\
+\
+一旦配置完毕，Warp 可以直接从提示中发出 Puppeteer 命令，实现无需手动脚本编写的完整**浏览器自动化**。
+
+你将学习如何：
+
+* 设置 Puppeteer MCP 服务器。
+* 使用 Warp 的语音输入和 AI 描述自动化任务。
+* 免提起执行浏览器工作流。
+* 以编程方式捕获、抓取和分析网络数据。
+
+---
+
+<Steps>
+
+1. #### 配置 Puppeteer MCP 服务器
+
+   在 Warp 中打开 MCP 面板：
+
+   * 按 **Cmd + Shift + P**（Mac）或 **Ctrl + Shift + P**（Windows/Linux）打开**命令面板**。
+   * 搜索 `MCP` 并打开 **MCP 面板**。
+
+   添加 Puppeteer MCP 配置：
+
+   * 点击**添加**，然后粘贴提供的 Puppeteer JSON 配置：
+
+   ```json
+   {
+     "puppeteer": {
+       "command": "npx",
+       "args": [
+         "-y",
+         "@modelcontextprotocol/server-puppeteer"
+       ],
+       "env": {},
+       "working_directory": null
+     }
+   }
+   ```
+   保存你的配置。可用的端点将包括：
+
+   * `puppeteer.navigate`
+   * `puppeteer.fill`
+   * `puppeteer.screenshot`
+   * `puppeteer.evaluate`
+
+   这些代表 Warp 可以通过其代理自动调用的操作。
+
+2. #### 使用语音输入触发自动化
+
+   点击 Warp 中的麦克风图标启用**语音输入**。然后自然地说出你的自动化提示。
+
+   ```
+   Can you go to Amazon search for "white t-shirt women?"
+
+   Scrape the results so the titles, prices, and links are extracted.
+   Then open each product link and summarize the product reviews.
+   Finally, give me a recommendation for which shirt to buy based on the combination of the pricing and review quality.
+   ```
+
+   #### 观看 Puppeteer 自动化工作流
+
+   在幕后，Puppeteer：
+
+   * 导航到亚马逊。
+   * 在搜索栏中填入"white t-shirt woman"。
+   * 抓取产品结果——捕获标题、价格和产品链接。
+   * 点击进入每个产品并使用 JavaScript 选择器提取评论数据。
+   * 截取页面截图作为参考。
+
+   你可以并排看到浏览器（亚马逊）和 Warp，Puppeteer 自主执行这些步骤。
+
+   :::note
+   Puppeteer 完全可以无头运行或可见浏览器模式运行——你无需触碰鼠标或键盘。
+   :::
+
+   #### 分析和总结结果
+
+   抓取完成后，Warp 编译数据并提供排名列表。示例输出（来自视频记录）：
+
+   | 产品 | 价格 | 评分 | 总结 |
+   | ---------------- | ----- | ------ | --------------------- |
+   | Cozy T-Shirt | $8 | ⭐ 4.5 | 柔软面料，合身 |
+   | Comfy Cotton Tee | $10 | ⭐ 4.2 | 略微宽松 |
+   | Basic White Top | $6 | ⭐ 3.8 | 质量参差不齐 |
+
+   Warp 的建议：
+
+   > "Cozy T-Shirt —— 8 美元，4.5 星，合身，面料柔软。"
+
+   #### 将 Puppeteer MCP 应用于其他场景
+
+   相同的设置适用于：
+
+   * **产品研究**——跨多个网站比较评论或规格。
+   * **竞争分析**——抓取竞争对手的定价或产品数据。
+   * **网络测试**——自动化用户流程，如登录或结账。
+   * **重复性数据处理任务**——定期抓取或截图捕获。
+
+   :::tip
+   Puppeteer MCP 让 Warp 像你的手在浏览器中一样工作——导航、抓取和总结数据，而你专注于分析。
+   :::
+
+</Steps>

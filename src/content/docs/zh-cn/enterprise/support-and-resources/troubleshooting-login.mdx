@@ -1,0 +1,108 @@
+---
+title: 登录故障排除
+description: >-
+  解决 Warp Enterprise 用户和 IT 管理员的常见登录和 SSO 问题。
+---
+
+本页涵盖 Warp Enterprise 用户的常见登录问题，重点关注与 SSO 相关的问题。有关 SSO 设置和配置，请参见[单点登录（SSO）](/enterprise/security-and-compliance/sso/)。
+
+## SSO 登录问题
+
+### 无法从 SSO 提供商打开 Warp
+
+当直接从 Okta 或其他 SSO 提供商的应用仪表板启动 Warp 时，你可能会看到类似"由于缺少初始状态，无法处理请求"的错误。这是认证流程中的一个已知限制。
+
+**解决方法：**
+
+1. 访问 [app.warp.dev/login](https://app.warp.dev/login)。
+2. 选择 **Continue with SSO**。
+3. 使用你常用的 SSO 凭据登录。
+
+### 之前使用其他方式登录过
+
+如果你最初使用邮箱、Google 或 GitHub 创建了 Warp 账户，现在需要使用 SSO：
+
+1. 访问 [app.warp.dev/login](https://app.warp.dev/login)。
+2. 使用你的**原始**方式（邮箱、Google 或 GitHub）登录。
+3. 登录后，访问 [app.warp.dev/link_sso](https://app.warp.dev/link_sso)。
+4. 点击 **Link SSO** 以连接你现有的账户。以后你可以使用 **Continue with SSO** 登录。
+
+:::note
+IT 管理员：如果多个团队成员需要将其账户链接到 SSO，请在 SSO 推广期间分享这些步骤。
+:::
+
+## 常见登录问题
+
+### 无法注册或登录
+
+如果点击注册或登录按钮打开一个空白弹窗或没有任何反应：
+
+* 你的 ISP 或防火墙可能阻止了对 `*.googleapis.com` 的调用。尝试使用代理或将此域名加入白名单。
+* 在一些较旧的 Ruby 开发环境中，`.dev` 域名无法正确解析。如适用，请删除 `/etc/resolver/dev`（[更多信息](https://superuser.com/questions/1374892/dev-domains-dont-resolve)）。
+
+### 浏览器特定问题
+
+如果你在多个浏览器中看到认证错误或空白弹窗：
+
+1. 对 `app.warp.dev` **禁用广告拦截器**。
+2. **清除 cookies 和缓存**，或尝试隐身/私密浏览器窗口。
+3. 再次尝试 [app.warp.dev/login](https://app.warp.dev/login)。
+
+**Safari 特定：** 如果你看到"无法访问 localStorage"错误，请进入 **Safari 偏好设置** > **隐私**，取消勾选 **阻止所有 Cookie**。Firebase Auth 需要 Cookie 来跟踪登录状态。
+
+## 代理问题
+
+如果你在代理后面，QUIC 流量可能无法正确通过。在浏览器中禁用 QUIC 会强制回退到 TCP，通常可以解决问题：
+
+**Chrome / Chromium 内核浏览器（Edge、Opera、Arc）：**
+1. 导航到 `chrome://flags`。
+2. 搜索 **Experimental QUIC protocol**。
+3. 将其设置为 **Disabled**。
+4. 重新启动浏览器。
+
+**Firefox：**
+1. 导航到 `about:config`。
+2. 接受风险警告。
+3. 搜索 `network.http.http3.enable`。
+4. 双击将其设置为 `false`。
+5. 重新启动 Firefox。
+
+**Safari：** Safari 中没有内置的禁用 QUIC 选项。
+
+## 被标记为欺诈
+
+如果你看到"该账户已被标记为欺诈"，你的账户触发了 Warp 的欺诈检测系统。这可能是由于创建了多个账户或使用了临时邮箱（两者均违反 Warp 的[服务条款](https://www.warp.dev/terms-of-service)）。
+
+### 误报
+
+广告拦截器或 Pi-hole 等系统有时可能触发误报。尝试暂时禁用它们并再次尝试登录。
+
+### 申请申诉
+
+如果你仍然无法认证，请将受影响账户的邮箱地址发送至 [appeals@warp.dev](mailto:appeals@warp.dev)。申诉可能需要 5-10 天。
+
+企业客户也可以联系其客户经理或专属的 Slack/Teams 频道以获得更快的解决。
+
+## 登录时浏览器未打开
+
+如果在点击"注册"或"登录"时浏览器没有从 Warp 自动打开：
+
+1. 在浏览器中访问[注册](https://app.warp.dev/signup)或[登录](https://app.warp.dev/login)页面。
+2. 在浏览器中完成认证。
+3. 在已登录页面上，如果"带我前往 Warp"不起作用，请点击 **here** 链接复制认证令牌。
+4. 将令牌粘贴到 Warp 中。
+
+:::note
+在 Linux 和 Windows 上，默认的粘贴快捷键是 `CTRL+SHIFT+V`。
+:::
+
+## 获取帮助
+
+* **企业客户** - 联系你的专属 Slack/Teams 频道或客户经理。
+* **所有其他用户** - 访问 [warp.dev/contact](https://www.warp.dev/contact) 获取支持。
+
+## 相关资源
+
+* [单点登录（SSO）](/enterprise/security-and-compliance/sso/) - SSO 设置和配置
+* [反馈与功能请求](/enterprise/support-and-resources/feedback-and-feature-requests/) - 报告错误和请求功能
+* [登录故障排除（完整指南）](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/) - 完整的故障排除参考

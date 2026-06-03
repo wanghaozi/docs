@@ -1,0 +1,54 @@
+---
+title: integration_disabled
+description: >-
+  集成（Slack、Linear 等）当前在 Oz 设置中已禁用。启用它以继续使用。
+---
+
+`integration_disabled` 错误发生在任务针对当前在 Oz 设置中已禁用的集成时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* Slack 消息、Linear 问题或其他集成事件触发了云端代理，但相应的集成已在 Oz 设置中禁用
+* 集成之前是活跃的，但已被团队管理员关闭
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/integration-disabled/",
+  "title": "此集成已禁用。请在 Oz 中启用它。",
+  "status": 403,
+  "instance": "/api/v1/agent/tasks",
+  "error": "此集成已禁用。请在 Oz 中启用它。",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 前往 [Oz 集成页面](https://oz.warp.dev/integrations)。
+2. 启用被禁用的集成。
+3. 重试触发事件或任务。
+
+---
+
+## 相关
+
+* [集成](/agent-platform/cloud-agents/integrations/) — 配置 Slack、Linear 和 GitHub 集成
+* [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/) — 通过 Web 界面管理集成

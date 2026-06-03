@@ -1,0 +1,34 @@
+---
+title: Generate（旧版）
+description: >-
+  使用自然语言查找命令或输入，可以直接从命令行输入或在任何交互式命令或程序中访问。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Generate（旧版）将自然语言查询转化为精确的终端命令或交互式 CLI 工具内的上下文建议。在命令行中输入 `#` 描述您想要的内容，Warp 实时生成匹配的命令。
+
+## 什么是 Generate？
+
+Generate 帮助将自然语言查询转化为精确的命令，作为终端输入或交互式命令和程序中的上下文建议。
+
+:::note
+目前，您需要在线才能使用此功能。如果此功能不起作用，您的 ISP 或防火墙可能阻止了对 `app.warp.dev` 的调用。
+:::
+
+## 使用 AI 生成的方式
+
+### 生成命令作为命令行输入
+
+在命令行输入中键入 `#` 以生成命令建议。
+
+1. 按 `` CTRL-` `` 或输入 `#` 以使用自然语言搜索
+2. 输入您想要做的操作
+3. 结果实时生成
+4. 找到要执行的命令后，可以运行它或保存为工作流
+
+### [旧版] 在交互式 CLI 中生成文本和上下文建议
+
+:::caution
+**我们在交互式 CLI 中工作的旧版 Generate 功能已被** [完整终端使用](/agent-platform/capabilities/full-terminal-use/) **取代**，Warp 的 Agent 现在可以运行和控制长时间运行或全屏终端应用程序。
+:::

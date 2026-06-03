@@ -16,7 +16,7 @@ import type { StarlightSidebarTopicsUserConfig } from 'starlight-sidebar-topics'
  * files in ~/Projects/gitbook so the migrated site preserves the original
  * navigation structure.
  */
-export const sidebarTopics: StarlightSidebarTopicsUserConfig = [
+const _baseSidebarTopics: StarlightSidebarTopicsUserConfig = [
 		{
 			label: 'Terminal',
 			link: '/',
@@ -718,3 +718,260 @@ export const sidebarTopics: StarlightSidebarTopicsUserConfig = [
 			],
 		},
 ];
+
+// ── Chinese translation layer ───────────────────────────────────────────
+// Maps English sidebar labels to their Chinese (Simplified) translations.
+// Used to enrich sidebar topic configs and items for the zh-cn locale.
+const ZH_LABELS: Record<string, string> = {
+	// Topic-level labels (matched against `label` in each topic, including link-only)
+	Terminal: '终端',
+	Agents: '智能体',
+	Reference: '参考文档',
+	Changelog: '更新日志',
+	'Support & Community': '支持与社区',
+	Enterprise: '企业版',
+	Guides: '指南',
+
+	// Group labels (matched against group `label` in topic items)
+	'Getting started': '入门指南',
+	Code: '代码',
+	'Knowledge and collaboration': '知识与协作',
+	'Warp Agents': 'Warp 智能体',
+	'Third-Party CLI Agents': '第三方 CLI 智能体',
+	'Oz Cloud Agents & Orchestration': 'Oz 云智能体与编排',
+	'Memory (Research Preview)': '记忆（研究预览）',
+	'Technical reference': '技术参考',
+	CLI: 'CLI',
+	'API & SDK': 'API 和 SDK',
+	'All years': '所有年份',
+	Community: '社区',
+	'Troubleshooting and support': '故障排除与支持',
+	'Plans and billing': '方案与计费',
+	'Privacy, security, and licensing': '隐私、安全与许可',
+	'Security and compliance': '安全与合规',
+	'Team management': '团队管理',
+	'Enterprise features': '企业功能',
+	'Support and resources': '支持与资源',
+	'Agent workflows': '智能体工作流',
+	Configuration: '配置',
+	'External tools & integrations': '外部工具与集成',
+	'Build an app in Warp': '在 Warp 中构建应用',
+	'DevOps & infrastructure': 'DevOps 和基础设施',
+	'Frontend & UI': '前端和 UI',
+
+	// Sub-group labels
+	'Migrate to Warp': '迁移到 Warp',
+	Blocks: '区块',
+	'Modern text editing': '现代文本编辑',
+	'Command entry': '命令输入',
+	'Command completions': '命令补全',
+	'Windows and Tabs': '窗口和标签页',
+	Sessions: '会话',
+	'Terminal appearance': '终端外观',
+	'Settings file': '设置文件',
+	'Warpify overview': 'Warpify 概览',
+	'More Features': '更多功能',
+	'Terminal comparisons': '终端对比',
+	'Built-in code editor': '内置代码编辑器',
+	'Warp Drive overview': 'Warp Drive 概览',
+	Capabilities: '能力',
+	'Interacting with agents': '与智能体交互',
+	'Agent context': '智能体上下文',
+	'Inference & providers': '推理与提供商',
+	Triggers: '触发器',
+	Integrations: '集成',
+	Orchestration: '编排',
+	Handoff: '交接',
+	Harnesses: '执行环境',
+	'Self-hosting': '自托管',
+
+	// Item-level label overrides
+	'Getting started with Warp and Oz': 'Warp 和 Oz 入门',
+	'Warp quickstart': 'Warp 快速入门',
+	Overview: '概览',
+	'Migration guides': '迁移指南',
+	'Supported shells': '支持的 Shell',
+	'Keyboard shortcuts': '键盘快捷键',
+	'Block basics': '区块基础',
+	'Block actions': '区块操作',
+	'Block sharing': '区块分享',
+	'Block find': '区块搜索',
+	'Block filtering': '区块筛选',
+	'Background blocks': '后台区块',
+	'Alias expansion': '别名展开',
+	'Command inspector': '命令检查器',
+	'Syntax & error highlighting': '语法与错误高亮',
+	'Vim keybindings': 'Vim 快捷键',
+	'Command corrections': '命令纠正',
+	'Command search': '命令搜索',
+	'Command history': '命令历史',
+	'Synchronized inputs': '同步输入',
+	'YAML workflows': 'YAML 工作流',
+	'Tab completions': '标签补全',
+	'Vertical Tabs': '垂直标签页',
+	'Split panes': '分屏面板',
+	'Global hotkey': '全局快捷键',
+	'Session navigation': '会话导航',
+	'Session restoration': '会话恢复',
+	Themes: '主题',
+	'Custom themes': '自定义主题',
+	Prompt: '提示符',
+	'Text, fonts, & cursor': '文本、字体和光标',
+	'Size, opacity, & blurring': '尺寸、不透明度和模糊',
+	'Pane dimming & focus': '面板暗化与聚焦',
+	'Blocks behavior': '区块行为',
+	'Tabs behavior': '标签页行为',
+	'Custom app icons': '自定义应用图标',
+	'All settings reference': '所有设置参考',
+	'File locations': '文件位置',
+	'Warpify subshells': 'Warpify 子 Shell',
+	'SSH with Warp features': '使用 Warp 功能进行 SSH',
+	'Legacy SSH wrapper': '旧版 SSH 封装',
+	Accessibility: '无障碍',
+	'Files, links, & scripts': '文件、链接和脚本',
+	'Markdown viewer': 'Markdown 查看器',
+	'Working directory': '工作目录',
+	'Text selection': '文本选择',
+	'Full-screen apps': '全屏应用',
+	'Desktop notifications': '桌面通知',
+	'Audible terminal bell': '终端提示音',
+	'Settings Sync (Beta)': '设置同步（测试版）',
+	'Terminal quit warning': '终端退出警告',
+	'Warp URI scheme': 'Warp URI 方案',
+	'Warp for Linux': 'Warp Linux 版',
+	'Performance benchmarks': '性能基准测试',
+	'Terminal features': '终端功能',
+	'Terminal integrations': '终端集成',
+	'Code overview': '代码概览',
+	'Language Server Protocol (LSP)': '语言服务器协议（LSP）',
+	'File Tree (Project Explorer)': '文件树（项目浏览器）',
+	'Find & replace': '查找与替换',
+	'Code editor Vim keybindings': '代码编辑器 Vim 快捷键',
+	'Code Review panel': '代码审查面板',
+	'Git Worktrees': 'Git 工作树',
+	'Feature support over SSH': 'SSH 功能支持',
+	Notebooks: '笔记本',
+	Workflows: '工作流',
+	Prompts: '提示词',
+	'Environment variables': '环境变量',
+	'AI-Integrated Objects': 'AI 集成对象',
+	'Warp Drive on the web': 'Web 版 Warp Drive',
+	'Agent Mode context': '智能体模式上下文',
+	'Team Admin Panel': '团队管理面板',
+	'Session sharing': '会话分享',
+	'Agents overview': '智能体概览',
+	'Warp Agents overview': 'Warp 智能体概览',
+	'Slash commands': '斜杠命令',
+	'Scheduling and planning': '调度与规划',
+	'Task lists': '任务列表',
+	Rules: '规则',
+	'Agent notifications': '智能体通知',
+	'Full terminal use': '完整终端使用',
+	'Computer use': '计算机使用',
+	'Codebase context': '代码库上下文',
+	'Profiles & permissions': '配置与权限',
+	'Web search': '网络搜索',
+	'Cloud conversations': '云端对话',
+	'Conversation forking': '对话分支',
+	'Code diffs': '代码差异',
+	'Images as context': '图片作为上下文',
+	'URLs as context': 'URL 作为上下文',
+	'Selection as context': '选择作为上下文',
+	'Using @ to add context': '使用 @ 添加上下文',
+	'Blocks as context': '区块作为上下文',
+	'Model choice': '模型选择',
+	'Bring your own API key': '自带 API 密钥',
+	'Custom inference endpoint': '自定义推理端点',
+	'Interactive code review': '交互式代码审查',
+	'Active AI recommendations': '主动 AI 推荐',
+	'Claude Code': 'Claude Code',
+	'Codex CLI': 'Codex CLI',
+	'OpenCode CLI': 'OpenCode CLI',
+	'Rich input': '富输入',
+	'Remote control': '远程控制',
+	'Cloud agents overview': '云智能体概览',
+	Quickstart: '快速入门',
+	'Oz platform': 'Oz 平台',
+	'Scheduled agents': '定时智能体',
+	'Managing cloud agents': '管理云智能体',
+	'Multi-agent orchestration': '多智能体编排',
+	'Running orchestrated agents': '运行编排的智能体',
+	'Agent identities': '智能体身份',
+	'Oz web app': 'Oz Web 应用',
+	'SKills as agents': '技能作为智能体',
+	'Viewing cloud agent runs': '查看云智能体运行记录',
+	'Local to cloud': '从本地到云端',
+	'Cloud to cloud': '从云端到云端',
+	Snapshots: '快照',
+	'MCP servers': 'MCP 服务器',
+	'Deployment patterns': '部署模式',
+	'Warp-hosted agents': 'Warp 托管智能体',
+	'Managed: Docker': '托管：Docker',
+	Unmanaged: '非托管',
+	'Self-hosted worker reference': '自托管 Worker 参考',
+	'Security and networking': '安全与网络',
+	Troubleshooting: '故障排除',
+	'Access, billing, and identity': '访问、计费和身份',
+	'Cloud agent FAQs': '云智能体常见问题',
+	'Agent Memory': '智能体记忆',
+	'Oz CLI': 'Oz CLI',
+	'API Keys': 'API 密钥',
+	'Agent Profiles': '智能体配置',
+	'MCP Servers': 'MCP 服务器',
+	Skills: '技能',
+	'Warp Drive Context': 'Warp Drive 上下文',
+	'Integration Setup': '集成设置',
+	Artifacts: '产物',
+	'Federated identity': '联邦身份',
+	'Oz API & SDK': 'Oz API 和 SDK',
+	'API Reference': 'API 参考',
+	'API Troubleshooting': 'API 故障排除',
+	Errors: '错误',
+};
+
+/**
+ * Enrich a sidebar item tree with Chinese translations added as `translations`
+ * keys (the Starlight-native i18n mechanism for sidebar labels).
+ *
+ * Handles three item shapes:
+ *   - string slugs (unchanged — label comes from page frontmatter)
+ *   - link items (`{ label, link/slug, … }`) — adds `translations`
+ *   - group items (`{ label, items, … }`) — adds `translations`, recurses
+ */
+function addItemTranslations(items: readonly any[] | undefined): any[] | undefined {
+	if (!items) return undefined;
+	return items.map((item: any) => {
+		if (typeof item === 'string') return item;
+
+		const out: Record<string, any> = { ...item };
+		if (typeof out.label === 'string' && ZH_LABELS[out.label]) {
+			out.translations = { ...(out.translations as Record<string, string> | undefined), 'zh-CN': ZH_LABELS[out.label] };
+		}
+		if (Array.isArray(out.items)) {
+			out.items = addItemTranslations(out.items as any[]);
+		}
+		return out;
+	});
+}
+
+/**
+ * The enriched sidebar topics config with Chinese translations baked in.
+ *
+ * For each topic:
+ *   - `label` is converted from a plain string to a `Record<string, string>`
+ *     (the starlight-sidebar-topics i18n format) so Chinese readers see
+ *     translated topic tab labels.
+ *   - Nested sidebar items receive `translations: { 'zh-CN': … }` via
+ *     `addItemTranslations()` so group headings and overridden page labels
+ *     appear in Chinese.
+ */
+export const sidebarTopics: StarlightSidebarTopicsUserConfig = _baseSidebarTopics.map((topic) => {
+	const out: Record<string, unknown> = { ...topic };
+	if ('label' in out && typeof out.label === 'string' && ZH_LABELS[out.label]) {
+		out.label = { en: out.label, 'zh-CN': ZH_LABELS[out.label] };
+	}
+	if ('items' in out) {
+		out.items = addItemTranslations(out.items as any[]);
+	}
+	return out as StarlightSidebarTopicsUserConfig[number];
+});

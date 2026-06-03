@@ -1,0 +1,375 @@
+---
+title: 自带 LLM
+description: >-
+  将 Warp 的代理路由到你的 AWS Bedrock 模型，实现账单控制和基础设施灵活性。
+---
+
+Warp 支持**自带 LLM（BYOLLM）**，适用于需要在自有云基础设施上运行推理的企业团队。通过 BYOLLM，你的团队可以使用 Warp 的代理，同时将推理路由到托管在你 AWS Bedrock 环境中的模型。
+
+这让你能够控制云支出和模型托管，而无需改变团队在 Warp 中的工作方式。
+
+:::caution
+BYOLLM 目前仅支持 **AWS Bedrock**。即将支持：Azure Foundry 和 Google Vertex。
+:::
+
+:::note
+BYOLLM 仅在 Warp 的企业版计划中可用。请访问 [warp.dev/contact-sales](https://www.warp.dev/contact-sales) 了解更多信息。
+:::
+
+## 主要特性
+
+* **云原生凭证** - 无需长期有效的 API 密钥。交互式终端会话使用每个用户的 AWS CLI 会话凭证；云代理运行通过 OIDC 在你的 AWS 账户中承担 IAM 角色。
+* **管理员控制的 IAM** - 管理员定义 Warp 可以承担哪些 IAM 角色以及哪些模型可通过 AWS Bedrock 使用，并可完全禁用非 Bedrock 模型访问。
+* **管理员强制的路由** - 团队管理员配置用户在 AWS Bedrock 中可用的模型，并可完全禁用非 Bedrock 模型访问。
+* **统一账单** - 推理成本直接计入你的 AWS 账户，充分利用现有的云承诺。
+
+## BYOLLM 的工作原理
+
+{/* TODO: Add architecture diagram showing BYOLLM request flow (admin configures routing → user authenticates to AWS → Warp routes request → inference in customer AWS account) */}
+
+启用 BYOLLM 后，Warp 会将推理调用重定向到你的 AWS Bedrock 环境，而不是使用模型提供商的直接 API。
+
+以下是高层流程：
+
+**交互式终端流程**
+
+1. **管理员配置路由** - 你的团队管理员在 Warp 的管理设置中配置路由策略（例如："将 Claude Opus 4.7 路由到 AWS Bedrock；禁用直接 Anthropic API"）。
+2. **团队成员进行认证** - 每个团队成员使用 AWS CLI（`aws login`）在本地认证到 AWS。
+3. **Warp 路由请求** - 当团队成员在终端中使用交互式代理时，Warp 使用他们的短期会话凭证对配置的 AWS Bedrock API 端点进行请求认证。
+4. **推理在你的云中执行** - 模型在你的 AWS 账户中运行，响应返回 Warp 客户端。
+
+**云代理流程**
+
+1. **管理员配置路由** - 你的团队管理员在管理面板中配置 BYOLLM，并提供 Warp 可以承担的 IAM 角色 ARN。参见[为云代理启用 BYOLLM](#enabling-byollm-for-cloud-agents)了解设置详情。
+2. **Warp 承担角色** - 在运行开始时，Warp 生成一个 OIDC 令牌，并在你的 AWS 账户中承担已配置的 IAM 角色以获取临时凭证。
+3. **Warp 路由请求** - 云代理使用这些临时凭证调用你配置的 AWS Bedrock 端点。
+4. **推理在你的云中执行** - 模型在你的 AWS 账户中运行，响应返回云代理工作进程。
+
+### 凭证生命周期
+
+BYOLLM 使用**云原生 IAM 认证**，而非长期有效的 API 密钥：
+
+* **自动刷新** - 会话令牌每约 15 分钟自动刷新。用户可以通过打开**设置**并搜索 `AWS Bedrock` 来启用自动刷新，或在首次凭证过期时按提示启用。启用自动刷新后，会话可以连续运行最多 12 小时（取决于你的 AWS 管理员配置）。
+* **按用户凭证** - 凭证不在组织内共享。你的云提供商的默认凭证提供程序链（例如 AWS CLI）在本地配置和刷新它们。
+* **不存储或记录** - Warp 从不存储或记录你的云会话令牌在其服务器上。
+
+这种方法确保访问管理由你的云提供商控制，让管理员可以对每个成员进行细粒度控制。
+
+### 模型可用性
+
+BYOLLM 支持 Warp 支持的模型与 AWS Bedrock 上可用的模型的交集。目前，只有 **Claude 模型**（Anthropic）可通过 AWS Bedrock 使用。OpenAI 和 Google 模型在 Bedrock 上不可用。
+
+要确定你可以通过 BYOLLM 使用哪些模型：
+
+* [模型选择](/agent-platform/inference/model-choice/) - Warp 支持的完整模型列表。
+* [Amazon Bedrock 支持的模型](https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards.html) - AWS Bedrock 模型可用性。
+
+一个模型必须同时出现在两个列表中才能通过 BYOLLM 使用。
+
+## 启用 BYOLLM
+
+### 前提条件
+
+在配置 BYOLLM 之前，请确认以下事项：
+
+* 你的组织已在 AWS Bedrock 中启用了所需的模型。
+* 你同时拥有 Warp [管理面板](/enterprise/team-management/admin-panel/)和 AWS IAM 设置的管理员权限。
+* 团队成员已在本地安装 AWS CLI。
+
+### 第 1 步：配置路由策略（管理员）
+
+在[管理面板](/enterprise/team-management/admin-panel/)中，配置哪些模型应路由到 AWS Bedrock：
+
+1. 在[管理面板](/enterprise/team-management/admin-panel/)中，导航到**模型**页面。
+2. 选择哪些模型应使用你的云提供商（例如："Claude Opus 4.7 via AWS Bedrock"）。
+3. （可选）禁用直接 API 访问以强制仅通过提供商路由。
+
+### 第 2 步：配置 IAM 角色（云管理员）
+
+授予团队成员 AWS 中的必要权限。使用最小权限 IAM 策略。
+
+**示例：AWS Bedrock 最小 IAM 策略**
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockModelAccess",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/*",
+        "arn:aws:bedrock:*:*:inference-profile/*",
+        "arn:aws:bedrock:*:*:application-inference-profile/*"
+      ]
+    }
+  ]
+}
+```
+
+:::note
+该策略涵盖 Warp 当前的使用方式。默认情况下，Warp 会在模型可用时使用[全局推理配置文件](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html)。管理员可以在[管理面板](/enterprise/team-management/admin-panel/)的**模型**页面上按模型覆盖推理配置文件。
+:::
+
+### 第 3 步：本地认证（团队成员）
+
+每个团队成员使用 AWS CLI 认证到 AWS：
+
+```bash
+aws login
+```
+
+在使用 Warp 之前，确认你的 AWS 环境和区域已正确配置。
+
+### 第 4 步：验证
+
+在 Warp 中使用配置了 BYOLLM 路由的模型运行一个测试提示。验证：
+
+* 请求成功完成。
+* 日志出现在 AWS CloudWatch 中。
+
+## 为云代理启用 BYOLLM
+
+云代理认证到 AWS Bedrock 的方式与上述本地终端流程不同。Warp 不是依赖每个用户的 AWS CLI 会话，而是通过 OIDC 身份联合，在你 AWS 账户中承担你配置的 IAM 角色。
+
+### 前提条件
+
+在为云代理配置 BYOLLM 之前，请确认以下事项：
+
+* 你同时拥有 Warp [管理面板](/enterprise/team-management/admin-panel/)和 AWS IAM 设置的管理员权限。
+
+### 第 1 步：在 AWS 中设置 Warp 作为 OIDC 身份提供商（云管理员）
+
+在 AWS 可以信任 Warp 签发的令牌之前，需在 IAM 中将 Warp 注册为 OpenID Connect（OIDC）身份提供商。每个 AWS 账户只需设置一次。
+
+1. 在 AWS IAM 控制台中打开[身份提供商](https://console.aws.amazon.com/iam/home#/identity_providers)页面。
+2. 点击 **Add provider**。
+3. 在 **Provider type** 中选择 **OpenID Connect**。
+4. 在 **Provider URL** 中输入 `https://app.warp.dev`。
+5. 在 **Audience** 中输入 `sts.amazonaws.com`。
+6. 点击 **Add provider**。
+
+创建提供商后，复制其 ARN——格式类似 `arn:aws:iam::<aws-account-id>:oidc-provider/app.warp.dev`。你将在下一步的信任策略中引用此 ARN。
+
+更多详情，请参见 AWS 的[在 IAM 中创建 OpenID Connect（OIDC）身份提供商](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html)指南。
+
+### 第 2 步：配置可承担的 IAM 角色（云管理员）
+
+创建一个 Warp 可以通过 OIDC 承担的 IAM 角色，然后附加最小的 Bedrock 权限策略。使用最小权限 IAM 策略。
+
+角色设置包含两部分：
+
+1. 一个**信任策略**，允许 Warp 的 OIDC 身份调用 `sts:AssumeRoleWithWebIdentity`。
+2. 一个**权限策略**，授予最小的 Bedrock 推理权限。
+
+#### 信任策略要求
+
+此信任策略授权来自你团队的任意云托管运行。Warp 签发的 `sub` 声明格式为 `scoped_principal:<team-uid>/<actor-type>:<principal-uid>`，其中 `<actor-type>` 对于用户触发的运行为 `user`，对于[代理身份](/agent-platform/cloud-agents/agents/)运行为 `service_account`。下面的 `<team-uid>/*` 模式涵盖两者。
+
+**示例信任策略**
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<aws-account-id>:oidc-provider/app.warp.dev"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringLike": {
+          "app.warp.dev:sub": "scoped_principal:<team-uid>/*"
+        },
+        "StringEquals": {
+          "app.warp.dev:aud": "sts.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
+```
+
+将账户 ID、签发主机和团队 UID 替换为你环境中的实际值。
+
+`<team-uid>` 是被允许承担此角色的 Warp 团队的 UID。你可以在团队[管理面板](/enterprise/team-management/admin-panel/)的 URL 中找到它，位于 `/admin/` 之后的路径段。例如，在 `https://app.warp.dev/admin/HzjUdNkg8Uiq8gp6FMgfxe/models` 中，团队 UID 是 `HzjUdNkg8Uiq8gp6FMgfxe`。
+
+#### 权限策略
+
+将最小的 Bedrock 调用权限策略附加到角色：
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockModelAccess",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/*",
+        "arn:aws:bedrock:*:*:inference-profile/*",
+        "arn:aws:bedrock:*:*:application-inference-profile/*"
+      ]
+    }
+  ]
+}
+```
+
+:::note
+该策略涵盖 Warp 当前的使用方式。默认情况下，Warp 会在模型可用时使用[全局推理配置文件](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html)。管理员可以在[管理面板](/enterprise/team-management/admin-panel/)的**模型**页面上按模型覆盖推理配置文件。
+:::
+
+创建角色后，复制其 ARN。你将在下一步中粘贴到**模型**页面。
+
+### 第 3 步：配置路由策略（管理员）
+
+将第 2 步中的 IAM 角色附加到你的团队或特定的命名代理。
+
+#### 选项 A：团队范围
+
+这将 OIDC 角色应用于团队的所有云代理运行。
+
+1. 在[管理面板](/enterprise/team-management/admin-panel/)中，导航到**模型**页面。
+2. 在 **AWS Bedrock** 主机配置下，将第 2 步中的 IAM 角色 ARN 粘贴到 **Role ARN** 字段中。
+3. 选择哪些模型应通过 AWS Bedrock 路由。
+
+#### 选项 B：按命名代理
+
+这只将 OIDC 角色应用于特定命名代理的运行。
+
+:::note
+为了安全测试 BYOLLM，请先将其配置在单个命名代理上。范围限定到一个代理的错误配置只会影响该代理的运行，而不会影响整个团队。
+:::
+
+在 Oz Web 应用中：
+
+1. [创建新代理](/agent-platform/cloud-agents/oz-web-app/#creating-a-new-agent)或编辑现有代理。
+2. 在代理表单中，展开 **AWS Bedrock** 部分。
+3. 选择 **Custom** 并粘贴第 2 步中的 IAM 角色 ARN。
+4. 确保代理的默认模型是在管理面板**模型**页面上为 Bedrock 启用的模型之一。
+
+该代理的新运行将使用配置的角色认证到 Bedrock。
+
+### 第 4 步：验证配置
+
+使用配置了 BYOLLM 路由的模型启动一个测试云代理运行。验证：
+
+* 请求成功完成。
+* 日志出现在 AWS CloudWatch 中。
+
+## BYOLLM 使用与计费行为
+
+### 计费
+
+当请求通过 BYOLLM 路由时：
+
+* Warp **不消耗 AI 积分**用于该请求。
+* 云代理运行仍消耗平台和计算积分，用于编排和云代理的计算资源。
+
+关于积分类型，请参见[三种积分桶](/support-and-community/plans-and-billing/platform-credits/#the-three-credit-buckets)。
+
+### 路由行为
+
+Warp 的代理会自动为你的任务选择最佳模型，同时尊重管理员的配置策略。如果你为某个模型配置了 BYOLLM，该模型的请求将路由到 AWS Bedrock。
+
+### 故障转移行为
+
+如果 BYOLLM 请求失败（例如由于角色承担错误、权限不足或提供商配额限制），Warp 会尝试回退到管理员已启用的下一个可用模型。
+
+例如，如果 Bedrock 上的 Claude Opus 4.7 失败，但管理员也通过直接 API 启用了它，Warp 会回退到直接 API 以避免中断。如果回退使用了直接 API 模型，该请求将消耗 Warp 积分。
+
+如果没有可用的回退（例如管理员禁用了所有非 Bedrock 模型），Warp 会显示明确的错误消息。
+
+## 安全与数据处理
+
+### 凭证安全
+
+* **无长期有效的 API 密钥** — BYOLLM 使用云原生 IAM 和短期会话令牌。
+* **按用户认证** — 每个团队成员单独认证；凭证不共享。
+* **不存储或记录** — Warp 从不存储或记录你的云会话令牌在其服务器上。
+
+### 零数据保留（ZDR）
+
+Warp 保持 **SOC 2 合规性**，并与其签约的 LLM 提供商签订了**零数据保留（ZDR）**协议。
+
+但是，使用 BYOLLM 时：
+
+* **你的**云账户设置决定了数据保留策略。
+* Warp 无法对通过你基础设施路由的请求强制执行 ZDR。
+* 如果你的云账户未启用 ZDR，你的提供商可能根据其条款保留数据。
+
+### 可审计性
+
+* Warp 在 Warp 内保持所有运行完全可控和可记录。
+* 你的云账户保留提供商侧的日志（使用情况、延迟、错误）。
+
+## 故障排除
+
+### 常见错误
+
+* **缺少或过期的本地凭证**（交互式终端使用）— 使用 `aws login` 重新认证。为避免中断，请打开**设置**并搜索 `AWS Bedrock` 启用自动刷新，或在凭证过期时按提示操作。
+* **角色承担失败**（云代理运行）— 验证 IAM 信任策略、签发主机、团队 UID 限制以及在 Warp 中配置的角色 ARN。
+* **缺少 OIDC 提供商**（云代理运行）— 确认你的 AWS 账户中存在信任策略中引用的签发主机的 OIDC 提供商。
+* **权限不足** — 验证你的 IAM 策略包含所需的 Bedrock 操作和任何必要的资源。
+* **区域或模型不匹配** — 确认该模型在你的 AWS 区域中已启用，并且你的环境已配置为正确的区域。
+* **提供商配额限制** — 检查你的 AWS Bedrock 配额，并根据需要请求增加。
+
+### 调试步骤
+
+1. 确认配置的角色 ARN 是你希望 Warp 承担的那个。
+2. 检查 IAM 信任策略，验证签发主机、`sub` 和 `aud` 条件与你的 Warp 配置匹配。
+3. 检查附加的 IAM 策略是否包含所需的 Bedrock 权限。
+4. 确认模型 ID 和区域与你的 Warp 配置匹配。
+5. 检查 AWS CloudWatch 日志以获取请求详情和错误信息。
+
+## 常见问题
+
+### BYOLLM 与 BYOK 有何不同？
+
+**BYOK（自带 API 密钥）** 允许个人用户添加自己的 API 密钥，用于直接访问模型提供商（例如 Anthropic、OpenAI、Google）。Warp 在用户本地设备上存储密钥。
+
+**BYOLLM（自带 LLM）** 通过云原生 IAM 将推理路由到组织的云基础设施（AWS Bedrock）。管理员在管理级别配置，适用于整个团队。
+
+| 特性 | BYOK | BYOLLM |
+| --- | --- | --- |
+| 配置级别 | 用户 | 管理员/团队 |
+| 认证方式 | API 密钥（本地） | Warp 通过 OIDC 承担的 IAM 角色 |
+| 计费 | 直接向提供商付费 | 你的云账户 |
+| 数据驻留 | 提供商基础设施 | 你的云基础设施 |
+
+### BYOLLM 与 Auto 模式兼容吗？
+
+如果管理员**禁用**了**任何**直接 API 模型，无论 AWS Bedrock 配置如何，自动模型选择都会被禁用。
+
+当直接 API 模型保持启用且 BYOLLM 已配置时，Auto 会为任务选择最佳模型。如果所选模型也启用了 AWS Bedrock，请求将通过 Bedrock 路由；否则通过直接 API 路由。
+
+### 计算在哪里运行，由谁付费？
+
+推理在你的 **AWS 账户**中运行，AWS 直接向你收费。Warp 不消耗 BYOLLM 路由推理的 AI 积分。云代理运行继续消耗平台和计算积分用于编排。更多信息请参见[三种积分桶](/support-and-community/plans-and-billing/platform-credits/#the-three-credit-buckets)。
+
+### Warp 存储哪些数据？你们会存储我们的云凭证吗？
+
+Warp **不存储或记录**你的云凭证。
+
+* **交互式终端使用** — 凭证在签名请求时临时使用，不会在 Warp 服务器上持久化。
+* **云代理运行** — 临时 AWS 凭证仅在运行期间使用，运行结束后不保留。
+
+### 管理员可以强制仅使用提供商路由，并禁用 Warp 管理的模型吗？
+
+可以。管理员可以配置路由策略，要求特定模型使用 BYOLLM，并禁用 Warp 管理模型端点的直接 API 访问。
+
+## 相关资源
+
+* [自带 API 密钥](/agent-platform/inference/bring-your-own-api-key/)
+* [模型选择](/agent-platform/inference/model-choice/) — 支持的完整模型列表
+* [管理面板](/enterprise/team-management/admin-panel/) — 配置团队设置
+* [联系销售](https://www.warp.dev/contact-sales) — 获取企业设置帮助

@@ -1,0 +1,52 @@
+---
+title: 设置同步
+description: >-
+  通过基于云的同步，在设备和会话之间保持您的 Warp 设置一致。
+sidebar:
+  label: "设置同步（Beta）"
+---
+
+## 如何切换设置同步
+
+* 您可以在 **设置** > **账户** 窗格中切换设置同步
+* 通过 [命令面板](/terminal/command-palette/)，搜索"设置同步"
+
+<figure>
+![账户窗格中的设置同步](../../../../../assets/terminal/settings-sync-account.png)
+<figcaption>账户窗格中的设置同步。</figcaption>
+</figure>
+
+<figure>
+![命令面板中的设置同步](../../../../../assets/terminal/settings-sync-palette.png)
+<figcaption>命令面板中的设置同步。</figcaption>
+</figure>
+
+## 设置同步的工作原理
+
+**设置同步** 通过将您的大多数 Warp 设置状态同步到我们的云服务器来工作。
+
+当您在另一台设备上或通过浏览器使用 [会话共享](/knowledge-and-collaboration/session-sharing/) 登录 Warp 时，如果您已启用设置同步，您的大多数设置将与您之前登录时的设置保持一致。
+
+这意味着您的主题、大多数功能、隐私设置、AI 设置，**在您使用 Warp 的任何地方都是相同的**，为您节省了重新设置它们的时间。
+
+当您首次启用设置同步时，您启用它的计算机上的设置将成为所有设备的默认设置。如果您关闭并重新打开设置同步也是如此——同步的设置始终来自 **您上次启用设置同步的设备**，因此切换实际上会导致所有设备具有当前登录实例的设置。
+
+:::note
+在 [隐私概览](https://www.warp.dev/privacy/overview) 中阅读更多关于云功能的隐私信息。
+:::
+
+### 不同步的设置
+
+并非所有设置都同步。特别地，Warp 不同步：
+
+* 自定义键位绑定（我们将来可能会支持）。尽管您可以使用 [文件设置自定义键位绑定](/getting-started/keyboard-shortcuts/#custom-keyboard-shortcuts)
+* 自定义主题（我们将来可能会支持）
+* 设备特定设置（例如您偏好的编辑器、启动 shell）
+* 平台特定设置在同一平台上的设备之间同步（例如，您与 Linux 剪贴板交互的设置会在所有 Linux 设备之间同步，但不会在 macOS、Windows 或 Web 上同步）。
+
+您可以通过设置面板中具有特殊的云删除线图标来识别设置何时不同步。
+
+<figure>
+![设置未同步](../../../../../assets/terminal/settings-not-synced.png)
+<figcaption>指示设置未同步的图标。</figcaption>
+</figure>

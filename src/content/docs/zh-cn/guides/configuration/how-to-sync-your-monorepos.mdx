@@ -1,0 +1,77 @@
+---
+title: "同步你的单体仓库"
+description: >-
+  在 Warp 中定义全局规则，自动跨仓库同步单体仓库的模式、服务器类型和客户端类型。
+sidebar:
+  label: "同步你的单体仓库"
+tags:
+  - "rules"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的规则系统连接相互关联的仓库并自动更新整个技术栈的类型。
+
+<VideoEmbed url="https://youtu.be/bndY6opaA7w?si=6zZWh4aB8f8kCD5F" />
+
+---
+
+## 介绍
+
+本教程教你如何在 Warp 中定义**全局规则**，使你的编码代理理解项目之间的关联关系。
+
+通过链接单体仓库（例如服务器、客户端和共享 API 模式），当你在一处进行更改时，Warp 会自动跨仓库更新类型和模式。
+
+虽然此示例使用了 Warp 的内部仓库，但相同的工作流程适用于任何多仓库设置。
+
+---
+
+## 问题
+
+当项目被拆分为多个仓库时——例如后端、客户端和共享模式——开发者经常忘记手动同步类型更改。
+
+这容易出错且耗时。Warp 通过全局规则教会你的**代理**仓库之间的关系来解决这个问题。
+
+---
+
+## 规则设置
+
+描述每个仓库及其与其他仓库的连接。
+
+### 示例规则
+
+```
+We have three inter-related projects in ~/Repos:
+
+warp-internal (client-side application)
+
+warp-server (server application)
+
+warp-proto-apis (shared API schemas for each)
+
+When you update the schema types, push to git and update the installed types in the server and client by the commit hash.
+```
+一旦定义，Warp 会在模式文件更改时自动遵循这些指令。
+
+<Steps>
+
+1. #### 当模式更新时——更新服务器类型
+
+   `cd` 进入服务器仓库并运行适当的命令，根据更改后的模式重新生成/更新服务器端类型。
+
+2. #### 当模式更新时——更新客户端类型
+
+   `cd` 进入客户端仓库并运行适当的命令，重新生成/更新客户端类型，使客户端与模式更改保持同步。
+
+</Steps>
+
+---
+
+:::tip
+好处
+
+* 保持你的**模式、服务器和客户端**完美同步
+* 减少合并冲突和版本漂移
+* 在提交或部署时节省手动步骤
+:::

@@ -1,0 +1,82 @@
+---
+title: "Linear MCP：以精益构建方法更新工单"
+description: >-
+  使用 Warp 的 Linear MCP 集成更新工单描述、将更改传播到子任务并维护精益构建策略。
+sidebar:
+  label: "Linear MCP：以精益构建方法更新工单"
+tags:
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的 Linear MCP 集成以编程方式更新工单，同时维护精益构建策略。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=hqleW6jDCbY" />
+
+---
+
+## 概述
+
+本演练演示：
+
+* 通过 Warp 的 MCP 集成更新 Linear 工单
+* 围绕精益开发技术栈构建任务
+* 观察工单数据的实时同步
+* 在编辑相关子任务时测试代理自主性
+
+<Steps>
+
+1. #### 设置场景
+
+   目标是使用 Warp 的代理以新的、更精益的构建方法更新一个 Linear epic，并在相关子任务中反映更改。
+
+   首先，打开你的 Linear 项目并找到目标 epic。\
+   复制**工单 ID**（例如"Empty Studio 36"）。
+
+2. #### 定义更新提示
+
+   在 Warp 中，运行 MCP 命令来编辑 Linear 问题。
+
+   **提示词**
+
+   ```
+   Use the warp-server-staging gcloud project and pull logs for the last 10 minutes from the warp-server Cloud Run instance.
+   Organize them by info, warning, and error levels.
+   Create a histogram across message types, and highlight the most concerning errors to investigate.
+   ```
+   Warp 解析问题上下文并相应地更新工单的字段。
+
+3. #### 观察更改
+
+   执行后：
+
+   * Linear 工单反映新的 **Next.js + Supabase** 技术栈。
+   * 如_构建基础_、_实现 AI 驱动的 PRD 生成_和_设置开发环境_等任务得到更新。
+   * 时间估算自动从_4-6 周_调整为_2-3 周_。
+   * 复杂的集成（AI 和 Linear 应用）推迟到未来阶段。
+
+4. #### 将更新传播到子任务
+
+   Warp 的代理可以将更改级联到链接的子任务。\
+   如果它意外开始编辑其他 epic，你可以通过在提示中指定任务 ID 来限制其范围：
+
+   ```
+   Only update the ticket with ID <ticket_number>.
+   Do not modify other epics or related tickets.
+   ```
+
+5. #### 审查和验证
+
+   重新打开 Linear epic 确认更新：
+
+   * **前端规格**反映精益技术栈。
+   * **子任务**与阶段 1 的交付物一致。
+   * **推迟的功能**（例如高级集成）被推至阶段 2。
+
+   :::note
+   这展示了 Warp _智能地维护和修改工单_的能力，而不仅仅是创建它们。
+   :::
+
+</Steps>

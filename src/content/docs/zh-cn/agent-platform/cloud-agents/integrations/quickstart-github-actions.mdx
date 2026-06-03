@@ -1,0 +1,73 @@
+---
+title: GitHub Actions 快速入门
+description: >-
+  在大约 10 分钟内设置您的第一个 GitHub Actions 中的 Agent。作为工作流步骤运行 Agent 以自动化代码审查和问题分类。
+sidebar:
+  label: "快速入门"
+---
+
+使用 [`oz-agent-action`](https://github.com/warpdotdev/oz-agent-action) 将 Agent 添加到您的 GitHub Actions 工作流。此快速入门引导您设置第一个 GitHub Actions 集成：一个自动分析拉取请求并发布内联审查评论的 PR 审查工作流。
+
+---
+
+## 前提条件
+
+* **Warp API 密钥** - 在 Warp 应用中，点击您的头像照片，然后前往**设置** > **云平台** > **Oz Cloud API 密钥**创建。如果 agent 需要写入您的仓库，请使用个人密钥。请参阅 [API 密钥](/reference/cli/api-keys/)了解详情。
+* **一个启用 Actions 的 GitHub 仓库** - 工作流文件将位于您仓库的 `.github/workflows/` 中。
+
+---
+
+## 1. 将您的 API 密钥添加为 GitHub Actions 密钥
+
+将您的 Warp API 密钥存储为 GitHub Actions 密钥，以便工作流可以认证而不在代码中暴露密钥。
+
+1. 在 GitHub 上的您的仓库中，前往**设置** > **密钥和变量** > **Actions**。
+2. 点击**新建仓库密钥**。
+3. 将名称设置为 `WARP_API_KEY`。
+4. 将您的 API 密钥粘贴到**密钥**字段中。
+5. 点击**添加密钥**。
+
+## 2. 创建工作流文件
+
+此工作流在 PR 打开或标记为可审查时触发 agent。Agent 审查差异并发布内联评论。
+
+在您的仓库中创建 `.github/workflows/oz-pr-review.yml`，内容如下：
+
+```yaml
+name: Oz PR review
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Review PR with Oz
+        uses: warpdotdev/oz-agent-action@v1
+        with:
+          prompt: |
+            Review the code changes on this pull request:
+            1. Use `git diff origin/${{ github.base_ref }}...HEAD` to identify changes.
+            2. Analyze the diff for style, security, or correctness issues.
+            3. Use `gh pr review --comment` to post inline suggestions.
+          warp_api_key: ${{ secrets.WARP_API_KEY }}
+```
+
+## 3. 打开拉取请求
+
+在您的仓库中创建新的拉取请求以触发工作流。
+
+## 4. 查看运行
+
+每个 `oz-agent-action` 步骤都会创建一个您可以从 Oz 仪表板检查的云 agent 运行：
+
+* **Oz Web 应用** - 前往 [oz.warp.dev/runs](https://oz.warp.dev/runs) 查看完整的运行记录。
+* **Warp 应用** - 打开对话面板以查看运行。

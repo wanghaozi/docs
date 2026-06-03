@@ -1,0 +1,29 @@
+---
+title: 命令历史
+description: >-
+  命令历史帮助您快速找到之前运行过的命令。
+sidebar:
+  label: "命令历史"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是命令历史
+
+运行时，Warp 会隔离每个 shell 会话的历史，例如，如果您有两个拆分窗格打开，一个窗格中创建的命令不会填充到另一个窗格的历史中。Warp 在关闭时会合并历史。
+
+命令历史还提供丰富的信息，如退出码、目录、线程、运行完成时间、最后运行时间等。
+
+<figure>
+![命令历史丰富信息](../../../../../assets/terminal/command-history-rich.png)
+<figcaption>带有丰富元数据的命令历史。</figcaption>
+</figure>
+
+## 如何访问
+
+* 在 [输入编辑器](/terminal/editor/) 中按 `UP` 会调出您的历史，并根据输入执行前缀搜索。
+* 按 `CTRL-R` 会打开 [命令搜索](/terminal/entry/command-search/) 面板并启动对命令历史的搜索。要浏览命令搜索面板：
+  * 开始输入，Warp 将自动使用模糊搜索进行过滤。使用模糊搜索过滤时，Warp 会加粗匹配的文本。
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/8119beca8d794b06859c5dea1b1377bb?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="命令历史演示" />

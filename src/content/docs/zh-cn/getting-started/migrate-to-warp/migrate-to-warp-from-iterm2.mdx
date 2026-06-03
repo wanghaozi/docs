@@ -1,0 +1,74 @@
+---
+title: 从 iTerm2 迁移到 Warp
+description: >-
+  将你的 iTerm2 配置文件导入 Warp，只需点击几下即可迁移主题、字体、键位、热键窗口等。
+---
+
+Warp 会自动导入你的 iTerm2 配置文件，只需点击几下即可迁移主题、字体、键位、热键窗口等。本页将介绍导入工具、涵盖的内容以及之后需要手动重新配置的内容。
+
+## 自动转移的内容
+
+Warp 内置了 iTerm2 导入工具，可从 `~/Library/Preferences/com.googlecode.iterm2.plist` 读取你的默认配置文件。它会导入：
+
+* **主题** - 前景色、背景色、光标颜色以及所有 16 种 ANSI 颜色（如果配置了亮色和暗色变体）。
+* **字体** - 字体族和大小（当字体在你的系统上存在且受 Warp 支持时）。
+* **默认 shell** - 如果你在 iTerm2 配置文件中设置了自定义命令。
+* **工作目录行为** - Warp 会翻译 iTerm2 的"复用前一会话的目录"及类似选项。
+* **窗口尺寸** - 行数和列数。
+* **不透明度和模糊。**
+* **选中即复制、鼠标和滚动报告以及 Option 作为 Meta 键的设置。**
+* **全局热键** - 如果你使用热键窗口或热键激活，Warp 会进行映射。
+
+运行导入工具：
+
+1. 在 Warp 中，打开[命令面板](/terminal/command-palette/)。
+2. 搜索**导入外部设置**。
+3. 选择 **iTerm2 配置文件：默认**。Warp 只导入在 iTerm2 中标记为默认书签的配置文件。
+4. 在预览界面上选择保留或跳过的设置。
+
+<figure style={{ maxWidth: "563px" }}>
+![选择要导入的设置配置文件](../../../../../assets/terminal/migrate-to-warp.png)
+<figcaption>选择要导入的设置配置文件。</figcaption>
+</figure>
+
+## 使用 Warp 的智能体处理后续设置
+
+如果导入工具没有获取到你在意的内容，例如非默认配置文件、不常见的键位或特定设置，请让 Warp 的智能体直接翻译。Warp 自带一个 [`settings.toml` 文件](/terminal/settings/)和一个内置的 `modify-settings` 技能，让智能体读取你的 iTerm2 plist 并将等效的值写入 Warp 的设置中。
+
+1. 在 Warp 应用中，使用 `⌘+I` 切换到[智能体模式](/agent-platform/local-agents/overview/)。
+2. 将以下提示粘贴到智能体模式输入框中，然后按 `Enter`。
+
+   > 使用 `defaults read com.googlecode.iterm2` 读取我的 iTerm2 偏好设置，并使用 `modify-settings` 技能将导入工具未涵盖的任何设置（额外配置文件、自定义键位）移植到我的 Warp `settings.toml` 中。在应用前显示差异对比。
+
+3. 查看建议的差异对比，然后批准更改。Warp 会热重载 `settings.toml`。
+
+## 需要手动重新配置的内容
+
+一些 iTerm2 功能没有直接映射，需要在导入后手动处理：
+
+* **多个配置文件。** Warp 只导入你的默认配置文件。如果你依赖多个 iTerm2 配置文件，请在 Warp 中创建等效的[标签页配置](/terminal/windows/tab-configs/)。
+* **键盘快捷键。** Warp 的[键盘快捷键](/getting-started/keyboard-shortcuts/)开箱即用地涵盖了大多数 iTerm2 键位，但自定义键位需要在**设置** > **键盘快捷键**中重新创建。
+* **分屏和布局。** 使用[分屏窗格](/terminal/windows/split-panes/)和[标签页配置](/terminal/windows/tab-configs/)重新构建。
+* **触发器。** Warp 没有直接等效的功能。可以通过 [YAML 工作流](/terminal/entry/yaml-workflows/)或智能体模式达到类似的效果。
+
+### 选择提示符
+
+导入后，选择使用哪种[提示符](/terminal/appearance/prompt/)：
+
+1. [**Warp 提示符**](/terminal/appearance/prompt/#warp-prompt) - Warp 的原生提示符，支持拖放上下文标签，显示 git 分支、目录、时间戳等。在**设置** > **外观** > **提示符**中配置。
+2. [**Shell 提示符 (PS1)**](/terminal/appearance/prompt/#custom-prompt) - 保持不变地继承你现有的 shell 提示符配置。如果你希望 Warp 与你的 iTerm2 提示符完全一致，请选择此项。
+
+## Warp 原生等效功能
+
+使用此表查找你在切换后可能寻找的 iTerm2 功能在 Warp 中的对应项：
+
+| iTerm2 中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| 热键窗口（Quake 模式） | [全局热键](/terminal/windows/global-hotkey/)（在 iTerm2 配置文件中检测到时自动导入） |
+| 触发器 | [YAML 工作流](/terminal/entry/yaml-workflows/)用于重复性操作；智能体模式用于基于模式的自动化 |
+| 配置文件 | [标签页配置](/terminal/windows/tab-configs/)用于布局；[Warp Drive](/knowledge-and-collaboration/warp-drive/) 用于共享团队设置 |
+| 自动补全菜单 | [自动建议](/terminal/command-completions/autosuggestions/) + [Tab 补全](/terminal/command-completions/completions/) |
+| 即时回放 | [会话恢复](/terminal/sessions/session-restoration/) |
+| 密码管理器集成 | [Warp Drive 环境变量](/knowledge-and-collaboration/warp-drive/environment-variables/) |
+
+有关迁移后更多可配置的内容，请参阅 [Warp 快速入门](/quickstart/)和[自定义 Warp](/getting-started/quickstart/customizing-warp/)。

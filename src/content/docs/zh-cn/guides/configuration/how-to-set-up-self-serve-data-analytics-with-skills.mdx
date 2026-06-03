@@ -1,0 +1,188 @@
+---
+title: "使用技能设置自助数据分析"
+description: >-
+  在 Warp 中使用两个社区技能设置自助数据分析工作流，将问题映射到 dbt 模型并构建可复现的分析。
+sidebar:
+  label: "使用技能设置自助数据分析"
+tags:
+  - "skills"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+自助数据分析意味着团队中的任何人都可以提出数据问题并获得可信的答案，而无需打扰数据团队。本指南使用两个可以串联工作的社区技能来设置此工作流：一个将模糊的问题解析到正确的 BigQuery 表，另一个将深入分析组织到可复现的文件夹中。初始设置约需 10 分钟，另需时间自定义数据仓库的模型索引。
+
+## 先决条件
+
+* **Warp**——如果还没有安装，请从 [warp.dev](https://www.warp.dev/download) 下载。
+* **带有 dbt 模型的 BigQuery 数据仓库**——发布的技能假定使用 BigQuery 和 dbt。你可以将其适配到 Snowflake、Redshift、Databricks 或非 dbt 设置。请参阅[适配你的技术栈](#adapting-to-your-stack)。
+* **BigQuery CLI (`bq`)**——作为 [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) 的一部分安装。代理直接调用它来查询数据仓库，因此不需要 MCP 服务器。
+* **代理将要工作的 Git 仓库**——Warp 从当前工作目录向上到仓库根目录自动发现 `.agents/skills/` 中的技能。有关支持的目录列表以及发现机制的工作原理，请参阅[技能](https://docs.warp.dev/agent-platform/capabilities/skills/)。
+
+## 演练视频
+
+在这个 40 分钟的直播中，Warp 的数据团队端到端地演示了该工作流，包括你将安装的两个技能以及第三种模式（通过云端代理从 Slack 运行相同的技能）。如果你更愿意按照书面步骤操作，可以跳过视频。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=WyMTjXSplRU" />
+
+## 1. 安装两个技能
+
+Warp 会自动发现存储在你的仓库中 `.agents/skills/` 下的任何技能，因此提交两个目录即可让每个队友的代理运行都可用。克隆公共的 [warpdotdev/oz-skills](https://github.com/warpdotdev/oz-skills) 仓库并将两个技能目录复制到你自己的 dbt 仓库中：
+
+```bash
+cd /path/to/your/dbt-repo
+mkdir -p .agents/skills
+git clone https://github.com/warpdotdev/oz-skills.git /tmp/oz-skills
+cp -r /tmp/oz-skills/.agents/skills/dbt-model-index .agents/skills/
+cp -r /tmp/oz-skills/.agents/skills/analysis-artifacts .agents/skills/
+```
+
+验证两个技能已就位：
+
+```bash
+ls .agents/skills/
+# analysis-artifacts  dbt-model-index
+```
+
+提交技能。一旦提交到你的仓库，整个团队都可以使用：
+
+```bash
+git add .agents/skills && git commit -m "Add self-serve analytics skills"
+```
+
+## 2. 自定义 dbt 模型索引
+
+[`dbt-model-index`](https://github.com/warpdotdev/oz-skills/blob/main/.agents/skills/dbt-model-index/SKILL.md) 技能是一个模板，你需要填入关于你自己模型的详细信息。此技能教会代理哪些表可以回答哪些类型的问题，因此在自定义上花些时间很重要。详细的"适用于"描述使技能最有效。
+
+打开 `.agents/skills/dbt-model-index/SKILL.md` 并将模板占位符替换为真实模型。对于每个模型，包括：
+
+* 表名（反引号格式化）
+* 1-2 句话描述其粒度
+* "适用于："列表，涵盖它能回答的问题类型
+
+一个填好的条目可能类似这样：
+
+```markdown
+### `users_daily`
+
+One row per user per day, with activity signals and plan type.
+
+**Useful for:**
+
+- Daily, weekly, or monthly active user counts
+- Retention and churn by plan tier
+- Joining to revenue models as the canonical user dimension
+```
+
+首先填写覆盖最常见问题的领域（通常是用户、活动和收入）。当你注意到代理在猜测表时，可以随时扩展索引。
+
+不要跳过技能底部的**重要说明**部分。记录你的标准过滤器（例如 `where not is_internal_user`）、你的完全限定项目路径、分区字段以及任何计划或层级值，可以防止代理意外地展开连接、扫描整个分区表或返回被测试账户污染的数字。
+
+完成此步骤后，代理就拥有了从问题到表的有序映射，并且在编写任何 BigQuery SQL 之前都会查阅它。
+
+## 3. 审查 analysis-artifacts 技能
+
+[`analysis-artifacts`](https://github.com/warpdotdev/oz-skills/blob/main/.agents/skills/analysis-artifacts/SKILL.md) 技能是一个工作流脚手架。它告诉代理如何构建深入分析：先规划，将每个可执行的 SQL 查询保存到 `assets/queries/`，将可视化保存到 `assets/visualizations/`，并编写一个包含问题陈述、摘要、群组定义、逐步章节和关键要点的可读 README。
+
+无需自定义即可开始使用。当代理调用它时，你会得到一个类似以下的目录：
+
+```
+analyses/
+└── 2026-04-ai-usage-by-os/
+    ├── README.md
+    └── assets/
+        ├── queries/
+        │   └── ai_requests_by_os.sql
+        └── visualizations/
+            ├── os_trend.py
+            └── os_trend.png
+```
+
+这种结构使分析可共享。队友可以阅读 README，点击进入任何 SQL 文件，并复现或扩展工作。
+
+## 4. 提出一个简单的数据问题
+
+两个技能就位后，从一个具体的查询提示开始。这可以练习 `dbt-model-index`，而无需引入深入分析工作流。
+
+在你的 dbt 仓库中打开一个代理对话并询问：
+
+```
+How many unique users made AI requests yesterday?
+```
+
+代理将：
+
+1. 查阅 `dbt-model-index` 找到正确的活动表。
+2. 编写 BigQuery 查询，应用你记录的任何标准过滤器（例如排除内部用户）。
+3. 通过 `bq` CLI 运行查询。
+4. 返回一个单一数字以及它运行的 SQL。
+
+通过审查查询来验证结果。如果它使用了错误的表或跳过了标准过滤器，则说明该领域的 `dbt-model-index` 条目需要更多细节。更新技能并重试。
+
+## 5. 运行深入分析
+
+现在尝试一个超出单一查询范围的提示。代理会识别这是一个深入分析并调用 `analysis-artifacts`。
+
+```
+Tell me about any recent trends in AI usage across different operating systems in the last month.
+```
+
+代理将：
+
+1. 使用 `dbt-model-index` 解析正确的活动和操作系统维度。
+2. 调用 `analysis-artifacts`，提出计划，并等待你的批准。
+3. 逐步执行计划，将查询和可视化保存为工件。
+4. 编写一个 README，端到端总结分析。
+
+生成的 README 遵循一致的结构，大致如下：
+
+```markdown
+# AI usage trends by operating system (last 30 days)
+
+Author: Your Name
+Date: 2026-04-22
+
+## TL;DR
+One or two sentences capturing the headline finding.
+
+## Problem Statement
+What the analysis set out to answer and why.
+
+## Cohorts Definition
+Explicit definition of the groups being compared, including tenure,
+plan type, and observation windows.
+
+## Step 1: Baseline volume by OS
+Narrative, embedded chart, and a link to the query in assets/queries/.
+
+## Step 2: Week-over-week trend
+...
+
+## Key Takeaways
+Bulleted summary of what was learned and any follow-up questions.
+```
+
+将新的 `analyses/<name>/` 目录提交到你的仓库，以便它与你的代码一起可审查。团队中的任何人都可以阅读它、验证查询或从你中断的地方继续。
+
+## 适配你的技术栈
+
+这两个技能是为 BigQuery 和 dbt 编写的，但该模式具有通用性。以下是需要更改的内容：
+
+* **非 BigQuery 数据仓库（Snowflake、Redshift、Databricks）**——更新 `dbt-model-index/SKILL.md` 的**重要说明**部分，填写你的数据仓库的完全限定表引用格式、分区或聚簇约定以及标准过滤器。将 `bq` 引用替换为你的数据仓库的 CLI（例如 `snowsql`、`redshift-data`）。
+* **没有 dbt**——`dbt-model-index` 技能适用于任何数据仓库模式，而不仅仅是 dbt。如果需要，可以重命名它，并将条目视为原始表、视图或语义层的映射。
+* **不同的建模约定**——在技能中明确记录你的粒度、层级或计划值以及内部用户过滤器。代理擅长遵循已记录的规则，而不擅长猜测它们。
+
+`analysis-artifacts` 技能在很大程度上与技术栈无关。它结构化输出，而非查询，因此无论数据仓库是什么，它都以相同的方式工作。
+
+## 后续步骤
+
+你已经安装了两个社区技能，为你的数据仓库自定义了模型索引，并运行了简单查询和完整的深入分析。
+
+**扩展到 Slack。** 将相同的两个技能连接到配置了你的 dbt 仓库的云端代理，你的队友可以通过在 Slack 频道中 @-mentioning Oz 来提出数据问题，而无需打开终端。代理克隆仓库，从 `.agents/skills/` 获取技能，并在线程中回复。有关设置，请参阅 [Slack 集成文档](https://docs.warp.dev/agent-platform/cloud-agents/integrations/slack/)和[作为代理的技能](https://docs.warp.dev/agent-platform/cloud-agents/skills-as-agents/)。
+
+探索相关指南和功能：
+
+* [使用已保存提示触发可复用操作](/guides/configuration/trigger-reusable-actions-with-saved-prompts/)——另一个可复用的代理原语，适用于搭建常见数据问题的框架
+* [创建项目规则](/guides/configuration/how-to-create-project-rules-for-an-existing-project-astro-typescript-tailwind/)——将技能与规则配对，以引导代理在仓库中的行为
+* [技能](https://docs.warp.dev/agent-platform/capabilities/skills/)——关于技能、发现机制、参数和斜杠命令调用的完整参考
+* [warpdotdev/oz-skills](https://github.com/warpdotdev/oz-skills)——包含这两个技能以及更多内容的公共仓库

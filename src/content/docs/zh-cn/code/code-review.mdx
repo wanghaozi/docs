@@ -1,0 +1,198 @@
+---
+title: 代码审查面板
+description: >-
+  代码审查面板让你实时审查、编辑和管理 Git 差异，提供附加、还原或直接打开文件的选项。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+代码审查面板让你直接在 Warp 中检查、编辑和管理 Git 差异。审查未提交的更改或比较分支，将差异作为上下文附加给智能体，还原特定块，以及留下智能体可以实时处理的内联评论。
+
+## 概述
+
+当你在具有未提交更改的 Git 仓库中本地工作时，**代码审查面板**让你直接在 Warp 中检查、编辑和管理代码更改。它与 Git 和 Warp 的智能体集成，使你能够：
+
+* 审查差异并将其作为上下文附加给智能体
+* 实时应用、编辑或还原更改
+* 自动反映在 Warp 外部或由 Warp 的智能体所做的更改
+
+任何未提交的更改都会出现在面板中（或将你分支上的更改与 `main` 或 `master` 进行比较）。切换分支或保存文件会即时更新面板，因此它始终反映代码库的当前状态。
+
+<VideoEmbed url="https://www.loom.com/share/96581523168742eb9b95c3973924728c?sid=a3ee9164-4274-4468-ac32-38ce6807f9a8" title="代码审查演示" />
+
+<figure style={{ maxWidth: "563px" }}>
+![代码审查面板和终端窗格的完整视图。](../../../../assets/terminal/code-review-panel-update.png)
+<figcaption>代码审查面板和终端窗格的完整视图。</figcaption>
+</figure>
+
+:::note
+要审查智能体生成的差异、留下内联评论、批量收集反馈并让智能体应用所有请求的更改，请参阅[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)。
+:::
+
+:::tip
+如果智能体的更改将提交到 GitHub 拉取请求，请在 PR 中包含共享会话或云运行链接，以便审查者可以检查差异背后的提示、计划、命令、日志和验证。请参阅[将智能体会话上下文附加到 GitHub PR](/guides/agent-workflows/how-to-attach-agent-session-context-to-github-prs/)。
+:::
+
+## 打开代码审查面板
+
+可以通过多种方式打开代码审查面板。每个入口点都使在不离开工作流程的情况下检查和更改变得容易。
+
+:::tip
+你也可以使用 macOS 上的 `CMD – SHIFT – +` 或 Windows 和 Linux 上的 `CTRL – SHIFT – +` 打开代码审查面板。
+:::
+
+#### 1. Git diff 标签（终端输入）
+
+在终端模式下，当你在一个有更改的 Git 仓库中时，Git diff 标签显示已修改文件的数量以及添加和删除的行数。点击标签会打开代码审查面板，显示相关差异。
+
+<figure style={{ maxWidth: "563px" }}>
+![终端输入栏显示 Git diff 标签，包含分支名称、修改文件数以及添加和删除的行数](../../../../assets/terminal/whole-UDI-bar.png)
+<figcaption>终端输入中的 Git diff 标签。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "375px" }}>
+![Git diff 标签带有查看更改工具提示，显示分支名称、文件数和更改行数](../../../../assets/terminal/git-chip-tooltip-1.png)
+<figcaption>Git diff 标签工具提示。</figcaption>
+</figure>
+
+#### 2. 智能体对话：审查更改按钮
+
+当智能体在[智能体对话](/agent-platform/local-agents/interacting-with-agents/)中进行代码编辑时，对话底部会出现一个`审查更改`按钮。点击按钮以打开代码审查面板。
+
+<figure style={{ maxWidth: "563px" }}>
+![智能体对话底部的审查更改按钮。](../../../../assets/terminal/Blocklist-with-review-changes.png)
+<figcaption>对话中的审查更改按钮。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "375px" }}>
+![带有反馈按钮和审查更改按钮的智能体对话页脚](../../../../assets/terminal/review-changes-in-footer.png)
+<figcaption>对话页脚操作。</figcaption>
+</figure>
+
+#### 3. 智能体对话：工具带（右下）
+
+在智能体对话期间，你可以在右下角的持久工具带标签中查看所有已更改的文件。从那里，你可以直接打开代码审查面板。
+
+<figure style={{ maxWidth: "375px" }}>
+![智能体对话在右下角显示文件更改和操作按钮的工具带标签](../../../../assets/terminal/ai_control_panel_buttons_larger_view.png)
+<figcaption>对话工具带标签。</figcaption>
+</figure>
+
+#### 4. Warp 标签栏
+
+在任何 Git 跟踪的仓库中，你可以通过点击 Warp 右上角的`代码审查`按钮（位于你的头像旁边）来打开代码审查面板。
+
+#### 查看所有编辑过的文件
+
+在代码审查面板内部，你可以打开文件侧边栏以浏览仓库中所有已更改的文件。点击文件会自动滚动到面板中的该文件。
+
+<figure style={{ maxWidth: "563px" }}>
+![在代码审查面板中查看所有编辑过的文件，文件侧边栏已打开。](../../../../assets/terminal/whole-git-diff-view-with-one-file-collapsed.png)
+<figcaption>代码审查面板文件侧边栏。</figcaption>
+</figure>
+
+:::note
+默认情况下，代码审查面板作为右侧窗格打开，但你可以将其拖拽到你喜欢的位置重新定位。
+:::
+
+## 审查差异
+
+默认情况下，代码审查面板显示当前分支上的所有**未提交更改**，排除 `.gitignore` 忽略的文件的更改。
+
+Warp 提供两种审查更改的方式：
+
+1. **未提交更改**：查看你在当前分支上本地进行的所有编辑。
+2. **与 main 的对比**：将你的分支与 `main` 或 `master` 进行比较，以查看例如将包含到该分支的拉取请求中的内容。
+   1. Warp 自动检测目标分支并相应更新比较。
+3. **与其他分支对比**：将你的工作与任意分支进行比较，用于堆叠 PR、功能比较或替代基础分支。
+
+你可以在代码审查面板或终端输入中的 Git diff 标签上手动切换这两种视图：
+
+<figure style={{ maxWidth: "375px" }}>
+![在代码审查面板中更改差异视图。](../../../../assets/terminal/diff-dropdown-to-change-base-from-the-code-review-pane.png)
+<figcaption>差异视图菜单。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "375px" }}>
+![从终端输入更改差异视图。](../../../../assets/terminal/git-diff-change-base-dropdown.png)
+<figcaption>Git diff 标签菜单。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "375px" }}>
+![针对任意分支更改差异视图。](../../../../assets/terminal/arbitrary-branch-diff.png)
+<figcaption>任意分支差异菜单。</figcaption>
+</figure>
+
+任何在 Warp 外部进行的保存编辑（例如在另一个编辑器中），以及由 Warp 的智能体应用的更改，都会自动显示。面板会实时更新，确保它始终反映工作文件和目录的当前状态。
+
+#### 附加差异作为上下文
+
+代码审查面板使得与智能体共享更改变得简单。你可以将整个差异附加到提示中，以便智能体完全了解添加或删除了什么。
+
+<figure style={{ maxWidth: "563px" }}>
+![从代码审查面板附加差异作为上下文。](../../../../assets/terminal/attach-diff-hunk-as-context.png)
+<figcaption>从代码审查面板附加差异作为上下文。</figcaption>
+</figure>
+
+这确保了无论你是要求反馈、解释还是后续更改，响应都基于你最新的编辑。有关更多详情，请参阅[选择作为上下文](/agent-platform/local-agents/agent-context/selection-as-context/)。
+
+#### 还原差异
+
+代码审查面板让你轻松地在不同级别撤销更改。在每条差异旁边的槽中，你会看到一个选项可以还原一个块：回滚文件中的一组特定更改（"差异块"）。这将删除添加或修改的行并恢复先前的版本。
+
+<figure style={{ maxWidth: "350px" }}>
+![代码差异槽显示已更改行上的还原差异块工具提示](../../../../assets/terminal/revert-diff-hunk.png)
+<figcaption>还原差异块工具提示。</figcaption>
+</figure>
+
+当你还原时，更改会立即在你的工作目录中更新。文件将恢复为匹配所选版本，因此你可以继续编辑或提交而不包含已还原的代码。
+
+### 从代码审查中打开文件
+
+除了直接在代码审查窗格中审查和编辑差异外，你还可以直接在 Warp 的[代码编辑器](/code/code-editor/)中打开文件。
+
+<figure style={{ maxWidth: "563px" }}>
+![代码审查面板头部显示文件名、更改行数以及附加、还原和在编辑器中打开的按钮](../../../../assets/terminal/code-review-header.png)
+<figcaption>代码审查面板头部。</figcaption>
+</figure>
+
+* 点击**展开按钮**（头部最右侧的按钮）在新编辑器标签页中打开文件，允许你查看超出更改行之外的完整文件。
+  * 这在以下情况下很有用：你需要差异周围的更多上下文，想要进行更广泛的编辑，或者更喜欢在完整编辑器中而不是内联工作。
+* 打开后，文件的行为与任何其他编辑器标签页一样：你可以滚动、编辑、搜索和保存。
+* 在编辑器中进行的任何更改都会自动同步回代码审查窗格，因此差异视图始终保持最新。
+
+**注意**：从此代码审查文件头部，你还可以将文件差异作为上下文附加到 Warp 的智能体中，或放弃单个文件上的所有更改。
+
+#### 直接编辑代码差异
+
+或者，从代码审查面板，你可以点击并直接编辑差异：
+
+<figure style={{ maxWidth: "563px" }}>
+![在代码审查面板的内联差异视图中直接编辑代码](/assets/terminal/directly-editing-diffs.gif)
+<figcaption>在内联差异中编辑代码。</figcaption>
+</figure>
+
+### 向正在运行的智能体发送评论
+
+你可以在代码审查面板中留下内联评论，并将其直接发送到正在运行的编码智能体会话，包括第三方 CLI 智能体如 Claude Code、Codex 等。
+
+这将 Warp 的[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)工作流扩展到任何在 Warp 中运行的受支持的 CLI 智能体。智能体会收到你的评论批处理并应用请求的更改。
+
+<DemoVideo src="/assets/terminal/code-review-inline-comment.mp4" label="在差异行上添加内联评论并发送到正在运行的智能体" />
+
+有关受支持的智能体的更多信息，请参阅[第三方 CLI 智能体](/agent-platform/cli-agents/overview/)。
+
+### 放弃所有更改
+
+代码审查面板还允许你一次性放弃分支上的所有未提交更改。点击放弃所有将移除面板中显示的所有本地修改，并将每个文件恢复到基础分支上的状态。这在你想重置工作目录、放弃一组编辑或从干净状态开始新的迭代时非常有用。
+
+<figure style={{ maxWidth: "563px" }}>
+![代码审查面板头部带有未提交更改下拉菜单、附加按钮和放弃所有按钮](../../../../assets/terminal/discard-all-changes.png)
+<figcaption>放弃所有更改按钮。</figcaption>
+</figure>
+
+放弃更改会要求你确认，但仍请确保在使用之前保存或备份你想保留的任何内容。
+
+:::note
+Warp 原生支持代码审查和其他功能的 Git 工作树。请参阅 [Git 工作树](/code/git-worktrees/)了解详情。
+:::

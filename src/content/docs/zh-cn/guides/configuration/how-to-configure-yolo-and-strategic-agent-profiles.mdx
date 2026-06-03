@@ -1,0 +1,110 @@
+---
+title: "配置 YOLO 和战略型代理配置文件"
+description: >-
+  在 Warp 中配置自定义代理配置文件，以控制规划深度、自主性和执行速度——通过 YOLO 和战略型示例进行演示。
+sidebar:
+  label: "配置 YOLO 和战略型代理配置文件"
+tags:
+  - "profiles"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教程解释了 Warp 中的**代理配置文件**如何在 AI 编码时影响行为、自主性和规划——通过 NFL 预测器应用示例进行演示。
+:::
+
+<VideoEmbed url="https://youtu.be/iD0R-8fY-tY?si=FCX9yVq5_BRUognp" />
+
+<Steps>
+
+1. #### 定义项目
+
+   我想创建一个应用，抓取过去十年的 **NFL 数据**，处理团队得分和球员表现等统计数据，并预测未来胜场。
+
+   提示词指定了：
+
+   * 数据源和约束
+   * 依赖项和 CLI 命令
+   * 实现细节和交付物
+
+   ```
+   Role & Goal
+   You are my AI coding copilot inside Warp. 
+   Create a production-ready Python project that ingests 2015-2025 NFL data to power future win projections. 
+
+   Specifically: acquire week-level player and team stats, acquire game schedules + final scores (to determine weekly winners), and assemble a clean analytics dataset I can build models on later. Prefer stable/public data sources over brittle HTML scraping. Where scraping is unavoidable, respect robots.txt, add rate-limiting, and make scraping pluggable/optional. 
+
+   Primary data sources:
+   nflverse/nflreadr static files for weekly player stats and schedules (CSV/Parquet over HTTPS). 
+
+   Tech constraints:
+   Python 3.11+, no notebooks in the main flow. 
+   Deterministic, idempotent pipelines. 
+   Strong typing (pydantic) + docstrings. 
+   Parquet as the storage format; small sample CSVs for quick checks. 
+   CLI via Typer (warp run … friendly). 
+   Logging (structlog), retry/backoff (tenacity), polite rate-limits. 
+   Zero secrets required for core pipeline. 
+
+   Deliverables:
+   A fully initialized repo with the scaffold above.
+   Implemented CLI + modules to download/ingest 2015-2025 data, compute/normalize fantasy PPR, produce winners by week, and write Parquet outputs. 
+   One sample run in the README showing commands and example output counts. 
+   If successful, run full 2015-2025. 
+   Print a summary table (by season: games, players, weeks) at the end.
+   ```
+
+2. #### 配置战略型代理
+
+   **基础模型：** GPT-5（用于推理）\
+   **规划模型：** Claude 4 Opus（用于详细分解）
+
+   | 操作 | 权限 |
+   | ---------------- | ------------- |
+   | 应用代码差异 | 代理决定 |
+   | 读取文件 | 代理决定 |
+   | 创建计划 | 始终允许 |
+   | 执行命令 | 始终询问 |
+
+   行为：
+
+   *   代理首先提出澄清性问题：
+
+       > "你希望同时抓取球员统计数据和赛程，还是先只抓取一个？"\
+       > "原始数据应存储在本地还是数据库中？"
+   * 它构建了一个包含**14 个步骤**的计划，涵盖设置、依赖项、验证模块和管道。
+   * 当代理请求 NFL 赛程 URL 时，所选来源返回 404 错误。
+   * 执行停止——这表明**战略型**配置文件优先考虑验证而非进度。
+
+3. #### 配置 YOLO 代理
+
+   **权限：**
+
+   | 操作 | 权限 |
+   | ------------------------ | ------------ |
+   | 应用差异/读取文件 | 始终允许 |
+   | 创建计划 | 从不 |
+   | 执行命令 | 始终允许 |
+
+   行为：
+
+   * YOLO 代理跳过详细规划。
+   * 它生成一个仅包含要点的**10 步计划**：
+     * 初始化项目
+     * 构建 CLI
+     * 导入球员数据
+     * 计算得分和转换
+   * 它不依赖不稳定的赛程 URL，而是专注于可靠的球员端点——完成了功能性的数据管道。
+
+4. #### 比较结果
+
+</Steps>
+
+| 方面 | 战略型代理 | YOLO 代理 |
+| ----------- | ----------------------- | -------------------------------------- |
+| 规划 | 详细（14 步） | 最少（10 步） |
+| 交互 | 需要澄清 | 自主 |
+| 速度 | 因检查而较慢 | 迭代更快 |
+| 输出 | 因无效 URL 而停滞 | 可用的球员数据集 + 摘要表 |

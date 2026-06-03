@@ -1,0 +1,118 @@
+---
+title: "Figma 远程 MCP：从 Figma 文件创建网站"
+description: >-
+  通过 OAuth 将 Warp 连接到 Figma 的远程 MCP 服务器，直接从设计文件生成前端代码。
+sidebar:
+  label: "Figma 远程 MCP：从 Figma 文件创建网站"
+tags:
+  - "mcp"
+  - "frontend"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何将 Warp 连接到 Figma 的远程 MCP 服务器，直接从设计文件生成代码——包含截图、元数据和设计系统上下文。
+
+<VideoEmbed url="https://youtu.be/PsM_Y8Pt-1Q?si=wYT-lXf-FYUizrEy" />
+
+---
+
+## 概述
+
+本指南涵盖如何：
+
+* 将 Warp 连接到**远程 Figma MCP 服务器**
+* 使用 OAuth 安全登录
+* 使用服务器从你的 Figma 设计中拉取实时上下文（组件、变量和资源）
+* 基于你的 UI 文件生成前端代码
+* 直接在 Warp 中迭代和优化输出
+
+---
+
+<Steps>
+
+1. #### 什么是远程 MCP 服务器？
+
+   **远程 MCP 服务器**在你的本地机器之外运行——Warp 通过安全的网络调用连接到它。\
+   \
+   这意味着你无需手动管理进程、端口或令牌。Warp 为你处理设置、身份验证和通信。
+
+2. #### 将 Figma MCP 连接到 Warp
+
+   * 复制 Figma MCP 配置 JSON
+
+   ```
+   {
+     "Figma": {
+       "url": "https://mcp.figma.com/mcp"
+     }
+   }
+   ```
+
+   * 在 Warp 中粘贴 JSON——Warp 将自动打开 OAuth 登录窗口。
+   * 使用你的 **Figma 账户**凭据登录一次。
+
+   :::note
+   你需要一个 Figma Dev 账户才能使其正常工作。
+   :::
+
+3. #### Figma MCP 服务器提供什么
+
+   连接后，服务器通过获取以下内容使 Warp 的 AI 能够理解你的设计上下文：
+
+   | 类型 | 描述 |
+   | -------------------------------- | -------------------------------------------------------------------- |
+   | **`get_screenshot`** | 帮助 AI 可视化布局和元素之间的关系。 |
+   | **`create_design_system_rules`** | 组件、变量和样式，用于生成一致、可复用的代码。 |
+   | **`get_code`** | 从你的 Figma 设计中提取代码，直接在项目中使用。 |
+   | **`get_metadata`** | 包含文本、图像和图层名称，用于更真实的模拟数据。 |
+
+4. #### 从 Figma 文件生成网站
+
+   基本流程：
+
+   * 复制你的 **Figma 文件链接**：
+     * 右键 → _复制/粘贴为 → 复制链接到选择内容_
+   * 在 Warp 中，粘贴基于该设计创建网站的提示。
+
+   提示：
+
+   ```
+   Create a website from this Figma file: <LINK HERE>
+   Follow the design layout and use these guidelines:
+   - Match spacing and typography from the design
+   - Use Tailwind CSS and TypeScript
+   - Make components reusable
+   ```
+   Warp 使用 Figma MCP 服务器拉取所有必要的上下文并开始生成代码差异。
+
+5. #### 迭代输出
+
+   * 在不到五分钟的时间内，Warp 基于 Figma 布局生成一个可工作的网站结构。
+   * 缺失的资源（例如徽标或图像）会自动在 `assets/` 文件夹中引用。
+   * Warp 会提示你在继续之前添加任何缺失的文件。
+
+6. #### 持久输入功能
+
+   Warp 的**持久输入**允许在处理过程中进行更新。\
+   如果你忘记了一个图像（例如 Misho 徽标），只需上传并通知 Warp：
+
+   ```
+   I've uploaded the Misho logo to the assets folder.
+   ```
+
+   Warp 会在相同的生成会话期间自动检测并使用它。
+
+7. #### 总结
+
+   * Warp 现在支持 Figma 的**远程 MCP 服务器**（以及其他如 GitHub、Sentry 和 Linear）。
+   * OAuth 登录简化了设置，无需手动处理令牌。
+   * Figma MCP 集成实现了快速、上下文感知的代码生成。
+   * 持久输入和实时迭代使设计到代码的工作流无缝衔接。
+
+   :::tip
+   在不到 20 分钟的时间内，你可以从 Figma 设计到可运行的网站——全部由 Warp 的 AI 编码环境驱动。
+   :::
+
+</Steps>

@@ -1,0 +1,72 @@
+---
+title: 云 Agent 快速入门
+description: >-
+  学习如何在大约 10 分钟内运行您的第一个云 Agent。云 Agent 在远程环境中运行，实现自动化、调度和团队协作。
+sidebar:
+  label: "快速入门"
+---
+
+**云 Agent** 在远程环境中运行，可以从事件、计划、集成或手动触发。这使您可以将 Agent 扩展到笔记本电脑之外，自动化开发任务，并在 Agent 之上构建应用。Oz 处理编排、执行和可观测性。
+
+云 Agent 可以交互式运行（您实时引导它们）或自主运行（作为后台任务）。每次运行创建一个您的团队可以通过 Warp 应用、CLI、Web 应用或 API 检查、共享和查询的持久会话。
+
+---
+
+## 前提条件
+
+* **Warp 桌面应用** - 从 [warp.dev](https://www.warp.dev) 下载
+* **Warp 账户** - 在 [oz.warp.dev](https://oz.warp.dev) 创建账户
+
+:::note
+刚接触 Warp？您将获得积分以尝试云 Agent。您需要至少有 20 个可用积分才能运行云 Agent 和集成。
+:::
+
+---
+
+## 运行您的第一个云 Agent
+
+### 1. 打开 Warp
+
+从 [warp.dev](https://www.warp.dev) 下载 Warp 并登录您的账户。
+
+### 2. 运行 `/cloud-agent` 命令
+
+```bash
+/cloud-agent
+```
+
+### 3. 创建您的环境
+
+如果需要，设置流程将指导您创建环境，包括名称、仓库、Docker 镜像和设置命令。
+
+### 4. 描述您希望 Agent 做什么
+
+输入您的提示（例如"分析测试覆盖率并建议改进"）。Agent 在云端执行，完全访问您的环境。
+
+### 5. 查看运行详情
+
+您可以通过多种方式查看 Agent 运行的详情：
+* Warp 应用中的对话面板
+* 终端输出中的会话链接
+* [oz.warp.dev](https://oz.warp.dev) 上的 Runs 选项卡
+* 通过 [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)从移动设备访问
+
+### 6. 使用技能使其可重用（可选）
+
+```bash
+/create-skill
+```
+
+---
+
+## 后续步骤
+
+### 自动化重复任务
+
+[计划 Agent](/agent-platform/cloud-agents/triggers/scheduled-agents/) 按 cron 计划运行维护任务。
+
+### 从集成触发 Agent
+
+**Slack 集成** - 在任何 Slack 频道中标记 @Oz
+**Linear 集成** - 将 Oz 连接到 Linear 以自动化 Bug 分类和修复
+**GitHub Actions** - 在 CI/CD 流水线中运行 Agent

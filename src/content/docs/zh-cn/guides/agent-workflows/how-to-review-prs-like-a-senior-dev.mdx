@@ -1,0 +1,101 @@
+---
+title: "像资深开发者一样审查 PR"
+description: >-
+  提示 Warp 的编码代理生成结构化的 PR 审查，包含风险评估、关键问题和合并信心评分。
+sidebar:
+  label: "像资深开发者一样审查 PR"
+tags:
+  - "agents"
+  - "code-review"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何提示 Warp 的 AI 像经验丰富的工程师一样审查拉取请求——关注结构、危险信号和清晰度。
+
+<VideoEmbed url="https://youtu.be/NVwqQyphlAw?si=zcMR1ZHt-xnIS_ME" />
+
+---
+
+<Steps>
+
+1. #### 介绍
+
+   本教程教你如何使用 Warp 使**拉取请求审查更快、更智能**。\
+   与其依赖 AI 摘要，你将提示 Warp 生成一个**索引和优先级列表**，引导你的审查顺序，同时标记有风险的部分。
+
+   虽然此示例侧重于大型 PR，但相同的工作流程适用于**代码审查**、**设计文档**或**功能差异**。
+
+2. #### 问题
+
+   大型 PR 难以解析。\
+   AI 摘要会忽略细微差别，可能遗漏微妙的问题——你需要结构化、优先级的见解。
+
+3. #### 提示词
+
+   在 Warp 的 AI 输入中使用此提示：
+
+   ```
+   ## Prompt: Structured PR Review Format
+
+   > Review this pull request and format your response for rapid scanning by a busy maintainer. Follow the structure below.
+
+   ---
+
+   ### 1. 🚨 Risk Assessment
+
+   **Overall Risk:** 🔴 HIGH | 🟠 MEDIUM | 🟢 LOW  
+   **Complexity:** [Simple | Moderate | Complex | Very Complex]  
+   **Blast Radius:** [Isolated | Module-wide | System-wide | External APIs affected]  
+   **Requires Immediate Review:** [YES / NO – why]
+
+   ---
+
+   ### 2. 🔍 Critical Issues  
+   _If none, write "None found" and skip to the next section._
+
+   #### 1. [CRITICAL ISSUE TITLE]  
+   **File:** `path/to/file.js:L125`  
+   **Impact:** Data loss / Security hole / System crash  
+   **Fix:**  
+   // Quick code fix example here
+
+   ---
+
+   ### 3. ⚠️ Concerns  
+   _Should discuss or fix before merge. If none, write "None found."_  
+
+   **Examples:**  
+   - [PERFORMANCE] Unindexed query on large table  
+   - [SECURITY] Missing input sanitization in login form  
+
+   ---
+
+   ### 4. 🎯 Maintainer Decision Guide  
+
+   **Merge confidence:** [0–100]%  
+   - □ Safe to merge after fixing blockers  
+   - □ Needs architecture discussion first  
+   - □ Requires performance testing  
+   - □ Get security team review  
+   - □ Author should split into smaller PRs  
+
+   **Time to properly review:** ~[X] minutes  
+   **Recommended reviewer expertise:** [Backend | Security | Database | Frontend]  
+
+   ---
+
+   ### 5. 🧭 Formatting Rules  
+
+   - Use emoji headers for instant visual recognition  
+   - Keep sections short; if empty, say "None found"  
+   - Blockers get full detail, everything else stays concise  
+   - Include code examples only for blockers  
+   - Bold key impact/risk words  
+   - Use consistent prefixes like [SECURITY], [PERFORMANCE], [LOGIC] for easy scanning  
+   - If PR is genuinely fine, end with: ✅ "This PR is safe to merge as-is."
+
+   ```
+
+</Steps>

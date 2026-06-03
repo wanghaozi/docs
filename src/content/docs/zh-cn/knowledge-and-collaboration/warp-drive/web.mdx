@@ -1,0 +1,91 @@
+---
+title: 在网页上使用 Warp Drive
+description: >-
+  从任何浏览器或触摸屏设备（包括手机、平板电脑和触控笔记本电脑）访问你的 Warp Drive 对象和共享会话。
+---
+
+Warp Drive on the Web 让你可以直接在任何浏览器（包括移动设备和平板电脑）中查看和编辑 Warp Drive 对象及共享会话。从任何地方访问工作流、笔记本、提示和会话记录，无需安装 Warp 桌面应用。
+
+## 什么是 Warp on the web？
+
+Warp Drive on the Web 让你可以直接在浏览器中、在任何设备上查看和编辑你的 Warp Drive 对象及共享会话。
+
+<figure>
+![团队工作流的网页端渲染](../../../../../assets/terminal/wd-web-team-workflow.png)
+<figcaption>团队工作流的网页端渲染。</figcaption>
+</figure>
+
+## 如何访问 Warp on the web
+
+Warp 的网页端浏览体验目前可以通过以下方式访问：
+
+* [`app.warp.dev/app` 主页](https://app.warp.dev/app)
+* [Drive 对象](/knowledge-and-collaboration/warp-drive/#sharing-your-drive-objects)链接
+* [会话共享](/knowledge-and-collaboration/session-sharing/#how-to-allow-access-to-collaborators-in-your-session)链接
+
+:::caution
+你可以像往常一样编辑和查看基于网页的对象和会话。唯一的例外是从工作流或笔记本执行命令，因为网页端没有 Shell 会话在运行。
+:::
+
+## 管理你的查看偏好——网页端或桌面端
+
+如果安装了 Warp 应用，链接默认会在桌面端打开。你可以通过多种方式管理 Warp 链接是在 Warp 桌面应用还是浏览器中打开：
+
+:::note
+仅在 Warp 的网页服务能够检测到本地安装了 Warp 应用时，才会显示桌面端选项。Warp 桌面端通过开放 localhost 端口 9277 来实现此检测。这是在单独的进程中完成的，该进程无权访问你的终端内容。\
+\
+如果你想在本地使用 Warp 但尚未安装，请访问我们的[安装指南](/getting-started/quickstart/installation-and-setup/)。
+:::
+
+1. 第一次点击链接时，如果未安装 Warp，系统会提示你下载它。你可以关闭弹窗以留在网页端。
+
+![在网页端查看 Drive 对象时提示下载 Warp Desktop 的弹窗](../../../../../assets/terminal/wd-popup-message.png)
+
+2.  此偏好可以随时在**设置** > **功能** > **通用** > **在桌面应用中打开链接**中更改。请注意，此设置仅在基于网页的 Warp 版本中可用。
+
+    <figure>
+    ![管理如何打开链接的设置](../../../../../assets/terminal/wd-open-links-preference.png)
+    <figcaption>管理如何打开链接的设置。</figcaption>
+    </figure>
+3. 你也可以在每个对象的基础上切换网页端和桌面端视图。
+   1.  要从网页端视图切换到桌面端，打开溢出菜单 > **在桌面端打开链接**。
+
+       ![网页端 Drive 对象的溢出菜单，突出显示在桌面端打开选项](../../../../../assets/terminal/wd-switch-viewer.png)
+   2.  尽管全局偏好是桌面端，你也可以选择在网页端查看特定对象，点击重定向屏幕中的**在网页上查看**选项。
+
+       ![重定向屏幕，包含打开 Warp 和在网页上查看选项](../../../../../assets/terminal/wd-view-on-web.png)
+
+## 支持的浏览器
+
+Warp on the web 支持所有现代浏览器，包括：
+
+**桌面端**
+
+* Chrome
+* Firefox
+* Safari
+
+**移动端**
+
+* iOS Safari 15+
+* Android Chrome 58+
+* Samsung Internet 7.2+
+
+:::note
+这些移动浏览器版本是 WebGL 2.0 支持的最低要求。大多数最新设备都满足这些要求。
+:::
+
+## 触摸屏和移动端支持
+
+Warp 支持所有触摸屏设备，包括手机、平板电脑和触控笔记本电脑。触摸输入在网页端和桌面应用中均可用。
+
+### 支持的手势
+
+* **触摸并滚动** - 垂直和水平滚动正常工作
+* **双击** - 选择文本或元素
+* **长按** - 打开上下文菜单（等同于右键点击）
+
+## 相关功能
+
+* [Warp Drive](/knowledge-and-collaboration/warp-drive/) - 存储和共享工作流、提示和环境变量
+* [会话共享](/knowledge-and-collaboration/session-sharing/) - 实时终端会话中与他人协作

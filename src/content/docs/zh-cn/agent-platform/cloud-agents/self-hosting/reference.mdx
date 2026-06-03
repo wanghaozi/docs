@@ -1,0 +1,57 @@
+---
+title: 自托管 worker 参考
+description: >-
+  oz-agent-worker 守护进程的完整参考——Docker、Kubernetes 和 Direct 后端的 CLI 标志和配置文件架构。
+---
+
+`oz-agent-worker` 守护进程的参考：所有三个[托管后端](/agent-platform/cloud-agents/self-hosting/#managed-architecture)——Docker、Kubernetes 和 Direct 的 CLI 标志和完整 YAML 配置文件架构。
+
+## Worker 标志
+
+### 必需
+* `--worker-id` — 标识此 worker 的字符串
+* `--api-key` 或 `WARP_API_KEY` 环境变量
+
+### 可选
+* `--config-file` — YAML 配置文件的路径
+* `--backend` — 后端类型：`docker`（默认）、`kubernetes` 或 `direct`
+* `--log-level` — 日志详细程度：`debug`、`info`、`warn`、`error`
+* `--no-cleanup` — 执行后保留任务容器/工作区
+* `-v` / `--volumes` — 将主机目录挂载到任务容器中（仅 Docker）
+* `-e` / `--env` — 为任务设置环境变量
+* `--max-concurrent-tasks` — 最大并发任务数
+
+## 配置文件
+
+### Docker 后端配置
+
+```yaml
+worker_id: "my-worker"
+backend:
+  docker:
+    volumes:
+      - "/data:/data:ro"
+    environment:
+      - name: NPM_TOKEN
+        value: "your_token"
+```
+
+### Kubernetes 后端配置
+
+```yaml
+worker_id: "k8s-worker"
+backend:
+  kubernetes:
+    namespace: "warp-oz"
+    default_image: "my-registry.io/dev-image:latest"
+```
+
+### Direct 后端配置
+
+```yaml
+worker_id: "direct-worker"
+backend:
+  direct:
+    workspace_root: "/var/lib/oz/workspaces"
+    oz_path: "/usr/local/bin/oz"
+```

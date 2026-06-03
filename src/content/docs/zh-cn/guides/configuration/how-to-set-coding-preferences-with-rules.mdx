@@ -1,0 +1,52 @@
+---
+title: "使用规则设定编码偏好"
+description: >-
+  将你的包管理器、环境工具和 CLI 偏好存储为 Warp 规则，使代理自动使用 pnpm、miniconda 或你偏好的工具。
+sidebar:
+  label: "使用规则设定编码偏好"
+tags:
+  - "rules"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的规则功能为每个编码会话定义你的个人环境和工具偏好。
+
+<VideoEmbed url="https://youtu.be/zWvRB2zWr-4?si=tv-TIhsqEtLG9iDs" />
+
+本教程教你如何使用 **Warp 的规则** 自定义你的开发设置——确保代理始终在你偏好的环境中工作。无需不断提醒它们使用哪个包管理器或环境，你可以**将这些偏好存储为持久规则**，它们会自动跨项目应用。
+
+<Steps>
+
+1. #### 问题
+
+   使用 AI 工具编写或修改代码时，它们通常默认使用过时或不理想的工具。\
+   例如，许多代理仍然使用 **npm** 而不是 **pnpm**——或使用 **pip** 而不是 **miniconda**。
+
+   Warp 通过让你一次性定义偏好来解决这个问题，然后每当代理运行命令时自动应用它们。
+
+2. #### 规则设置
+
+   你可以设置规则，规定你希望 AI 如何处理环境、依赖项和命令。
+
+   **示例规则**
+
+   ```
+   Rule: Environment Preferences
+   - Always use pnpm for Node.js projects unless the project already uses npm.
+   - Default to miniconda for Python environments.
+   - Use the Tauri CLI when building desktop apps.
+   ```
+   这确保了代理自动选择正确的包管理器或环境——无需额外提示。
+
+3. #### 支持的用例
+
+   你可以将规则应用于：
+
+   * 包管理器（例如 npm → pnpm）
+   * 环境工具（例如 virtualenv → miniconda）
+   * 框架默认值（例如 Next.js 而非 React）
+   * CLI 工具或自定义构建工具
+
+</Steps>

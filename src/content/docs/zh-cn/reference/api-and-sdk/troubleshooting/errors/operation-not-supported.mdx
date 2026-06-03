@@ -1,0 +1,58 @@
+---
+title: operation_not_supported
+description: >-
+  此资源或其当前状态不支持所请求的操作。
+---
+
+`operation_not_supported` 错误发生在您尝试对给定资源或其当前状态执行当前不支持的操作时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `422 无法处理的实体`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 您尝试通过 API 取消**自托管**代理运行（自托管运行必须通过托管基础设施取消）
+* 您尝试通过 API 取消**本地**代理运行（本地运行必须从源客户端取消）
+* 您尝试取消通过 **GitHub Actions** 触发的运行（这些必须通过 GitHub Actions 工作流视图取消）
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/operation-not-supported/",
+  "title": "自托管代理运行无法通过 API 取消。",
+  "status": 422,
+  "instance": "/api/v1/agent/tasks/abc123/cancel",
+  "error": "自托管代理运行无法通过 API 取消。",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 检查错误消息以了解哪个操作不受支持及其原因。
+2. 使用适当的操作方法：
+   * **自托管运行** — 通过您的托管基础设施取消。
+   * **本地运行** — 从 Warp 桌面应用或终端会话取消。
+   * **GitHub Actions 运行** — 通过 GitHub Actions 工作流视图取消。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理任务的工作原理
+* [自托管](/agent-platform/cloud-agents/self-hosting/) — 自托管代理配置
+* [Oz API & SDK](/reference/api-and-sdk/) — 管理代理任务的 API 参考

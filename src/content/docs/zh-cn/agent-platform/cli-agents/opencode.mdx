@@ -1,0 +1,49 @@
+---
+title: Warp 中的 OpenCode
+sidebar:
+  label: "OpenCode"
+description: >-
+  在 Warp 中设置 OpenCode，支持通知、丰富输入、代码审查等功能。
+---
+
+OpenCode 是一个开源、基于终端的编码 agent。它连接到多个 LLM 提供商，并支持从终端使用工具、文件编辑和命令执行。有关完整文档，请参阅 [OpenCode 文档](https://opencode.ai/docs)。
+
+当您运行 OpenCode 时，Warp 会自动检测它，使您能够使用丰富的输入控件、代码审查、agent 通知和其他集成功能。有关产品概述，请参阅 [Warp 中的 OpenCode](https://www.warp.dev/agents/opencode)。
+
+有关安装、身份验证、项目配置和生产效率提示，请参阅[如何设置 OpenCode](/guides/external-tools/how-to-set-up-opencode/) 指南。
+
+## 设置通知
+
+Warp 通过插件支持 OpenCode 的 agent 通知。安装后，当 OpenCode 需要您的输入时，Warp 会显示应用内和桌面提醒。
+
+要设置插件，请将 `"@warp-dot-dev/opencode-warp"` 添加到您的 `opencode.json` 配置文件中的 `plugin` 数组：
+
+```json
+{
+  "plugin": ["@warp-dot-dev/opencode-warp"]
+}
+```
+
+如果插件未安装，当您在终端中运行 OpenCode 时，Warp 会显示一个安装芯片，提供您可以直接遵循的设置步骤。
+
+有关插件源和更新，请参阅 [opencode-warp GitHub 仓库](https://github.com/warpdotdev/opencode-warp)。
+
+## 受支持的 Warp 功能
+
+OpenCode 支持 Warp 的全套 agent 集成功能：
+
+* **Agent 通知** - 当 OpenCode 需要您的关注时接收应用内和桌面提醒。通知 UI 显示您当前的 git 分支以及 agent 状态。
+* **丰富输入编辑器** - 按下 `Ctrl-G` 打开扩展输入编辑器以编写更长的提示。
+* **代码审查** - 从 Warp 的代码审查面板直接发送内联审查评论给 agent。
+* **附加代码作为上下文** - 选择代码并将其作为上下文发送给 agent。
+* **带有 agent 元数据的垂直标签** - 在 Warp 的标签栏中使用状态指示器监控 OpenCode 会话。
+* **标签配置** - 保存和恢复 OpenCode 会话配置。
+* **远程控制** - 通过会话共享与团队成员共享您的 OpenCode 会话。
+
+## 相关页面
+
+* [如何设置 OpenCode](/guides/external-tools/how-to-set-up-opencode/) — 逐步设置指南
+* [Warp 中的 OpenCode](https://www.warp.dev/agents/opencode) — 产品概述
+* [第三方 CLI Agent 概述](/agent-platform/cli-agents/overview/)
+* [Claude Code](/agent-platform/cli-agents/claude-code/)
+* [Codex](/agent-platform/cli-agents/codex/)

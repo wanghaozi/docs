@@ -1,0 +1,61 @@
+---
+title: infrastructure_timeout
+description: >-
+  任务因保持活动状态超过最大允许运行时间而被强制终止。重试任务，如果问题持续存在请联系支持。
+---
+
+`infrastructure_timeout` 错误发生在云端代理任务运行时间超过平台最大允许运行时间并被强制终止时。
+
+:::note
+这被归类为**平台错误**（任务状态 → ERROR），而非用户错误，因为终止是由 Warp 的基础设施执行的，而非任务本身。
+:::
+
+---
+
+## 详情
+
+* **HTTP 状态：** `500 内部服务器错误`
+* **可重试：** 否
+* **任务状态：** ERROR
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 任务运行时间超过平台的最大允许运行时间，被定期过期任务清理作业终止
+* 代理进程在该时间窗口内从未报告终止状态（例如，进程挂起或卡在长时间运行的命令上）
+* 网络或基础设施问题导致任务静默停滞而未能报告完成
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/infrastructure-timeout/",
+  "title": "任务超过了最大允许运行时间，已被终止。",
+  "status": 500,
+  "instance": "/api/v1/agent/tasks",
+  "error": "任务超过了最大允许运行时间，已被终止。",
+  "retryable": false,
+  "trace_id": "abc123..."
+}
+```
+
+---
+
+## 解决方法
+
+1. 重试任务。如果始终超时，将工作分解为更小、运行时间更短的子任务，或缩小提示的范围。
+2. 检查[环境配置](/agent-platform/cloud-agents/environments/)中是否有阻止用户输入、长时间下载或无响应的网络调用的设置命令或 MCP 服务器。
+3. 如果问题仍然存在，联系 [Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)，并提供错误响应中的 `trace_id`。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理任务的工作原理
+* [internal_error](/reference/api-and-sdk/troubleshooting/errors/internal-error/) — 其他平台级错误
+* [云端代理常见问题](/agent-platform/cloud-agents/faqs/) — 关于云端代理的常见问题

@@ -1,0 +1,109 @@
+---
+title: 单点登录（SSO）
+description: >-
+  配置单点登录（SSO），在组织中认证和管理对 Warp 的访问。
+---
+
+Warp 使用 SSO 来认证用户并控制对组织 Warp 团队的访问。本指南涵盖配置 SSO、测试你的设置以及通过你的身份提供商管理用户访问。
+
+## 支持的身份提供商
+
+Warp 支持以下身份提供商：
+
+* **Okta**
+* **Microsoft Entra ID**
+* **Google Workspace**
+* **OneLogin**
+* **任何兼容 SAML 2.0 或 OpenID Connect（OIDC）的提供商**
+
+## SSO 强制与会话管理
+
+* **SSO 强制** - 管理员可以要求所有团队成员使用 SSO，阻止通过其他方式登录。
+* **多因素认证** - MFA 通过你的身份提供商的策略强制执行。Warp 尊重在 Okta、Microsoft Entra ID、Google Workspace 等中配置的 MFA 要求。
+* **会话管理** - 通过你的身份提供商配置可设置的会话超时和重新认证策略。
+
+## 设置 SSO
+
+SSO 通过 [WorkOS](https://workos.com) 与 Warp 团队协调配置：
+
+1. 联系你的 Warp 客户团队或[企业支持](https://www.warp.dev/contact-sales)以启动 SSO 设置。
+2. Warp 在 WorkOS 中为你的团队创建一个组织并设置团队域名。
+3. 你的 IT 管理员会收到来自 WorkOS 的邮件邀请。
+4. 按照 WorkOS 设置向导连接你的身份提供商（配置 SAML 属性或 OAuth 范围，提供你的 SSO URL 和证书）。
+5. 完成后，团队成员可以通过在 [app.warp.dev/login](https://app.warp.dev/login) 选择 **Continue with SSO** 登录。
+
+:::note
+启用 SSO 后，之前使用邮箱或 OAuth 注册的用户需要链接其账户。请参见下方的[链接现有账户](#linking-existing-accounts)。
+:::
+
+## 测试 SSO
+
+在向团队推广之前：
+
+1. 打开一个隐身/私密浏览器窗口。
+2. 导航到 [app.warp.dev/login](https://app.warp.dev/login)。
+3. 点击 **Continue with SSO**。
+4. 输入你的组织域名。
+5. 确认你被重定向到你的身份提供商并能够成功登录。
+
+:::caution
+Warp 无法直接从你的 SSO 提供商应用门户（例如 Okta 仪表板）启动。用户必须通过 [app.warp.dev/login](https://app.warp.dev/login) 登录并选择 **Continue with SSO**。
+:::
+
+## SCIM 配置
+
+Warp 支持通过 SCIM 进行用户生命周期管理。配置通过即时（JIT）配置结合 SSO 和域名捕获实现：
+
+* **用户配置** - 在你的身份提供商中向 Warp 应用添加用户。他们通过 SSO 登录后，会自动添加到你的 Warp 团队。
+* **域名自动加入** - 从你配置的域名通过 SSO 登录的用户会自动加入你的团队。参见[域名自动加入](#domain-auto-join)了解设置详情。
+* **用户取消配置** - 从你的身份提供商中的 Warp 应用移除用户会阻止未来的 SSO 登录。现有会话不会立即被撤销。
+
+:::note
+Warp 目前不支持 SCIM 组同步。用户配置通过 JIT 处理——用户在首次 SSO 登录后才会出现在你的 Warp 团队中，而不是在他们在身份提供商中被分配时。
+:::
+
+## 链接现有账户
+
+在你的组织启用 SSO 之前已创建 Warp 账户的用户需要链接其账户：
+
+1. 使用原来的方式（邮箱、Google 或 GitHub）登录 Warp。
+2. 导航到 [app.warp.dev/link_sso](https://app.warp.dev/link_sso)。
+3. 完成链接过程。
+4. 登出后，使用 **Continue with SSO** 重新登录。
+
+## 域名自动加入
+
+域名自动加入允许你组织的用户在 SSO 认证后自动加入你的 Warp 团队。
+
+:::note
+域名配置由 Warp 团队在入职过程中设置。请联系你的 Warp 客户团队配置或更新团队域名。
+:::
+
+配置团队域名后，从你的域名通过 SSO 登录的用户会自动添加到你的 Warp 团队。
+
+## 故障排除
+
+### 用户无法通过 SSO 登录
+
+**常见原因：**
+* 身份提供商中 SSO 未正确配置。
+* 用户试图直接从 SSO 提供商启动 Warp（不支持）。
+* 用户有需要[链接到 SSO](https://app.warp.dev/link_sso) 的现有 Warp 账户。
+
+**解决方案：**
+1. 验证身份提供商中的 SSO 配置。
+2. 让用户通过 [app.warp.dev/login](https://app.warp.dev/login) 登录并选择 **Continue with SSO**。
+3. 对于现有账户，按照 [SSO 链接流程](https://app.warp.dev/link_sso)操作。
+
+### Warp 无法从 SSO 提供商门户打开
+
+**问题：** 在 Okta/Microsoft Entra ID 门户中点击 Warp 时显示错误。
+
+**解决方案：**
+直接通过 [app.warp.dev/login](https://app.warp.dev/login) 登录，然后选择 **Continue with SSO**。
+
+## 相关资源
+
+* [安全概述](/enterprise/security-and-compliance/security-overview/) - 企业安全态势和合规
+* [管理员入门指南](/enterprise/getting-started/getting-started-enterprise/) - 完整的管理员入职指南
+* [登录问题故障排除](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/)

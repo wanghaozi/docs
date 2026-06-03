@@ -1,0 +1,44 @@
+---
+title: 命令面板
+description: >-
+  命令面板是一个全局搜索工具，用于快速定位 Warp 中的工作流、笔记本、键盘快捷键或其他操作。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+命令面板是 Warp 的全局搜索界面，用于快速查找和启动工作流、笔记本、提示符、键盘快捷键、文件搜索、设置和其他操作。使用键盘快捷键打开，然后输入或按类型过滤结果以找到您需要的内容。
+
+<figure>
+![命令面板](../../../../assets/terminal/command-palette-panel.png)
+<figcaption>命令面板。</figcaption>
+</figure>
+
+## 如何访问
+
+<Tabs>
+  <TabItem label="macOS">
+    您可以使用键盘快捷键 `CMD-P` 访问命令面板。
+  </TabItem>
+  <TabItem label="Windows">
+    您可以使用键盘快捷键 `CTRL-SHIFT-P` 访问命令面板。
+  </TabItem>
+  <TabItem label="Linux">
+    您可以使用键盘快捷键 `CTRL-SHIFT-P` 访问命令面板。
+  </TabItem>
+</Tabs>
+
+## 工作原理
+
+* 开始输入以搜索工作流、笔记本、键盘快捷键、操作、开关等。
+* 通过点击过滤按钮或在搜索前添加以下前缀来激活特定过滤器：
+  * `workflows:` 或 `w:` 将过滤 [工作流](/knowledge-and-collaboration/warp-drive/workflows/)。
+  * `prompts:` 或 `p:` 将过滤 [提示符](/knowledge-and-collaboration/warp-drive/prompts/)。
+  * `notebook:` 或 `n:` 将过滤 [笔记本](/knowledge-and-collaboration/warp-drive/notebooks/)。
+  * `env_vars:` 将过滤 [环境变量](/knowledge-and-collaboration/warp-drive/environment-variables/)。
+  * `files:` 将过滤本地文件。
+  * `drive:` 将过滤 [Warp Drive](/knowledge-and-collaboration/warp-drive/)。
+  * `actions:` 将过滤 Warp 特定的操作，如设置和功能。
+  * `sessions:` 将过滤活动会话，使用 [会话导航](/terminal/sessions/session-navigation/)。
+  * `launch_configs:` 将过滤 [启动配置](/terminal/sessions/launch-configurations/)。
+
+<VideoEmbed url="https://www.loom.com/share/0e6108b295234637a0bb20cc941976e9?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="命令面板演示" />

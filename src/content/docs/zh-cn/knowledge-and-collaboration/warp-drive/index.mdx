@@ -1,0 +1,191 @@
+---
+title: Warp Drive 概述
+description: >-
+  Warp Drive 是你终端中的一个工作空间，可以保存工作流、笔记本、提示和环境变量，供个人使用或与团队共享。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp Drive 是一个内置工作空间，用于在团队中保存和共享工作流、笔记本、提示和环境变量。所有对象实时同步，因此你和你的团队始终可以访问最新版本，无论你是本地工作还是在组织中协作。
+
+## 什么是 Warp Drive？
+
+存储在 Warp Drive 中的所有对象在更新后立即同步，因此你和你的团队始终可以访问最新版本。
+
+<VideoEmbed url="https://youtu.be/AGL0YcRj5-o" title="Warp Drive 概述" />
+
+## 如何访问
+
+<Tabs>
+  <TabItem label="macOS">
+    可以从 Warp 的状态栏访问 Warp Drive，或使用 `CMD-\` 切换 Warp Drive 侧面板。
+  </TabItem>
+  <TabItem label="Windows">
+    可以从 Warp 的状态栏访问 Warp Drive，或使用 `CTRL-SHIFT-\` 切换 Warp Drive 侧面板。
+  </TabItem>
+  <TabItem label="Linux">
+    可以从 Warp 的状态栏访问 Warp Drive，或使用 `CTRL-SHIFT-\` 切换 Warp Drive 侧面板。
+  </TabItem>
+</Tabs>
+
+<figure>
+![Warp 左上角的 Warp Drive 图标](../../../../../assets/terminal/Open_Warp_Drive.png)
+<figcaption>左上角的 Warp Drive 图标。</figcaption>
+</figure>
+
+## Warp Drive 中的工作空间
+
+打开 Warp Drive 面板时，你会看到一个个人工作空间，可以在其中存储工作流、笔记本、提示和环境变量，并将它们组织到文件夹中。
+
+![Warp Drive 中的个人工作空间初始状态，显示工作流、笔记本、提示和环境变量的保存位置。](../../../../../assets/terminal/Warp_Drive_Zero_State.png)
+
+如果你是使用 Warp Drive 的团队成员，你的团队工作空间也会在侧面板中显示。
+
+![Warp Drive 侧面板同时显示个人工作空间和团队工作空间。](../../../../../assets/terminal/Warp_Drive_with_Team.png)
+
+## 与团队在 Warp Drive 中组织对象
+
+* Warp Drive 中的对象（例如工作流、笔记本、提示和环境变量）和文件夹可以按字母顺序和最后更新时间排序
+* 从个人工作空间移动到团队工作空间的任何对象都将与所有团队成员共享
+* 目前无法将项目从团队工作空间移回个人工作空间；如果你不小心共享了某物，应将对象的内容复制到剪贴板，在个人工作空间中重新创建，然后从团队工作空间中删除该对象
+* 目前无法将个人工作流的文件夹拖放到团队工作空间中；你需要逐个移动对象
+
+## 离线使用 Warp Drive
+
+在离线模式下，某些文件将是只读的。你仍然可以在离线时在个人空间中创建和编辑文件。它们只会在本地保存，不会同步。在重新上线之前，它们无法移动到团队中或被删除。
+
+<figure>
+![Warp Drive 离线模式](../../../../../assets/terminal/warp_drive_offline.png)
+<figcaption>Warp Drive 在离线模式下运行。</figcaption>
+</figure>
+
+## 使用键盘导航 Warp Drive
+
+为避免在鼠标和键盘之间来回切换，你可以在打开 Warp Drive 或将焦点切换到 Warp Drive 面板后使用键盘进行导航。（你也可以点击 Warp Drive 中的空白区域。）你使用键盘导航的对象将以强调色高亮显示。
+
+你可以在 Warp Drive 中执行以下键盘操作：
+
+<Tabs>
+  <TabItem label="macOS">
+    * 按 `UP`/`DOWN` 或 `j`/`k` 导航到你想要的对象。
+    * 按 `Enter` 1) 执行对象，2) 打开/折叠工作空间或文件夹，或 3) 打开回收站。
+    * 按 `CMD-ENTER` 打开对象的上下文菜单。
+    * 按 `CMD-SHIFT-(` 和 `CMD-SHIFT-)` 在终端和 Warp Drive 之间切换焦点。
+    * 按 `LEFT-ARROW` 折叠工作空间或文件夹。
+    * 按 `RIGHT-ARROW` 打开工作空间或文件夹。
+    * 按 `Esc` 从回收站返回到 Warp Drive。
+  </TabItem>
+  <TabItem label="Windows">
+    * 按 `UP`/`DOWN` 或 `j`/`k` 导航到你想要的对象。
+    * 按 `Enter` 1) 执行对象，2) 打开/折叠工作空间或文件夹，或 3) 打开回收站。
+    * 按 `CTRL-ENTER` 打开对象的上下文菜单。
+    * 按 `CTRL-SHIFT-(` 和 `CTRL-SHIFT-)` 在终端和 Warp Drive 之间切换焦点。
+    * 按 `LEFT-ARROW` 折叠工作空间或文件夹。
+    * 按 `RIGHT-ARROW` 打开工作空间或文件夹。
+    * 按 `Esc` 从回收站返回到 Warp Drive。
+  </TabItem>
+  <TabItem label="Linux">
+    * 按 `UP`/`DOWN` 或 `j`/`k` 导航到你想要的对象。
+    * 按 `Enter` 1) 执行对象，2) 打开/折叠工作空间或文件夹，或 3) 打开回收站。
+    * 按 `CTRL-ENTER` 打开对象的上下文菜单。
+    * 按 `CTRL-SHIFT-(` 和 `CTRL-SHIFT-)` 在终端和 Warp Drive 之间切换焦点。
+    * 按 `LEFT-ARROW` 折叠工作空间或文件夹。
+    * 按 `RIGHT-ARROW` 打开工作空间或文件夹。
+    * 按 `Esc` 从回收站返回到 Warp Drive。
+  </TabItem>
+</Tabs>
+
+<figure>
+![Warp Drive 导航状态](../../../../../assets/terminal/warp_drive_nav1.png)
+<figcaption>Warp Drive 侧栏中的导航状态。</figcaption>
+</figure>
+
+要使用键盘在面板之间切换，你可以使用[命令面板](/terminal/command-palette/)中的"将焦点切换到左侧面板"和"将焦点切换到右侧面板"命令。
+
+![通过命令面板在终端和 Warp Drive 面板之间切换焦点。](../../../../../assets/terminal/warp_drive_nav2.png)
+
+## 导入和导出
+
+Warp Drive 中的每个对象都可以导出到文件或从文件导入。导入或导出时，对象的转换方式如下：
+
+* [工作流](/knowledge-and-collaboration/warp-drive/workflows/) 从 YAML（.yaml， .yml）导入并导出到 YAML
+* [提示](/knowledge-and-collaboration/warp-drive/prompts/) 目前不支持导入，但可以导出到 YAML（.yaml， .yml）
+* [笔记本](/knowledge-and-collaboration/warp-drive/notebooks/) 从 MARKDOWN（.md）导入并导出到 MARKDOWN
+* [环境变量](/knowledge-and-collaboration/warp-drive/environment-variables/) 目前不支持导入，但可以导出到 DOTENV（.env）
+
+### 将文件导入 Warp Drive
+
+要导入本地文件或目录，在文件夹上**右键点击**或点击工作空间上的 **+** 并选择"Import"。如果导入目录，目录及其子目录中受支持的文件将导入到匹配的文件夹结构中。
+
+<figure>
+![导入对话框](../../../../../assets/terminal/notebook-import-modal.png)
+<figcaption>用于将本地文件添加到 Warp Drive 的导入对话框。</figcaption>
+</figure>
+
+### 从 Warp Drive 导出文件
+
+要导出单个 Warp Drive 对象，在对象上**右键点击**并从菜单中选择"Export"，然后选择导出的目录。要导出所有 Warp Drive 对象，打开[命令面板](/terminal/command-palette/#how-to-access-it)，搜索并选择"导出所有 Warp Drive 对象"，然后选择导出的目录。
+
+## 共享你的 Drive 对象
+
+Warp Drive 中的每个对象都可以共享。有三种共享对象的方式：
+
+* **团队：** Warp 团队的所有成员对其 Drive 中的对象具有完全访问权限。
+* **直接共享：** 对象可以通过邮箱直接与个人共享。
+* **基于链接的共享：** 你可以使对象对拥有链接的任何人公开，包括没有 Warp 账户的人。
+
+### 使用链接共享 Drive 对象
+
+要共享 Drive 对象，导航到对象的溢出菜单，选择"Copy link"。链接成功复制到剪贴板后，你可以与队友分享，并在你的代码库、文档或 Slack 等通信渠道中引用你的对象。
+
+:::note
+要访问一个对象，链接访问者必须通过上述共享方法之一拥有打开它的权限。如果他们没有权限，他们可以自动向对象所有者或团队管理员请求访问权限。
+:::
+
+<figure>
+![复制链接菜单项](../../../../../assets/terminal/wd-copy-link-menu.png)
+<figcaption>右键菜单中的复制链接选项。</figcaption>
+</figure>
+
+### 管理权限
+
+要管理 Drive 对象的权限，导航到其溢出菜单并选择"Share"。如果对象已打开，你也可以使用[命令面板](/terminal/command-palette/#how-to-access-it)搜索"Share pane"，或点击面板标题中的共享按钮：
+
+<figure>
+![笔记本的面板标题，共享按钮已标出](../../../../../assets/terminal/wd-share-button.png)
+<figcaption>面板标题中的共享按钮。</figcaption>
+</figure>
+
+这将打开一个对话框，列出当前的共享设置并允许你更改它们：
+
+<figure>
+![共享对话框显示任何拥有链接的人都可以查看，所有者具有完全访问权限，另一个用户可以编辑。](../../../../../assets/terminal/wd-share-dialog.png)
+<figcaption>Warp Drive 共享对话框。</figcaption>
+</figure>
+
+在此对话框中，你可以：
+
+* 使用顶部的邮箱输入直接邀请其他用户。
+* 更改或移除基于公共链接的访问级别。
+* 更新个人用户的访问级别，或移除他们的访问权限。
+
+权限从父文件夹继承。例如，如果一个文件夹被共享了编辑权限，那么用户也将能够编辑该文件夹或其子文件夹内的所有对象。
+
+所有者及其队友始终拥有完全访问权限。共享对象时，你可以在查看和编辑访问之间选择。
+
+|                                     | 可以查看 | 可以编辑 | 完全访问 |
+| ----------------------------------- | -------- | -------- | --------- |
+| 阅读笔记本                        | ✓        | ✓        | ✓         |
+| 执行工作流                        | ✓        | ✓        | ✓         |
+| 使用环境变量                      | ✓        | ✓        | ✓         |
+| 编辑内容                          |          | ✓        | ✓         |
+| 在文件夹中创建对象                |          | ✓        | ✓         |
+| 放入或恢复回收站                  |          | ✓        | ✓         |
+| 永久删除                          |          |          | ✓         |
+| 修改权限                          |          |          | ✓         |
+| 移动到不同的文件夹或 Drive         |          |          | ✓         |
+
+## Warp Drive 故障排除
+
+* 如果你之前独自使用 Warp，后来被邀请加入团队，你可能需要退出、更新并重新启动 Warp 应用才能访问团队的共享 Drive 和命令
+* 导航到 Warp 中的设置 > 团队也应强制为你进行元数据更新，确保你可以访问团队 Drive 中的最新版本的工作流

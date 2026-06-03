@@ -1,0 +1,82 @@
+---
+title: "Context7 MCP：使用最佳实践更新 Astro 项目"
+description: >-
+  使用 Context7 MCP 服务器为 Warp 代理提供对框架文档的实时访问，以实现自动化项目升级。
+sidebar:
+  label: "Context7 MCP：使用最佳实践更新 Astro 项目"
+tags:
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教程展示了 **Context7 MCP 服务器**如何为 Warp 代理提供对文档的实时访问，以自动升级框架和代码库。
+:::
+
+<VideoEmbed url="https://youtu.be/rrxfS9u1XRA?si=X2CBWW1PD3M8IuFr&t=369" />
+
+---
+
+## 🧠 概述
+
+**Context7 MCP 服务器**让 Warp 从网络获取实时文档。\
+\
+在示例中，代理将较旧的 **Astro** 项目更新以符合最新版本（Astro 5）的最佳实践。
+
+---
+
+<Steps>
+
+1. #### 添加 Context7 服务器
+
+   * 通过命令面板打开 Warp 的 **MCP 面板**。
+   * 添加 **Context7 JSON 配置**并点击**保存**。
+
+   ```json
+   {
+     "Context7": {
+       "command": "npx",
+       "args": [
+         "-y",
+         "@upstash/context7-mcp"
+       ],
+       "env": {},
+       "working_directory": null
+     }
+   }
+   ```
+
+   * 这将启用 `getLibraryDocs` 端点，它可以直接从官方来源检索实时文档。
+
+2. #### 运行更新提示
+
+   开发者发出以下提示：
+
+   ```
+   Create a new git branch called update and in that branch update this Astro project to follow all the latest best practices based on all Astro and developer documentation.
+   ```
+
+3. #### 查看自动代码更改
+
+   视频记录显示 Warp 自动：
+
+   * 更新 Tailwind 导入语法
+   * 改进 TypeScript 配置
+   * 优化构建设置
+   * 增强无障碍规则
+
+   这些编辑在多个文件中完成——无需手动搜索文档或变更日志。
+
+4. #### 最佳用例
+
+   * 迁移旧的 Astro、React 或 Vue 项目
+   * 刷新代码库以反映最新标准
+   * 节省原本用于阅读版本说明的时间
+
+</Steps>
+
+:::tip
+Context7 MCP 自动化文档查询——让 Warp 基于实时参考智能地更新你的项目。
+:::

@@ -1,0 +1,30 @@
+---
+title: 自带 API 密钥
+description: >-
+  Warp 让您为 OpenAI、Anthropic 和 Google AI 模型自带 API 密钥 (BYOK)。
+---
+
+Warp 支持**自带 API 密钥 (BYOK)**，适用于希望将 Warp 的 Agent 连接到自己的 Anthropic、OpenAI 或 Google API 账户的用户。
+
+这使您可以使用自己的 API 密钥进行模型访问，让您控制模型选择、计费和数据路由。请参阅[模型选择](/agent-platform/inference/model-choice/)获取受支持模型的列表。
+
+BYOK 提供更大的模型访问灵活性，并确保 Warp **从不消耗您的** [AI 积分](/support-and-community/plans-and-billing/credits/)用于通过您自己的密钥路由的请求。
+
+## BYOK 如何工作
+
+当您在 Warp 中添加自己的模型 API 密钥时，这些密钥**仅存储在您的设备上**（在您的操作系统密钥链或等效安全存储中），从不在 Warp 的服务器上。它们用于向您选择的模型提供商发出请求。
+
+当您使用带有**密钥图标**的模型发送提示时：
+1. 您的本地 Warp 客户端从设备的安全存储中拉取您的 API 密钥，并随提示一起发送到 Warp 后端
+2. Warp 的 Agent harness 在 Warp 后端运行，组装完整请求并使用您的密钥调用您选择的模型提供商
+3. 提供商的响应通过 Warp 后端流式返回给客户端
+
+## 启用 BYOK
+
+1. 打开**设置**并搜索 `API keys`
+2. 添加您用于 Anthropic、OpenAI 或 Google 的 API 密钥
+3. 添加后，您会在模型选择器中看到受支持模型旁的**密钥图标**
+
+## 计费行为
+
+当您选择带有密钥图标的模型时，Warp 通过您的 API 密钥路由请求。推理直接通过您的提供商账户计费，而非从您的 Warp AI 积分中扣除。

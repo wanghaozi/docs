@@ -1,0 +1,53 @@
+---
+title: Codex 与 Oz
+description: >-
+  使用 Oz 运行 Codex 进行代码库迁移、发布协调、批量测试生成以及后端或 DevOps 自动化。
+sidebar:
+  label: "Codex"
+---
+
+Codex 是 OpenAI 的编码 agent。使用 Oz 运行它，将 Codex 置于 Warp 管理的环境中，并将其连接到 Oz 平台的其余部分——包括触发器、环境、密钥、可观测性和治理——同时行为方式与您的团队已经使用的 Codex CLI 相同。
+
+:::note
+此页面涵盖作为**云** harness 的 Codex，由 Oz 分派和编排。要在您的 Warp 终端中本地运行 Codex，请参见 [Warp 中的 Codex CLI](/agent-platform/cli-agents/codex/)。
+:::
+
+## 主要特性
+
+* **云编排** - 从任何 Oz 触发器启动 Codex：Warp 应用、Oz Web 应用、Oz CLI、REST API、计划、Slack 提及、Linear 问题或 GitHub Actions。
+* **Codex 模型选择器** - 选择 Codex 使用的 OpenAI 模型，包括 GPT-5 系列、Codex 调优变体，以及让 Codex 自行选择推荐模型的 `default` 选项。
+* **一级子 Agent** - Warp Agent 父级可以分派 Codex 子 Agent 来处理更大编排中高量或定义明确的编码步骤。
+
+## 可用模型
+
+Codex harness 公开了 OpenAI 的 Codex 调优和通用编码模型。常见选择包括：
+
+* `default` - 让 Codex 根据您的 OpenAI 账户访问权限自行选择推荐模型。
+* `gpt-5.5`、`gpt-5.4` - OpenAI 近期强大的编码模型，具有可配置的推理级别。
+* `gpt-5.4-mini` - 用于较轻编码任务或子 Agent 的更快、更低成本选项。
+
+有关完整列表，包括 Codex 调优和通用模型，打开 Oz Web 应用新运行窗格中的模型选择器。有关每个模型的详细信息，请参见 [OpenAI 的 Codex 模型文档](https://developers.openai.com/codex/models)。
+
+## 凭据和计费
+
+Codex 使用您的团队提供的凭据直接调用 OpenAI。Oz 目前支持一种凭据类型，存储为 [Warp 管理的密钥](/agent-platform/cloud-agents/secrets/)：
+
+* **OpenAI API 密钥** - Codex harness 每次运行都使用此密钥向 OpenAI 进行身份验证。
+
+OpenAI 直接向您的账户收取推理费用。Warp 仍然为运行的沙箱计量[计算积分](/support-and-community/plans-and-billing/credits/#compute-credits)，并为编排层计量[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+有关设置步骤，请参见[连接 Codex 凭据](/agent-platform/cloud-agents/harnesses/authentication/#connecting-codex-credentials)。
+
+## 启动 Codex 运行
+
+* **Warp 应用** - 在云模式中，点击输入上方的 **Agent harness** 下拉菜单并选择 **Codex**。
+* **Oz Web 应用** - 在新运行或新计划窗格中，在 **Harness** 字段中选择 **Codex**。其下方会出现 **Codex auth secret** 字段；选择您的团队已存储的 OpenAI 密钥。
+* **API 和 SDK** - 将 agent 配置 `harness` 设置为 `codex`，并在匹配的 auth-secret 字段上设置 OpenAI 密钥名称。参见 [API 参考](/reference/api-and-sdk/)。
+
+## 相关页面
+
+* [Oz 中的 Harnesses](/agent-platform/cloud-agents/harnesses/) — 在 Warp Agent、Claude Code 和 Codex 之间选择。
+* [身份验证](/agent-platform/cloud-agents/harnesses/authentication/) — 将 OpenAI 凭据存储为 Warp 管理的密钥。
+* [Warp Agent 与 Oz](/agent-platform/cloud-agents/harnesses/warp-agent/) — Oz 的默认 harness，也是唯一可以编排 Codex 子 Agent 的 harness。
+* [Claude Code 与 Oz](/agent-platform/cloud-agents/harnesses/claude-code/) — Claude Code 作为云 harness。
+* [Warp 中的 Codex CLI](/agent-platform/cli-agents/codex/) — 在您的本地 Warp 终端中的 Codex。

@@ -1,0 +1,71 @@
+---
+title: 企业版常见问题
+sidebar:
+  label: "常见问题"
+description: >-
+  关于 Warp 企业版的常见问题解答，包括登录问题、SSO 和入门指南。
+---
+
+## 登录与 SSO
+
+### 我无法通过 SSO 登录
+
+**问题：** 尝试通过 SSO 登录时出现错误消息。
+
+**解决方案：**
+1. 确保你通过 [app.warp.dev/login](https://app.warp.dev/login) 登录，而不是通过你的 SSO 提供商门户。
+2. 选择 **Continue with SSO** 并输入你的工作邮箱或域名。
+3. 如果你已有 Warp 账户，请使用原始凭据登录并[先将其链接到 SSO](https://app.warp.dev/link_sso)。
+4. 完成链接过程。
+5. 登出后，使用 **Continue with SSO** 重新登录。
+
+### 我之前用其他方式登录过，现在无法使用 SSO
+
+**问题：** 你用邮箱/Google/GitHub 创建了 Warp 账户，但你的组织现在要求使用 SSO。
+
+**解决方案：**
+1. 访问 [app.warp.dev/login](https://app.warp.dev/login)。
+2. 使用你的原始方式登录。
+3. 导航到 [app.warp.dev/link_sso](https://app.warp.dev/link_sso)。
+4. 完成链接过程。
+5. 登出后，使用 **Continue with SSO** 重新登录。
+
+### 无法从我的 SSO 提供商打开 Warp
+
+**问题：** 在 Okta/Microsoft Entra ID 门户中点击 Warp 时显示错误。
+
+**解决方案：**
+这是一个已知的限制。Warp 无法直接从 SSO 提供商门户启动。请改为：
+1. 访问 [app.warp.dev/login](https://app.warp.dev/login)。
+2. 点击 **Continue with SSO**。
+3. 完成认证。
+
+## 团队与访问
+
+### 团队邀请链接无效
+
+**常见原因：**
+* 邀请链接已过期或被撤销。
+* 用户的邮箱域名与配置的限制不匹配。
+
+**解决方案：**
+1. 生成一个新的邀请链接。
+2. 确认域名限制与用户的邮箱匹配。
+
+### 用户看不到新的管理设置
+
+**问题：** 你在管理面板中更改了设置，但用户没有看到变化。
+
+**解决方案：**
+1. 确认该设置未设为"尊重用户设置"。
+2. 要求用户重启 Warp 以强制刷新设置。
+3. 确认用户是正确团队的成员。
+4. 检查用户是否已通过 SSO 登录（而非个人账户）。
+
+## 更多帮助
+
+如需进一步排查问题，请参见：
+* [登录问题故障排除文档](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/)
+* 联系你的团队管理员处理与组织相关的问题。
+* 通过团队专属的 Slack/Teams 频道联系 Warp 支持。
+* 加入 Warp 的 [Slack 社区](https://go.warp.dev/join-preview)，与其他 Warp 用户和工程师交流。

@@ -1,0 +1,75 @@
+---
+title: "分析 Cloud Run 日志（gcloud）"
+description: >-
+  使用 Warp 通过自然语言提示和自动化 Python 脚本，按严重级别提取、组织和分析 Cloud Run 生产日志。
+sidebar:
+  label: "分析 Cloud Run 日志"
+tags:
+  - "cloud"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 从云服务器检索、组织和分析生产日志——全部使用自然语言提示。
+
+<VideoEmbed url="https://youtu.be/GJ0NepZmmv8?si=MHhAVD2JeTLYc9rM" />
+
+<Steps>
+
+1. #### 设置上下文
+
+   打开 Warp 并启用**语音输入**（可选）以实现免提交互。
+
+   :::note
+   语音输入是可选的——仅在偏好在不使用双手的情况下进行提示时启用。
+   :::
+
+   **提示词**
+
+   ```
+   Use the warp-server-staging gcloud project and pull logs
+   for the last 10 minutes from the warp-server Cloud Run instance.
+   Organize them by info, warning, and error levels.
+   Create a histogram across message types,
+   and highlight the most concerning errors to investigate.
+   ```
+
+2. #### Warp 的代理运行中
+
+   按下回车后：
+
+   * Warp 检测到该命令为**代理模式**请求。
+   * 它收集项目上下文（`warp-server-staging`）。
+   * 自动执行必要的 `gcloud` 日志查询。
+   * 将检索到的数据写入临时文件进行处理。
+
+3. #### 自动化分析
+
+   Warp 的代理临时生成一个**Python 脚本**：
+
+   * 解析日志
+   * 按严重级别统计消息数量
+   * 输出汇总指标
+
+   示例输出：
+
+   ```
+   1,000 log entries total
+   980 info
+   11 warning
+   9 errors
+   ```
+
+   你可以查看或快进执行，或随时停止进程。
+
+4. #### 查看结果
+
+   Warp 输出可读的直方图并突出显示异常。\
+   例如：
+
+   > "检测到 Gemini AI 错误消息——值得审查。"
+
+   你可以交互式地展开每个日志组，或检查用于调试的临时 Python 代码。
+
+</Steps>

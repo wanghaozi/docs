@@ -1,0 +1,68 @@
+---
+title: Warp Agent 与 Oz
+description: >-
+  Warp Agent 是 Oz 的默认 Harness。它跨领先模型路由，具有完整的终端访问权限，并且是唯一可以编排子 Agent 的 Harness。
+sidebar:
+  label: "Warp Agent"
+---
+
+Warp Agent 是 Warp 构建并随 Oz 发布的 Harness。除非您选择其他 Harness，否则它是每个云 Agent 运行的默认选择，并且是唯一可以生成跨 Harness 子 Agent 的 Harness（例如 Warp Agent 父级分派 Claude Code 或 Codex 子级）。
+
+Warp Agent 是驱动 Warp 终端中 Agent 模式的相同 agent 运行时。作为云 Harness 运行提供了相同的行为——模型路由、工具访问、技能、规则、记忆——而无需将执行绑定到单个笔记本电脑。
+
+## 主要特性
+
+* **多模型自动路由** - 在 Anthropic、OpenAI、Google 和 Fireworks 托管的模型之间路由。选择特定模型，或让 Warp 通过 `auto`、`auto-efficient`、`auto-genius` 或 `auto-open` 选择。请参阅[模型选择](/agent-platform/inference/model-choice/)获取完整目录。
+* **完整的终端和工具访问** - 运行命令、编辑文件、读取日志、执行测试、导航仓库和调用 MCP 服务器，为云运行提供与 Warp Agent 本地使用时相同的工具带。
+* **平台原生上下文** - 读取[代码库上下文](/agent-platform/capabilities/codebase-context/)、应用[规则](/agent-platform/capabilities/rules/)、重用已保存的[技能](/agent-platform/capabilities/skills/)，并尊重记忆和 Warp Drive 上下文，无需额外设置。
+* **多仓库执行** - 克隆[环境](/agent-platform/cloud-agents/environments/)上配置的每个仓库，并在单次运行中跨它们工作。
+* **跨 Harness 编排父级** - Warp Agent 父级运行可以生成 Claude Code 或 Codex [子 Agent](/agent-platform/cloud-agents/overview/)并协调其输出。在多 Harness 编排中，其他 Harness 不能充当父级。
+* **无需额外凭据** - Warp Agent 使用您现有的 Warp 账户和积分。没有单独的 API 密钥需要配置。
+
+## 工作原理
+
+Warp Agent 与 Warp 终端中的 Agent 模式相同的 agent 运行时：它规划、调用工具、编辑代码、运行测试和报告进度。云平台在运行周围添加了[环境](/agent-platform/cloud-agents/environments/)、触发器、可观测性和团队治理，记录可实时检查并在之后从 [Oz 仪表板](/agent-platform/cloud-agents/managing-cloud-agents/)回放。
+
+团队管理员可以为其工作区禁用任何 Harness。该团队的用户只能启动保持启用的 Harness 的运行。
+
+### 可用模型
+
+Warp Agent 支持完整的 Warp 模型目录。按 [Agent 配置文件](/agent-platform/capabilities/agent-profiles-permissions/)配置模型，或在运行时选择一个。请参阅[模型选择](/agent-platform/inference/model-choice/)获取受支持的模型 ID，包括 `auto`、`auto-efficient`、`auto-genius` 和 `auto-open` 路由选项。
+
+### 跨 Harness 编排
+
+Warp Agent 是多 Harness 运行的编排主机。典型模式如下：
+
+1. Warp Agent 父级运行分析任务并将其分解为子任务。
+2. 父级分派 Claude Code 子 Agent 处理需要仔细审查的步骤，以及 Codex 子 Agent 处理高量编辑。
+3. 父级收集结果、解决冲突并返回单个最终输出（PR、报告、Slack 回复）。
+
+子 Agent 在与父级相同的环境中运行，并共享相同的密钥、MCP 服务器和集成。记录显示完整树，因此审查者可以准确看到哪个子 Agent 做了什么。
+
+## 何时选择 Warp Agent
+
+* 任务跨越多个仓库、语言或领域。
+* 您希望模型自动路由而不是固定在一个提供商上。
+* 运行需要将其他 Harness 编排为子 Agent。
+* 您希望与 Warp 的平台功能（技能、规则、记忆、代码库上下文）进行最深入的集成。
+* 您不确定哪个 Harness 适合——Warp Agent 是安全的默认选择，并且可以在决定更好的选择时委托给其他 Harness。
+
+## 启动 Warp Agent 运行
+
+Warp Agent 是默认的，因此无需额外配置。
+
+* **Warp 应用** - 从输入启动云 Agent 运行。**Agent harness** 下拉菜单默认为 **Warp Agent**。
+* **Oz Web 应用** - 在新运行或新计划窗格中，将 **Harness** 字段保持为 **Warp Agent**。
+* **Oz CLI** - 运行 `oz agent run-cloud --prompt "..."` 不带 `--harness` 标志，或显式传递 `--harness oz`。
+* **API 和 SDK** - 省略 agent 配置上的 `harness` 字段，或将其设置为 `oz`。请参见 [API 参考](/reference/api-and-sdk/)。
+
+有关完整演练，请参阅[云 Agent 快速入门](/agent-platform/cloud-agents/quickstart/)。
+
+## 相关页面
+
+* [Oz 中的 Harnesses](/agent-platform/cloud-agents/harnesses/) — 在 Warp Agent、Claude Code 和 Codex 之间选择。
+* [Claude Code 与 Oz](/agent-platform/cloud-agents/harnesses/claude-code/) — Claude Code 作为云 Harness。
+* [Codex 与 Oz](/agent-platform/cloud-agents/harnesses/codex/) — Codex 作为云 Harness。
+* [模型选择](/agent-platform/inference/model-choice/) — Warp Agent 跨其路由的模型目录。
+* [Agent 配置文件和权限](/agent-platform/capabilities/agent-profiles-permissions/) — 为 Warp Agent 配置默认模型、自主性和工具访问。
+* [技能作为 Agent](/agent-platform/cloud-agents/skills-as-agents/) — 将已保存的技能转换为可重用的 Warp Agent 运行。

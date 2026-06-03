@@ -1,0 +1,58 @@
+---
+title: feature_not_available
+description: >-
+  请求的功能不包含在您当前计划中。升级团队计划以访问此功能。
+---
+
+`feature_not_available` 错误发生在您尝试使用团队当前计划不包含的功能或能力时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 您尝试使用需要更高等级计划的功能（例如，某些集成、高级功能或自托管执行）
+* 云端代理或集成触发器尝试访问受计划升级限制的功能
+
+响应中的 `title` 字段将描述具体不可用的功能。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/feature-not-available/",
+  "title": "Slack 集成需要 Build 计划或更高版本。",
+  "status": 403,
+  "instance": "/api/v1/agent/tasks",
+  "error": "Slack 集成需要 Build 计划或更高版本。",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 在团队的计费设置中检查您的团队当前使用的计划。
+2. 升级到包含所需功能的计划。
+3. 重试操作。
+
+有关计划比较和功能可用性，请参见[访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/)。
+
+---
+
+## 相关
+
+* [访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/) — 计划要求和功能可用性
+* [集成](/agent-platform/cloud-agents/integrations/) — 按计划划分的集成要求

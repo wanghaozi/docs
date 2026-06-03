@@ -1,0 +1,141 @@
+---
+title: "产品经理的 5 个代理工作流"
+description: >-
+  五个代理工作流，自动完成产品经理的状态更新、文档编写、Slack 搜索和会议准备工作。
+tags:
+  - "agents"
+
+---
+大多数产品经理的工作可以分为三类：收集信息、综合信息和传达结果。以下五个工作流使用 Warp 的代理和 MCP 集成来自动化收集过程并加速综合，让你花更少的时间在工具之间切换，更多的时间做决策。每个工作流设置需 5-10 分钟。
+
+## 先决条件
+
+* **Warp**——已安装并登录。请参阅[安装和设置](/getting-started/quickstart/installation-and-setup/)开始使用。
+* **MCP 服务器（可选但推荐）**——Slack、Linear 和 Notion 在 Warp 中都有文档化的 MCP 配置。有关设置说明，请参阅 [MCP](https://docs.warp.dev/agent-platform/capabilities/mcp/)。下面的每个工作流都注明了使用哪些 MCP 服务器，并为没有 MCP 的用户提供了备用方案。
+
+:::note
+这些工作流适用于 Warp 的内置代理或在 Warp 中运行的任何第三方 CLI 代理，包括 Claude Code、Codex、OpenCode 和 Gemini CLI。完整列表请参阅[第三方 CLI 代理](https://docs.warp.dev/agent-platform/cli-agents/overview/)。
+:::
+
+## 1. 拉取跨项目状态更新
+
+跨多个项目编译状态更新通常意味着在单独的标签中打开 Slack、Linear、Notion 和电子邮件，逐一阅读并手动综合摘要。通过 MCP 连接的代理，你可以在一个提示中从所有这些工具拉取上下文。
+
+1. 告诉代理要覆盖哪些项目、工具和时间范围。明确说明受众和需要的格式。
+2. 提交一个查询已连接工具的提示词。例如：
+
+```
+Pull updates from the last week across #project-atlas and #project-beacon
+in Slack, any Linear tickets that moved to Done or In Review, and the
+latest entries in our Notion launch tracker. Summarize into a status
+update for my skip-level, organized by project. Use bullet points. Flag
+anything blocked or at risk.
+```
+
+3. 审查输出并迭代。要求代理调整语气（更简洁、更正式）、重新排序部分或为特定利益相关者添加上下文。
+
+结果是一个格式化好的状态更新，可以直接粘贴到 Slack 或电子邮件中。
+
+**使用的 MCP 服务器**——Slack、Linear、Notion。
+
+:::note
+**没有 MCP 时**：从每个工具复制相关更新并粘贴到你的提示词中。要求代理综合并格式化摘要。工作流相同；MCP 只是自动化了收集步骤。
+:::
+
+## 2. 从终端起草文档
+
+编写发布文档、产品简报或战略文档通常从 Google Docs 或 Notion 中的空白页面开始。相反，向代理描述你需要的内容，并在不离开 Warp 的情况下迭代草稿。
+
+1. 描述文档类型、受众和结构。例如：
+
+```
+Draft a product brief for a new onboarding flow redesign. The audience
+is engineering and design leads. Include sections for problem statement,
+proposed solution, success metrics, and open questions. The problem is
+that 40% of new users drop off before completing setup.
+```
+
+2. 审查草稿并迭代。要求代理展开某个部分、精炼语言、添加竞争对手比较或重新组织大纲。
+3. 将完成的草稿复制到 Google Docs、Notion、Confluence 或你的团队存放文档的任何地方。如果你连接了 Notion MCP，可以要求代理直接推送内容。
+
+结果是一个结构化的初稿，基于你的具体上下文，可供审查。
+
+**使用的 MCP 服务器**——Notion（可选，用于直接推送内容）。
+
+:::note
+**没有 MCP 时**：手动将完成的草稿复制粘贴到你的文档工具中。
+:::
+
+## 3. 搜索 Slack 为会议做准备
+
+在会议或项目检查之前，你通常需要了解跨多个 Slack 频道的活动。手动阅读 10 多个频道很慢。使用 Slack MCP 服务器，你可以在一个提示中搜索和总结。
+
+1. 告诉代理搜索哪些频道和时间范围。例如：
+
+```
+Search #eng-backend, #design-reviews, #project-atlas, and
+#incidents for the last 3 days. Summarize the key decisions,
+open questions, and anything that was escalated. I have a
+project sync in 30 minutes and need to be caught up.
+```
+
+2. 审查代理返回的结构化摘要，按主题或频道分组。
+3. 提出后续问题深入了解特定线程。例如："#eng-backend 中关于 API 速率限制讨论的解决方案是什么？"
+
+结果是一个简报文档，总结跨频道的最新活动，几分钟即可完成。
+
+**使用的 MCP 服务器**——Slack。
+
+:::note
+**没有 MCP 时**：从 Slack 复制关键消息或线程摘要并粘贴到你的提示词中。要求代理组织和总结。这在频道数量较少时效果很好。
+:::
+
+## 4. 在标签中运行并行工作流
+
+产品经理的工作通常涉及同时处理多个线程：在起草简报的同时研究竞争对手，同时审查队友的文档。Warp 的垂直标签让你可以并排运行独立的代理会话，每个专注于不同的任务。
+
+1. 要启用垂直标签，在 Warp 应用中前往**设置** > **外观** > **标签**，并打开**使用垂直标签布局**。
+2. 为每个工作流打开一个单独的标签。例如：
+   * **标签 1**——通过网络搜索研究竞争对手定价
+   * **标签 2**——基于研究起草产品简报
+   * **标签 3**——为利益相关者更新总结 Slack 线程
+3. 每个标签显示哪个代理正在运行及其当前状态。当代理需要你的输入时，Warp 会发送通知，因此你无需监视每个标签。
+
+这种"思维线程"模式让你的工作流保持隔离，并且可以在不丢失进度的情况下切换上下文。有关多代理标签设置的深入演练，包括标签配置和 Git 工作树，请参阅[运行多个 AI 编码代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)。
+
+## 5. 使用语音起草战略文档
+
+当构思简报、战略文档或利益相关者更新时，说话通常比打字更快。Warp 的语音输入让你可以口述粗略草稿，然后要求代理进行整理。
+
+1. 点击输入区域中的**麦克风图标**或按语音输入键（默认：`fn` 键）开始录音。
+2. 自然地讲述你的文档。描述问题、你建议的方法、未解决的问题和下一步。不必担心结构或修饰。
+3. 转录出现后，提交后续提示：
+
+```
+Clean up that transcription into a structured strategy doc. Add an
+executive summary at the top, organize the body into Problem, Approach,
+Risks, and Next Steps sections, and tighten the language for a
+leadership audience.
+```
+
+结果是一份从意识流录音转化而来的结构化初稿。有关完整的设置详情和更多用例，请参阅[使用语音和图像提示代理](/guides/agent-workflows/how-to-use-voice-and-images-to-prompt-coding-agents/)。
+
+## 生产力技巧
+
+* **为重复格式保存规则**——保存包含团队状态更新格式、文档模板或项目列表的规则，这样代理每次都能以正确的上下文开始。请参阅[规则](https://docs.warp.dev/agent-platform/capabilities/rules/)。
+* **为重复工作流创建已保存提示**——将你的每周状态提示或会议准备提示转化为可复用的已保存提示，一键即可运行。请参阅[使用已保存提示触发可复用操作](/guides/configuration/trigger-reusable-actions-with-saved-prompts/)。
+* **使用 `Ctrl+G` 处理复杂提示**——打开富文本输入编辑器以点击编辑方式编写提示，而不是使用箭头键导航。适用于在 Warp 中运行的任何 CLI 代理。请参阅[富文本输入编辑器](https://docs.warp.dev/agent-platform/cli-agents/rich-input/)。
+* **为重复设置保存标签配置**——如果你经常使用研究+起草+审查的标签布局，将其保存为标签配置，一键即可设置工作区。请参阅[标签配置](https://docs.warp.dev/terminal/windows/tab-configs/)。
+
+## 后续步骤
+
+你现在拥有五个工作流来自动化构成大多数产品经理工作的信息收集、综合和沟通：跨项目状态更新、文档起草、会议准备的 Slack 搜索、标签中的并行工作流以及用于草稿的语音转文本。
+
+要深入了解这些工作流中使用的任何工具，请探索下面的相关指南。你还可以通过规则、已保存提示和 MCP 集成自定义代理在团队中的行为方式。
+
+* [将代理连接到 MCP 服务器](/guides/external-tools/using-mcp-servers-with-warp/)——设置 Slack、Linear、Notion 和其他 MCP 集成
+* [使用语音和图像提示代理](/guides/agent-workflows/how-to-use-voice-and-images-to-prompt-coding-agents/)——多模态输入的完整设置和用例
+* [运行多个 AI 编码代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)——多标签工作流、标签配置和 Git 工作树
+* [MCP](https://docs.warp.dev/agent-platform/capabilities/mcp/)——MCP 服务器配置的完整参考
+* [规则](https://docs.warp.dev/agent-platform/capabilities/rules/)——保存持久上下文，使代理遵循团队约定
+* [语音输入](/agent-platform/local-agents/interacting-with-agents/voice/)——语音转录功能的完整参考

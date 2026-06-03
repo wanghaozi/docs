@@ -1,0 +1,27 @@
+---
+title: Warp URI 方案
+description: >-
+  Warp 的 URI 方案使您能够以编程方式轻松打开新窗口、标签、启动配置或标签配置。
+sidebar:
+  label: "Warp URI 方案"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何使用
+
+有几种方式使用 URI 方案：
+
+* 打开新窗口 `warp://action/new_window?path=<path_to_folder>`
+* 打开新标签 `warp://action/new_tab?path=<path_to_folder>`
+* 打开启动配置 `warp://launch/<launch_configuration_path>`
+* 打开标签配置 `warp://tab_config/<name>` — 在活动窗口中打开已保存的 [标签配置](/terminal/windows/tab-configs/) 作为新标签。附加 `?new_window=true` 以在新窗口中打开。`<name>` 不区分大小写地匹配 `.toml` 的文件名（不含扩展名），因此 `warp://tab_config/my_tab` 和 `warp://tab_config/my_tab.toml` 都解析为 `my_tab.toml`。
+
+:::note
+[Warp Preview](/support-and-community/community/warp-preview-and-alpha-program/) URI 方案以 `warppreview://` 开头
+:::
+
+## 工作原理
+
+Warp [URI 在 Warp + Raycast 扩展中使用](https://github.com/raycast/extensions/blob/74521b70b62355004b0958393a64f9417b1ff3a6/extensions/warp/src/uri.ts) 的示例。
+
+<VideoEmbed url="https://twitter.com/i/status/1678432353461637121" title="使用 URI 制作的 Warp + Raycast 扩展演示" />

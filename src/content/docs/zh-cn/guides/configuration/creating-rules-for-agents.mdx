@@ -1,0 +1,52 @@
+---
+title: 为代理创建规则
+description: >-
+  在 Warp 中创建可复用的规则来编码团队约定——例如 Dockerfile 模式或依赖管理——使代理遵循你的标准。
+sidebar:
+  label: "为代理创建规则"
+tags:
+  - "rules"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+_主讲人：Maggie——Warp 工程师_
+
+<VideoEmbed url="https://youtu.be/OyrpkeL6WNY?si=E1rDShRA0CisOwZp" />
+
+### 1. 从代理模式评估开始
+
+我正在添加 **Evals**（评估的简称）来测试我一直在构建的新功能。
+
+Warp 快速呈现了有用的上下文——比如队友编写的关于如何运行评估的笔记本和内部文档。\
+\
+这使得新任务的上手变得快速且协作。
+
+---
+
+### 2. 添加 Rust 语法评估
+
+接下来，我想添加一个测试 Rust 语法错误的评估。\
+于是我要求 Warp 更新 Dockerfile 以包含 Rust。
+
+然而，生成的 Dockerfile 安装 Rust 的方式与我想的不同。\
+它还通过单行 `apt-get` 安装了 `gcc` 和 `python`，这没有遵循我们的内部约定。
+
+---
+
+### 3. 暂存更改并创建规则
+
+我不想每次都手动修复这个问题，而是决定暂存当前更改并创建一个可复用的规则来编码我们的约定：
+
+> 规则示例：\
+> "始终使用 `apt-get` 安装包，并遵循与安装 Python 和 GCC 相同的模式。"
+
+这样，未来的会话——甚至其他队友——都可以自动应用相同的标准。
+
+---
+
+### 4. 应用规则
+
+现在，我只要求 Warp 的代理模式再试一次！
+
+Warp 重新运行请求，遵循新规则，并使用正确的语法正确添加了 Rust。代码现在符合我们的约定。

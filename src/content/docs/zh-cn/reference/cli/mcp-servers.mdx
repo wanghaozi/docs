@@ -1,0 +1,114 @@
+---
+title: MCP 服务器（CLI 参考）
+description: >-
+  通过将 MCP 服务器以 UUID、内联 JSON 或文件路径传递给 --mcp 标志来将代理连接到 GitHub、Linear 和 Sentry 等外部工具。
+sidebar:
+  label: "MCP 服务器"
+---
+
+MCP 服务器将代理连接到 GitHub、Linear 或 Sentry 等外部系统。要从 CLI 使用 [模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/) 服务器，请使用 `oz agent run` 或 `oz agent run-cloud` 的 `--mcp` 标志。
+
+有关本地、云端和共享 MCP 工作流的帮助选择，请参阅[使用 MCP 工作流将开发者工具连接到代理](/guides/external-tools/using-mcp-servers-with-warp/)。有关 MCP 与云端代理的概念性概述——包括配置模式、完整代理配置示例和限制——请参阅云端代理文档中的 [MCP 服务器](/agent-platform/cloud-agents/mcp/)。
+
+---
+
+## 使用 `--mcp` 标志
+
+`--mcp` 标志接受三种格式：
+
+* **UUID** — 通过 UUID 引用 Warp 共享的 MCP 服务器（使用 `oz mcp list` 查找 UUID）
+* **内联 JSON** — 直接将完整的 MCP JSON 配置作为字符串传递
+* **文件路径** — 包含 MCP 配置的 JSON 文件路径
+
+您可以重复 `--mcp` 以包含多个服务器。
+
+### 通过 UUID 传递 MCP 服务器
+
+1. 使用 `oz mcp list` 定位 MCP 服务器 UUID。此命令列出您在 Warp 账户中配置的所有 MCP 服务器，包括团队共享的服务器：
+
+```sh
+$ oz mcp list
++--------------------------------------+--------+
+| UUID                                 | 名称   |
++===============================================+
+| 1deb1b14-b6e5-4996-ae99-233b7555d2d0 | github |
+|--------------------------------------+--------|
+| 65450c32-9eb1-4c57-8804-0861737acbc4 | linear |
+|--------------------------------------+--------|
+| d94ade64-0e73-47a6-b3ee-14e5afec3d90 | Sentry |
++--------------------------------------+--------+
+```
+
+  或者，从 Warp 的 **设置** > **代理** > **MCP 服务器** 中复制 UUID。
+
+<figure style={{ maxWidth: "375px" }}>
+![MCP 服务器页面，显示一个服务器及其 UUID](../../../../../assets/reference/mcp-server-id.png)
+<figcaption>MCP 服务器页面，显示一个服务器及其 UUID。</figcaption>
+</figure>
+
+2. 将 UUID 传递给 `--mcp`：
+
+```sh
+$ oz agent run --mcp "1deb1b14-b6e5-4996-ae99-233b7555d2d0" --prompt "谁最后更新了 README？"
+```
+
+### 以内联 JSON 或文件传递 MCP 服务器
+
+您可以内联传递 MCP 配置或通过文件传递：
+
+```sh
+# 内联 JSON
+$ oz agent run --mcp '{"github": {"url": "https://api.githubcopilot.com/mcp/"}}' --prompt "列出打开的问题"
+
+# 从文件
+$ oz agent run --mcp ./my-mcp-config.json --prompt "列出打开的问题"
+```
+
+文件必须包含有效的 MCP JSON 对象。例如：
+
+```json
+{
+  "github": {
+    "url": "https://api.githubcopilot.com/mcp/"
+  },
+  "sentry": {
+    "command": "npx",
+    "args": ["-y", "mcp-remote@latest", "https://mcp.sentry.dev/mcp"]
+  }
+}
+```
+
+### 组合多个服务器
+
+多次传递 `--mcp` 以在单次运行中组合 UUID 引用、内联 JSON 和基于文件的配置：
+
+```sh
+$ oz agent run \
+  --mcp "1deb1b14-b6e5-4996-ae99-233b7555d2d0" \
+  --mcp '{"sentry": {"url": "https://mcp.sentry.dev/sse"}}' \
+  --prompt "打开一个修复顶部 Sentry 错误的 PR"
+```
+
+---
+
+## 远程机器上的环境变量
+
+Warp 会在使用您的 Warp 账户登录的机器之间同步 MCP 服务器配置，但**不会**同步配置中使用的环境变量。在远程机器上运行时，在运行代理之前手动设置任何必需的密钥：
+
+```sh
+export MY_MCP_SERVER_ACCESS_TOKEN="..."
+$ oz agent run --mcp "904a8936-fa82-4571-b1d6-166c26197981" --prompt "使用我的 MCP 服务器检查错误"
+```
+
+:::note
+对于云端代理工作流，使用 [Oz 管理的密钥](/agent-platform/cloud-agents/secrets/)安全地存储和注入凭据——密钥存储在云端，在您的配置中按名称引用。对于本地运行，密钥管理器 CLI（如 [`op`](https://developer.1password.com/docs/cli/get-started/)、[`pass`](https://www.passwordstore.org/) 或 [`gcloud secrets versions access`](https://cloud.google.com/secret-manager/docs/create-secret-quickstart#secretmanager-quickstart-gcloud)）可以在远程主机上获取密钥，而不会将其暴露在 shell 历史中。
+:::
+
+---
+
+## 了解更多
+
+* [MCP 服务器（云端代理）](/agent-platform/cloud-agents/mcp/) — 配置模式、完整代理配置文件示例和云端代理限制
+* [模型上下文协议 (MCP)](/agent-platform/capabilities/mcp/) — 在 Warp 中为本地代理配置 MCP 服务器
+* [使用 MCP 工作流将开发者工具连接到代理](/guides/external-tools/using-mcp-servers-with-warp/) — 为本地会话、云端运行、团队共享和可重复自动化选择设置路径
+* [密钥](/agent-platform/cloud-agents/secrets/) — 在 Warp 中存储凭据，以便代理在运行时访问，而无需在配置文件中暴露

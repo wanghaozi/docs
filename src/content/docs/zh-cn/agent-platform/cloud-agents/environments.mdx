@@ -1,0 +1,300 @@
+---
+title: 云 Agent 环境
+sidebar:
+  label: "环境"
+description: >-
+  环境确保您的云 Agent 在所有触发器中以一致的工具链运行。了解何时使用环境以及如何配置它们。
+---
+
+环境确保您的[云 Agent](/agent-platform/cloud-agents/overview/) 每次以相同的工具链和设置运行，无论它们从何处触发。
+
+环境定义了自动化 agent 运行的执行上下文：**Docker 镜像**、**要克隆的仓库**、**设置命令**以及 Warp 在 agent 开始前准备工作区所使用的**运行时配置**。
+
+:::note
+对于交互式本地运行，您通常不需要环境，因为您已经在工作检出中，并依赖现有的机器设置。
+:::
+
+## 主要特性
+
+环境为您提供的功能：
+
+* **跨触发器的一致行为** – 从 Slack 触发的工作流与从 Linear 或 CLI 运行的工作流表现一致，每次使用相同的工具链和设置步骤。
+* **一次配置，多种用途** – 定义您的 Docker 镜像和设置一次，然后在触发器和主机之间重用，无需复制配置。
+* **运行完全可见性** – 检查运行使用的镜像、仓库和命令，便于调试故障或重现结果。
+
+:::note
+不想自带镜像？Warp 提供[预构建的开发镜像](https://github.com/warpdotdev/oz-dev-environments)，预安装了常见语言和工具。
+:::
+
+## 关于环境
+
+环境定义了 agent **如何**运行，而非**做什么**。它们对于 [Oz Platform](/agent-platform/cloud-agents/platform/) 自动化（云 agent、集成、API 运行）是必需的，但对于交互式本地使用则不是必需的。
+
+环境通常包括：
+
+* **Docker 镜像（必需）** – 包含代码所需的工具链和依赖的任务/工作区镜像。对于自托管的 Kubernetes worker，worker 上的 [`default_image`](/agent-platform/cloud-agents/self-hosting/managed-kubernetes/) 让您完全无需创建环境。
+* **仓库/工作区** – agent 可以克隆和操作的一个或多个仓库。
+* **设置命令** – 准备工作区的命令（例如依赖安装、构建、引导）。
+
+使用 Docker 镜像安装项目所需的语言运行时、包管理器、系统库和脚本。自定义镜像不需要处理安装 Warp CLI 二进制文件；Warp 单独提供 agent 运行时。您可以从官方镜像或 Warp 的[预构建开发镜像](https://github.com/warpdotdev/oz-dev-environments)开始。
+
+:::note
+配置运行时设置：
+
+* **环境变量**：在 Dockerfile 中使用 Docker 的 `ENV` 指令配置它们，或在运行容器时传递。
+* **密钥**：对于凭据和敏感数据，使用 [Agent 密钥](/agent-platform/cloud-agents/secrets/)。它们与环境分开配置，并在运行时安全注入。
+:::
+
+环境不是什么：
+
+* 主机 – 主机决定执行发生的位置（Warp 托管与自托管基础设施）。
+* [Agent 配置文件](/agent-platform/capabilities/agent-profiles-permissions/) – 配置文件控制 agent 行为，如权限、模型选择和默认值，而非运行时环境。
+* [规则](/agent-platform/capabilities/rules/) – 规则决定 agent 的响应和决策，但不定义容器或工具链。
+* [MCP 服务器](/agent-platform/cloud-agents/mcp/) – 通过 MCP 将 agent 连接到外部工具和数据。
+* 每次运行的上下文 – 触发特定数据如 Slack 线程、PR 元数据或 CI 日志附加到个别任务，而非环境配置。
+
+## 环境如何融入 Oz Platform
+
+环境是自动化 Oz Platform 运行的运行时层。它定义了触发器启动 agent 任务时使用的容器镜像、仓库和设置步骤。
+
+执行流程中的组件：
+
+1. **触发器** – 事件开始工作（Slack 提及、Linear 评论、CI 事件、API 调用）
+2. **任务** – Warp 为运行创建跟踪任务
+3. **环境** – 任务使用环境定义执行上下文
+4. **主机** – 环境在主机上运行（Warp 托管或自托管基础设施）
+5. **Agent 执行** – 工作流在准备好的环境中运行
+6. **输出** – 运行产生 PR、消息、报告或记录
+
+:::note
+**本地 agent** 运行（使用 `oz agent run`）不需要环境。这些运行使用您当前机器的设置。环境对于**自动化平台**运行如云 agent 和集成是必需的。
+:::
+
+### 主机和环境
+
+环境定义了 agent **如何**运行，而主机决定了环境在**哪里**执行。
+
+主机选项：
+
+* **Warp 托管（默认）** – Warp 提供基础设施。最适合大多数希望即用即执行无需管理的用户。
+* **[自托管](/agent-platform/cloud-agents/self-hosting/)** – 您提供基础设施（云或网络中的运行器）。最适合合规要求、本地执行或自定义硬件需求。
+* 本地（即将推出） – 在本地机器上运行环境进行沙箱开发和测试。
+
+同一环境可以在不同的主机上运行，行为完全相同。有关托管选项的更多详情，请参阅[部署模式](/agent-platform/cloud-agents/deployment-patterns/)和[执行主机](/agent-platform/cloud-agents/platform/#execution-hosts)。
+
+### 运行时发生什么
+
+当您触发 agent 时，Warp 遵循以下流程：
+
+1. **Warp 接收触发器。** Warp 捕获消息内容（Slack 线程、Linear 问题）和任何链接的上下文。
+2. **Warp 创建执行环境。** Warp 从环境中定义的 Docker 镜像启动隔离的执行上下文。
+3. **克隆仓库。** 与环境关联的 GitHub 仓库被克隆到容器中。
+4. **运行设置命令。** 配置的设置命令执行（安装依赖、运行构建等）
+5. **Agent 工作流运行。** Agent 使用提供的上下文、工具和权限执行任务。
+6. **结果回发。** 进度更新、摘要和结果发布到触发源（Slack、Linear 等），或在任务记录中可用。
+7. **容器被销毁。** 完成后，容器被拆除。每次运行从干净、隔离的环境开始。
+
+此流程确保每次运行从相同的基线开始，使结果可重现且易于调试。
+
+---
+
+## 何时使用环境
+
+当您的运行需要可预测的工具链和可重复的设置时，无论从何处触发，都应使用环境。
+
+* **集成和计划** – 当运行从 Slack、Linear、GitHub Actions、计划或其他集成启动，并且您希望每次行为一致时使用环境。
+* **CI 和远程自动化** – 当主机不一致时使用环境（例如不同的运行器、不同的基础镜像）。
+* **团队标准化** – 当您希望每个人的自动化运行使用相同的镜像、仓库和设置步骤时使用环境。
+* **工具链特定工作流** – 当工作流依赖于特定语言版本、linter、构建工具或系统包时使用环境。
+
+**何时可以跳过环境**
+
+对于交互式本地运行，您通常不需要环境，因为您已经在工作检出中，并依赖现有的机器设置。
+
+**决策清单**
+
+如果以下任何条件适用，请选择环境：
+
+* 运行必须跨触发器/主机一致。工作流应行为相同，无论从何处触发。
+* 工具链必须是固定的。您需要已知镜像和确定性的设置步骤，以避免"在我机器上能用"的漂移。
+* 工作流跨团队共享。多人或多个系统将运行工作流并期望可重现的结果。&#x20;
+
+**示例：**
+
+如果您的团队在 Slack 中标记 @Oz 以修复失败的 CI 作业，环境确保每次运行使用相同的 Docker 镜像、克隆相同的仓库并运行相同的设置命令。&#x20;
+
+Agent 应用的修复与 CI 中运行的内容以及您的团队成员审查 PR 时看到的内容匹配。&#x20;
+
+### 在哪里配置环境
+
+您可以通过 Warp 的引导设置或 CLI 创建和配置环境。首次开始时使用引导流程，当您需要完全控制或需要自动化环境创建时使用 CLI。
+
+**开始之前**
+
+确保您拥有：
+
+* 一个或多个 agent 应克隆和工作于其中的 GitHub 仓库。
+* **已配置 GitHub 授权**，以便 agent 可以访问您的仓库。对于用户触发的运行，每个用户单独授权 GitHub。对于使用团队 API 密钥的自动化工作流，在管理面板中配置[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)。
+* 可公开访问、可构建和运行代码的 Docker 镜像。官方镜像如 [node](https://hub.docker.com/_/node)、[python](https://hub.docker.com/_/python) 或 [rust](https://hub.docker.com/_/rust) 适用于许多项目。您也可以使用 [Warp 的预构建开发镜像](https://github.com/warpdotdev/oz-dev-environments)之一。
+
+:::caution
+基于 Musl 的 Docker 镜像（如 Alpine Linux）不受支持。Agent 运行时需要 glibc。使用基于 glibc 的镜像，如 Debian、Ubuntu 或官方 Docker Hub 镜像的默认（非 Alpine）变体。
+:::
+
+:::note
+每个代码库创建一个环境，然后跨触发器如 Slack、Linear 和 CLI 运行重用。
+:::
+
+<figure>
+![在 Oz Web 应用中创建新环境。](../../../../../assets/agent-platform/oz-web-app-new-environment.png)
+<figcaption>在 Oz Web 应用中创建环境。</figcaption>
+</figure>
+
+### 使用引导设置创建环境（推荐）
+
+当您希望 Warp 检查您的仓库并自动推荐环境配置时，使用 [`/create-environment`](warp://action/create_environment)。这是最快的入门方式：Warp 检测您的语言、框架和工具，然后建议适当的镜像和设置命令。
+
+您可以在 Git 仓库目录中不带参数运行该命令，或带一个或多个仓库路径或 URL。&#x20;
+
+```shellscript
+# 本地文件路径
+/create-environment ./warp-internal ./warp-server
+
+# owner/repo
+/create-environment warpdotdev/warp-internal warpdotdev/warp-server
+
+# GitHub URL
+/create-environment 
+https://github.com/warpdotdev/warp-internal.git    
+```
+
+Warp 将：
+
+* 检测您希望 agent 使用的仓库，并识别语言、框架和工具
+* 查找现有的 Dockerfile，推荐官方基础镜像，或帮助构建自定义镜像（如果需要）
+* 根据您的脚本和包管理器建议设置命令
+* 通过 CLI 创建环境并返回一个 `environment ID`
+
+这将生成一个立即可用的环境，可以立即连接到集成和云 agent。
+
+### 使用 CLI 创建环境
+
+当您已经知道如何配置环境、有要使用的自定义 Docker 镜像，或正在自动化环境创建时使用 CLI。
+
+```sh
+oz environment create \
+  --name <name> \
+  --docker-image <image> \
+  --repo <owner/repo> \
+  --repo <owner/repo> \
+  --setup-command "<command1>" \
+  --setup-command "<command2>" \
+  --description "Optional description"
+```
+
+关键标志：
+
+* `--name` (`-n`) — 环境的人类可读标签。
+* `--docker-image` (`-d`) — Docker Hub 上的镜像名称。如果未指定，将提示您从可用镜像中选择（参见 `oz environment image list`）。
+* `--repo` (`-r`) — 要克隆的仓库（可重复）。
+* `--setup-command` (`-c`) — 按提供的顺序运行的命令（可重复）。
+* `--description` — 可选的描述（最多 240 个字符）。
+
+---
+
+## 管理环境
+
+创建后，您可以使用 [Oz CLI](/reference/cli/) 检查和更新环境。
+
+**列出环境**
+
+```sh
+oz environment list
+```
+
+**查看环境配置。** 将 \<ENV_ID> 替换为您要查看的环境 ID。
+
+```sh
+oz environment get <ENV_ID>
+```
+
+**更新环境**
+
+添加/删除仓库、设置命令和其他属性，无需重新创建环境。将 \<ENV_ID> 替换为您要修改的环境 ID。
+
+```sh
+# 添加仓库
+oz environment update <ENV_ID> --repo owner/repo
+
+# 移除仓库
+oz environment update <ENV_ID> --remove-repo owner/repo
+
+# 添加设置命令
+oz environment update <ENV_ID> --setup-command "your command"
+
+# 移除设置命令（必须完全匹配）
+oz environment update <ENV_ID> --remove-setup-command "exact command"
+
+# 更新名称、描述或 Docker 镜像
+oz environment update <ENV_ID> --name "new name"
+oz environment update <ENV_ID> --description "Updated description"
+oz environment update <ENV_ID> --docker-image node:22
+```
+
+其他标志：
+
+* `--remove-description` — 清除描述。
+* `--force` — 跳过对集成使用的环境的确认检查。
+
+**删除环境。** 将 \<ENV_ID> 替换为您要删除的环境 ID。
+
+```sh
+oz environment delete <ENV_ID>
+```
+
+添加 `--force` 跳过对集成使用的环境的确认检查。
+
+:::note
+有关端到端设置，请参阅[集成设置](/reference/cli/integration-setup/)指南。
+:::
+
+---
+
+## 环境设计和最佳实践
+
+设计良好的环境通过给每次运行相同的起始条件来消除猜测。当 agent 从 Slack 打开 PR 或修复失败的 CI 作业时，结果与您的团队可以在本地和 CI 中重现的结果匹配。&#x20;
+
+**设计指南**<br />
+
+* **保持设置可重复** – 编写安全可重复运行的设置步骤，为给定的仓库修订版本生成相同的工具链和工作区状态。这使 agent 运行跨触发器和主机可靠。
+* **固定工具链中的版本** – 首选固定语言运行时和核心工具的 Docker 或基础镜像，然后使用锁定文件（`package-lock.json` 等）管理依赖。
+* **定义清晰的工作区边界** – 在多仓库环境中，明确说明克隆哪些仓库以及设置命令在何处运行，以便 agent 不会"猜测"工作目录。
+* **使先决条件明确** – 如果 agent 在开展有意义的工作之前必须运行构建步骤、生成代码或安装系统包，将其编码为设置。
+
+**示例设置命令**
+
+```sh
+# 更安全的模式（可重复且稳定）
+mkdir -p .cache
+npm ci
+
+# 不太安全的模式（可能在重新运行时失败或随时间漂移）
+mkdir .cache
+npm install
+```
+
+:::note
+如果您的设置命令依赖于密钥或凭据，请通过 Warp 的[密钥机制](/agent-platform/cloud-agents/secrets/)进行配置，而非硬编码令牌。
+:::
+
+### 常见问题
+
+* **设置假设先前状态** – 依赖剩余缓存、现有目录或已克隆仓库的步骤可能使运行不可靠。设置失败可能表现为 [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/)。
+  * 解决方案：编写在新鲜容器上也能运行的幂等设置命令。
+* **缺少凭据或密钥** – 当私有仓库、包注册表或外部服务需要授权时，构建失败。
+  * 解决方案：使用 [Agent 密钥](/agent-platform/cloud-agents/secrets/)配置凭据。
+* **仓库访问和 GitHub 授权问题** – 当 GitHub 没有仓库访问权限或触发用户缺少权限时运行失败。缺少外部授权可能表现为 [`external_authentication_required`](/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/)。
+  * 解决方案：参见[集成设置](/reference/cli/integration-setup/#how-github-authorization-works)进行 GitHub 授权设置。
+* **Docker 镜像不兼容** – 您看到错误："VM failed before the agent could run. This is likely an issue with your Docker image."
+  * 可能原因：Alpine Linux 和其他基于 musl 的镜像与需要 glibc 的 agent 运行时不兼容。这可能表现为 [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/)。
+  * 解决方案：切换到基于 glibc 的镜像，如 Debian、Ubuntu 或官方 Docker Hub 镜像的默认（非 Alpine）变体（例如 `node`、`python`、`rust`）。

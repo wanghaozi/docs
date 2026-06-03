@@ -1,0 +1,54 @@
+---
+title: Claude Code 与 Oz
+description: >-
+  使用 Oz 运行 Claude Code。擅长代码审查、深度 Bug 调查、大型特性规划和前端或 UI 工作。
+sidebar:
+  label: "Claude Code"
+---
+
+Claude Code 是 Anthropic 的 agent 编码工具。使用 Oz 运行它，将 Claude Code 置于 Warp 管理的环境中，并将其连接到 Oz 平台的其余部分——包括触发器、环境、密钥、可观测性和治理——同时行为方式与您的团队已经使用的 Claude Code 相同。
+
+:::note
+此页面涵盖作为**云** harness 的 Claude Code，由 Oz 分派和编排。要在您的 Warp 终端中本地运行 Claude Code，请参见 [Warp 中的 Claude Code](/agent-platform/cli-agents/claude-code/)。
+:::
+
+## 主要特性
+
+* **云编排** - 从任何 Oz 触发器启动 Claude Code：Warp 应用、Oz Web 应用、Oz CLI、REST API、计划、Slack 提及、Linear 问题或 GitHub Actions。
+* **Claude 模型选择器** - 选择 harness 使用的 Claude 模型，包括最新的固定 Opus、Sonnet 和 Haiku 版本，`best`/`opus`/`sonnet`/`haiku` 别名，以及 1M 上下文变体。
+* **一级子 Agent** - Warp Agent 父级可以分派 Claude Code 子 Agent 来处理需要代码审查或细致判断的步骤，在更大的编排中。
+
+## 可用模型
+
+Claude Code harness 公开了 Anthropic 的编码调优模型系列。常见选择包括：
+
+* `best` - 解析为当前顶级的 Claude 模型。
+* `opus`、`sonnet`、`haiku` - 别名，解析为该系列的当前默认值。
+
+有关完整列表——包括面向超大型代码库的 1M 上下文变体和规划调优模型——打开 Warp 应用云模式中的模型选择器或 Oz Web 应用新运行窗格中的**模型**字段。
+
+## 凭据和计费
+
+Claude Code 使用您的团队提供的凭据直接调用 Anthropic。Oz 支持三种 Anthropic 凭据类型，存储为 [Warp 管理的密钥](/agent-platform/cloud-agents/secrets/)：
+
+* **Anthropic API 密钥** - 用于直接 Anthropic API 访问。
+* **Anthropic Bedrock API 密钥** - 用于使用 API 密钥的 Bedrock 路由推理。
+* **Anthropic Bedrock 访问密钥** - 用于使用 AWS 访问凭据的 Bedrock 路由推理。
+
+Anthropic 直接向您的账户收取推理费用。Warp 仍然为运行的沙箱计量[计算积分](/support-and-community/plans-and-billing/credits/#compute-credits)，并为编排层计量[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+有关设置步骤，请参见[连接 Claude Code 凭据](/agent-platform/cloud-agents/harnesses/authentication/#connecting-claude-code-credentials)。
+
+## 启动 Claude Code 运行
+
+* **Warp 应用** - 在云模式中，点击输入上方的 **Agent harness** 下拉菜单并选择 **Claude Code**。
+* **Oz Web 应用** - 在新运行或新计划窗格中，在 **Harness** 字段中选择 **Claude Code**。其下方会出现 **Claude Code auth secret** 字段；选择您已存储的 Anthropic 密钥之一。
+* **API 和 SDK** - 将 agent 配置 `harness` 设置为 `claude`，并在匹配的 auth-secret 字段上设置 Anthropic 密钥名称。参见 [API 参考](/reference/api-and-sdk/)。
+
+## 相关页面
+
+* [Oz 中的 Harnesses](/agent-platform/cloud-agents/harnesses/) — 在 Warp Agent、Claude Code 和 Codex 之间选择。
+* [身份验证](/agent-platform/cloud-agents/harnesses/authentication/) — 将 Anthropic 凭据存储为 Warp 管理的密钥。
+* [Warp Agent 与 Oz](/agent-platform/cloud-agents/harnesses/warp-agent/) — Oz 的默认 harness，也是唯一可以编排 Claude Code 子 Agent 的 harness。
+* [Codex 与 Oz](/agent-platform/cloud-agents/harnesses/codex/) — Codex 作为云 harness。
+* [Warp 中的 Claude Code](/agent-platform/cli-agents/claude-code/) — 在您的本地 Warp 终端中的 Claude Code。

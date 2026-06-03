@@ -1,0 +1,217 @@
+---
+title: 安装与设置
+description: >-
+  在 macOS、Windows 或 Linux 上安装 Warp。所有安装选项均包含自动更新，以获得新功能、错误修复和性能改进。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+**平台支持：** Warp 支持 macOS（Intel 和 Apple Silicon）、Windows（x86\_64 和 ARM64）和 Linux（x86\_64 和 ARM64）。
+:::
+
+## 安装 Warp
+
+:::caution
+**请访问** [已知问题](/support-and-community/troubleshooting-and-support/known-issues/) **以获取有关设置和故障排除 Warp 的更多详细信息。**
+:::
+
+<Tabs>
+  <TabItem label="macOS">
+    :::note
+    **最低要求：** Intel 或 Apple Silicon macOS 10.14 或更高版本，以及支持 [Metal](https://support.apple.com/en-us/HT205073) 的硬件。
+    :::
+
+    **下载 Warp 并拖入 Applications 文件夹**
+
+    <VideoEmbed url="https://www.warp.dev/download" title="下载 Warp" />
+
+    **使用 Homebrew 安装，运行以下命令**
+
+    ```bash
+    brew install --cask warp
+    ```
+
+    安装后，你可以在 Applications 文件夹中找到 Warp。
+  </TabItem>
+  <TabItem label="Windows">
+    :::note
+    **最低要求：** Warp 需要 Windows 10 版本 1809（build 17763）或更高版本、Windows Server 2019（build 17763）和 Windows Server 2022（build 20348）或更高版本。这是 [Windows 伪控制台 (ConPTY)](https://devblogs.microsoft.com/commandline/windows-command-line-introducing-the-windows-pseudo-console-conpty/) 的要求。
+    :::
+
+    **下载 Warp，然后打开并运行安装程序**
+
+    <VideoEmbed url="https://www.warp.dev/download" title="下载 Warp" />
+
+    **使用 WinGet 安装，运行以下命令**
+
+    ```powershell
+    winget install Warp.Warp
+    ```
+
+    安装后，你可以在开始菜单中找到 Warp。
+  </TabItem>
+  <TabItem label="Linux">
+    :::note
+    **最低要求：** Linux 发行版需要 glibc >= 2.31（2020 年 2 月发布）并支持 [OpenGL ES 3.0+ 或 Vulkan](https://github.com/gfx-rs/wgpu?tab=readme-ov-file#supported-platforms) 中的一种。
+
+    这包括（但不限于）以下发行版：
+
+    * Ubuntu 20.04
+    * Debian 11 ("bullseye")
+    * Fedora 32
+    * Arch Linux
+    :::
+
+    **访问 Warp 下载页面获取完整的 Linux 安装选项列表**
+
+    <VideoEmbed url="https://www.warp.dev/download" title="下载 Warp" />
+
+    **基于 Debian 和 Ubuntu 的发行版**
+
+    安装 Warp 最简单的方法是下载 [x64 .deb 包](https://app.warp.dev/download?package=deb)或 [ARM64 deb 包](https://app.warp.dev/download?package=deb_arm64)。下载后，你可以使用以下命令安装：
+
+    ```
+    sudo apt install ./<file>.deb
+    ```
+
+    安装 .deb 包将自动设置 Warp apt 仓库和签名密钥，以便自动更新 Warp 并验证下载包的完整性。
+
+    或者，你也可以手动配置 Warp apt 仓库并通过运行以下命令安装 Warp：
+
+    ```
+    sudo apt-get install wget gpg
+    wget -qO- https://releases.warp.dev/linux/keys/warp.asc | gpg --dearmor > warpdotdev.gpg
+    sudo install -D -o root -g root -m 644 warpdotdev.gpg /etc/apt/keyrings/warpdotdev.gpg
+    sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/warpdotdev.gpg] https://releases.warp.dev/linux/deb stable main" > /etc/apt/sources.list.d/warpdotdev.list'
+    rm warpdotdev.gpg
+    sudo apt update && sudo apt install warp-terminal
+    ```
+
+    **基于 RHEL、Fedora 和 CentOS 的发行版**
+
+    安装 Warp 最简单的方法是下载 [x64 .rpm 包](https://app.warp.dev/download?package=rpm)或 [ARM64 .rpm 包](https://app.warp.dev/download?package=rpm_arm64)。下载后，你可以使用以下命令安装：
+
+    ```bash
+    sudo dnf install ./<file>.rpm
+    ```
+
+    安装 .rpm 包将自动设置 Warp yum 仓库。首次更新时，`dnf` 将检索验证下载包完整性所需的签名密钥。
+
+    或者，你也可以手动配置 Warp yum 仓库并通过运行以下命令安装 Warp：
+
+    ```bash
+    sudo rpm --import https://releases.warp.dev/linux/keys/warp.asc
+    sudo sh -c 'echo -e "[warpdotdev]\nname=warpdotdev\nbaseurl=https://releases.warp.dev/linux/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://releases.warp.dev/linux/keys/warp.asc" > /etc/yum.repos.d/warpdotdev.repo'
+    sudo dnf install warp-terminal
+    ```
+
+    **基于 Arch Linux 的发行版**
+
+    安装 Warp 最简单的方法是下载 [x64 .pkg.tar.zst 包](https://app.warp.dev/download?package=pacman)或 [ARM64 pacman 包](https://app.warp.dev/download?package=pacman_arm64)。下载后，你可以使用以下命令安装：
+
+    ```bash
+    sudo pacman -U ./<file>.pkg.tar.zst
+    ```
+
+    首次通过应用更新 Warp 时，它会引导你设置 Warp pacman 仓库和签名密钥。
+
+    或者，你也可以手动配置 Warp pacman 仓库并通过运行以下命令安装 Warp：
+
+    ```bash
+    sudo sh -c "echo -e '\n[warpdotdev]\nServer = https://releases.warp.dev/linux/pacman/\$repo/\$arch' >> /etc/pacman.conf"
+    sudo pacman-key -r "linux-maintainers@warp.dev"
+    sudo pacman-key --lsign-key "linux-maintainers@warp.dev"
+    sudo pacman -Sy warp-terminal
+    ```
+
+    **基于 OpenSUSE 和 SLE 的发行版**
+
+    Warp yum 仓库也适用于基于 OpenSUSE 和 SLE 的系统。下载 [x64 .rpm 包](https://app.warp.dev/download?package=rpm)或 [ARM64 .rpm 包](https://app.warp.dev/download?package=rpm_arm64)。下载后，你可以使用以下命令安装：
+
+    ```bash
+    sudo zypper install ./<file>.rpm
+    ```
+
+    安装 .rpm 包将自动设置 Warp yum 仓库。首次更新时，`zypper` 将检索验证下载包完整性所需的签名密钥。
+
+    或者，你也可以手动配置 Warp yum 仓库并通过运行以下命令安装 Warp：
+
+    ```bash
+    sudo rpm --import https://releases.warp.dev/linux/keys/warp.asc
+    sudo sh -c 'echo -e "[warpdotdev]\nname=warpdotdev\ntype=rpm-md\nbaseurl=https://releases.warp.dev/linux/rpm/stable\nenabled=1\nautorefresh=1\ngpgcheck=1\ngpgkey=https://releases.warp.dev/linux/keys/warp.asc\nkeeppackages=0" > /etc/zypp/repos.d/warpdotdev.repo'
+    sudo zypper install warp-terminal
+    ```
+
+    **AppImage**
+
+    我们还提供 [AppImage](https://appimage.org)——一个单文件可执行版本的 Warp。建议通过包管理器安装 Warp，以确保你的系统安装了所有必要的依赖项。
+
+    你可以使用以下命令下载 Warp AppImage：
+
+    ```bash
+    # 在 x64 系统上
+    curl -L "https://app.warp.dev/download?package=appimage" -o Warp-x64.AppImage
+    chmod +x Warp-x64.AppImage
+    ```
+
+    ```bash
+    # 在 ARM64 系统上
+    curl -L "https://app.warp.dev/download?package=appimage_arm64" -o Warp-ARM64.AppImage
+    chmod +x Warp-ARM64.AppImage
+    ```
+
+    **在 Linux 上运行 Warp**
+
+    如果你安装了软件包，可以在桌面管理器中找到 Warp，或在终端中运行 `warp-terminal`。如果你使用 AppImage，可以导航到 AppImage 所在目录并运行 `./Warp-*.AppImage` 来启动它。
+  </TabItem>
+</Tabs>
+
+:::note
+想尝试我们的最新功能？[Warp Preview](/support-and-community/community/warp-preview-and-alpha-program/) 适用于所有平台和架构（macOS、Windows、Linux），可提前体验实验性功能。
+:::
+
+## 从源码构建
+
+Warp 的客户端在 [AGPL v3](https://github.com/warpdotdev/warp/blob/master/LICENSE-AGPL) 下开源，因此你可以从 [`warpdotdev/warp`](https://github.com/warpdotdev/warp) 自行构建。
+
+克隆仓库，引导工具链依赖项，并启动开发构建：
+
+```bash
+git clone https://github.com/warpdotdev/warp.git
+cd warp
+./script/bootstrap
+cargo run
+```
+
+`cargo run` 会从你的本地检出启动一个 `warp-oss` 二进制文件。请参阅仓库的 `README.md` 和 `CONTRIBUTING.md` 了解完整的先决条件（macOS 上的 Xcode、固定的 Rust 工具链、`protoc`）和开发环境设置。
+
+:::note
+日常使用请使用官方构建版本。自建的 `warp-oss` 二进制文件使用单独的配置和数据目录，因此它们可以与官方 Warp 一起运行而不会冲突，但它们不会自动更新，也不包含生产环境的代码签名标识。它们用于开发、审计或向上游贡献。
+:::
+
+## 初始设置
+
+### 登录 Warp（可选）
+
+安装后，你可以通过"注册"按钮（右上角）或导航至**设置** > **账户** > **注册**来创建 Warp 账户。你也可以跳过此步骤。如果登录时遇到问题，请参阅[登录故障排除](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/)页面。
+
+:::note
+如果你使用 Google 或 GitHub 注册，Warp 只能获取相关的电子邮件地址。请访问[隐私](/support-and-community/privacy-and-security/privacy/)页面了解更多关于 Warp 隐私策略的详细信息。
+:::
+
+### 离线使用 Warp
+
+你只需要在首次打开 Warp 应用时保持互联网连接。打开后，[Warp 可以在没有互联网连接的情况下运行](/support-and-community/troubleshooting-and-support/using-warp-offline/)，但需要网络连接的某些功能（如 AI 和实时协作功能）将不可用。
+
+### 导入设置
+
+如果你正在从其他终端、编辑器或 AI 编码工具迁移到 Warp，请参阅[迁移到 Warp](/getting-started/migrate-to-warp/) 文档以获取按来源划分的指南，包括设置导入步骤和功能等效项。
+
+### 设置 Warp 默认 shell
+
+Warp 默认尝试加载你的登录 shell。目前，Warp 支持 bash、fish、zsh 和 PowerShell (pwsh)。如果你的登录 shell 设置为其他内容（例如 Nushell），Warp 将默认加载 zsh。
+
+Zsh 是 macOS 的默认登录和交互式 shell（从 2019 年的 macOS Catalina 开始），取代了 bash。对于大多数 Linux 发行版，默认 shell 是 bash。
+
+你可以通过进入**设置** > **功能** > **会话**来更改默认 shell。在"新会话的启动 shell"部分，你可以选择 Warp 要使用的 shell。

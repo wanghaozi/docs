@@ -1,0 +1,100 @@
+---
+title: Oz CLI 的 API 密钥
+description: >-
+  创建和管理用于认证 Oz CLI 和云端代理的 API 密钥。
+sidebar:
+  label: "API 密钥"
+---
+
+API 密钥让 Oz CLI 和云端代理无需人工交互即可认证。在 CI 流水线、无头服务器、VM、Codespaces、容器和其他自动化环境中使用 API 密钥。
+
+## 创建 API 密钥
+
+您可以从 Warp 的设置中创建 API 密钥：
+
+1. 点击右上角的头像，然后点击**设置**。
+2. 在侧边栏中，展开**云平台**并点击**Oz Cloud API 密钥**。
+3. 在 API 密钥部分，点击**+ 创建 API 密钥**。
+4. 为密钥命名并选择过期时间（1 天、30 天、90 天或永不过期）。
+5. 选择密钥类型：
+   * `个人` - 绑定到您的个人 Warp 账户
+   * `团队` - 绑定到您的团队，而非特定用户
+
+:::note
+当代理需要进行代码更改时（例如，打开拉取请求、推送分支或写入仓库），您有两个选择：
+
+* 使用**个人 API 密钥**以您的身份认证。代理使用您的 GitHub 权限运行，代码更改归属于您的 GitHub 账户。
+* 使用配置了[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)的**团队 API 密钥**。代理使用 Oz by Warp GitHub App 进行认证，代码更改不归属于任何个人用户。
+:::
+
+:::note
+没有 GitHub App 授权的团队密钥适用于不需要写入 GitHub 的自动化工作流，例如分析、监控或分类。
+:::
+
+6. 点击**创建密钥**。
+7. 复制原始 API 密钥并安全存储。**关闭对话框后您将无法再次看到它。**
+
+<figure>
+![Warp 设置中的 API 密钥管理界面](../../../../../assets/reference/api-key-management.png)
+<figcaption>Warp 设置中的 API 密钥管理界面。</figcaption>
+</figure>
+
+## 个人与团队 API 密钥
+
+Warp 支持两种 API 密钥类型，各有不同的计费和身份行为：
+
+* **个人 API 密钥** - 云端代理运行以您的身份认证，就像从 Warp 应用运行代理或通过 Slack 或 Linear 触发一样。在 Build、Max 和 Business 计划中，运行从您的计划包含积分中扣除，然后是您的附加积分——两者都限定于您的个人用户范围。在企业计划中，运行根据您的企业合同条款从团队范围的积分池中扣除。
+* **团队 API 密钥** - 云端代理运行不绑定到任何个人用户。在 Build、Max 和 Business 计划中，Warp 向团队所有者计费：所有者的计划包含积分，然后是所有者的附加积分。自动充值关闭时，当两个池都耗尽时请求被阻止。自动充值开启时，使用可能会触发所有者积分池的充值，受限于团队范围的月消费上限。在企业计划中，团队 API 密钥运行从团队范围的积分池中扣除。当配置了[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)时，团队密钥运行还可以使用 Oz by Warp GitHub App 克隆仓库和打开拉取请求。
+
+团队 API 密钥适用于完全自动化的工作流、CI/CD 流水线和不需要特定用户上下文的定时任务。有关完整的积分瀑布流程及其与附加积分的交互方式，请参见[访问、计费和身份权限](/agent-platform/cloud-agents/team-access-billing-and-identity/)和[附加积分](/support-and-community/plans-and-billing/add-on-credits/)。
+
+## 使用 API 密钥认证
+
+您可以在 CLI 中使用环境变量或命令标志通过 API 密钥认证。我们建议使用环境变量以提高安全性并便于在多个命令间复用。
+
+**通过环境变量（推荐）：**
+
+```sh
+$ export WARP_API_KEY="wk-xxx..."
+$ oz agent run --prompt "分析这个代码库"
+```
+
+**通过命令标志：**
+
+```sh
+$ oz agent run --api-key "wk-xxx..." --prompt "分析这个代码库"
+```
+
+:::note
+API 密钥以 `wk-` 前缀开头。如果您的密钥没有此前缀，可能是[无效或来自旧格式](/reference/api-and-sdk/troubleshooting/errors/authentication-required/)。
+:::
+
+## 管理 API 密钥
+
+**设置** > **云平台** > **Oz Cloud API 密钥**中的 API 密钥部分显示您所有的活跃密钥，包含以下信息：
+
+* **名称** - 创建密钥时分配的名称
+* **密钥** - 掩码后缀（`wk-**xxxx`）用于帮助识别密钥
+* **范围** - 密钥是个人还是团队
+* **创建时间** - 密钥的创建时间
+* **最后使用** - 密钥最近一次用于认证的时间
+* **过期时间** - 密钥的过期日期，如果永不过期则显示"永不"
+
+### 删除 API 密钥
+
+要删除 API 密钥：
+
+1. 前往 **设置** > **云平台** > **Oz Cloud API 密钥**。
+2. 在 API 密钥列表中找到要删除的密钥。
+3. 点击密钥旁边的删除图标。
+
+已删除的密钥会立即失效且无法恢复。任何使用已删除密钥的服务或脚本将失去访问权限，并可能返回 [`authentication_required` 错误](/reference/api-and-sdk/troubleshooting/errors/authentication-required/)。
+
+## 最佳实践
+
+* **使用环境变量** - 避免在命令中直接传递 API 密钥，以免被记录或在 shell 历史中可见。
+* **设置适当的过期时间** - 开发和测试使用较短的过期时间；稳定的生产工作流可考虑更长的持续时间。
+* **自动化使用团队密钥** - 对于 CI/CD 和定时任务，团队密钥提供更清晰的计费归属，不依赖于任何个人用户的账户。
+* **当代理需要写入 GitHub 时使用个人密钥或配置团队 GitHub 授权** - 个人密钥以您的身份认证；当通过管理面板配置了[团队 GitHub 授权](/agent-platform/cloud-agents/team-access-billing-and-identity/#team-github-authorization)时，团队密钥也可以写入 GitHub。
+* **定期轮换密钥** - 定期创建新密钥并停用旧密钥，以限制凭据泄露造成的风险。
+* **安全存储** - 使用密钥管理器（如 1Password CLI、HashiCorp Vault 或云提供商密钥服务）而不是纯文本文件。

@@ -1,0 +1,167 @@
+---
+title: "登出与卸载"
+description: >-
+  如何退出 Warp 以及如何卸载 Warp。
+sidebar:
+  label: "登出与卸载"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## 登出
+
+您可以通过以下方式退出 Warp：
+
+* **设置** > **账户**，使用"登出"按钮
+* [命令面板](/terminal/command-palette/)，使用"登出"项。
+
+<DemoVideo src="/assets/support-and-community/logout.mp4" label="登出演示" />
+
+### 已知问题：
+
+1. 当您登出时，将丢失所有正在运行的进程和所有未保存的对象。
+2. 当您登出并使用另一个账户登录 Warp 时，以下偏好设置将从原始账户保留：
+   1. 主题
+   2. 键绑定
+   3. 设置（例如自动建议、通知、字体大小、欢迎提示状态）
+3. 每当您登录 Warp 时，都会收到入门调查问卷。
+
+## 卸载 Warp
+
+从电脑中移除 Warp 包括卸载 Warp 以及删除相关文件或数据。
+
+:::note
+如果您使用的是 Warp Preview，请将下方命令中的 "Warp-Stable" 替换为 "Warp-Preview"（例如 `defaults delete dev.warp.Warp-Preview`）。
+:::
+
+<Tabs>
+  <TabItem label="macOS">
+    **通过 dmg 卸载 Warp**
+
+    * 使用 `sudo rm -r /Applications/Warp.app` 移除 Warp
+    * 打开 **Finder** > **应用程序**，右键点击 Warp，然后选择"移到废纸篓"
+
+    **通过 Homebrew 卸载 Warp**
+
+    * 使用 `brew uninstall warp` 移除 Warp
+
+    **移除 Warp 设置、文件、日志和数据库**
+
+    ```bash
+    # 移除 Warp 设置默认值
+    defaults delete dev.warp.Warp-Stable
+    # 移除 Warp 日志
+    sudo rm -r $HOME/Library/Logs/warp.log
+    # 移除 Warp 数据库、代码库上下文和 MCP 日志
+    sudo rm -r "$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable"
+    # 移除 Warp 用户文件、主题和启动配置
+    sudo rm -r $HOME/.warp
+    # 注意：删除 $HOME/.warp 将同时删除 Stable 和 Preview 的文件。
+    # 如果您想全部删除，则：sudo rm -r $HOME/.warp
+    ```
+
+    **对于 Warp Preview 用户：**
+
+    ```bash
+    # 移除 Warp Preview 设置默认值
+    defaults delete dev.warp.Warp-Preview
+    # 移除 Warp Preview 日志
+    sudo rm -r $HOME/Library/Logs/warp_preview.log
+    # 移除 Warp Preview 数据库、代码库上下文和 MCP 日志
+    sudo rm -r "$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Preview"
+    # 注意：删除 $HOME/.warp 将同时删除 Preview 和 Stable 的文件。 
+    # 如果您想全部删除，则：sudo rm -r $HOME/.warp
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    **通过 WinGet 卸载 Warp**
+
+    ```powershell
+    winget uninstall Warp.Warp
+    ```
+
+    **通过安装程序卸载 Warp**
+
+    * 搜索控制面板的"已安装的应用"部分。
+    * 搜索并卸载 Warp 应用程序
+
+    **移除 Warp 设置、文件、日志和数据库**
+
+    ```powershell
+    # 移除 Windows 注册表中的 Warp 设置
+    Remove-Item -Path "HKCU:\Software\Warp.dev\Warp" -Recurse -Force
+    # 移除 Warp 设置、键绑定、日志、数据库、代码库上下文和 MCP 日志
+    Remove-Item -Path "$env:LOCALAPPDATA\warp\Warp" -Recurse -Force
+    # 移除 Warp 主题、标签页配置、工作流和启动配置
+    Remove-Item -Path "$env:APPDATA\warp\Warp" -Recurse -Force
+    # 移除 MCP 服务器配置和捆绑技能（Stable 和 Preview 共享）
+    Remove-Item -Path "$env:USERPROFILE\.warp" -Recurse -Force
+    ```
+
+    **对于 Warp Preview 用户：**
+
+    ```powershell
+    # 移除 Windows 注册表中的 Warp Preview 设置
+    Remove-Item -Path "HKCU:\Software\Warp.dev\WarpPreview" -Recurse -Force
+    # 移除 Warp Preview 设置、键绑定、日志、数据库、代码库上下文和 MCP 日志
+    Remove-Item -Path "$env:LOCALAPPDATA\warp\WarpPreview" -Recurse -Force
+    # 移除 Warp Preview 主题、标签页配置、工作流和启动配置
+    Remove-Item -Path "$env:APPDATA\warp\WarpPreview" -Recurse -Force
+    # 注意：删除 $env:USERPROFILE\.warp 也会移除 Stable 的 MCP 配置和技能。
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    **通过包管理器卸载 Warp**
+
+    ```bash
+    # apt 卸载
+    sudo apt remove warp-terminal
+    # dnf 卸载
+    sudo dnf remove warp-terminal
+    # zypper 卸载
+    sudo zypper remove warp-terminal
+    # pacman 卸载
+    sudo pacman -R warp-terminal
+    ```
+
+    * 使用您之前用于[安装](/getting-started/quickstart/installation-and-setup/) Warp 的同一包管理器进行卸载。
+
+    **移除 Warp 设置、文件、日志和数据库**
+
+    ```bash
+    # 移除 Warp 设置和键绑定文件
+    rm -r ${XDG_CONFIG_HOME:-$HOME/.config}/warp-terminal
+    # 移除 Warp 日志、数据库、代码库上下文和 MCP 日志
+    rm -r ${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal
+    # 移除 Warp 主题、标签页配置、工作流和启动配置
+    rm -r ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal
+    # 移除 MCP 服务器配置和捆绑技能（Stable 和 Preview 共享）
+    rm -r $HOME/.warp
+    ```
+
+    **对于 Warp Preview 用户：**
+
+    ```bash
+    # apt 卸载
+    sudo apt remove warp-terminal-preview
+    # dnf 卸载
+    sudo dnf remove warp-terminal-preview
+    # zypper 卸载
+    sudo zypper remove warp-terminal-preview
+    # pacman 卸载
+    sudo pacman -R warp-terminal-preview
+    ```
+
+    * 使用您之前用于安装 Warp Preview 的同一包管理器进行卸载。
+
+    ```bash
+    # 移除 Warp Preview 设置和键绑定文件
+    rm -r ${XDG_CONFIG_HOME:-$HOME/.config}/warp-terminal-preview
+    # 移除 Warp Preview 日志、数据库、代码库上下文和 MCP 日志
+    rm -r ${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal-preview
+    # 移除 Warp Preview 主题、标签页配置、工作流和启动配置
+    rm -r ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal-preview
+    # 注意：删除 $HOME/.warp 也会移除 Stable 的 MCP 配置和技能。
+    ```
+  </TabItem>
+</Tabs>

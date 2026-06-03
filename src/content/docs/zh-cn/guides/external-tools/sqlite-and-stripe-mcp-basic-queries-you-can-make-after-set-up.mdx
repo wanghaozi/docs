@@ -1,0 +1,99 @@
+---
+title: "SQLite 和 Stripe MCP：设置后可以执行的基本查询"
+description: >-
+  将 SQLite 和 Stripe MCP 服务器连接到 Warp，并对你的本地数据库和支付数据进行对话式查询。
+sidebar:
+  label: "SQLite 和 Stripe MCP：设置后可以执行的基本查询"
+tags:
+  - "mcp"
+  - "database"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+本教程教你如何使用 **MCP 服务器**将 Warp 连接到 **Stripe** 和 **SQLite**，展示 AI 如何将命令行转变为一个互联的、对话式的工作空间。
+
+<VideoEmbed url="https://x.com/svpino/status/1937896922297311390" />
+
+<Steps>
+
+1. #### 在 Warp 中启用 MCP
+
+   Warp 现在支持直接从终端配置任何 MCP 服务器。
+
+   配置方法：
+
+   * 在 Warp 中打开 **设置 → AI → MCP 服务器**。
+   * 点击**添加服务器**，从可用的 MCP 配置列表中选择。
+   * 添加后，Warp 会自动连接并授权代理使用这些工具。
+
+   在此演示中，启用了两个 MCP 服务器：
+
+   * **SQLite 服务器**——用于运行本地数据库查询
+   * **Stripe 服务器**——用于检索和分析支付数据
+
+2. #### 查询 Stripe
+
+   配置完成后，你可以向终端发出对话式提示——无需手动 API 调用。
+
+   示例——查询 Stripe
+
+   ```
+   How many customers do I have in Stripe?
+   ```
+
+   Warp 连接到 Stripe MCP 服务器，确认操作，并返回：
+
+   > "你有 3 个客户。"
+
+   你可以自然地继续：
+
+   ```
+   List the payments made by the first customer.
+   ```
+
+   代理检索了七个支付意图——一个成功，六个取消——全部来自你的 Stripe 测试账户的实时数据。
+
+   注意：一旦你信任某个给定的服务器或代理，可以禁用 MCP 的确认提示。
+
+3. #### 查询 SQLite
+
+   相同的工作流程适用于数据库。
+
+   示例——查询 SQLite
+
+   ```
+   What SQL tables do I have access to?
+   ```
+
+   Warp 列出本地 SQLite 数据库中所有可用的表。
+
+   ```
+   Break down female penguins by island.
+   ```
+
+   Warp 将其转换为结构化的 SQL 查询并执行，返回：
+
+   > "Bisco Island —— 51 只雌性企鹅；Dream Island —— ……"
+
+   后续提示可以上下文相关地工作：
+
+   ```
+   Do the same with male penguins.
+   ```
+
+   Warp 运行更新后的 SQL 查询并内联显示结果。
+
+4. #### 为什么这很重要
+
+   此演示强调了 Warp 的 AI 和 MCP 支持如何结合，使你的终端：
+
+   * **互联**——即时访问云 API、本地数据或企业工具。
+   * **对话式**——对结构化数据检索运行自然语言提示。
+
+5. :::note
+   "即使在两年前，也没人能想象一个终端能做到这样。Warp 正式重新定义了终端可以是什么。"——Santiago
+   :::
+
+</Steps>

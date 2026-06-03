@@ -1,0 +1,168 @@
+---
+title: "在 Postgres REPL 中编写 SQL 命令"
+description: >-
+  在 Warp 中的 Postgres REPL 内使用代理将自然语言转换为 SQL 查询——也适用于 Node.js、Python 和 MySQL。
+sidebar:
+  label: "在 Postgres REPL 中编写 SQL 命令"
+tags:
+  - "database"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教程教你如何使用 **Warp 的 AI 输入**在交互式 **Postgres REPL** 中运行自然语言提示，将普通英语转换为 SQL 命令。\
+\
+虽然示例使用了 **PostgreSQL**，但相同的工作流程适用于 **Node.js**、**Python**、**MySQL** 和其他交互式 shell。
+:::
+
+<VideoEmbed url="https://www.youtube.com/watch?v=guXQSMq_Yss" />
+
+---
+
+### 🧠 概述
+
+你将学习如何：
+
+* 在 Warp 中启动 Postgres REPL。
+* 使用 **Command + I**（或 **Ctrl + I**）打开 Warp 的 AI 输入。
+* 用自然语言说出或输入请求，让 Warp 将其转换为 SQL。
+* 直接在 REPL 会话中运行生成的查询。
+
+<Steps>
+
+1. #### 在 Warp 中打开 Postgres REPL
+
+   打开 Warp 并连接到你的 Postgres 数据库（或测试实例）：
+
+   ```bash
+   psql -U postgres -d my_database
+   ```
+
+   你将进入交互式 `psql` 提示符，通常在这里输入 SQL 命令。
+
+2. #### 调用 Warp 的 AI 输入
+
+   在正在运行的 REPL 中，按下：
+
+   ```
+   Command + I    (macOS)
+   Ctrl + I       (Windows/Linux)
+   ```
+
+   这将打开**生成输入**框。
+
+   你可以用普通英语**输入或说出**——Warp 会将你的请求转换为有效的 SQL 或 shell 语法，取决于你所在的 REPL。
+
+3. #### 用自然语言询问 Warp
+
+   从一个简单的请求开始：
+
+   ```
+   Show me all tables.
+   ```
+
+   Warp 将其转换为 Postgres 命令：
+
+   ```sql
+   \dt
+   ```
+
+   然后尝试更具体的查询，如视频中所示：
+
+   ```
+   Show me our users table and our teams table.
+   ```
+
+   Warp 生成：
+
+   ```sql
+   SELECT * FROM users;
+   SELECT * FROM teams;
+   ```
+
+   你可以在你的 REPL 中运行两者以显示表。
+
+4. #### 观察 Warp 如何从上下文学习
+
+   随着你继续发出提示，Warp 的代理通过观察 REPL 输出中打印的内容来**学习你的数据库结构**。
+
+   这意味着你可以提出逐渐更复杂的问题，Warp 会相应地定制 SQL。
+
+   ```
+   Show me all of the users who have joined Warp in the last 90 days from public email accounts
+   (like Gmail, Yahoo, Hotmail) and are on teams of more than two people.
+   ```
+
+   Warp 生成多子句 SQL 查询，例如：
+
+   ```sql
+   SELECT *
+   FROM users
+   WHERE email LIKE '%gmail.com%'
+      OR email LIKE '%yahoo.com%'
+      OR email LIKE '%hotmail.com%'
+     AND joined_at > NOW() - INTERVAL '90 days'
+     AND team_size > 2;
+   ```
+
+   在 `psql` 中运行此查询即可相应筛选用户。
+
+5. #### 将相同的工作流程应用于其他 REPL
+
+   此功能**不仅适用于 Postgres**，也适用于：
+
+   * Node.js
+   * Python
+   * MySQL
+   * GDB（GNU 调试器）
+
+   对于这些环境中的任何一个：
+
+   1. 在 Warp 中启动 REPL。
+   2. 按 **Command + I** 调出 AI 输入。
+   3. 用自然语言描述你想要的内容。
+   4. Warp 将其转换为该环境的正确语法。
+
+   :::note
+   Warp 会自动检测活动的 REPL，因此你无需指定"SQL"或"Python"——它知道要生成哪种语言。
+   :::
+
+6. #### 实验和迭代
+
+   尝试变化你的自然语言提示：
+
+   ```
+   List all databases.
+   ```
+
+   ```sql
+   \l
+   ```
+
+   ```
+   Count how many users signed up this month.
+   ```
+
+   ```sql
+   SELECT COUNT(*) FROM users WHERE joined_at > date_trunc('month', NOW());
+   ```
+
+   你实验得越多，Warp 收集的上下文就越多，其翻译也会越准确。
+
+</Steps>
+
+---
+
+### 🏁 关键要点
+
+* **Command + I** 在任何交互式 shell 中激活 Warp 的 AI 输入。
+* Warp 理解自然语言并为当前 REPL 生成有效的命令。
+* 它**从上下文学习**——后续提示会更准确。
+* 不仅适用于 Postgres，还适用于 Node、Python、MySQL 等。
+* 无需记住语法即可快速查询或探索系统。
+
+:::tip
+下次你在 Postgres 或 Python 中记不住命令时，按 **Command + I**，直接向 Warp 用英语提问即可。
+:::

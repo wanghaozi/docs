@@ -1,0 +1,137 @@
+---
+title: Warp Drive 工作流
+description: >-
+  将参数化命令保存为工作流，并从 Warp Drive 按需执行。
+sidebar:
+  label: "工作流"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+工作流是参数化的命令，你可以在 Warp Drive 中命名、保存和共享。使用默认值定义参数，添加描述以便搜索，然后从命令面板或 Warp Drive 执行工作流，无需重新输入即可运行常用命令。
+
+## 什么是工作流？
+
+工作流是一种参数化命令，你可以在 Warp 中命名和保存，附带描述和参数。工作流可通过[命令面板](/terminal/command-palette/)搜索和轻松访问，让你无需切换上下文即可找到并执行它们。
+
+## 如何保存和编辑工作流
+
+你可以从 Warp 中的多个入口点创建新工作流：
+
+* 从 Warp Drive，+ > 新建工作流
+* 使用块操作，另存为工作流
+* 从代理结果，另存为工作流
+* 从[命令面板](/terminal/command-palette/)，创建新的个人工作流
+
+上述任一入口点都会打开工作流编辑器，你可以：
+
+* 命名你的工作流
+* 编辑命令以及任何参数（也称为参数）
+* 添加将为搜索建立索引的有意义的描述（可选）
+* 添加参数、参数描述和默认值（可选）
+
+<figure>
+![工作流保存和编辑对话框](../../../../../assets/terminal/edit-workflow-pane.png)
+<figcaption>工作流保存/编辑面板。</figcaption>
+</figure>
+
+<VideoEmbed url="https://www.youtube.com/watch?v=8UmreUTTrkg&start=9s&end=198s" title="保存工作流演示" />
+
+### 使用参数
+
+在工作流编辑器中，你可以通过"New argument"手动添加参数，或在命令字段中输入双花括号（`{{argument}}`）。如果你在选择了文本的情况下点击"New argument"，Warp 会用花括号包裹该文本以创建参数。
+
+创建有效参数有一些规则：
+
+* 参数名称只能包含字符 `A-Za-z0-9`、连字符 `-` 和下划线 `_`
+* 参数的第一个字符不能是数字
+
+参数可以是两种类型之一：文本或枚举。默认情况下，所有新参数都是文本类型。
+
+#### 枚举类型参数
+
+枚举允许你指定工作流参数的预期输入。当你将带有枚举的工作流插入到输入编辑器时，系统会提示你填充参数的建议。你可以通过在选择参数时按 `SHIFT-TAB` 来打开建议菜单。
+
+<VideoEmbed url="https://www.loom.com/share/b2f54eeef2f247a8bbcf87698b2a4287?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="枚举输入建议演示" />
+
+要创建枚举类型参数：
+
+1. 导航到参数的"default value"字段。
+2. 选择"Enum"类型。
+3. 点击"New"创建新的枚举，或从下拉菜单中选择现有枚举。
+4. 如果选择了"New"，你可以选择创建"Static"枚举或"Dynamic"枚举。动态枚举与一个 Shell 命令关联，其输出被解析以确定该参数的有效值集。
+
+<VideoEmbed url="https://www.loom.com/share/b429ab7f7014418e9591e505fd71af83?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="枚举创建演示" />
+
+### 使用别名
+
+工作流别名允许你为常用的工作流创建个性化快捷键和自定义配置。这些别名提供了使用和配置工作流的更大灵活性。别名是你的账户私有的，不会与拥有该工作流的其他人共享。如果启用了设置同步，它们会同步到你账户下登录的所有设备。别名可以为每个[参数](/knowledge-and-collaboration/warp-drive/workflows/#working-with-arguments)设置默认值，但不是必需的。别名可以关联[环境变量](/knowledge-and-collaboration/warp-drive/environment-variables/)。
+
+:::note
+工作流别名与 [YAML 工作流](/terminal/entry/yaml-workflows/)不兼容。它们只能与在 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 中创建的工作流一起使用。
+:::
+
+### 编辑工作流
+
+工作流创建后，只要你有互联网连接，就可以随时编辑它。
+
+<figure>
+![编辑工作流菜单](../../../../../assets/terminal/Edit_Workflow.png)
+<figcaption>Warp Drive 中工作流的编辑菜单。</figcaption>
+</figure>
+
+#### AI 自动填充
+
+工作流还可以选择使用[代理](/agent-platform/local-agents/overview/)自动生成标题、描述或参数。
+
+* 创建或编辑工作流，在编辑视图中你应该看到 AutoFill 选项。
+* Warp 将根据你正在创建的工作流填充字段。
+
+<DemoVideo src="/assets/terminal/Edit-workflows-autofill.mp4" label="编辑工作流 - 自动填充" />
+
+### 与团队一起编辑工作流
+
+如果工作流与团队共享，所有团队成员都有权编辑该工作流，更新将立即为所有团队成员同步。
+
+如果在 Warp Drive 中的工作流已被其他团队成员或另一设备上的用户在尝试编辑相同工作流时编辑，你将无法保存更改；你需要检查最新版本并重试。
+
+## 如何执行工作流
+
+你可以通过多种方式执行工作流：
+
+* 从 Warp Drive，点击工作流
+* 从[命令面板](/terminal/command-palette/)，搜索要执行的工作流，点击或选择然后回车
+* 从[命令搜索](/terminal/entry/command-search/)，搜索要执行的工作流，点击或选择然后回车
+* 选中工作流后，你可以使用 `SHIFT-TAB` 循环切换参数
+
+:::note
+当你创建两个或更多同名的参数时，Warp 自动选择并在输入编辑器中放置多个光标到这些参数上，使它们保持同步。\
+\
+另外，通过在**设置** > **功能**中关闭"显示全局工作流"来定制你的命令搜索体验。禁用后，你的搜索将仅包含 YAML 和 Warp Drive 工作流。
+:::
+
+<figure>
+![在命令面板中使用 CMD + P 搜索任何工作流](../../../../../assets/terminal/search-workflow-command-palette.png)
+<figcaption>在命令面板中搜索工作流。</figcaption>
+</figure>
+
+这些选项会将工作流粘贴到你当前活动的终端输入中。工作流名称以及任何相关的描述和参数将显示在对话框中，以便你了解如何使用该工作流。
+
+<figure>
+![执行工作流](../../../../../assets/terminal/execute-a-workflow.png)
+<figcaption>从 Warp Drive 执行工作流。</figcaption>
+</figure>
+
+在输入编辑器中运行命令之前，你可以对参数（或命令本身）进行任何需要的调整。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=8UmreUTTrkg&start=344s&end=370s" title="运行工作流演示" />
+
+## 支持 YAML 工作流
+
+Warp 将无限期支持 [YAML 工作流](/terminal/entry/yaml-workflows/)，包括来自开源仓库的个人和社区工作流。
+
+如果需要，你可以继续使用[命令搜索](/terminal/entry/command-search/)或[命令面板](/terminal/command-palette/)访问你的 `.yaml` 文件工作流。但是，这些基于文件的工作流将无法在 Warp Drive 中访问、整理或共享。
+
+### 在 Warp Drive 中导入和导出工作流
+
+请参见我们的 [Warp Drive 导入和导出](/knowledge-and-collaboration/warp-drive/#import-and-export)说明。

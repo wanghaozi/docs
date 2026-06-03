@@ -1,0 +1,94 @@
+---
+title: 本地到云端交接
+description: >-
+  将正在进行的本地 Warp Agent 对话移动到云 agent 运行中，用于长时间运行的工作、并行探索或远程后续操作。
+sidebar:
+  label: "本地到云端"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 中的本地到云端交接将活动的本地 Warp Agent 对话提升为云 agent 运行。Warp 会分叉对话、快照您的未提交工作区更改，并将两者发送到云端，以便 agent 可以使用所需的上下文和文件继续同一任务。
+
+观看此演示，了解如何将本地 Warp Agent 对话移动到云 agent 运行。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=9qpGYZ58Wck" title="如何在 Warp 中将本地 agent 交接给云端" />
+
+在以下情况下使用此交接方向：
+
+* 您有长时间运行的任务，不希望笔记本电脑一直醒着。
+* 您希望将同一任务的变体同时扇出到多个云 agent 中。
+* 您想离开并从不同设备检查 agent。
+* 您希望 agent 继续工作，同时您在本地开始新的对话。
+
+## 云 agent 接收的内容
+
+当您从本地交接至云端时，接收云 agent 继承：
+
+* **分叉的对话** - Warp 分叉您的本地对话，使云 agent 继承完整的记录而不修改源。请参阅[云同步对话](/agent-platform/local-agents/cloud-conversations/)了解相关同步行为。
+* **工作区快照** - Warp 捕获您的未提交仓库更改，包括已跟踪修改和未跟踪文件，并将其打包供云 agent 使用。云 agent 在回答您的后续指令前应用它们。
+* **对话附件** - 附加到本地对话的文件在云运行中仍然可用。
+
+如果有任何更改在云运行中应用失败，云 agent 会报告哪些更改失败，并继续处理已成功应用的更改。
+
+## 前提条件
+
+* **一个活动的本地对话** - 在 Warp 中打开一个[Warp Agent](/agent-platform/local-agents/overview/)对话，其中包含您要交接的工作。
+* **一个已配置的环境** - 云 agent 需要一个[环境](/agent-platform/cloud-agents/environments/)，其中包含您本地工作中使用的相同仓库。环境的仓库必须与您的本地检出匹配，以便工作区快照干净地应用。
+* **已启用云对话存储** - 在 Warp 应用中，转到**设置** > **隐私**并打开**在云端存储 AI 对话**，以便对话可以被分叉。请参阅[云同步对话](/agent-platform/local-agents/cloud-conversations/)。
+* **足够的积分** - 云 agent 运行消耗积分。请参阅[积分](/support-and-community/plans-and-billing/credits/)了解积分使用方式，以及[访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/)了解团队特定的积分要求。
+
+## 将对话交接至云端
+
+1. **从您的活动对话打开交接流程。** 聚焦本地对话，按下 `&` 或运行 `/handoff` 斜杠命令。任一入口点都打开限定于当前对话的交接流程。`/cloud-agent` 斜杠命令始终启动全新的云对话，不是交接的入口点。
+2. **选择云运行的环境。** 选择其仓库与您的本地对话一直在编辑的目录匹配的环境。如果您还没有匹配的环境，创建一个并添加您一直在工作的仓库。
+3. **添加后续提示并提交。** 输入您希望云 agent 处理的下一条消息。
+
+`&` 入口点和 `/handoff` 斜杠命令都打开相同的交接流程。
+
+<figure style={{ maxWidth: "375px" }}>
+![本地 Warp Agent 对话中的 & 交接入口点。](../../../../../../assets/agent-platform/local-to-cloud-handoff-input-entrypoint.png)
+<figcaption>& 交接入口点。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "375px" }}>
+![Warp 中的斜杠命令菜单显示交接命令。](../../../../../../assets/agent-platform/local-to-cloud-handoff-slash-command.png)
+<figcaption>`/handoff` 斜杠命令。</figcaption>
+</figure>
+
+流程打开后，选择云环境并添加云 agent 应处理的后续提示。
+
+<figure style={{ maxWidth: "375px" }}>
+![交接流程显示云运行的环境选择器。](../../../../../../assets/agent-platform/local-to-cloud-handoff-environment-selector.png)
+<figcaption>交接流程中的环境选择器。</figcaption>
+</figure>
+
+<figure style={{ maxWidth: "563px" }}>
+![交接流程在提交前输入的后续提示。](../../../../../../assets/agent-platform/local-to-cloud-handoff-follow-up-prompt.png)
+<figcaption>交接前的后续提示。</figcaption>
+</figure>
+
+:::note
+云 agent 运行与您的本地对话使用的模型相同。交接期间不支持更改模型。
+:::
+
+提交后，云 agent 应用您的工作区快照并响应您的后续指令。本地对话不会被修改，因此您可以继续在其中本地工作或关闭它。
+
+要检查新运行，请从 Oz Web 应用的 [Runs 页面](https://oz.warp.dev/runs)或 Warp 应用的对话面板中打开它。
+
+## 故障排除
+
+**云 agent 报告某些更改无法应用。**
+最常见的原因是本地检出与环境之间的仓库不匹配。工作区快照是针对您本地仓库的当前状态生成的；环境必须位于兼容的分支和提交上，更改才能干净地应用。将环境的仓库切换到您本地所在的分支并重试交接。
+
+**云 agent 看不到我的未提交更改。**
+必须启用云对话存储才能使交接工作。在 Warp 应用中，打开**设置** > **隐私**并确认**在云端存储 AI 对话**已开启。否则，对话无法被分叉，运行将回退到从头开始。
+
+**对话没有出现在云运行中。**
+当您触发交接时，源对话可能尚未完成同步到云端。稍等片刻并重试。如果问题持续存在，请检查 Warp 应用中的对话面板，确认对话具有云同步指示器。
+
+## 相关页面
+
+* [交接概述](/agent-platform/cloud-agents/handoff/) - 什么是交接，它支持的方向，以及延续的内容。
+* [云端到云端交接](/agent-platform/cloud-agents/handoff/cloud-to-cloud/) - 继续已完成的云运行，恢复工作区状态。
+* [环境](/agent-platform/cloud-agents/environments/) - 配置云 agent 启动的仓库、镜像和设置命令。
+* [云 Agent 快速入门](/agent-platform/cloud-agents/quickstart/) - 从头开始运行您的第一个云 agent。

@@ -1,0 +1,55 @@
+---
+title: 命令纠正
+description: >-
+  命令纠正为之前运行过的命令提供自动更正建议，以捕获拼写错误、遗漏的标志，并修复一般的控制台错误。
+sidebar:
+  label: "命令纠正"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是命令纠正
+
+此功能建立在开源项目 [nvdn/thefuck](https://github.com/nvbn/thefuck) 之上。以下是 Warp 团队通常发现命令纠正有用的一些示例：
+
+* 拼写错误的命令
+  * `gti checkout myBranchName` -> `git checkout myBranchName`
+  * `cd ap/sorce/executtor` -> `cd app/source/executor`
+* 遗漏的标志
+  * `git push` -> `git push –set-upstream myBranchName`
+* 添加权限
+  * `./script` -> `chmod +x ./script && ./script`
+
+## 如何访问
+
+* 命令纠正默认启用。您可以通过前往 **设置** > **功能** > **终端输入** > 切换"建议纠正的命令"来禁用命令纠正。
+* 运行错误命令后，输入编辑器上方会出现一个带有纠正命令建议的面板。`点击`或按 `RIGHT` 箭头以插入建议。
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/180e1dc8d1504ec39c00694d9fd71b7c?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="命令纠正演示" />
+
+#### 命令纠正规则：
+
+| 命令                                                       |
+| ------------------------------------------------------------- |
+| brew                                                          |
+| cargo                                                         |
+| cat                                                           |
+| cd                                                            |
+| chmod                                                         |
+| conda                                                         |
+| cp                                                            |
+| docker                                                        |
+| generic（与命令无关，例如可执行文件名称拼写错误） |
+| git                                                           |
+| go                                                            |
+| grep                                                          |
+| java                                                          |
+| ls                                                            |
+| mkdir                                                         |
+| npm                                                           |
+| pip                                                           |
+| python                                                        |
+| sed                                                           |
+| sudo                                                          |
+| yarn                                                          |

@@ -1,0 +1,142 @@
+---
+title: 设置 Claude Code
+description: >-
+  在 Warp 中设置 Claude Code，为你的项目进行配置，并学习生产力技巧——从语音提示到可视化代码审查。
+sidebar:
+  label: "设置 Claude Code"
+featured: true
+tags:
+  - "third-party-tools"
+
+---
+
+Claude Code 是 Anthropic 的 AI 编码代理。它可以读取你的代码库、编写和编辑代码、运行命令以及使用自然语言提示处理复杂的重构。本指南将带你在大约 5 分钟内从零开始到在 Warp 中运行一个可用的 Claude Code 会话，然后展示如何充分利用它。
+
+## 先决条件
+
+* **一个具有 CLI 访问权限的 Claude 账户**——Claude Code 需要付费计划或 API 额度。有关符合条件的计划，请参阅 [Claude Code 要求](https://docs.anthropic.com/en/docs/claude-code/setup)。
+* **macOS 13+、Windows 10+ 或 Ubuntu 20.04+**——有关完整的平台详情，请参阅 [Claude Code 系统要求](https://docs.anthropic.com/en/docs/claude-code/setup)。
+* **Git**——Claude Code 在 Git 仓库中效果最佳。在 Windows 上，需要 [Git for Windows](https://git-scm.com)。
+
+## 1. 安装 Claude Code
+
+按照 Anthropic 的[官方安装指南](https://docs.anthropic.com/en/docs/claude-code/quickstart)安装 Claude Code。原生安装程序（推荐）无需依赖项，并在后台自动更新。
+
+当你在 Warp 中启动 Claude Code 时，Warp 会自动检测代理会话并显示集成控件，包括富文本输入、代码审查、垂直标签元数据等。
+
+## 2. 身份验证
+
+首次运行 Claude Code 时，它会打开浏览器进行登录。
+
+```bash
+claude
+```
+
+使用你的 Claude 账户登录。身份验证后，令牌会存储在本地，你无需再次登录。
+
+对于无头环境或 CI/CD，请改用设置 API 密钥：
+
+```bash
+export ANTHROPIC_API_KEY=YOUR_API_KEY
+```
+
+## 3. 启动你的第一个会话
+
+导航到任何项目目录并启动 Claude Code：
+
+```bash
+cd ~/your-project
+claude
+```
+
+尝试给它一个任务，例如：
+
+```
+Explain the architecture of this project
+```
+
+或者更实际的任务：
+
+```
+Add input validation to the user registration endpoint
+```
+
+Claude Code 将找到相关文件，向你显示提议的更改，并在修改任何内容之前征求确认。
+
+## 4. 为你的项目配置
+
+在项目根目录创建一个 `CLAUDE.md` 文件，教会 Claude Code 你项目的约定。Claude Code 在每个会话开始时读取此文件。
+
+```markdown
+# My Project
+
+## Stack
+- Backend: Python 3.12, FastAPI, SQLAlchemy
+- Frontend: React, TypeScript, Vite
+- Database: PostgreSQL 16
+
+## Commands
+- `npm run dev` starts the dev server
+- `pytest -v` runs the test suite
+- `npm run lint` checks code style
+
+## Conventions
+- Use async/await for all database operations
+- Type hints on all function signatures
+- ESM imports only (no require())
+```
+
+这可以防止 Claude Code 猜测你的约定，并确保它从第一个提示就遵循你的团队标准。
+
+## 5. 选择模型和权限
+
+Claude Code 默认使用最新的 Claude 模型。要使用特定模型：
+
+```bash
+claude --model MODEL_NAME
+```
+
+默认情况下，Claude Code 在每次文件写入和命令执行之前请求权限。你可以在 `.claude/settings.json` 中预批准安全操作：
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(pytest*)",
+      "Bash(npm run lint)"
+    ]
+  }
+}
+```
+
+这允许 Claude 在无需提示的情况下读取文件并运行你的测试/lint 命令，同时在写入文件之前仍会询问。
+
+## 6. 设置代理通知
+
+Warp 通过插件支持 Claude Code 的代理通知。当你在 Warp 中运行 Claude Code 而未安装插件时，会出现一个提供一键安装的通知标签。安装后，当 Claude Code 需要你的输入时，Warp 会显示应用内和桌面提醒。
+
+有关手动安装步骤、故障排除和 SSH/远程设置，请参阅 [Warp 中的 Claude Code（文档）](/agent-platform/cli-agents/claude-code/#setting-up-notifications)。
+
+## 生产力技巧
+
+* **使用语音提示 Claude Code**——无需输入复杂的指令，只需口述。Warp 支持适用于任何 CLI 代理（包括 Claude Code）的[语音转录](/agent-platform/local-agents/interacting-with-agents/voice/)。按下麦克风图标或 `fn` 键开始录音。
+* **附加图像作为上下文**——将错误报告、设计稿或错误消息的截图直接粘贴到你的提示中。Warp 的[图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)功能让 Claude Code 看到你所看到的。
+* **可视化审查差异**——Claude Code 做出更改后，打开 Warp 的[代码审查面板](/code/code-review/)（`⌘+Shift++`）查看每个更改文件的可视化差异。你可以留下内联评论并发送回 Claude Code 进行修正。
+* **并行运行多个 Claude Code 会话**——使用[垂直标签](/terminal/windows/vertical-tabs/)并排运行不同的 Claude Code 任务，一个会话修复错误，另一个编写测试。每个标签显示哪个代理正在运行及其当前状态。
+* **编写更丰富的提示**——按 `Ctrl+G` 打开 Warp 的富文本输入编辑器用于 Claude Code。这为你提供了完整的文本编辑器体验来编写提示——点击定位光标、选择文本并自然编辑，而不是使用箭头键导航。
+
+## 后续步骤
+
+你已经安装了 Claude Code、进行了身份验证、启动了第一个会话、为你的项目进行了配置，并学习了使其在 Warp 中使用更快的关键生产力功能。
+
+探索相关指南和功能：
+* [设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/) 在 Claude Code 旁边运行第二个代理
+* [如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)——审查和完善代理输出的结构化工作流
+* [同时运行多个代理](/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)——并排使用 Claude Code 和 Codex
+* [Claude Code 文档](https://docs.anthropic.com/en/docs/claude-code/quickstart)——Anthropic 的官方参考
+* [Warp 中的 Claude Code](https://www.warp.dev/agents/claude-code)——Warp 中 Claude Code 支持概述
+* [Warp 中的 Claude Code（文档）](/agent-platform/cli-agents/claude-code/)——Claude Code 的 Warp 集成完整参考，包括通知设置
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和 Warp 的通用代理功能

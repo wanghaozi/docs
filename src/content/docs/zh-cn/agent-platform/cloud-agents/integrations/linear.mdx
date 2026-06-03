@@ -1,0 +1,39 @@
+---
+title: Linear 集成
+sidebar:
+  label: "Linear"
+description: >-
+  使用在云端运行代码并代表您创建拉取请求的 Agent 自动化 Linear 问题。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Linear 集成让您的团队直接从 Linear 内部将开发工作委托给 Agent。当您在问题或评论上标记 @Oz 时，Agent 将在云端启动，克隆环境中定义的仓库，并开始处理任务。
+
+Agent 在 Linear 中保持您的更新，使用您的 GitHub 账户生成拉取请求，并提供加入实时远程会话的链接，以便您可以实时观看或引导工作流。
+
+<VideoEmbed url="https://youtu.be/FNefNmbSdmg?si=PxvDuW6OfNZBvhSl" />
+
+此指南说明集成的功能、端到端工作原理以及如何为您的 Warp 团队配置它。
+
+---
+
+### 在 Linear 中使用 Oz
+
+在问题上或 Linear 评论中标记 @Oz 会启动 agent 运行。Oz 克隆环境中定义的仓库，使用您的 Docker 镜像和设置命令设置开发环境，并开始处理任务，充分利用您的代码库和 Linear 问题的上下文。Agent 在处理过程中发布更新，包括任务列表、经过的时间和检查点，因此您可以不必离开 Linear 即可跟踪进度。
+
+Agent 还共享使用 Warp 的[云 agent 会话共享](/agent-platform/cloud-agents/viewing-cloud-agent-runs/)的交互式远程会话链接。打开此链接可让您在 Warp 或浏览器中查看正在运行的 agent 的实时终端输出。在那里，您可以在需要时中断或指导 agent。Agent 完成后，它将使用您的 GitHub 权限代表您创建拉取请求，并将其工作摘要和 PR 链接发布回 Linear。
+
+您可以通过两种方式启动 agent：
+
+* **在评论中标记 @Oz** 并描述您想要完成的事情
+* **将问题分配给 Oz**，就像分配给团队成员一样
+
+Oz 直接在 Linear 问题中确认请求并开始工作。
+
+Agent 通过以下方式让您了解情况：
+
+* Linear 内部的**活动更新**
+* 显示 agent 工作内容的**运行任务列表**和时间线
+* 打开 agent 云环境实时视图的**共享会话链接**
+
+![从 Linear 问题共享的实时云 agent 会话，在 Warp on Web 中查看。](../../../../../../assets/agent-platform/linear-warp-on-web.png)

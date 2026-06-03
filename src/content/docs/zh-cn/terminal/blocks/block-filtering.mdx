@@ -1,0 +1,49 @@
+---
+title: 块过滤
+description: >-
+  按文本、正则表达式或大小写过滤块输出，以专注于特定的匹配行。
+sidebar:
+  label: "块过滤"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+在 Warp 中过滤块的输出行，以快速聚焦于块的子集。您可以按纯文本、正则表达式、反转过滤，或使过滤区分大小写。您还可以添加上下文行以查看匹配内容周围的输出。过滤不会删除任何输出行，因此您可以清除过滤器以返回到原始输出。
+
+## 如何过滤块
+
+要对块应用过滤器：
+
+1. 点击块右上角的过滤图标。将出现一个过滤器编辑器，带有一个大的输入字段和左侧的两个按钮，以及右侧的一个较小输入字段。
+2. 在左侧输入字段中输入内容以过滤块。将只显示包含与过滤查询匹配的文本的行。
+3. （可选）点击正则表达式、区分大小写搜索或反转过滤按钮以启用。
+4. （可选）在右侧输入字段中输入数字，以在匹配行周围添加上下文行。
+
+<DemoVideo src="/assets/terminal/block_filtering_with_context_lines.mp4" label="过滤块的输出，并能够添加上下文行。" />
+
+<Tabs>
+  <TabItem label="macOS">
+    您还可以通过以下方式切换过滤器：
+
+    * 默认使用快捷键 `OPT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+  <TabItem label="Windows">
+    您还可以通过以下方式切换过滤器的开/关：
+
+    * 使用快捷键 `ALT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+  <TabItem label="Linux">
+    您还可以通过以下方式切换过滤器的开/关：
+
+    * 使用快捷键 `ALT-SHIFT-F` 切换对选定或最新块的过滤
+    * 在块上下文菜单中选择 `切换块过滤`
+  </TabItem>
+</Tabs>
+
+:::note
+在没有应用过滤器的块上切换过滤器将打开过滤器编辑器。如果您关闭过滤器，再次打开过滤时将应用相同的过滤器。
+:::
+
+<DemoVideo src="/assets/terminal/block_filtering_toggle.mp4" label="切换块过滤器的开/关。" />

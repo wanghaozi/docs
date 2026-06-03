@@ -1,0 +1,170 @@
+---
+title: Bitbucket 集成
+sidebar:
+  label: "Bitbucket"
+description: >-
+  使用访问令牌和 Warp 管理的密钥将云 Agent 连接到 Bitbucket 仓库。
+---
+
+云 Agent 适用于任何 Git 仓库，包括托管在 Bitbucket 上的仓库。与 GitHub 不同，Bitbucket 没有原生的 Warp 集成，但您可以使用访问令牌和 Warp 管理的密钥授予 agent 访问您的 Bitbucket 仓库的权限。配置后，您的环境适用于任何 Oz 触发器——Slack、Linear、计划或 CLI。
+
+此页面说明如何生成 Bitbucket 访问令牌、安全存储它，以及配置在运行时克隆您的仓库的云 agent 环境。
+
+Bitbucket Cloud 和 Bitbucket Data Center/Server 使用不同的令牌类型：
+
+* **Bitbucket Cloud** 使用 **API 令牌**，通过您的 Atlassian 账户设置创建。
+* **Bitbucket Data Center/Server** 使用 **HTTP 访问令牌**，通过您的 Bitbucket 配置文件设置创建。
+
+请按照与您的设置匹配的部分进行操作。
+
+---
+
+## 前提条件
+
+* Warp 账户（[在 oz.warp.dev 创建账户](https://oz.warp.dev)）
+* 托管在 Bitbucket（Cloud 或 Data Center/Server）上的仓库
+* 已安装并认证的 [Oz CLI](/reference/cli/)
+
+---
+
+## Bitbucket Cloud
+
+### 第 1 步：生成 API 令牌
+
+:::note
+Bitbucket Cloud API 令牌通过您的 Atlassian 账户管理，这是一个与 bitbucket.org 不同的站点。以下步骤将带您前往那里。
+:::
+
+1. 点击 Bitbucket 右上角的头像，然后点击**账户设置**。
+2. 在打开的 Atlassian 账户页面，点击**安全**选项卡。
+3. 点击**创建和管理 API 令牌**，然后点击**创建带作用域的 API 令牌**。
+4. 输入令牌名称（例如 `warp-oz-agent`）并选择到期日期。
+5. 点击**下一步**。
+6. 选择 **Bitbucket** 作为应用并点击**下一步**。
+7. 在**选择 Bitbucket 作用域**搜索框中搜索 `repository`，然后选择 **read:repository:bitbucket**（查看您的仓库）。
+8. 点击**下一步**。
+9. 点击**创建令牌**。
+10. 立即复制令牌值。它只显示一次，之后无法检索。
+
+:::note
+**read:repository:bitbucket** 是克隆仓库所需的最小范围。如果未来的工作流要求 agent 推送提交或打开拉取请求，您还需要 **write:repository:bitbucket**。
+:::
+
+---
+
+### 第 2 步：将令牌存储为 Warp 管理的密钥
+
+Warp 在运行时将管理的密钥作为环境变量注入，从不在日志或配置文件中暴露它们。有关范围限定和管理密钥的完整详情，请参阅[密钥](/agent-platform/cloud-agents/secrets/)文档。
+
+1. 运行以下命令：
+
+```bash
+oz secret create --team BITBUCKET_API_TOKEN
+```
+
+2. 提示时粘贴令牌。
+
+值被存储和加密，创建后无法检索。
+
+:::note
+使用 `--team` 创建对所有团队成员和自动化触发器可用的共享令牌。使用 `--personal` 如果每个团队成员应使用自己的 Atlassian 账户令牌进行身份验证。个人密钥适用于所有触发器，并在两者都存在时优先于同名的团队密钥。
+:::
+
+如果需要更新密钥值，运行：
+
+```bash
+oz secret update --value BITBUCKET_API_TOKEN
+```
+
+---
+
+### 第 3 步：使用克隆设置命令创建环境
+
+创建一个在每次 agent 运行开始时使用令牌克隆仓库的环境。在克隆 URL 中使用静态用户名 `x-bitbucket-api-token-auth`——这是一个适用于 API 令牌的 Bitbucket 特定占位符，意味着您无需单独存储 Bitbucket 用户名。
+
+1. 运行以下命令：
+
+```bash
+oz environment create \
+  --name "my-bitbucket-cloud-env" \
+  --docker-image <image> \
+  --setup-command 'git clone https://x-bitbucket-api-token-auth:$BITBUCKET_API_TOKEN@bitbucket.org/your-workspace/your-repo.git' \
+  --setup-command 'cd your-repo && <install dependencies>'
+```
+
+:::caution
+在引用密钥的设置命令周围使用单引号。双引号会导致您的 shell 立即展开 `$BITBUCKET_API_TOKEN`（为空），而不是让 Warp 在运行时在容器内注入密钥。
+:::
+
+2. 替换以下占位符：
+   * `<image>` 替换为您的 Docker 镜像（例如 `node:22`、`python:3.12` 或 [Warp 预构建开发镜像](https://github.com/warpdotdev/oz-dev-environments)）
+   * `bitbucket.org/your-workspace/your-repo.git` 替换为您的实际仓库 URL
+   * 第二个 `--setup-command` 替换为您的项目所需的任何依赖安装或构建步骤（例如 `npm ci` 或 `pip install -r requirements.txt`）
+
+:::caution
+设置命令在每次 agent 运行的干净容器上执行。将它们编写为幂等的——假设现有状态的命令可能不可预测地失败。请参阅[环境设计和最佳实践](/agent-platform/cloud-agents/environments/#environment-design-and-best-practices)获取指导。
+:::
+
+3. 记下返回的环境 ID。您在下一步中需要它。
+
+---
+
+## Bitbucket Data Center / Server
+
+### 第 1 步：生成 HTTP 访问令牌
+
+1. 在 Bitbucket 中点击您的头像，然后点击**管理账户**。
+2. 在左侧边栏中，点击 **HTTP 访问令牌**。
+3. 点击**创建令牌**。
+4. 输入令牌名称（例如 `warp-oz-agent`）并根据管理员要求选择到期日期。
+5. 在**权限**下，为**仓库**权限选择**读取**。
+6. 点击**创建令牌**。
+7. 立即复制令牌值。它只显示一次，之后无法检索。
+
+:::note
+**仓库读取**是克隆仓库所需的最小权限。如果未来的工作流要求 agent 推送提交，您还需要**仓库写入**。
+:::
+
+---
+
+### 第 2 步：将令牌存储为 Warp 管理的密钥
+
+1. 运行以下命令：
+
+```bash
+oz secret create --team BITBUCKET_TOKEN
+```
+
+2. 提示时粘贴令牌。
+
+---
+
+### 第 3 步：使用克隆设置命令创建环境
+
+1. 运行以下命令：
+
+```bash
+oz environment create \
+  --name "my-bitbucket-dc-env" \
+  --docker-image <image> \
+  --setup-command 'git clone -c "http.extraHeader=Authorization: Bearer $BITBUCKET_TOKEN" https://your-server.com/scm/your-project/your-repo.git' \
+  --setup-command 'cd your-repo && <install dependencies>'
+```
+
+2. 替换占位符。
+
+---
+
+## 第 4 步：测试您的环境
+
+```bash
+oz agent run-cloud --environment <ENV_ID> --prompt "Your task here"
+```
+
+---
+
+## 后续步骤
+
+* **Slack** — 标记 **@Oz** 以启动针对 Bitbucket 仓库的 agent 运行。请参阅 [Slack](/agent-platform/cloud-agents/integrations/slack/)。
+* **Linear** — 标记 **@Oz** 以启动工作流。请参阅 [Linear](/agent-platform/cloud-agents/integrations/linear/)。
+* **计划 Agent** — 按重复计划运行 agent。请参阅[计划 Agent](/agent-platform/cloud-agents/triggers/scheduled-agents/)。

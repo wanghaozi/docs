@@ -1,0 +1,63 @@
+---
+title: 全局热键
+description: >-
+  使用全局热键即时显示或隐藏 Warp，包括一个专用的 Quake 风格下拉窗口。
+sidebar:
+  label: "全局热键"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+:::note
+在 macOS 上，[系统键盘快捷键](https://support.apple.com/en-us/HT201236) 如 `CMD-ESC`、`CMD-BACKTICK`、`CMD-TAB`、`CMD-PERIOD` 和 `CMD-TILDE` 需要在 Warp 中使用之前 [解除绑定](https://support.apple.com/guide/mac-help/keyboard-shortcuts-mchlp2262/mac)。
+:::
+
+:::caution
+在 Linux 上，全局热键可能无法在未实现 [扩展窗口管理器提示](https://en.wikipedia.org/wiki/Extended_Window_Manager_Hints) 的某些 X11 窗口管理器上工作。一些示例包括：[sowm](https://github.com/dylanaraps/sowm)、[catwm](https://github.com/pyknite/catwm)、[Fvwm](https://www.fvwm.org/)、[dwm](https://dwm.suckless.org/)、[2bWM](https://github.com/venam/2bwm)、[monsterwm](https://github.com/c00kiemon5ter/monsterwm)、[TinyWM](https://github.com/mackstann/tinywm)、[x11fs](https://github.com/sdhand/x11fs)、[XMonad](https://xmonad.org/)
+:::
+
+## 如何访问
+
+### 专用窗口
+
+专用窗口允许您自定义窗口的固定位置以及相对于活动屏幕尺寸的宽度和高度比例（也称为 Quake 模式）。
+
+1. 打开 **设置** > **功能** > **键**，并从全局热键下拉菜单中选择"专用热键窗口"以启用该功能。
+2. 配置键位绑定、窗口位置、屏幕和相对大小，或取消选中"失去键盘焦点时自动隐藏"，这将导致专用热键窗口在被触发时保持在最前，无论鼠标或键盘焦点如何。
+
+:::caution
+在 Linux 和 Windows 上，Warp 不支持"失去键盘焦点时自动隐藏"功能。
+:::
+
+### 显示/隐藏所有窗口
+
+显示/隐藏所有窗口允许您配置一个快捷键来显示/隐藏所有 Warp 窗口。
+
+1. 打开 **设置** > **功能** > **键**，并从全局热键下拉菜单中选择"显示/隐藏所有窗口"以启用该功能。
+2. 配置您偏好的键位绑定。
+
+:::caution
+在 Linux 上，隐藏的窗口可能不会出现在您的 `ALT-TAB` 窗口切换器菜单中。此外，切换后顶部窗口之外的窗口顺序可能会发生变化。
+:::
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/Dedicated-Window.mp4" label="全局热键 - 专用窗口演示" />
+
+<DemoVideo src="/assets/terminal/Show-Hide-All-Windows.mp4" label="全局热键 - 显示/隐藏所有窗口演示" />
+
+## 热键专用窗口故障排除
+
+请查看以下平台特定的全局热键故障排除说明：
+
+<Tabs>
+  <TabItem label="macOS">
+    如果键位绑定不起作用，请检查 `系统偏好设置 > 安全性与隐私 > 辅助功能`，并勾选授权 Warp 访问的复选框。
+  </TabItem>
+  <TabItem label="Windows">
+    在 Windows 上，没有已知的全局热键专用窗口问题。如果您发现问题，请 [发送反馈](/support-and-community/troubleshooting-and-support/sending-us-feedback/) 告知我们。
+  </TabItem>
+  <TabItem label="Linux">
+    热键窗口在某些窗口尺寸下可能出现在错误的显示器上。例如，使用 GNOME 时，如果热键窗口本应显示在具有任务栏（GNOME Panel）的显示器上，并且窗口高度为 100%，导致重叠，热键窗口可能会回退到外部显示器（如果您有）。尝试将窗口高度设置为较低的百分比来解决，例如 90%。
+  </TabItem>
+</Tabs>

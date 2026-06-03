@@ -1,0 +1,507 @@
+---
+title: 模型上下文协议（MCP）
+description: >-
+  在 Warp 应用中配置 MCP 服务器，通过标准化接口使用自定义工具和数据源扩展本地 Agent。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import DemoVideo from '@components/DemoVideo.astro';
+
+MCP 服务器通过标准化接口暴露自定义工具或数据源，以模块化、灵活的方式扩展 Warp 的[本地 Agent](/agent-platform/local-agents/interacting-with-agents/)——本质上充当 Warp 的插件。Warp 支持多种连接协议，包括 Streamable HTTPS 和 SSE，以及自定义标头和环变量。
+
+MCP 是一个开源协议。查看官方 [MCP 文档](https://modelcontextprotocol.io/introduction)了解更多关于此协议设计的详细信息。
+
+:::note
+此页面涵盖 Warp 应用中本地 Agent 的 MCP 服务器。有关在本地、云和共享 MCP 工作流之间进行选择的帮助，请参阅[使用 MCP 工作流将开发工具连接到 Agent](/guides/external-tools/using-mcp-servers-with-warp/)。如果您使用云 Agent，请参阅[云 Agent 的 MCP 服务器](/agent-platform/cloud-agents/mcp/)。
+:::
+
+### 如何访问 MCP 服务器设置
+
+您可以通过以下任一方式导航到 MCP 服务器页面：
+
+* 从[设置页面](warp://settings/mcp)：**设置** > **Agent** > **MCP 服务器**
+* 从 [Warp Drive](/knowledge-and-collaboration/warp-drive/)：在**个人** > **MCP 服务器**下
+* 从[命令面板](/terminal/command-palette/)：搜索 `Open MCP Servers`
+* 从 Warp 应用：**设置** > **Agent** > **Warp Agent** > **管理 MCP 服务器**
+
+这将显示所有已配置的 MCP 服务器列表，包括当前正在运行的哪些。如果您在 MCP 服务器运行时关闭 Warp，它会在下次启动 Warp 时再次运行。已停止的 MCP 服务器在下次启动 Warp 时将保持停止状态。
+
+<figure style={{ maxWidth: "563px" }}>
+![MCP 服务器页面](../../../../../assets/agent-platform/mcp-servers-list.png)
+<figcaption>MCP 服务器页面。</figcaption>
+</figure>
+
+### 添加 MCP 服务器
+
+要添加新的 MCP 服务器，您可以点击 **+ 添加**按钮。来自大多数 MCP 客户端的配置可以直接复制粘贴。
+
+您可以添加的 MCP 服务器类型：
+
+<Tabs>
+  <TabItem label="CLI 服务器（命令）">
+    提供一个启动命令。Warp 将在启动时启动此命令，并在退出时关闭它。
+
+    <figure style={{ maxWidth: "375px" }}>
+    ![添加 CLI MCP 服务器（命令）](../../../../../assets/agent-platform/mcp-servers-add-cli.png)
+    <figcaption>添加 CLI MCP 服务器（命令）。</figcaption>
+    </figure>
+
+    :::note
+    当您的 MCP 服务器命令或参数包含相对路径时，始终显式设置 `working_directory`。这确保跨机器和会话的一致可预测行为。
+    :::
+
+    **CLI 服务器（命令）MCP 配置属性**
+
+    | 属性                | 类型      | 必需 | 描述                                                                         |
+    | ------------------- | --------- | -------- | ----------------------------------------------------------------------------------- |
+    | `command`           | string    | 是      | 要启动的可执行文件（例如 `npx`）。                                             |
+    | `args`              | string\[] | 是      | 传递给 `command` 的命令行参数数组（例如模块名称、路径）。     |
+    | `env`               | object    | 否       | 环境变量的键值对象（例如 API Token）。                       |
+    | `working_directory` | string    | 否       | 运行命令的工作目录路径，用于解析相对路径。 |
+  </TabItem>
+  <TabItem label="可流式 HTTP 或 SSE 服务器（URL）">
+    提供一个 URL，Warp 可以连接到一个已经运行、支持 Server-Sent Events 的 MCP 服务器。
+
+    <figure style={{ maxWidth: "375px" }}>
+    ![添加 SSE MCP 服务器（URL）](../../../../../assets/agent-platform/mcp-servers-add-sse.png)
+    <figcaption>添加 SSE MCP 服务器（URL）。</figcaption>
+    </figure>
+
+    **可流式 HTTP 或 SSE 服务器（URL）MCP 配置属性**
+
+    | 属性      | 类型   | 必需 | 描述                                                       |
+    | --------- | ------ | -------- | ----------------------------------------------------------------- |
+    | `url`     | string | 是      | 通过 Server-Sent Events (SSE) 连接的 HTTP 端点 URL。 |
+    | `headers` | object | 否       | 标头变量的键值对象（例如 Authorization）。       |
+  </TabItem>
+</Tabs>
+
+### 添加多个 MCP 服务器
+
+Warp 支持使用 JSON 片段配置**多个 MCP 服务器**。`mcpServers` 下的每个条目由唯一名称（`filesystem`、`github`、`notes` 等）作为键名。示例中定义的所有服务器都会自动添加——无需手动设置。
+
+要添加多个 MCP 服务器，您可以点击 **+ 添加**按钮，然后粘贴如下示例的 JSON 片段：
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/files"]
+    },
+    "notes": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-notes", "--notes-dir", "/Users/you/Documents/notes"]
+    },
+    "externalDocs": {
+      "url": "http://localhost:4000/mcp/stream",
+      "headers": {
+            "my-header": "my-header-value"
+      }
+    }
+  }
+}
+```
+
+### 基于文件的 MCP 服务器
+
+与在 Warp 设置中手动添加服务器相比，基于文件的服务器在 Warp 检测到的配置文件中定义，并且可以自动生成。它们提供了一些额外的好处：
+
+* **可直接通过 agent 配置** - 使用内置的 [skill](#using-agent-add-mcp) `/agent-add-mcp`，让 Warp 的 agent 无需离开对话即可添加或更新 MCP 服务器。
+* **跨提供商和仓库继承** - Warp 读取 `.warp/.mcp.json` 文件，也会拾取来自第三方 agent 提供商（Claude Code、Codex 等）的配置。相同的服务器定义可跨工具和仓库跟随您。
+
+#### 受支持的提供商
+
+Warp 从以下提供商读取 MCP 服务器定义：
+
+| 提供商 | 全局配置 | 项目作用域配置 | 自动生成 |
+| -------- | ------------- | --------------------- | ---------- |
+| Warp | `~/.warp/.mcp.json` | 项目根目录下的 `.warp/.mcp.json` | 默认开启 |
+| Claude Code | `~/.claude.json` | 项目根目录下的 `.mcp.json` | 需要切换 |
+| Codex | `~/.codex/config.toml` | 项目根目录下的 `.codex/config.toml` | 需要切换 |
+| 其他 Agent | `~/.agents/.mcp.json` | 项目根目录下的 `.agents/.mcp.json` | 需要切换 |
+
+全局 Warp 服务器默认自动生成。来自所有其他提供商的全局服务器仅在启用**自动生成来自第三方 Agent 的服务器**时自动生成。来自任何提供商的项目作用域服务器都需要明确批准。
+
+有关特定提供商的设置，请参阅 [Claude Code MCP 文档](https://code.claude.com/docs/en/mcp#user-scope)和 [Codex MCP 文档](https://developers.openai.com/codex/mcp/#connect-codex-to-an-mcp-server)。
+
+#### 自动生成行为
+
+全局 Warp 服务器默认自动生成。第三方 Agent 服务器需要您先启用自动生成。
+
+要自动生成来自第三方 Agent 的全局服务器：
+
+1. 在 Warp 应用中，前往**设置** > **Agent** > **MCP 服务器**。
+2. 开启**自动生成来自第三方 Agent 的服务器**开关。
+
+<figure style={{ maxWidth: "375px" }}>
+![自动生成基于文件的全局 MCP 服务器的开关](/assets/agent-platform/file-based-mcp-setting.png)
+<figcaption>基于文件的 MCP 服务器设置。</figcaption>
+</figure>
+
+来自任何提供商的项目作用域服务器必须从 MCP 服务器页面单独切换开启。这些是会话作用域的——重启 Warp 后，如果您仍然信任该仓库，需要再次开启。
+
+#### 使用 `/agent-add-mcp`
+
+内置的 `/agent-add-mcp` skill 让 Warp 的 agent 创建或更新基于文件的 MCP 服务器定义。选择保存到全局或当前项目——该 skill 会将服务器定义写入匹配的文件：
+
+* **全局：** `~/.warp/.mcp.json`
+* **项目作用域：** `{repo_root}/.warp/.mcp.json`
+
+<DemoVideo src="/assets/agent-platform/file-based-mcp-demo.mp4" label="使用 agent-add-mcp skill 创建基于文件的 MCP 服务器配置" />
+
+演示展示了如何使用 `/agent-add-mcp` 添加 MCP 服务器，选择 Warp 保存基于文件配置的位置，以及在使用服务器前审查生成的 `.warp/.mcp.json` 文件。
+
+#### 安全缓解措施
+
+MCP 配置文件可以启动本地命令并将数据发送到外部工具。Warp 围绕基于文件的 MCP 服务器添加了审批关卡，以降低不受信任的配置更改的风险：
+
+* **配置编辑需要批准** - Warp 阻止对 MCP 配置文件的编辑，除非您明确批准更改。这可以防止 agent 或自动化静默添加可以运行命令或访问数据的服务器。
+* **项目作用域服务器从不自动生成** - Warp 检测克隆仓库中的项目作用域 MCP 配置文件，但要求您手动启动每个服务器。这可以防止克隆的仓库自动启动运行任意本地命令的 MCP 服务器。
+
+:::note
+需要 OAuth 的基于文件的服务器在首次生成时显示身份验证模态框。凭据保存用于未来的生成，与手动配置的 MCP 服务器相同。
+:::
+
+### 管理 MCP 服务器
+
+MCP 服务器在 Warp 中注册后，您可以从 MCP 服务器页面**启动**或**停止**它们。每个正在运行的服务器将显示可用工具和资源的列表。
+
+您可以重命名和编辑服务器的名称，以及删除服务器。如果您是团队的一部分，您还可以与您的团队成员共享 MCP 服务器。
+
+### 共享 MCP 服务器
+
+MCP 服务器可以通过点击共享图标与您的团队成员共享。共享时，`env` 配置中的敏感值将自动被擦除并替换为变量。
+
+<figure style={{ maxWidth: "375px" }}>
+![共享 MCP 服务器](../../../../../assets/agent-platform/mcp-servers-share.png)
+<figcaption>共享 MCP 服务器。</figcaption>
+</figure>
+
+您的团队成员可以在其 MCP 设置的 `Shared` 部分找到共享的 MCP 服务器。当您的团队成员安装您的服务器配置时，他们将得到提示输入任何被擦除的 `env` 值。
+
+Warp 还提供开箱即用的 MCP 服务器，任何人都可以安装。这些可以在您的 MCP 设置的 `Shared` 部分找到。
+
+### MCP 服务器中的身份验证
+
+大多数 MCP 服务器需要身份验证才能连接到外部服务。Warp 支持以下方法：
+
+* **环境变量**：通过服务器的环境变量传递 API 密钥或访问令牌。
+* **OAuth 登录（一键安装）**：通过浏览器处理身份验证，简化配置。Warp 将凭据安全地存储在您的设备上，并在未来的会话中重用它们。在新机器上打开 Warp 时需要重新验证。
+  * 启动没有现有凭据的服务器会自动打开基于浏览器的身份验证流程。
+  * 凭据可以随时从 Warp 的 MCP 服务器窗格中撤销。
+* **自定义标头**：通过标头变量传递身份验证 Bearer Token。
+
+### 调试 MCP
+
+如果您在使用 MCP 服务器时遇到问题，您可以通过从 MCP 服务器页面点击服务器上的"查看日志"按钮来检查日志以获取任何错误或消息，帮助您诊断问题。
+
+:::caution
+如果您选择与任何人共享您的 MCP 服务器日志，**在共享之前确保删除任何敏感信息**，因为它们可能包含 API 密钥。
+
+许多基于 SSE 的 MCP 服务器会声明您的 URL 应像密码一样对待，并且可以在没有额外身份验证的情况下使用。
+:::
+
+:::note
+提示：我们注意到某些模型与其他模型相比，与 MCP 服务器的配合效果更好。如果您在调用或使用 MCP 服务器时遇到困难，请尝试使用不同的模型。
+:::
+
+#### 调试 MCP 身份验证问题
+
+在某些情况下，您可能需要重置某些 MCP 服务器的身份验证令牌。为此，请删除本地 MCP 身份验证文件，运行以下命令：`rm -rf ~/.mcp-auth`
+
+:::caution
+请注意，这将删除您本地存储的所有 MCP 身份验证令牌，因此您需要重新登录和重新验证。
+:::
+
+如果上述方法无效，您可能需要重置或更改身份验证，您可能需要切换到基于 CLI 的 MCP 服务器配置并通过环境变量提供令牌。请参阅 [Sentry CLI MCP 示例](/agent-platform/capabilities/mcp/#sentry)。
+
+### MCP 日志的存储位置
+
+Warp 将 MCP 日志保存在您的计算机本地。您可以直接打开文件并检查以下位置的完整内容：
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    cd "$HOME/Library/Group Containers/2BBY89MBSN.dev.warp/Library/Application Support/dev.warp.Warp-Stable/mcp"
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    Set-Location $env:LOCALAPPDATA\warp\Warp\data\logs\mcp
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    cd "${XDG_STATE_HOME:-$HOME/.local/state}/warp-terminal/mcp"
+    ```
+  </TabItem>
+</Tabs>
+
+## MCP 服务器配置示例
+
+以下是流行模型上下文协议（MCP）服务器的示例。
+
+* **CLI 服务器（命令）** — 基于本地 `npx` 或 `docker` 命令的 MCP 服务器。
+* **可流式 HTTP 或 SSE 服务器（URL）** — 远程或本地托管的 MCP 端点。
+
+### **工程与运维**
+
+<Tabs>
+  <TabItem label="GitHub">
+    [GitHub MCP 文档](https://github.com/github/github-mcp-server)
+
+    **GitHub CLI 服务器（命令）**
+
+    ```json
+    {
+      "GitHub": {
+        "command": "docker",
+        "args": ["run","-i","--rm","-e","GITHUB_PERSONAL_ACCESS_TOKEN","ghcr.io/github/github-mcp-server"],
+        "env": {
+          "GITHUB_PERSONAL_ACCESS_TOKEN": "<your_github_token>"
+        }
+      }
+    }
+    ```
+
+    **GitHub SSE 服务器（URL）**
+
+    ```json
+    {
+      "GitHub": {
+        "url": "https://api.githubcopilot.com/mcp/"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Sentry">
+    [Sentry MCP 文档](https://docs.sentry.io/product/sentry-mcp/)
+
+    **Sentry CLI 服务器（命令）**
+
+    ```json
+    {
+      "Sentry": {
+        "command": "npx",
+        "args": ["-y","mcp-remote@latest","https://mcp.sentry.dev/mcp"]
+      }
+    }
+    ```
+
+    **Sentry SSE 服务器（URL）**
+
+    ```json
+    {
+      "Sentry": {
+        "url": "https://mcp.sentry.dev/sse"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Grafana">
+    [Grafana MCP 文档](https://github.com/grafana/mcp-grafana)
+
+    **Grafana CLI 服务器（命令）**
+
+    ```json
+    {
+      "Grafana": {
+        "command": "docker",
+        "args": ["run","--rm","-i","-e","GRAFANA_URL","-e","GRAFANA_API_KEY","mcp/grafana","-t","stdio","-debug"],
+        "env": {
+          "GRAFANA_URL": "http://localhost:3000",
+          "GRAFANA_API_KEY": "<your_grafana_key>"
+        }
+      }
+    }
+    ```
+
+    **Grafana SSE 服务器（URL）**
+
+    ```json
+    {
+      "Grafana": {
+        "url": "https://your-mcp-host.com/api/mcp/grafana/sse"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Linear">
+    [Linear MCP 文档](https://linear.app/docs/mcp)
+
+    **Linear CLI 服务器（命令）**
+
+    ```json
+    {
+      "Linear": {
+        "command": "npx",
+        "args": ["-y","mcp-remote","https://mcp.linear.app/sse"]
+      }
+    }
+    ```
+
+    **Linear SSE 服务器（URL）**
+
+    ```json
+    {
+      "Linear": {
+        "url": "https://mcp.linear.app/sse"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Chroma">
+    **Chroma 包搜索 CLI 服务器（命令）**
+
+    1. 访问 Chroma 的[包搜索](http://trychroma.com/package-search)页面。
+    2. 点击"获取 API 密钥"以创建或登录您的 Chroma 账户并签发用于包搜索的 API 密钥。
+    3. 签发 API 密钥后，点击"其他"选项卡并复制您的 API 密钥。
+    4. 将以下内容添加到您的 Warp MCP 配置中。确保添加后点击服务器上的"启动"。
+
+    更多信息请参考 [Chroma 的包搜索 MCP 文档](https://docs.trychroma.com/cloud/package-search/mcp)
+
+    ```json
+    {
+        "package-search": {
+          "command": "npx",
+          "args": ["mcp-remote", "https://mcp.trychroma.com/package-search/v1", "--header", "x-chroma-token: ${X_CHROMA_TOKEN}"],
+          "env": {
+            "X_CHROMA_TOKEN": "<YOUR_CHROMA_API_KEY>"
+          }
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### **设计与协作**
+
+<Tabs>
+  <TabItem label="Figma">
+    **Figma 远程 MCP 服务器（推荐）**
+
+    官方 Figma 远程 MCP 服务器支持 OAuth 实现简单的一键设置。
+
+    1. 在 Warp 中，前往 **Warp Drive** > **MCP 服务器** > **+ 添加**并粘贴下面的配置。
+    2. Warp 将打开浏览器窗口以使用 Figma 进行身份验证。
+    3. 批准访问后，凭据将安全地存储在您的设备上。
+
+    :::note
+    注意：需要启用了[开发者模式](https://www.figma.com/dev-mode/)的 Figma 账户。
+    :::
+
+    ```json
+    {
+      "Figma": {
+        "url": "https://mcp.figma.com/mcp"
+      }
+    }
+    ```
+
+    **Figma 本地 MCP 服务器**
+
+    1. 启用官方 Figma MCP 服务器。[Figma MCP 文档](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)
+    2. 打开 [Figma 桌面应用](https://www.figma.com/downloads/)并确保已[更新至最新版本](https://help.figma.com/hc/en-us/articles/5601429983767-Guide-to-the-Figma-desktop-app#h_01HE5QD60DG6FEEDTZVJYM82QW)。
+    3. 创建或打开 Figma 设计文件。
+    4. 在左上角，打开 Figma 菜单。
+    5. 在**偏好设置**下，选择**启用本地 MCP 服务器**。
+    6. 将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Figma (Local)": {
+        "url": "http://127.0.0.1:3845/mcp"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Slack">
+    [Slack MCP 文档](https://github.com/korotovsky/slack-mcp-server/)
+
+    **Slack CLI 服务器（命令）**
+
+    将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Slack": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-slack"],
+        "env": {
+          "SLACK_BOT_TOKEN": "xoxb-<your-bot-token>",
+          "SLACK_APP_TOKEN": "xapp-<your-app-token>",
+          "SLACK_TEAM_ID": "T<your_workspace_id>",
+          "SLACK_CHANNEL_IDS": "<your_channel_id-1>, <your_channel_id-2>",
+          "MCP_MODE": "stdio"
+        }
+      }
+    }
+    ```
+
+    **Slack SSE 服务器（URL）**
+
+    将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Slack": {
+        "url": "https://your-mcp-host.com/api/mcp/slack/sse"
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Atlassian">
+    [Atlassian MCP 文档](https://support.atlassian.com/rovo/docs/setting-up-ides/)
+
+    **Atlassian CLI 服务器（命令）**
+
+    将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Atlassian": {
+        "command": "npx",
+        "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Notion">
+    [Notion MCP 文档](https://developers.notion.com/docs/mcp)
+
+    **Notion CLI 服务器（命令）**
+
+    将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Notion": {
+        "command": "npx",
+        "args": ["-y", "mcp-remote", "https://mcp.notion.com/mcp"]
+      }
+    }
+    ```
+
+    **Notion SSE 服务器（URL）**
+
+    将以下配置输入到 **Warp** > **Warp Drive** > **MCP 服务器** > **+ 添加**。
+
+    ```json
+    {
+      "Notion": {
+        "url": "https://mcp.notion.com/sse"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### MCP 服务器演示
+
+[Warp Guides](/guides/) 托管了一系列演示和指南，展示 MCP 服务器如何扩展您的工作流程。每个示例突出您今天可以尝试的实用用例：
+
+* [**GitHub**](/guides/external-tools/github-mcp-summarizing-open-prs-and-creating-gh-issues/) — 通过 MCP 访问仓库、问题和拉取请求。
+* [**Sentry**](/guides/external-tools/sentry-mcp-fix-sentry-error-in-empower-website/) — 将错误监控和警报作为 agent 可用数据呈现。
+* [**Linear**](/guides/external-tools/linear-mcp-retrieve-issue-data/) — 集成项目管理任务和工单。
+* [**Puppeteer**](/guides/external-tools/puppeteer-mcp-scraping-amazon-web-reviews/) — 通过 MCP 运行自动化浏览器工作流。
+* [**Context7**](/guides/external-tools/context7-mcp-update-astro-project-with-best-practices/) — 尝试外部数据集成。

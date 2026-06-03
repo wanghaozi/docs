@@ -1,0 +1,63 @@
+---
+title: 运行编排的 Agent
+description: 从 Warp 应用、Oz CLI、Oz Web 应用或 Oz API 启动多 Agent 编排，并检查父级和子级对话及制品。
+sidebar:
+  label: "运行编排的 Agent"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+编排运行以生成一个或多个子 Agent 的父 Agent 开始。您可以从 Warp 应用、Oz CLI、Oz Web 应用或 Oz API 启动父级。使用编排运行在扇出前审查计划、在本地或云端执行子级，以及在工作时检查父级和子级对话。
+
+## 开始之前
+
+选择父级运行的位置。每个编排从生成子级的单个父级开始：
+
+* **Warp 应用中的父级** - 使用 `/orchestrate` 或 `/plan` 斜杠命令。这是尝试编排的最快方式。
+* **云中的父级** - 通过 Oz CLI (`oz agent run-cloud`)、[Oz API](/reference/api-and-sdk/) 或任何集成（Slack、Linear、计划）触发父级。父级在环境中运行并从那里生成子级。
+
+## 从 Warp 启动编排运行
+
+在 Warp 应用中，打开 agent 输入并输入 `/orchestrate` 后跟您的任务。Agent 进入 `orchestrate` 模式并在生成任何子级前提议分解方案。
+
+Agent 用描述以下内容的提议响应：
+* 它打算生成的子级数量
+* 每个子级的提示和环境
+* 它期望每个子级返回的内容
+
+批准提议以开始生成子级。
+
+### 在 /plan 期间让 Agent 提议编排
+
+您也可以从 `/plan` 到达相同的批准流程。当您要求 Agent 计划复杂任务时，它将编排视为规划的一部分，并在工作受益时提议使用。
+
+### 从本地父级生成云子级
+
+本地父级可以通过为每个子级指定环境来生成云子级。
+
+## 从 CLI 启动编排运行
+
+使用 `oz agent run-cloud` 启动父级并让 agent 本身在工作时生成子级。
+
+## 从 Oz Web 应用启动编排运行
+
+在 Oz Web 应用的 [**Runs** 页面](https://oz.warp.dev/runs)：点击 **New run**，选择环境，输入父级提示，点击 **Run**。
+
+## 从 API 启动编排运行
+
+使用 `POST /agent/runs` 生成父级。
+
+### Agent 驱动的编排 - 使用 `mode: orchestrate` 启动父级
+### 调用者驱动的编排 - 使用 `parent_run_id` 显式生成每个子级
+
+## 检索对话和制品
+
+使用标准 API 端点获取父级和子级的详情：
+
+* **列出父级的所有后代** - `GET /api/v1/agent/runs?ancestor_run_id=YOUR_PARENT_RUN_ID`
+* **获取一个运行的详情和制品** - `GET /api/v1/agent/runs/YOUR_RUN_ID`
+* **读取规范化的对话** - `GET /api/v1/agent/runs/YOUR_RUN_ID/conversation`
+* **下载原始记录** - `GET /api/v1/agent/runs/YOUR_RUN_ID/transcript`
+
+## 取消整个集群
+
+取消父级**不会**自动取消其子级。要取消所有内容，列出后代并取消每个，然后取消父级。

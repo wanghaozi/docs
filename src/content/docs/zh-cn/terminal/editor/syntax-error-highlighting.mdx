@@ -1,0 +1,54 @@
+---
+title: "语法和错误高亮"
+description: >-
+  在 Warp 的输入编辑器中输入时，实时为命令着色并给错误添加下划线。
+sidebar:
+  label: "语法和错误高亮"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是语法高亮
+
+Warp 支持 [输入编辑器](/terminal/editor/) 中的语法高亮。它给命令的每个部分着色，以帮助区分子命令、选项/标志、参数和变量。
+
+:::caution
+新安装的应用或新创建的别名不会触发语法高亮，直到您打开一个新的 Warp 会话（新窗口、标签或窗格），即使您 `source` 了当前会话中的 RC 文件。
+:::
+
+### 如何访问语法高亮
+
+当语法高亮启用时，Warp 的 [输入编辑器](/terminal/editor/) 会在您输入时自动识别命令的每个部分，并进行语法高亮。
+
+### 如何启用/禁用语法高亮
+
+语法高亮默认启用，切换方式：
+
+* 通过 [命令面板](/terminal/command-palette/)，搜索"语法高亮"选项并点击（或按回车）以启用/禁用。
+* 通过 **设置** > **功能** > **终端输入**，切换"命令语法高亮"
+
+### 语法高亮的工作原理
+
+<VideoEmbed url="https://www.loom.com/share/87b15de13ee9407b98a24f1a31835784?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="语法高亮演示" />
+
+## 什么是错误下划线
+
+Warp 高亮在 [输入编辑器](/terminal/editor/) 中键入的命令中的错误，例如，如果您键入的命令的二进制文件不存在。
+
+:::caution
+新安装的应用或新创建的别名会触发错误下划线，直到您打开一个新的 Warp 会话（新窗口、标签或窗格），即使您 `source` 了当前会话中的 RC 文件。
+:::
+
+### 如何访问错误下划线
+
+当错误下划线启用时，Warp 会自动用红色虚线为任何无效命令添加下划线。
+
+### 如何启用/禁用错误下划线
+
+错误下划线默认启用，切换方式：
+
+* 通过 [命令面板](/terminal/command-palette/)，搜索"语法高亮"选项并点击（或按回车）以启用/禁用。
+* 通过 **设置** > **功能** > **终端输入**，切换"命令错误下划线"
+
+### 错误下划线的工作原理
+
+<VideoEmbed url="https://www.loom.com/share/7721e06ed4aa4e1380abae4f5827ef6f?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="错误下划线演示" />

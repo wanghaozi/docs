@@ -1,0 +1,75 @@
+---
+title: 从 Windows 终端迁移到 Warp
+description: >-
+  从 Windows 终端切换到 Warp（Windows 版本）。重新配置配置文件、shell、字体、键位，并寻找 Warp 中的等效功能。
+---
+
+Windows 版 Warp 涵盖了你目前使用 Windows 终端所做的一切，包括配置文件、PowerShell、配色方案和键位，此外还增加了智能体模式和块功能。本页将介绍迁移过程。
+
+## Warp 可以帮助迁移的内容
+
+Warp 没有一键导入 Windows 终端的工具。由于 Windows 终端将配置文件、配色方案和键位存储在单个 JSON 文件中，Warp 的智能体可以读取该文件并将匹配的值翻译成 Warp 的 `settings.toml`：
+
+```powershell
+%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+```
+
+## 使用 Warp 的智能体迁移设置（推荐）
+
+迁移 Windows 终端设置的最快方式是让 Warp 的智能体直接翻译 `settings.json`。Warp 自带一个 [`settings.toml` 文件](/terminal/settings/)和一个内置的 `modify-settings` 技能，让智能体读取你现有的配置并将等效的值写入 Warp 的设置中，包括将你的配色方案翻译成 Warp [自定义主题](/terminal/appearance/custom-themes/)。
+
+1. 在 Warp 应用中，打开一个新标签页，使用 `Ctrl+I` 切换到[智能体模式](/agent-platform/local-agents/overview/)。
+2. 将以下提示粘贴到智能体模式输入框中，然后按 `Enter`。
+
+   > 读取我的 Windows 终端 `settings.json`（位于 `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`），并使用 `modify-settings` 技能将活动配置文件和配色方案移植到我的 Warp `settings.toml` 中。创建一个匹配的自定义主题。在应用前显示差异对比。
+
+3. 查看建议的差异对比，然后批准更改。Warp 会热重载 `settings.toml`。
+
+如果你希望通过设置 UI 手动配置每个设置，下面的步骤涵盖了最常见的情况。
+
+## 需要手动重新配置的内容
+
+### 默认 shell
+
+Windows 版 Warp 支持 PowerShell（`pwsh` 和 `powershell.exe`）、命令提示符（`cmd`）、bash、zsh 和 fish。Warp 会自动检测你的登录 shell。如需覆盖，请在 Warp 应用中打开**设置** > **功能** > **会话**，然后从**新会话的启动 shell**中选择一个 shell。
+
+如果你使用 PowerShell 模块或自定义 `$PROFILE`，Warp 会像 Windows 终端一样加载它们。
+
+### 配置文件
+
+Windows 终端使用配置文件将 shell、主题、起始目录和字体组合在一起。Warp 没有单一的配置文件概念；相反，需要分别匹配每个维度：
+
+* **Shell** - 在 Warp 应用中从**设置** > **功能** > **会话**配置。
+* **起始目录** - 在 Warp 应用中从**设置** > **功能** > **会话**配置**工作目录**。
+* **字体族和大小** - 在 Warp 应用中从**设置** > **外观** > **文本、字体和光标**配置。
+* **配色方案** - 在 Warp 应用中从**设置** > **外观** > **主题**配置。使用相同的 16 种 ANSI 颜色值将你的 Windows 终端配色方案转换为[自定义 Warp 主题](/terminal/appearance/custom-themes/)。
+* **可复用布局** - 为以前是配置文件的每个工作流程创建一个[标签页配置](/terminal/windows/tab-configs/)。
+
+### 配色方案
+
+Windows 终端的 `schemes` 数组定义了前景色、背景色、光标色和 ANSI 颜色。要匹配现有方案：
+
+1. 从你在 `settings.json` 中使用的方案复制颜色值。
+2. 在 Warp 应用中，打开**设置** > **外观** > **主题**，然后选择一个匹配的预设或[创建自定义主题](/terminal/appearance/custom-themes/)。
+
+### 键位
+
+Warp 的[默认键盘快捷键](/getting-started/keyboard-shortcuts/)涵盖了大多数 Windows 终端的键位。对于来自 `settings.json` 的 `actions` 数组中的自定义键位，请在 Warp 应用中的**设置** > **键盘快捷键**中添加。
+
+### 提示符
+
+如果你使用 `oh-my-posh` 或自定义 PowerShell 提示符，它在 Warp 中仍可继续工作。要在 Warp 的原生提示符和现有 shell 提示符之间选择，请在 Warp 应用中打开**设置** > **外观** > **提示符**。请参阅[提示符](/terminal/appearance/prompt/)。
+
+## Warp 原生等效功能
+
+使用此表查找你在切换后可能寻找的 Windows 终端功能在 Warp 中的对应项：
+
+| Windows 终端中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| 配置文件 | [标签页配置](/terminal/windows/tab-configs/) + [主题](/terminal/appearance/themes/) + 每会话 shell 设置 |
+| 标签页和窗格 | [标签页](/terminal/windows/tabs/)、[垂直标签页](/terminal/windows/vertical-tabs/)、[分屏窗格](/terminal/windows/split-panes/) |
+| 命令面板 | [命令面板](/terminal/command-palette/)（`Ctrl+Shift+P`） |
+| Oh My Posh 提示符 | 继续使用；在 Warp 中选择 [Shell 提示符 (PS1)](/terminal/appearance/prompt/#custom-prompt) |
+| Quake 模式 | [全局热键](/terminal/windows/global-hotkey/) |
+
+在 Windows 终端的功能集之外，Warp 还增加了[智能体模式](/agent-platform/local-agents/overview/)、[块](/terminal/blocks/)和 [Warp Drive](/knowledge-and-collaboration/warp-drive/)。如果你尚未安装，请参阅[Windows 版 Warp 安装](/getting-started/quickstart/installation-and-setup/)。

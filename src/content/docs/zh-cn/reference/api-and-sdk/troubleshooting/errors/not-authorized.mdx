@@ -1,0 +1,57 @@
+---
+title: not_authorized
+description: >-
+  已认证的用户或 API 密钥没有执行所请求操作的权限。
+---
+
+`not_authorized` 错误发生在已认证的主体（用户或 API 密钥）没有足够的权限执行所请求的操作时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `403 禁止访问`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 您尝试访问其他团队或用户拥有的资源
+* 您的 API 密钥没有执行该操作所需的作用域
+* 您尝试执行管理员级别的操作但没有管理员权限
+* 非团队成员尝试执行团队级别的操作
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/not-authorized/",
+  "title": "您没有此操作的权限。",
+  "status": 403,
+  "detail": "用户不是该团队的成员",
+  "instance": "/api/v1/agent/tasks/abc123",
+  "error": "您没有此操作的权限。(用户不是该团队的成员)",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. 确认 API 密钥或用户帐户属于正确的团队。
+2. 检查您的角色是否具有操作所需的权限。
+3. 如果您需要提升权限，请联系团队管理员。
+
+---
+
+## 相关
+
+* [访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/) — 权限模型和身份
+* [Oz API & SDK](/reference/api-and-sdk/) — API 认证和授权

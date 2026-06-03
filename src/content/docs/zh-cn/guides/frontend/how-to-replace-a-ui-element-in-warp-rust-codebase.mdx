@@ -1,0 +1,99 @@
+---
+title: "在 Warp 中替换 UI 元素（Rust 代码库）"
+description: >-
+  在 Warp 中使用代理模式在大型 Rust 代码库中规划和执行图标替换——支持实时差异、自动编译和自我修正。
+sidebar:
+  label: "在 Warp 中替换 UI 元素"
+tags:
+  - "frontend"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的 AI 编码功能进行实时代码更改——在此示例中，通过代理工作流在 Warp 庞大的 Rust 代码库中替换一个图标。
+
+<VideoEmbed url="https://youtu.be/V2pwBN6Vt7k" />
+
+:::note
+此演示展示了 Warp 通过提供结构化提示、实时审查差异以及让代理编译和自我修正，在数百万行代码库中安全地进行智能代码更改的能力。
+:::
+
+<Steps>
+
+1. #### 定义任务
+
+   此处的目标是替换**闪烁图标**的所有实例为新的**代理图标**，尤其是在历史菜单中。
+
+   在 Warp 中打开你的项目，直接提示代理（通过输入或语音）：
+
+   ```
+   Please create a new branch for me according to the format in the attached Linear URL.
+
+   I've attached screenshots of what the Agent Mode and sparkle icons look like.
+   I would like you to understand those icons, search for their use in the code,
+   and wherever we're using sparkles, replace them with the Agent Mode icon.
+   Specifically, make sure this happens in the history menu.
+   Please give me a plan before making any coding changes.
+   ```
+
+   附加任何相关的 Linear 问题链接或截图，以帮助代理准确识别资源。
+
+2. #### 审查计划
+
+   Warp 的代理解析你的请求并生成代码编辑计划。\
+   它识别使用闪烁图标的文件和函数。
+
+   如果计划看起来正确，批准它以继续。
+
+   后续提示示例：
+
+   ```
+   Yes, proceed — and please rename the function from renderAISparklesIcon
+   to something like renderAgentModeIcon.
+   ```
+
+   Warp 自动更新函数名称、资源引用和组件使用。
+
+3. #### 实时查看 AI 差异
+
+   Warp 让你在代理编辑文件时查看实时差异。
+
+   * 差异显示渲染逻辑和函数命名的更改。
+   * 你可以选择自动接受或手动审查差异。
+   * 这些设置可以在 AI 设置 → 自动应用更改下进行调整。
+
+   :::note
+   注意：演示运行时会话启用了"自动接受"，允许 Warp 在差异验证后立即应用它们。
+   :::
+
+4. #### 编译和修复
+
+   编辑后，Warp 的代理运行：
+
+   ```bash
+   cargo check
+   ```
+
+   以验证编译。
+
+   如果编译失败（例如缺少导入），代理会自动修正并重试——模拟人工调试过程。
+
+5. #### 测试更改
+
+   编译后：
+
+   * 在本地运行你的项目以确认视觉更改。
+   * 检查代理图标是否在所有目标位置替换了闪烁图标。
+
+6. #### 总结
+
+   Warp 的代理完成了完整流程：
+
+   1. 理解 Linear 工单和视觉上下文
+   2. 创建新分支
+   3. 规划和执行图标替换
+   4. 自动修复编译问题
+   5. 在应用中验证最终结果
+
+</Steps>

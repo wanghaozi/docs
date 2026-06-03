@@ -1,0 +1,313 @@
+---
+title: 企业分析 API
+description: >-
+  通过编程方式访问团队级使用数据（面向 Warp 企业版），包括团队汇总、用户聚合以及消息级活动事件。
+sidebar:
+  label: "分析 API"
+---
+
+Enterprise Analytics API 让企业管理员将 Warp 使用数据拉取到自己的仪表板、成本分配工具或审计管道中。它通过 HTTPS 提供三个只读端点，返回团队在 Warp 和 Oz 中运行的代理的聚合团队指标、用户聚合数据以及消息级活动事件。
+
+:::note[早期访问]
+Enterprise Analytics API 处于早期访问阶段，所有企业团队均可使用。要开始为你的团队收集数据，管理员需要打开 Warp 应用，然后在**管理面板** > **隐私**中开启 **Enterprise Usage Reporting（早期访问）**——在该开关打开之前，不会记录任何使用数据。
+
+该 API 仅公开**聚合使用指标**（计数、积分消耗、代码变更统计和消息级元数据），不会返回代理对话的原始文本。如需保留和查看完整的对话内容，请在**设置** > **隐私**下启用[云同步对话](/agent-platform/local-agents/cloud-conversations/)。
+:::
+
+## 你可以用 API 做什么
+
+* **构建生产力仪表板** - 使用 `summary` 和 `users` 端点追踪跨用户和团队的使用情况。
+* **分配积分消耗** - 按用户、模型或运行类型（`local` vs. `cloud`）分解使用数据，将成本归因到团队或项目。
+* **审计消息级活动** - 按 `run_type`、`user_id`、`conversation_id`、`message_type` 或 `tool_type` 过滤 `events` 端点，用于合规审查和事件调查。
+* **驱动自定义报表** - 将 JSON 响应导入你的数据仓库、BI 工具或告警系统。
+
+## 前提条件与访问权限
+
+在调用 API 之前，你的团队必须满足以下所有条件：
+
+* **企业版计划** - 早期访问期间，所有企业团队均可使用 Analytics API，无需单独注册。
+* **团队管理员角色** - 如果认证用户不具备企业团队的管理员权限，调用将被拒绝。参见[角色与权限](/enterprise/team-management/roles-and-permissions/)。
+* **个人 Warp API 密钥** - 使用**设置** > **云平台** > **Oz Cloud API Keys** 中的密钥进行请求认证。参见 [API 密钥](/reference/cli/api-keys/)了解详细步骤。这些端点不接受团队 API 密钥——只有属于团队管理员的个人 API 密钥才能使用。
+* **启用 Enterprise Usage Reporting 开关** - 在 Warp 应用中，进入**管理面板** > **隐私**，开启 **Enterprise Usage Reporting（早期访问）**。在该开关打开之前，不会为你的团队记录任何使用数据，即使满足所有其他条件，端点也会返回空数据集。
+
+:::caution
+个人 API 密钥继承创建者的访问权限。请像对待其他管理员凭证一样对待它们，并在团队成员变更时进行轮换。
+:::
+
+## 快速开始
+
+以下示例获取最近一天的团队级汇总数据。首先设置你的 API 密钥：
+
+```bash
+export WARP_API_KEY="wk-..."
+```
+
+然后调用 `summary` 端点：
+
+```bash
+curl "https://app.warp.dev/api/v1/enterprises/analytics/summary" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+一旦管理员为你的团队开启了 **Enterprise Usage Reporting（早期访问）** 开关，你将收到一个 JSON 负载，其中汇总了团队的积分使用和对话计数。请继续查看[端点](#endpoints)部分了解每个端点的详细信息。
+
+## 端点
+
+所有端点共享相同的基础 URL、认证方式和通用验证规则：
+
+* **基础 URL** - `https://app.warp.dev/api/v1/enterprises/analytics`
+* **认证** - 每次请求都需携带 `Authorization: Bearer $WARP_API_KEY` 标头。
+* **日期** - 通过 `start_date` 和 `end_date` 传入 RFC 3339 时间戳（带时区），例如 `2026-04-01T00:00:00Z` 或 `2026-04-01T00:00:00-07:00`。省略时，API 默认为一个以当前时间结束的 1 天窗口。`start_date` 必须严格早于 `end_date`，否则请求返回 `400 Bad Request`。
+* **性能** - 日期范围越宽、`group_by_period` 粒度越细，扫描的数据越多，响应时间可能明显增加。对于频繁刷新的仪表板，建议使用较窄的时间窗口或较粗的分组。
+
+### `GET /api/v1/enterprises/analytics/summary`
+
+返回指定时间窗口内的单个团队级汇总数据，包括对话计数、积分消耗和代码变更活动。当设置了 `group_by_period` 时，响应将是一个时间序列，每个周期一个数据桶。
+
+**查询参数：**
+
+* `start_date`（可选）- RFC 3339 时间戳，默认为 `end_date` 前一天。
+* `end_date`（可选）- RFC 3339 时间戳，默认为当前时间。
+* `group_by_period`（可选）- 可选值 `day`、`week` 或 `month`。设置后，生成的 `period_list` 最多包含 365 个周期；更长的范围或更细的粒度将被拒绝并返回 `400 Bad Request`。
+
+**示例：**
+
+```bash
+curl "https://app.warp.dev/api/v1/enterprises/analytics/summary?start_date=2026-04-01T00:00:00Z&end_date=2026-04-30T23:59:59Z&group_by_period=day" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+**未分组响应结构：**
+
+```json
+{
+  "data": {
+    "local": {
+      "total_conversations_count": 1234,
+      "total_credits_spent": 8421.5,
+      "code_changes": {
+        "file_changes": { "suggested": 412, "accepted": 305 },
+        "lines_of_code": {
+          "suggested": { "added_count": 9821, "removed_count": 2104 },
+          "accepted":  { "added_count": 7102, "removed_count": 1488 }
+        }
+      }
+    },
+    "cloud": {
+      "total_conversations_count": 412,
+      "total_credits_spent": 2310.4,
+      "code_changes": {
+        "file_changes": { "suggested": 88, "accepted": 64 },
+        "lines_of_code": {
+          "suggested": { "added_count": 1450, "removed_count": 320 },
+          "accepted":  { "added_count": 1102, "removed_count": 248 }
+        }
+      }
+    }
+  }
+}
+```
+
+**分组响应结构（`group_by_period=day`）：**
+
+```json
+{
+  "group_by_period": "day",
+  "period_list": ["2026-04-01", "2026-04-02", "..."],
+  "data": {
+    "local": {
+      "total_conversations_count": [42, 51, "..."],
+      "total_credits_spent": [310.1, 412.5, "..."],
+      "code_changes": {
+        "file_changes": { "suggested": [12, 18, "..."], "accepted": [9, 14, "..."] },
+        "lines_of_code": {
+          "suggested": { "added_count": [240, 380, "..."], "removed_count": [55, 90, "..."] },
+          "accepted":  { "added_count": [180, 290, "..."], "removed_count": [40, 70, "..."] }
+        }
+      }
+    },
+    "cloud": { "...": "same shape as local" }
+  }
+}
+```
+
+在分组响应中，每个叶子数组的长度与 `period_list` 相同，每个值的索引对应 `period_list` 中的相同索引。没有记录活动的周期用默认空值填充（数字计数和积分总额为 `0`，`code_changes` 的子对象也为 `0` 值）。
+
+### `GET /api/v1/enterprises/analytics/users`
+
+返回按用户聚合的使用数据，分为 `local`（Warp 应用）和 `cloud`（云代理）两部分。结果支持分页。
+
+**查询参数：**
+
+* `start_date`（可选）- RFC 3339 时间戳，默认为 `end_date` 前一天。
+* `end_date`（可选）- RFC 3339 时间戳，默认为当前时间。
+* `group_by_period`（可选）- 可选值 `day`、`week` 或 `month`。设置后，每个用户记录中按运行类型划分的字段将变为数组，由响应级的 `period_list` 索引。
+* `page`（可选）- 页码，从 1 开始，默认为 `1`。
+* `page_size`（可选）- 每页条目数，默认为 `10`。
+
+**示例：**
+
+```bash
+curl "https://app.warp.dev/api/v1/enterprises/analytics/users?page=1&page_size=25" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+**未分组响应结构：**
+
+```json
+{
+  "data": [
+    {
+      "user_id": "user-uuid-abc",
+      "email": "alex@example.com",
+      "local": {
+        "distinct_conversation_count": 42,
+        "credits_spent": 310.1,
+        "model_usage": [
+          { "model_id": "claude-4-7-opus", "distinct_conversation_count": 30, "credits_spent": 240.0 }
+        ],
+        "code_changes": {
+          "file_changes": { "suggested": 18, "accepted": 12 },
+          "lines_of_code": {
+            "suggested": { "added_count": 412, "removed_count": 88 },
+            "accepted":  { "added_count": 305, "removed_count": 64 }
+          }
+        }
+      },
+      "cloud": { "...": "same shape as local" }
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "page_size": 25,
+    "total_pages": 4,
+    "total_count": 87
+  }
+}
+```
+
+当设置了 `group_by_period` 时，每个 `local`/`cloud` 块中的标量值变为数组，由响应级的 `period_list` 索引（与分组的 `summary` 响应相同）。在 `model_usage` 中，每个条目的 `distinct_conversation_count` 和 `credits_spent` 同样变为数组。
+
+### `GET /api/v1/enterprises/analytics/events`
+
+返回分页的消息级活动事件，用于精细审计和仪表板。每一行对应代理生成或处理的一条消息——与客户端和 Warp UI 看到的规范消息流相同。
+
+**查询参数：**
+
+* `start_date`（可选）- RFC 3339 时间戳，默认为 `end_date` 前一天。`start_date` 和 `end_date` 之间的时间窗口不能超过 365 天。
+* `end_date`（可选）- RFC 3339 时间戳，默认为当前时间。
+* `page`（可选）- 页码，从 1 开始，默认为 `1`。
+* `page_size`（可选）- 每页条目数，默认为 `10`，最大值为 `100`。
+* `run_type`（可选）- 按 `local` 或 `cloud` 过滤。
+* `user_id`（可选）- 单个团队成员的唯一标识符，格式与 `users` 和 `events` 端点返回的一致。
+* `conversation_id`（可选）- 将结果限制到单个对话。
+* `message_type`（可选）- 按消息变体过滤。常见值包括 `agent_output`、`tool_call`、`tool_call_result`、`user_query` 和 `agent_reasoning`；随着新代理功能的推出，还会增加其他值。内部脚手架消息（例如 `model_used`、`server_event`、`messages_received_from_agents`、`events_from_agents` 和 `debug_output`）不会被记录，也不会出现在此处。
+* `tool_type`（可选）- 针对 `tool_call` / `tool_call_result` 消息，限制为特定工具。值为工具的蛇形命名（snake_case）名称，例如 `apply_file_diffs`、`run_shell_command`、`search_codebase`、`grep`、`call_mcp_tool`。
+
+事件按最新优先排序，顺序为 `message_end_timestamp DESC, message_id DESC`。
+
+**示例：**
+
+```bash
+curl "https://app.warp.dev/api/v1/enterprises/analytics/events?run_type=cloud&message_type=tool_call&tool_type=apply_file_diffs&page_size=100" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+**响应结构：**
+
+```json
+{
+  "data": [
+    {
+      "message_id": "msg-uuid",
+      "llm_request_ids": ["llm-req-uuid"],
+      "message_type": "tool_call",
+      "tool_type": "apply_file_diffs",
+      "message_start_timestamp": "2026-04-15T19:21:08Z",
+      "message_end_timestamp": "2026-04-15T19:21:11Z",
+      "conversation_id": "conv-uuid",
+      "user_id": "user-uuid-abc",
+      "email": "alex@example.com",
+      "user_selected_model": "auto",
+      "run_type": "cloud",
+      "model_ids": ["claude-4-7-opus"],
+      "credit_charged": 0.42,
+      "code_changes": {
+        "file_changes": { "suggested": 3, "accepted": 2 },
+        "lines_of_code": {
+          "suggested": { "added_count": 48, "removed_count": 12 },
+          "accepted":  { "added_count": 36, "removed_count": 8 }
+        },
+        "was_edited_by_user": false
+      },
+      "git_context": {
+        "head": "a1b2c3d",
+        "branch": "feature/analytics-api"
+      },
+      "error_type": null
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "page_size": 100,
+    "total_pages": 12,
+    "total_count": 1180
+  }
+}
+```
+
+各字段的填充规则如下：
+
+* `llm_request_ids` 和 `model_ids` 是数组。大多数基于 LLM 的消息只有一个条目，但有些消息可能由多个 LLM 请求支撑。
+* `credit_charged` 是该消息对应 LLM 请求成本的按消息比例分摊。不涉及 LLM 调用的消息（例如客户端提交的 `tool_call_result`）该值为 `0`。
+* `code_changes` 对于不涉及建议或应用文件变更的消息会被省略（或为 `null`）。
+  * `was_edited_by_user` 在用户接受前编辑了 diff 时为 `true`，原样接受时为 `false`，消息没有接受事件时为 `null`。
+* `git_context` 在未捕获消息的 git 状态时会被省略（或为 `null`）。
+* `error_type` 仅当底层 LLM 请求出错时才会填充。
+
+## 分页
+
+`users` 和 `events` 端点使用基于偏移量的分页，通过 `page` 和 `page_size` 查询参数控制。每个分页响应都包含一个 `pagination` 块：
+
+* `current_page` - 返回的页码，从 1 开始。
+* `page_size` - 每页请求的条目数。
+* `total_pages` - 当前查询可用的总页数。
+* `total_count` - 跨所有页匹配查询的记录总数。
+
+要遍历所有数据，先请求 `page=1`，然后递增 `page` 直到获取完 `total_pages` 页。`events` 端点将 `page_size` 上限设为 `100`，超过该值将被拒绝。`users` 端点的 `page_size` 默认为 `10`。
+
+## 常见用例
+
+* **管理层仪表板** - 将 `summary` 端点的分组输出与你的 BI 工具结合，绘制团队使用情况和积分消耗随时间的变化趋势。
+* **成本分配** - 使用 `users` 端点将积分消耗归因到个人、团队或项目，用于成本分摊或展示。
+* **使用情况监控** - 追踪每个用户随时间变化的 `distinct_conversation_count`，识别重度用户、引导新用户，并衡量推广效果。
+* **合规审计追踪** - 使用 `message_type=tool_call` 过滤器拉取 `events` 端点，记录代码变更操作供安全审查。
+
+## 常见问题
+
+### 数据的实时性如何？
+
+使用数据在代理运行时被记录，通常在几分钟内可用。早期访问阶段没有保证的新鲜度 SLA。
+
+### 谁可以调用 API？
+
+任何具有企业团队管理员权限的认证用户。非管理员用户的调用将返回 `403 Forbidden`。
+
+### 使用哪种 API 密钥？
+
+仅限管理员从**设置** > **云平台** > **Oz Cloud API Keys** 创建的**个人** Warp API 密钥。团队 API 密钥会被这些端点明确拒绝。参见 [API 密钥](/reference/cli/api-keys/)了解如何创建。
+
+### 这些调用会收费吗？
+
+不会。Analytics API 调用不消耗 Warp 积分。
+
+### 可以查询什么时间范围？
+
+`events` 端点强制 `start_date` 和 `end_date` 之间的时间窗口不超过 365 天。`summary` 和 `users` 端点没有固定窗口限制，但分组变体的周期数上限为 365 个。
+
+## 相关资源
+
+* [API 密钥](/reference/cli/api-keys/) - 创建和管理个人 Warp API 密钥。
+* [管理面板](/enterprise/team-management/admin-panel/) - 管理团队设置，包括**隐私**部分。
+* [角色与权限](/enterprise/team-management/roles-and-permissions/) - 访问 Analytics API 所需的管理员角色。
+* [架构与部署](/enterprise/enterprise-features/architecture-and-deployment/) - 企业数据的存储位置及其在 Warp 基础设施中的传输方式。

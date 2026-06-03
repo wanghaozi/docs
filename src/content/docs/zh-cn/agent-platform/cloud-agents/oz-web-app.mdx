@@ -1,0 +1,58 @@
+---
+title: Oz Web 应用（云 Agent）
+description: >-
+  使用 Oz Web 应用从任何浏览器或移动设备管理云 Agent、查看运行、创建计划和配置环境及集成。
+sidebar:
+  label: "Oz Web 应用"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+[Oz Web 应用](https://oz.warp.dev)提供用于管理云 Agent 的可视化界面。您可以启动运行、浏览 Agent 和技能、创建计划、配置环境和设置集成——全部无需安装 Warp 或使用 CLI。
+
+:::note
+Oz Web 应用适用于移动设备，因此您可以从任何地方监控和管理云 Agent。
+:::
+
+## 快速参考
+
+| 页面 | 路径 | 您可以做什么 |
+| --- | --- | --- |
+| **运行** | `/runs` | 查看所有运行，按状态/来源/创建者筛选，启动新运行，检查记录 |
+| **Agent** | `/agents` | 浏览已保存的 Agent，创建 Agent，配置默认值，启动运行 |
+| **技能** | `/skills` | 浏览环境中的技能，查看建议技能，为 Agent 创建技能，启动运行 |
+| **计划** | `/schedules` | 创建计划 Agent，暂停/启用计划，查看运行历史 |
+| **环境** | `/environments` | 使用仓库、Docker 镜像和设置命令创建和管理环境 |
+| **密钥** | `/secrets` | 创建和管理 Warp 管理的密钥用于云 Agent 运行 |
+| **集成** | `/integrations` | 连接 Slack 和 Linear 以从外部工具触发 Agent |
+
+## 运行
+
+**Runs** 页面 (`/runs`) 是监控云 Agent 活动的中心视图。它显示跨账户和团队（如适用）的运行，包括从 CLI、API、集成和计划触发的那些。
+
+### 启动新运行
+
+点击 **New run**，选择 Agent 和环境，添加提示，然后点击 **Run**。
+
+### 检查编排运行
+
+Oz Web 应用将[多 Agent 编排](/agent-platform/cloud-agents/orchestration/)渲染为嵌套行，因此您可以一起跟踪父级和子级执行。
+
+## Agent
+
+**Agents** 页面 (`/agents`) 是您浏览、创建和运行已保存 Agent 的地方。Agent 是可重用的云 Agent 配置，可以包括提示、技能、harness、模型、环境和密钥。
+
+## 技能
+
+**Skills** 页面 (`/skills`) 是您浏览和运行技能的地方。
+
+## 计划
+
+**Schedules** 页面 (`/schedules`) 让您创建和管理按 cron 计划自动运行的计划 Agent。
+
+## 环境
+
+**Environments** 页面 (`/environments`) 显示为您的账户配置的所有环境。
+
+## 集成
+
+**Integrations** 页面 (`/integrations`) 让您配置与 Slack 和 Linear 的第一方集成。

@@ -1,0 +1,151 @@
+---
+title: "Oz API 和 SDK 参考"
+sidebar:
+  label: "Oz API & SDK"
+description: >-
+  通过 Oz API 以 HTTP 方式创建和检查云端代理运行，或使用 Python 和 TypeScript SDK
+  进行类型化请求、重试和错误处理。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Oz API 和 SDK 让你可以通过编程方式创建、监控和检查云端代理运行。使用 REST API 从任何 HTTP 客户端调用，或使用官方的 Python 和 TypeScript SDK 获得类型化请求、内置重试和结构化错误处理。SDK 非常适合 CI 流水线、内部工具和自定义集成。
+
+### Oz API
+
+Oz API 让你可以从任何系统（CI、定时任务、后端服务、内部工具）通过 HTTP 创建和检查[云端代理](/agent-platform/cloud-agents/overview/)运行，无需 Warp 桌面应用。
+
+**通过 API 你可以：**
+
+* 通过提交提示以及可选配置（模型、环境、MCP 服务器、基础提示等）来运行代理
+* 通过列出运行和跟踪状态转换（排队 → 进行中 → 成功/失败）来监控执行过程
+* 通过获取运行的完整详情（包括原始提示、来源/创建者元数据、会话链接和已解析的代理配置）来检查结果和来源
+
+:::caution
+本页面为高级概览。\
+\
+有关完整的 API 端点详情，请参阅 [**Agents API 参考**](/api)**。**有关模式定义，请参阅 SDK 仓库：[**Python SDK**](https://github.com/warpdotdev/oz-sdk-python) 和 [**TypeScript SDK**](https://github.com/warpdotdev/oz-sdk-typescript)。
+:::
+
+### Oz SDK
+
+Oz 提供官方的 [Python](https://github.com/warpdotdev/oz-sdk-python) 和 [TypeScript](https://github.com/warpdotdev/oz-sdk-typescript) SDK，封装了 Oz API，并提供：
+
+* **类型化请求和响应**（编辑器自动补全，减少模式错误）
+* **内置重试和超时**（支持逐请求覆盖）
+* **一致的错误类型**，映射到 API 状态码
+* **原始响应辅助工具**，适用于需要处理标头/状态或自定义解析的场景
+
+如果你正在构建集成（CI、Slack 机器人、内部工具、编排器），SDK 通常是最快、最安全的起点。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=0cf7383MZSk" />
+
+**SDK 与原始 REST 的比较**
+
+* 当你需要强类型、标准化错误处理和简便的并发模式时，使用 SDK。
+* 当你希望最小化依赖或完全控制 HTTP 客户端时，使用原始 REST（SDK 在需要时也支持调用未记录的端点）。
+
+:::caution
+有关完整的 SDK 接口和最新用法，请参阅 GitHub 仓库：[**Python SDK**](https://github.com/warpdotdev/oz-sdk-python) 和 [**TypeScript SDK**](https://github.com/warpdotdev/oz-sdk-typescript)。
+:::
+
+---
+
+## Oz API
+
+### REST API 基础 URL
+
+所有端点均通过 HTTPS 提供服务：
+
+```http
+https://app.warp.dev/api/v1
+```
+
+### 核心概念
+
+#### **代理运行**
+
+代理运行表示云端代理的单次执行，通过提示和可选配置创建。每次运行包含：
+
+* 唯一的 `run_id`
+* 人类可读的 `title`
+* 代理执行的 `prompt`
+* 一个 `state`（例如 `QUEUED`、`INPROGRESS`、`SUCCEEDED`、`FAILED`）
+* 时间戳（`created_at`、`updated_at`）
+* 可选的会话信息（`session_id`、`session_link`）
+* 可选的已解析配置（`agent_config`）
+
+有关运行的创建和列出方式的详情，请参阅 [**Agents API 参考**](/api)。
+
+#### **代理配置**
+
+你可以使用 AmbientAgentConfig 影响代理的运行方式，包括：
+
+* `name` — 用于分组、筛选和跟踪的人类可读标签。当你从[技能](/agent-platform/capabilities/skills/)运行代理时，`name` 会自动设置为技能名称。你也可以通过 API、SDK 或 CLI（`--name`）显式设置 `name`，以按意图对运行进行分类——例如，无论触发方式如何，将特定工作流的所有运行分组。使用 `GET /agent/runs` 上的 `name` 查询参数按配置名称筛选运行。
+* `model_id` 用于 LLM 选择
+* `base_prompt` 用于塑造行为
+* `environment_id` 用于选择 `CloudEnvironment`
+* `skill_spec` 用于使用[技能](/agent-platform/capabilities/skills/)作为基础提示（格式：`owner/repo:skill-name` 或 `owner/repo:path/to/SKILL.md`）
+* `mcp_servers` 用于通过 MCP 启用特定工具
+
+有关完整的配置模式，请参阅 [**Python SDK**](https://github.com/warpdotdev/oz-sdk-python) 或 [**TypeScript SDK**](https://github.com/warpdotdev/oz-sdk-typescript)。
+
+---
+
+### 关键端点
+
+**Agents API 暴露三个主要端点：**
+
+*   `POST /agent/run`
+
+    使用提示和可选配置及标题创建新的代理运行。返回 run\_id 和初始状态。
+*   `GET /agent/runs`
+
+    列出运行，支持分页以及按状态、config\_name、model\_id、创建者、来源和创建时间进行筛选。
+*   `GET /agent/runs/{runId}`
+
+    获取单次运行的完整详情，包括会话链接和已解析的配置。
+
+所有端点的语义、查询参数和[错误码](/reference/api-and-sdk/troubleshooting/errors/)均记录在 [Agents API 参考](/api)中。
+
+---
+
+#### 模型参考
+
+API 在多个端点间共享一组可重用的模型。详细的 JSON 模式、类型和枚举可在 SDK 仓库中找到（[Python](https://github.com/warpdotdev/oz-sdk-python)、[TypeScript](https://github.com/warpdotdev/oz-sdk-typescript)）。关键模型包括：
+
+* `RunAgentRequest`
+* `RunAgentResponse`
+* `ListRunsResponse`
+* `RunItem`
+* `PageInfo`
+* `RunStatusMessage`
+* `RunCreatorInfo`
+* `RunState`
+* `RunSourceType`
+* `AmbientAgentConfig`
+* `MCPServerConfig`
+* `Error`
+
+---
+
+## Oz SDK 文档
+
+### Python SDK
+
+Python SDK 是从 Python 服务和脚本调用 Oz API 的推荐方式。它提供：
+
+* 同步 + 异步客户端
+* 类型化请求/响应模型
+* 可配置的重试/超时和结构化错误
+
+参见 [**Python SDK GitHub 仓库**](https://github.com/warpdotdev/oz-sdk-python) 了解安装、完整 API 参考（api.md）和最新示例。
+
+### TypeScript SDK
+
+TypeScript SDK 是从 Node.js 服务和现代 TS/JS 运行时调用 Oz API 的推荐方式。它提供：
+
+* 完全类型化的参数/响应
+* 一流的错误处理、重试/超时
+* 支持 fetch 可用或已 polyfill 的常见运行时
+
+参见 [**TypeScript SDK GitHub 仓库**](https://github.com/warpdotdev/oz-sdk-typescript) 了解安装、完整 API 参考（api.md）和最新示例。

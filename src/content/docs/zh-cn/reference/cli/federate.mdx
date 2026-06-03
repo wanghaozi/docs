@@ -1,0 +1,97 @@
+---
+title: 联合身份令牌
+description: >-
+  从正在运行的代理签发短期的 OIDC 身份令牌，以便向云提供商认证，无需长期凭据。
+sidebar:
+  label: "联合身份"
+---
+
+`oz federate` 为当前正在运行的代理签发短期的 OIDC 身份令牌。使用这些令牌向云提供商（AWS、GCP、Azure 和其他支持 OIDC 的系统）认证，而无需在环境中嵌入长期凭据。
+
+此命令只能在正在运行的代理会话内部调用——通常作为[技能](/agent-platform/capabilities/skills/)、工具或代理在运行过程中执行的脚本的一部分。
+
+## 何时使用联合身份
+
+当您希望代理对云账户进行操作而不在环境中存储服务帐户密钥、访问密钥或刷新令牌时，请使用联合身份令牌。
+
+* **短期凭据** - 令牌按您选择的时间表过期。即使令牌泄漏，其影响范围也是有限的。
+* **无需轮换密钥** - 联合身份消除了在环境或密钥中轮换静态密钥的需求。
+* **每次运行的身份** - 每次运行可以声明不同的主题（用户、团队、环境、技能、运行 ID），为您提供细粒度的 IAM 策略。
+
+有关联合身份的背景信息，请参见云提供商的工作负载身份联合指南（例如 [Google Cloud 的工作负载身份联合](https://cloud.google.com/iam/docs/workload-identity-federation)或 [AWS IAM Identity Center](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc.html)）。
+
+## `oz federate issue-token`
+
+为当前运行签发一个 OIDC 身份令牌。
+
+```sh
+oz federate issue-token \
+  --run-id <RUN_ID> \
+  --audience <AUDIENCE> \
+  [--duration <DURATION>] \
+  [--subject-template <COMPONENT> ...]
+```
+
+### 标志
+
+* **`--run-id <RUN_ID>`** - 请求令牌的 Oz 运行的 ID。令牌绑定到此运行。
+* **`--audience <AUDIENCE>`** - 签发令牌的 `aud` 声明。将其设置为您的云提供商身份池期望的值（例如，AWS IAM Identity Center audience 或 GCP 工作负载身份池 URL）。
+* **`--duration <DURATION>`** - 请求的令牌生命周期。接受人类可读的持续时间，如 `15m`、`1h` 或 `2h30m`。默认为 `1h`。
+* **`--subject-template <COMPONENT> ...`** - 控制 OIDC 令牌的 `sub` 声明的格式。传递一个或多个组件，它们会被连接起来形成主题。默认为 `principal`（例如 `user:my-user-id`）。
+
+### 主题模板组件
+
+主题声明是您的云提供商的策略将匹配的内容，因此选择能为您提供所需 IAM 粒度的组合。支持的组件：
+
+* **`principal`** - 操作主体，如 `user:my-user-id` 或 `service_account:my-sa-id`。`service_account:` 主体对应您团队中的[代理身份](/agent-platform/cloud-agents/agents/)。
+* **`scoped_principal`** - 限定到团队的主体，如 `principal:my-team-id/user:my-user-id`。
+* **`email`** - 主体的电子邮件，如 `email:user@warp.dev`。
+* **`teams`** - 主体的团队，如 `teams:my-team-id`。
+* **`environment`** - 运行使用的[云环境](/agent-platform/cloud-agents/environments/)，如 `environment:my-environment-id`。
+* **`agent_name`** - 运行的配置名称，如 `agent_name:my-agent`。
+* **`skill_spec`** - 启动运行的技能，如 `skill_spec:warpdotdev/repo_path_to_skill`。
+* **`run_id`** - 运行的唯一 ID，如 `run_id:abc123`。
+* **`host`** - 运行所在的自托管工作节点，如 `host:my-worker-id`。
+
+当您传递多个组件时，生成的主题会按您指定的顺序连接它们。
+
+### 示例
+
+签发一个绑定到当前用户的一小时令牌，用于 AWS audience：
+
+```sh
+oz federate issue-token \
+  --run-id "$OZ_RUN_ID" \
+  --audience "sts.amazonaws.com"
+```
+
+签发一个 15 分钟的令牌，其主题标识团队和环境，以便 GCP IAM 策略仅授予该组合的访问权限：
+
+```sh
+oz federate issue-token \
+  --run-id "$OZ_RUN_ID" \
+  --audience "//iam.googleapis.com/projects/123/locations/global/workloadIdentityPools/oz/providers/oz-oidc" \
+  --duration 15m \
+  --subject-template teams environment
+```
+
+## 与云提供商使用令牌
+
+获得令牌后，使用您提供商的标准 OIDC 联合流程将其交换为云凭据。交换发生在云提供商和您的脚本之间——Oz 仅签发 OIDC 令牌。
+
+典型的 AWS 流程：
+
+1. 运行 `oz federate issue-token` 获取 OIDC JWT。
+2. 使用 JWT 和 IAM 角色 ARN 调用 `sts:AssumeRoleWithWebIdentity`。
+3. 使用 STS 返回的临时 AWS 凭据。
+
+典型的 GCP 流程：
+
+1. 运行 `oz federate issue-token` 获取 OIDC JWT。
+2. 调用[安全令牌服务 `token` 端点](https://cloud.google.com/iam/docs/reference/sts/rest/v1/TopLevel/token)将 JWT 交换为联合访问令牌。
+3. 可选地模拟服务帐户以获取最终凭据。
+
+## 相关
+
+* [云环境](/agent-platform/cloud-agents/environments/) - 配置代理运行的环境。
+* [密钥](/agent-platform/cloud-agents/secrets/) - 无法使用联合身份的凭据的替代方案。

@@ -1,0 +1,32 @@
+---
+title: 计划 Agent 快速入门
+description: >-
+  安排云 Agent 自动运行重复任务——问题分类、依赖检查、代码清理等。
+sidebar:
+  label: "快速入门"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+计划 Agent 是按重复 cron 计划运行的云 Agent，自动处理重复任务而无需手动触发。此指南引导您设置一个每周分类 GitHub Bug 报告的 Agent。
+
+---
+
+## 前提条件
+
+* **符合条件的计划上的 Warp 账户** - Build、Max 或 Business，有可用积分。
+* **云环境** - Agent 在包含仓库和其他依赖项的已配置环境中运行。
+
+---
+
+## 1. 设置计划 Agent
+
+1. 从 Oz Web 应用的 [Schedules 页面](https://oz.warp.dev/schedules)点击 **New schedule**。
+2. 输入名称，例如 `Weekly bug report triage`。
+3. 在 **Agent** 下，从建议技能中选择 **github-bug-report-triage**。
+4. 选择您的环境。
+5. 在 **Frequency** 下，选择一个预设或输入自定义 cron 表达式。
+6. 点击 **Create schedule**。
+
+## 2. 观看您的第一次运行
+
+从 [Schedules 页面](https://oz.warp.dev/schedules)，点击计划，点击 ⋮ 并选择 **Run now** 以触发测试运行。

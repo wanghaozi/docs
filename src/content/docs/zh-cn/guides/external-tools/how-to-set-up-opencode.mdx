@@ -1,0 +1,138 @@
+---
+title: 设置 OpenCode
+description: >-
+  在 Warp 中设置 OpenCode，为你的项目进行配置，并学习在 Warp 中实现更快 AI 辅助编码工作流的生产力技巧。
+sidebar:
+  label: "设置 OpenCode"
+tags:
+  - "third-party-tools"
+
+---
+
+OpenCode 是一个在终端中运行的开源编码代理。它支持 75 多种 LLM 提供商，具有内置终端 UI（TUI），并允许你从自然语言提示编辑代码、执行命令和管理会话。本指南将带你在大约 5 分钟内从安装到在 Warp 中运行一个可用的 OpenCode 会话，然后展示如何充分利用它。
+
+## 先决条件
+
+* **一个 LLM 提供商账户**——OpenCode 通过 API 密钥连接到任何受支持的提供商（Anthropic、OpenAI、Google 等），或使用 OpenCode Zen 获取精选模型列表。有关详细信息，请参阅 [OpenCode 配置](https://opencode.ai/docs#configure)。
+* **macOS、Linux 或 Windows（通过 WSL）**——建议在 Windows 上使用 WSL 以获得最佳体验。有关完整的平台详情，请参阅 [OpenCode 文档](https://opencode.ai/docs)。
+
+## 1. 安装 OpenCode
+
+按照[官方 OpenCode 安装指南](https://opencode.ai/docs#install)安装 OpenCode。安装脚本是最快的方法：
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+你也可以通过 npm 或 Homebrew 安装：
+
+```bash
+npm install -g opencode-ai
+```
+
+```bash
+brew install anomalyco/tap/opencode
+```
+
+有关其他安装方法（包括 Homebrew taps、平台特定二进制文件和 Docker），请参阅 [OpenCode 文档](https://opencode.ai/docs#install)。
+
+当你在 Warp 中启动 OpenCode 时，Warp 会自动检测代理会话并显示集成控件，包括富文本输入、代码审查、垂直标签元数据等。
+
+## 2. 身份验证
+
+OpenCode 支持多个 LLM 提供商。在 OpenCode 的 TUI 中运行 `/connect` 命令来配置提供商，或将 API 密钥设置为环境变量：
+
+```bash
+# For Anthropic models
+export ANTHROPIC_API_KEY=YOUR_API_KEY
+
+# For OpenAI models
+export OPENAI_API_KEY=YOUR_API_KEY
+
+# For Google Gemini models
+export GEMINI_API_KEY=YOUR_API_KEY
+```
+
+在 TUI 之外，从命令行运行 `opencode auth login` 进行交互式提供商设置。凭据存储在 `~/.local/share/opencode/auth.json` 中。
+
+## 3. 启动你的第一个会话
+
+导航到任何项目目录并启动 OpenCode：
+
+```bash
+cd ~/your-project
+opencode
+```
+
+OpenCode 启动其 TUI。尝试给它一个任务，例如：
+
+```
+Explain the architecture of this project
+```
+
+或者更实际的任务：
+
+```
+Add input validation to the user registration endpoint
+```
+
+OpenCode 读取相关文件，提议更改，并在修改任何内容之前征求确认。使用 `Tab` 键在计划模式（只读建议）和构建模式（应用更改）之间切换。
+
+## 4. 为你的项目配置
+
+在 TUI 中运行 `/init` 为你的项目初始化 OpenCode。这会分析你的代码库并在项目根目录创建一个 `AGENTS.md` 文件：
+
+```
+/init
+```
+
+`AGENTS.md` 文件教会 OpenCode 你项目的结构和约定。你也可以手动创建或编辑它：
+
+```markdown
+# My Project
+
+## Stack
+- Backend: Python 3.12, FastAPI, SQLAlchemy
+- Frontend: React, TypeScript, Vite
+- Database: PostgreSQL 16
+
+## Commands
+- `npm run dev` starts the dev server
+- `pytest -v` runs the test suite
+- `npm run lint` checks code style
+
+## Conventions
+- Use async/await for all database operations
+- Type hints on all function signatures
+- ESM imports only (no require())
+```
+
+将 `AGENTS.md` 文件提交到 Git，以便你的团队共享相同的项目上下文。
+
+## 5. 设置代理通知
+
+Warp 通过插件支持 OpenCode 的代理通知。如果未安装插件，当你运行 OpenCode 时，Warp 会在终端中显示安装标签，并附带你可以直接遵循的设置步骤。
+
+有关手动安装和配置，请参阅 [Warp 中的 OpenCode（文档）](/agent-platform/cli-agents/opencode/#setting-up-notifications)。
+
+## 生产力技巧
+
+* **使用语音提示 OpenCode**——口述复杂指令而不是输入。Warp 支持适用于任何 CLI 代理（包括 OpenCode）的[语音转录](/agent-platform/local-agents/interacting-with-agents/voice/)。
+* **附加图像作为上下文**——将错误、设计或错误消息的截图粘贴到你的提示中。Warp 的[图像作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)功能让 OpenCode 看到你所看到的。
+* **可视化审查差异**——OpenCode 做出更改后，打开 Warp 的[代码审查面板](/code/code-review/)（`⌘+Shift++`）查看可视化差异。你可以留下内联评论并发送回 OpenCode 进行修正。
+* **将 OpenCode 与其他代理并排运行**——使用[垂直标签](/terminal/windows/vertical-tabs/)在相同任务上并排运行 OpenCode 和 Claude Code 或 Codex。比较它们的方法并选择最佳输出。
+* **编写更丰富的提示**——按 `Ctrl+G` 打开 Warp 的富文本输入编辑器用于 OpenCode，为你提供完整的文本编辑器体验，而不是原始 CLI 输入。
+
+## 后续步骤
+
+你已经安装了 OpenCode、使用提供商进行了身份验证、启动了第一个会话并为你的项目进行了配置。OpenCode 现在在 Warp 中作为一个可工作的编码代理设置完成。
+
+探索相关指南和功能：
+
+* [设置 Ollama 用于本地模型](/guides/external-tools/how-to-set-up-ollama/)将 OpenCode 与本地模型一起运行
+* [代码审查面板](/code/code-review/)——审查和完善代理生成的代码
+* [Warp 中的 OpenCode](https://www.warp.dev/agents/opencode)——Warp 中 OpenCode 支持概述
+* [Warp 中的 OpenCode（文档）](/agent-platform/cli-agents/opencode/)——OpenCode 的 Warp 集成完整参考，包括通知设置
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和 Warp 的通用代理功能
+* [OpenCode 文档](https://opencode.ai/docs)——官方参考
+* [opencode-warp 插件](https://github.com/warpdotdev/opencode-warp)——通知插件源代码和更新

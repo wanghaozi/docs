@@ -1,0 +1,143 @@
+---
+title: 环境变量
+description: >-
+  保存或同步环境变量，以便加载到你的终端会话中。
+---
+
+Warp Drive 中的环境变量让你可以通过点击方式保存、同步和加载环境变量到终端会话中。支持静态值和来自外部管理器（如 1Password、LastPass 和 Hashicorp Vault）的动态密钥，确保凭证安全并远离源代码。
+
+## Warp 中的环境变量是什么？
+
+Warp 中的环境变量类似于 .env 文件，但你可以：
+
+* 通过点击将它们加载到终端会话中。
+* 在参数化工作流中使用它们。
+* 动态引用外部管理器中的密钥。
+
+## 如何创建和编辑环境变量
+
+你可以通过以下方式创建新的环境变量：
+
+* [Warp Drive](/knowledge-and-collaboration/warp-drive/)，+ → 环境变量
+* [命令面板](/terminal/command-palette/)，创建新的团队或个人环境变量
+
+上述任一入口点都会打开环境变量编辑器，你可以在其中命名和描述你的环境变量。
+
+![Warp Drive 中的环境变量编辑器，显示名称和描述字段。](../../../../../assets/terminal/env-var-create.png)
+
+## 管理单个环境变量
+
+Warp 支持两种类型的环境变量：静态变量和动态变量。
+
+### 静态变量
+
+静态变量类似于 .env 文件。你通过输入原始文本字符串来创建变量。每个变量都有一个变量名和对应的值。
+
+![保存带有名称和值对的静态环境变量。](../../../../../assets/terminal/env-var-static-variable-save.png)
+
+保存环境变量后，你可以点击它加载到终端会话中。
+
+![将保存的静态环境变量加载到当前终端会话中。](../../../../../assets/terminal/env-var-static-variable-load.png)
+
+使用静态变量时，Warp 会将它们安全地存储在 Warp Drive 中。\
+\
+注意：静态变量不应替代密钥管理器。任何敏感信息请使用动态变量。
+
+### 动态变量
+
+:::note
+Warp 从不存储动态变量中使用的密钥。Warp 只存储用于在运行时动态检索密钥的命令。
+:::
+
+动态变量让你可以引用存储在 Warp 外部的安全密钥管理器（如 1Password 或 LastPass）中的密钥。
+
+你可以使用自定义命令为任何具有公共 API 或 CLI 的系统（如 AWS 或 Hashicorp Vault）创建动态变量。
+
+### **如何创建和编辑动态环境变量**
+
+要创建新的动态变量：
+
+1. 打开环境变量编辑器。
+2. 使用密钥图标打开动态变量菜单。
+3. 选择集成的密码管理器或"Command"来编写你自己的自定义集成。
+
+![通过编辑器中的密钥图标打开动态环境变量菜单。](../../../../../assets/terminal/env-var-dynamic-variables.png)
+
+#### **集成的密码管理器**
+
+开始之前，请确保你已安装所选工具的 CLI 并按照说明启用 CLI：
+
+* [1Password CLI](https://developer.1password.com/docs/cli/get-started/)
+* [LastPass CLI](https://github.com/lastpass/lastpass-cli)
+
+然后，你可以点击密钥图标并从下拉菜单中选择你的管理器。
+
+![从动态变量下拉菜单中选择集成的密码管理器。](../../../../../assets/terminal/env-var-password-mgrs.png)
+
+CLI 将要求你进行认证，然后提供可用密钥列表。
+
+:::note
+选择密钥名称绝不会存储实际的密钥。Warp 使用你的选择生成一个命令，该命令在运行时动态拉取你选择的密钥。
+:::
+
+![从密码管理器 CLI 的可用密钥列表中选择密钥名称。](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcqiazhpRvaHxxSW5n3Ql6nFRDDRkyVdlRB9E-Q6HE0lpL2KFgwLM1P1PPrJG_i0KIHWuEKp2PMFq4T1auWvQOxXrpuERpLRZG1h2V4DDYmNRZRqShxjPzWyqGR2VfXYNhttAK0HT2-aQNjAt3xdCA9MwE?key=q_xMyXgvJVA02ysqZAH4Jw)
+
+### **如何编写自定义密钥命令**
+
+参考你的外部密钥管理器的文档。然后，编写一个自定义命令来检索密钥。
+
+:::note
+你的自定义命令应返回你希望加载到环境中的确切字符串。请确保你选择了正确的字段，因为许多密钥管理器 CLI 默认会提供额外的格式。
+:::
+
+例如，你可以编写一个使用 [Hashicorp Vault CLI](https://developer.hashicorp.com/vault/docs/commands) 的命令来检索并加载暂存服务器的密码字段。使用密钥命令时，Warp 存储命令但从不存储实际的密钥。密钥在运行时被引用并加载到终端会话中。
+
+```
+// vault kv get -field=password secret/staging/app/server/creds
+```
+
+![使用 Hashicorp Vault CLI 在运行时检索密码字段的自定义命令。](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcltckpSwesjA1O84nzZhUKc0Wuie0OH3iN6g0WPBojhtY5pckPSZgOZxqIjiV12ppe9t0jtF9z2Yf7d-fIZJhSu8-tLIT8CoG_Xh_NvCzFbrJgD5FA2ounNtHurq9nDLALiOekjPeVoru-FzeYOWkfm9PN?key=q_xMyXgvJVA02ysqZAH4JQ)
+
+### 使用环境变量
+
+有三种方式调用你的环境变量并将其加载到终端会话中：
+
+1. [点击加载到当前会话](/knowledge-and-collaboration/warp-drive/environment-variables/#click-to-load-into-a-current-session)
+2. [点击加载到子 Shell](/knowledge-and-collaboration/warp-drive/environment-variables/#click-to-load-into-a-subshell)
+3. [选择与工作流一起加载](/knowledge-and-collaboration/warp-drive/environment-variables/#select-to-load-with-a-workflow)
+
+#### 点击加载到当前会话
+
+首先，从 Warp Drive 或命令面板点击你的环境变量。
+
+然后，查看确认块。如果你的环境变量正确，按回车键将其加载到你的会话中。
+
+![提示将环境变量加载到当前会话的确认块。](../../../../../assets/terminal/env-var-load-to-input-1.png)
+
+![环境变量成功加载到当前终端会话中。](../../../../../assets/terminal/env-var-load-in-session.png)
+
+这些环境变量将在你会话的剩余时间内存在。
+
+#### 点击加载到子 Shell
+
+要将环境变量加载到子 Shell 中，你需要打开 [Warp Drive](/knowledge-and-collaboration/warp-drive/)，在 Warp Drive 索引中找到你的环境变量。然后可以使用溢出菜单选择"在子 Shell 中加载"。
+
+将环境加载到子 Shell 中可以降低环境变量意外污染工作空间的风险。子 Shell 被明确定义，一旦你退出它，任何由 Warp 环境变量设置的环境变量都将被清除，除非它们已经存在于父会话中。
+
+![从 Warp Drive 中环境变量的溢出菜单中选择在子 Shell 中加载。](https://lh7-rt.googleusercontent.com/docsz/AD_4nXeqhj2saz5AJTYUCx-PClwCLX421mKEzXelcnnkeHkqvDexelvBDmPpESHOmV_SjAOEuLKk8YgYaIodX-cOuXm1Nm05wUU88zcIv3otd1HRvXO455EiKEfs5tTB5ft9OoW7qxMK9BV1OPAVIc9AhMqsgweK?key=q_xMyXgvJVA02ysqZAH4Jw)
+
+![环境变量加载到子 Shell 中，与父终端会话隔离。](https://lh7-rt.googleusercontent.com/docsz/AD_4nXeeXyJEMxJV2DpOBJS7pKOEpBSm6aypAIKd4ygJKT13opDBxeS5k0S5NtM8Cr_Z_lafyj-cn1T-hJ-93AkZhpWTrbvYHYIRs96_V7dr3mfiM3lPx6-kMS_eLjINPHIr6Ex0NaMr-TRCkNQ1fdVv8cApJ0QJ?key=q_xMyXgvJVA02ysqZAH4Jw)
+
+#### 选择与工作流一起加载
+
+每次运行工作流时，你都可以从现有的环境变量中选择。这允许你动态地将环境变量注入参数化工作流，从而可以在多个环境（例如生产环境和暂存环境）中使用单个工作流命令。
+
+例如，你可能有一个创建新团队的工作流，该工作流使用环境变量 $SERVER\_URL。通过使用工作流卡中的环境变量下拉菜单，你可以动态注入必要的变量。这确保工作流引用适当的值，使命令能够使用相关的环境特定信息运行。
+
+这些环境变量将在你会话的剩余时间内存在，直到你清除它们或用不同的环境覆盖它们。
+
+![运行参数化工作流时，从下拉菜单中选择环境变量。](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcuOxH8UeVLSvWRpZwvdoVBgbpFhb2rXKbDw2CnZ5BQCTWSgzjwERe-fzKLEYBQZGKzjV-Pdd_z6tB9BTSWYos9ADRaDbChskSg-MZpjaKme0kG8UwWsJ2HBJk7iBu4SKbGZCobZy0uD2nFkrNoVjNZEEOW?key=q_xMyXgvJVA02ysqZAH4JQ)
+
+### 在 Warp Drive 中导入和导出环境变量
+
+请参见我们的 [Warp Drive 导入和导出](/knowledge-and-collaboration/warp-drive/#import-and-export)说明。

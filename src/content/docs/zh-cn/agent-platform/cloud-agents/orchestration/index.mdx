@@ -1,0 +1,67 @@
+---
+title: 多 Agent 编排
+description: 协调本地和云运行中的父级和子级 Agent，以在 Oz Platform 上构建监督者/工作者、扇出、批评者、DAG 和群体工作流。
+sidebar:
+  label: "编排"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+多 Agent 编排让一个 Agent 生成并协调其他 Agent，以并行化工作、委派专门任务或验证另一 Agent 的输出。父/子模型适用于 Warp 应用、[Oz CLI](/reference/cli/) 和 [Oz API](/reference/api-and-sdk/)，并支持本地、云和混合执行。
+
+观看此演示，了解云 Agent 如何协调云端的一组 Agent。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=qeR79bhyFOw" title="如何使用 Warp 在云端编排一组 Agent" />
+
+此页面涵盖编排模型及其支持的模式。要了解如何启动编排运行，请参阅[运行编排 Agent](/agent-platform/cloud-agents/orchestration/multi-agent-runs/)。
+
+## 父/子模型
+
+编排工作流始终有一个**父 Agent** 和一个或多个**子 Agent**。
+
+* **父 Agent** - 决定需要做什么工作、生成子 Agent 并（可选）合并其结果的 Agent。任何 Agent 在首次生成子级时都可以成为父级。
+* **子 Agent** - 由父级生成的 Agent，具有自己的提示、环境和（可选）不同的模型或 agent 运行时。子级运行自己的工作并报告；它不生成自己的子级。
+
+目前的编排恰好是一层深：父级和它的直接子级。Warp 应用、[Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)和 [Oz API](/reference/api-and-sdk/) 渲染这一层。父级和每个子级各自有一个独立的**运行**，具有自己的生命周期、记录、对话和积分使用。
+
+### 父 Agent 和子 Agent 可以运行的位置
+
+父级和子级不必在同一个地方运行。编排支持四种组合：
+
+* **本地 → 本地** - Warp 应用中的[Warp Agent](/agent-platform/local-agents/overview/) 对话在同一台机器上生成子 Warp Agent 对话。无需启动云基础设施即可尝试编排模式。
+* **本地 → 云** - 本地父级生成一个或多个在 Warp 托管或自托管基础设施上的[环境](/agent-platform/cloud-agents/environments/)中运行的云子级。子级并行执行时父级继续工作。
+* **云 → 云** - 云父级生成各自在自身环境中运行的云子级。这是审查群体、大型扇出以及从 Slack、Linear、计划或 API 触发的任何编排的规范模式。
+* **云 → 云本地** - 云父级生成在父级自己的云环境中运行的子级，而不是每个子级获得自己的环境。当子级需要与父级共享状态（文件系统、长时间运行的进程、shell 会话）或为每个子级启动环境可能浪费时很有用。
+
+子级也可以使用与父级不同的 agent 运行时运行。使用默认 Warp Agent 运行的父级可以生成使用 [Claude Code](/agent-platform/cli-agents/claude-code/) 或 [Codex](/agent-platform/cli-agents/codex/) 运行的子级，反之亦然。
+
+## 运行状态转换
+
+每个运行经历一小套状态。父级观察这些转换以决定下一步做什么——继续等待、发送后续指令、生成替代或完成。
+
+子级运行可以达到的主要用户可见状态有：
+
+* **`INPROGRESS`** - 正在积极执行（或在阻塞后重新启动）。
+* **`SUCCEEDED`** - 成功完成。
+* **`FAILED`** - 遇到终端故障。
+* **`BLOCKED`** - 等待用户操作（例如命令批准或许可请求）。
+* **`ERROR`** - 启动或执行期间遇到错误。
+* **`CANCELLED`** - 在达到终端状态前取消。
+
+在这些位置跟踪运行状态转换。
+
+## Agent 之间的消息传递
+
+编排构建在持久的、服务器支持的消息总线上。编排中的每个 Agent——父级和子级——都有由其 agent ID 寻址的自己的收件箱，父级和子级相互发送简短、结构化的消息以协调、交接工作和保持同步。
+
+这就是并行 Agent 在不共享可变状态的情况下保持一致的方式。每次运行拥有自己的对话、工作目录或环境以及积分使用；Agent 不读取彼此的记录或实时工作树。相反，它们在需要沟通决策、结果或问题时交换显式消息。消息和运行状态转换共享一个全局序列号，因此父级不会在产生结果的消息之前观察到子级的 `SUCCEEDED` 状态。
+
+## 常见模式
+
+以下模式显示了构建父 Agent 和子 Agent 的常见方式，取决于您是否需要并行执行、审查、依赖排序或松散协调。
+
+### 监督者/工作者 - 父级监督者将任务分解为工作项队列，生成工作者子级
+### 扇出/扇入 - 父级并行生成 N 个子级，每次分片
+### 批评者/验证者 - 父级提议解决方案，生成批评者子级审查
+### 审查群体（云→云）- 每个开放 PR 生成一个云子级并行审查
+### DAG - 编码子任务的定向无环图
+### 群体 - 平级 Agent 在无严格层级的情况下相互发现和协调

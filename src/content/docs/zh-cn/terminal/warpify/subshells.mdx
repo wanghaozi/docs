@@ -1,0 +1,117 @@
+---
+title: Warpify 子 shell
+description: >-
+  在 bash、zsh 和 fish 中 Warpify 子 shell，以在嵌套会话中获得 Warp 功能。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## 什么是子 shell？
+
+在 Warp 的上下文中，"子 shell"被定义为在现有、正在运行的 shell 上下文中生成并运行的任何嵌套交互式 shell 会话。这可以是本地机器上运行的嵌套会话、Docker 容器中运行的 shell 会话，或通过 SSH 访问的远程服务器。[查看更多关于 SSH Warpification 的信息](/terminal/warpify/ssh/)。
+
+请注意，Warp 对子 shell 的定义与更常见的 Unix 子 shell 定义不同，后者通常指作为交互式 shell 的子进程生成的任何 shell 进程。例如，在 bash 中，用括号包裹的命令会在具有自己的 PID 和可寻址内存空间的子 shell 中执行。
+
+## 如何 Warpify 子 shell
+
+默认情况下，Warp 自动将以下命令识别为 **子 shell 兼容**：
+
+* bash、fish、zsh
+* docker exec
+* gcloud compute ssh
+* eb ssh
+* poetry shell
+
+当您运行一个子 shell 兼容的命令时，Warp 会提示您并邀请您"Warpify"子 shell，这使得所有 Warp 的现代 IDE 功能在该子 shell 中可用。子 shell 兼容的命令列表可以在子 shell 设置中配置，如下 [所述](/terminal/warpify/subshells/#configuring-subshell-compatible-commands)。
+
+:::note
+必须将 bash、zsh 或 fish（3.6 或以上）设置为容器和 ssh 会话中的默认 shell，子 shell 的 Warpification 才能工作。
+:::
+
+<DemoVideo src="/assets/terminal/subshells-demo.mp4" label="子 shell 演示" />
+
+### 配置子 shell 兼容命令
+
+要配置子 shell 兼容命令，导航至 **设置** > **Warpify** > **子 shell**。
+
+#### 添加兼容命令
+
+您可以添加任何生成 bash、fish 或 zsh 子 shell 的命令到"已添加的命令"，使其符合"Warpification"的条件。
+
+此外，您可以将正则表达式添加到已添加的命令列表中。任何与添加的正则表达式匹配的命令都将符合"Warpification"的条件。
+
+#### 阻止列表命令
+
+某些类型的子 shell 不兼容，您可能还想控制 Warp，使其永远不会邀请您为特定命令"Warpify"子 shell。当您将命令添加到阻止列表时，Warp 永远不会邀请您为这些命令生成的子 shell 执行"Warpify"。
+
+### 自动"Warpify"子 shell
+
+要记住对某个命令的偏好并绕过确认横幅，您可以手动将适当的代码片段粘贴到与您的子 shell（bash、fish 或 zsh）对应的 RC 文件的末尾。
+
+```bash
+# 对于 zsh 子 shell，添加到 ~/.zshrc。
+printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "zsh"}}\x9c'
+
+# 对于 bash 子 shell，添加到 ~/.bashrc 或 ~/.bash_profile。
+printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "bash"}}\x9c'
+
+# 对于 fish 子 shell，添加到 ~/.config/fish/config.fish。
+if status is-interactive
+  printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "fish"}}\x9c'
+end
+```
+
+添加后，Warp 将自动为具有新更新的 RC 文件的机器上相应 shell 的后续子 shell 会话执行"Warpify"。
+
+在底层，此代码片段打印一个设备控制字符串（[DCS](https://vt100.net/docs/vt510-rm/chapter4.html)），由 Warp 读取，指示子 shell 会话已启动并准备被"Warpified"。相应地，Warp 在会话中执行一个设置脚本，启用完整的 Warp 功能集，如块、补全和输入编辑器。
+
+因此，最好确保代码片段添加到 RC 文件的末尾，这样 Warp 不会在 shell 完成 sourcing 您的 RC 文件之前尝试执行设置脚本。
+
+要禁用自动集成，请从相应的 RC 文件中删除该代码片段。
+
+如果您在 sourcing RC 文件的子 shell 会话中遇到问题，请 [提交 GitHub issue](https://github.com/warpdotdev/Warp/issues/new/choose)。
+
+## 后台命令
+
+Warp 运行后台命令来支持有用的功能，如补全、语法高亮和命令纠正。例如，为了提供 git checkout 的补全，Warp 运行一个列出当前仓库中所有 git 分支的后台命令。
+
+在本地子 shell 会话中，这些命令在分叉的 shell 进程中运行，与您的交互式 shell 会话隔离。这与任何非子 shell 会话使用的实现相同。
+
+然而，在远程会话中，Warp 采用不同的方法——虽然在您的本地机器（运行 Warp 应用的机器）上正在运行一个分叉的 shell 进程，但您的远程会话可能在另一台服务器上运行。在这些情况下，Warp 利用会话的"空闲时间"——当没有命令正在运行时——直接在会话本身中运行后台命令。这些命令在非交互式子 shell 进程中执行，以防止修改会话状态（例如，它们不能修改环境变量）。
+
+### 显示/隐藏后台块
+
+默认情况下，后台命令的块是隐藏的。要显示后台命令块，在 macOS 菜单栏的"块"菜单中选择"显示后台块"。
+
+### 在远程会话中禁用后台命令
+
+我们理解一些开发者可能希望为某些或所有环境禁用后台命令。
+
+要在远程子 shell 会话中禁用后台命令，您可以在顶级终端会话中执行以下命令：
+
+<Tabs>
+  <TabItem label="macOS">
+    更新位于 `dev.warp.Warp-Stable` 中的设置默认值，包含以下名称-值对：`"DisableInBandCommands": "true"`。
+
+    ```bash
+    defaults update dev.warp.Warp-Stable DisableInBandCommands true
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    更新位于 `HKCU:\Software\Warp.dev\Warp` 的设置注册表，包含以下名称-值对：`"DisableInBandCommands": "true"`。
+
+    ```powershell
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Warp.dev\Warp" -Name DisableInBandCommands -Value true
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    更新位于 `~/.config/warp-terminal/user_preferences.json` 的设置文件，包含以下名称-值对：`"DisableInBandCommands": "true"`。
+
+    ```bash
+    cd ~/.config/warp-terminal/
+    jq '.prefs += {"DisableInBandCommands": "true"}' user_preferences.json > tmp.json && mv tmp.json user_preferences.json
+    ```
+  </TabItem>
+</Tabs>
+
+这将有效禁用远程子 shell 中的标签补全、语法高亮、命令纠正和 git 状态提示指示器。

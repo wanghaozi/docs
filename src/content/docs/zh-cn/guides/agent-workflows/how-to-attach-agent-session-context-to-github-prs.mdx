@@ -1,0 +1,134 @@
+---
+title: 在 GitHub PR 中共享代理上下文
+description: >-
+  在 GitHub 拉取请求中共享 Warp 代理会话或云代理运行链接，使审查者能够查看代理生成变更背后的上下文。
+sidebar:
+  label: "将代理上下文附加到 PR"
+tags:
+  - "agents"
+  - "code-review"
+  - "session-sharing"
+---
+
+当代理帮助准备拉取请求时，审查者需要了解差异背后的执行上下文：原始提示词、计划、命令、验证结果、代码变更以及仍需人工审查的决策。
+
+在 PR 描述或 PR 评论中添加 Warp 会话或云代理运行链接。该链接为审查者提供了代理工作记录以及 GitHub 差异。
+
+使用以下 Warp 文档和界面来收集正确的上下文：
+
+* [代理会话共享](/agent-platform/local-agents/session-sharing/) 用于本地 Warp 代理或在 Warp 中运行的第三方 CLI 代理。
+* [云代理会话共享](/agent-platform/cloud-agents/viewing-cloud-agent-runs/) 用于从 Slack、Linear、GitHub Actions、定时任务、Oz CLI 或 API 启动的云代理运行。
+* [代码审查面板](/code/code-review/) 和 [交互式代码审查](/agent-platform/local-agents/interactive-code-review/) 用于在共享 PR 之前或之后检查和完善实际的代码差异。
+
+## PR 中应包含的内容
+
+将共享会话链接放在 PR 描述顶部附近或作为置顶 PR 评论。配合简短的审查摘要，以便队友决定首先检查什么。
+
+至少应包含：
+
+* **目标** - 代理被要求做什么。
+* **代理上下文** - 共享 Warp 会话或云代理运行的链接。
+* **变更的文件** - 审查者应重点检查的主要区域。
+* **验证** - 代理或作者运行的测试、lint、类型检查、构建或手动检查。
+* **已知风险** - 代理无法验证、跳过或推测性变更的任何内容。
+* **请求审查者关注** - 需要人工审查的特定文件、行为或决策。
+
+## PR 评论模板
+
+```markdown
+## Agent-generated change summary
+
+**Goal:** <what the agent was asked to do>
+**Agent session:** <shared Warp session or cloud agent run link>
+**Changed files:** <key files or directories>
+**Validation:** <commands run and results>
+**Known risks:** <untested areas, assumptions, follow-ups>
+**Reviewer asks:** <specific review focus>
+
+Notes:
+- The session link contains the agent prompt, plan, commands, logs, output, and follow-up messages where available.
+- Please review the code diff and the agent context before merging.
+```
+
+## 1. 共享代理会话或云运行
+
+根据代理运行的位置选择链接。
+
+### Warp 中的本地代理或第三方 CLI 代理
+
+如果代理在 Warp 中本地运行，请共享会话：
+
+1. 在 Warp 中打开代理会话。
+2. 在对话面板标题中，打开三点菜单，然后点击 **Share session**。如果需要会话记录，请不要使用顶级的 **Share** 图标。
+3. 选择要包含的回滚范围。
+4. 复制共享会话链接。
+5. 将链接粘贴到 PR 描述或 PR 评论中。
+
+有关完整的共享流程，请参阅[代理会话共享](/agent-platform/local-agents/session-sharing/)。
+
+### 云代理运行
+
+如果代理在云端运行，请使用云运行会话链接：
+
+1. 从 Warp 应用中的[代理管理面板](/agent-platform/cloud-agents/managing-cloud-agents/)或 [Oz Web 应用中的 Runs 页面](/agent-platform/cloud-agents/oz-web-app/#runs) 打开运行。
+2. 确认会话显示了审查者所需的运行上下文。
+3. 复制云代理会话链接。
+4. 将链接粘贴到 PR 描述或 PR 评论中。
+
+有关详细信息，请参阅[查看云代理运行](/agent-platform/cloud-agents/viewing-cloud-agent-runs/)。
+
+## 2. 在移交之前审查差异
+
+在要求队友审查 PR 之前，先在 Warp 中自行检查代码：
+
+1. 打开[代码审查面板](/code/code-review/)。
+2. 将分支与 PR 基础分支进行比较，而不仅仅是未提交的更改。
+3. 审查变更的文件，还原明显错误，如果代理需要修改任何内容，则留下内联评论。
+4. 运行项目的测试、lint、类型检查或构建。
+5. 将验证结果添加到 PR 摘要中。
+
+有关详细的本地工作流程，请参阅[如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)和[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)。
+
+## 3. 让代理上下文易于审查
+
+审查者不应阅读整个记录来了解发生了什么。在 PR 摘要中，指出会话中最重要的部分：
+
+* 原始提示词或任务来源。
+* 代理遵循的计划。
+* 更改或验证了代码的命令。
+* 需要额外关注的文件或目录。
+* 任何失败的命令以及它们是如何解决的。
+* 代理所做的任何假设。
+
+如果 PR 来自自动化工作流，也请包含触发来源。例如：Slack 线程、Linear 问题、GitHub Actions 工作流、定时代理、Oz CLI 命令或 API 调用。
+
+## 4. 共享前注意敏感上下文
+
+共享的会话可能包含提示词、终端输出、日志、命令历史、环境详情和其他回滚内容。在将会话链接放入 PR 之前：
+
+* 检查会话是否包含密钥、令牌、私人客户数据或无关的终端输出。
+* 为本地会话共享选择最窄的有用回滚范围。
+* 优先选择仅对需要上下文的审查者可见的链接。
+* 如果代理产生了带有敏感值的日志或工件，请在更广泛共享之前移除或轮换这些值。
+
+有关 Warp 如何帮助检测秘密的更多信息，请参阅[秘密编辑](/support-and-community/privacy-and-security/secret-redaction/)。
+
+## 5. 保持 PR 审查重点明确
+
+使用会话链接来加快审查速度，而不是替代审查。GitHub 差异仍然是即将合并内容的最终依据。
+
+良好的审查者请求：
+
+* "检查 `db/migrations/` 中的迁移和回滚路径。"
+* "验证代理对认证边缘情况的测试覆盖率。"
+* "审查会话中关于失败 lint 步骤和最终修复的命令。"
+* "确认代理关于 API 契约的假设是否正确。"
+
+避免像"审查代理输出"这样的模糊要求。将审查者引导到需要人为判断的决策、文件或验证结果。
+
+## 后续步骤
+
+* 使用[代理会话共享](/agent-platform/local-agents/session-sharing/)来共享本地或第三方代理会话。
+* 使用[云代理会话共享](/agent-platform/cloud-agents/viewing-cloud-agent-runs/)来检查云代理运行。
+* 使用[代码审查面板](/code/code-review/)在 Warp 中审查 Git 差异。
+* 使用[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)留下内联评论并将反馈发送回代理。

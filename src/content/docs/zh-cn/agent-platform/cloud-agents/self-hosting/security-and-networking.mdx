@@ -1,0 +1,39 @@
+---
+title: 安全与网络
+description: >-
+  自托管 Oz 云 Agent 的安全模型、数据边界和网络要求——包括按后端考虑因素和 BYOLLM。
+---
+
+自托管使用分离平面架构。了解哪些数据保留在您的基础设施上以及哪些数据通过 Warp 路由，对于安全评估至关重要。
+
+## 数据边界
+
+自托管执行将仓库克隆、源文件、构建制品、运行时密钥、环境变量和 Agent 工作区保留在您控制的基础设施上。
+
+**仅存储在您的基础设施上并在其上执行：**
+* 仓库克隆和源文件
+* 构建制品和编译输出
+* 运行时密钥和环境变量
+* 容器文件系统状态（托管架构）或主机工作区（Direct 后端/非托管）
+
+**通过 Warp 后端路由**（在 [ZDR](/enterprise/security-and-compliance/security-overview/#zero-data-retention-zdr) 下）：
+* 编排元数据（任务状态、生命周期事件）
+* 会话记录，包括 Agent 生成的代码上下文摘要、Agent 读取的文件内容和命令输出
+* LLM 推理请求和响应
+
+## 网络要求
+
+自托管 Agent **不需要任何网络入站访问**。它们需要出站访问以下服务：
+
+* `app.warp.dev` — 端口 443
+* `rtc.app.warp.dev` — 端口 443
+* `sessions.app.warp.dev` — 端口 443
+* `oz.warp.dev` — 端口 443（仅托管架构）
+* Docker Hub — 用于拉取任务镜像（仅托管架构）
+
+## 按后端的安全考虑
+
+### Docker 后端 — Docker 套接字访问、卷挂载、任务隔离
+### Kubernetes 后端 — Kubernetes RBAC、服务账户、API 密钥管理、任务隔离
+### Direct 后端 — 共享主机内核、默认最小环境、工作区清理
+### 非托管 — 主机继承、Kubernetes Pod 隔离

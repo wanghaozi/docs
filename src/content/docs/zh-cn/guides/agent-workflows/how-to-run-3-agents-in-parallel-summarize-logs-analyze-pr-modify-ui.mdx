@@ -1,0 +1,89 @@
+---
+title: "并行运行 3 个代理"
+description: >-
+  在 Warp 中同时运行三个代理任务——并行修改 UI、分析代码审查和总结生产日志。
+sidebar:
+  label: "并行运行 3 个代理"
+tags:
+  - "agents"
+
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教学模块演示了 Warp 的多线程功能——在多个代理标签中同时运行编码、调试和分析任务。
+:::
+
+<VideoEmbed url="https://youtu.be/3jwus1bfKv4" />
+
+---
+
+### 🧠 概述
+
+Warp 允许你同时启动多个代理，每个代理专注于不同的任务。\
+在演示中，我们并行运行三个工作流：
+
+* 修改 UI 行为
+* 分析团队代码审查
+* 总结生产环境日志
+
+<Steps>
+
+1. #### 并行启动代理
+
+   每个代理在自己的标签中运行。
+
+   <Tabs>
+     <TabItem label="UI 修复">
+       移除未聚焦输入面板的背景和边框。
+
+           ```
+       I'd like to make a coding change. Please create a new branch to do this.
+
+       What i want to do is for the Universal Developer Input, remove the border and background if it's being rendered in the same pane that is not focused. Please look at the reference file and at the attached screenshot. In the screenshot, you'll see what it looks like right now - there are two equally prominent input areas, even though one is focused and one is not. What I want to do is make the non-focused one not have a border and not have a background. 
+
+       Please check out this linear issue for more information. Also, give me a plan before you make any changes.
+       ```
+       </TabItem>
+     <TabItem label="代码审查检查">
+       分析团队成员分配了多少拉取请求。
+
+           ```
+       Use the GitHub CLI tool to summarize all open PRs for review that are assigned to user. I'd like to see who is the author of the PR, when was it opened, how long has it been open for, which repo is it in, are there open and unaddressed comments on it, and is it ready for review?
+       ```
+       </TabItem>
+     <TabItem label="日志分析">
+       按错误严重级别总结 Cloud Run 日志。
+
+           ```
+       Use the gcloud tool to list all my open projects. Once you've done that, let me select a project. Once I've selected a project, we will want to see all the Cloud Run instances that are available. Then once I've picked a Cloud Run instance, I'd like to get a summary of the last 2000 logs from that Cloud Run instance to see the history histogram of different types of logging on info, warning, and error levels.
+       ```
+       </TabItem>
+   </Tabs>
+
+2. #### 监控所有代理
+
+   Warp 中的**任务面板**显示所有正在运行的代理。\
+   你可以实时查看计划、进度和结果，而不会中断其他任务。
+
+3. #### 查看结果
+
+   * **编码代理：** 准确实现 UI 修复。
+   * **代码审查代理：** 报告 26 个开放的 PR（识别瓶颈）。
+   * **日志代理：** 分析 1,000 条日志条目，分类错误并标记 Gemini API 问题。
+
+4. #### 为何重要
+
+   Warp 的多代理执行让你能够：
+
+   * 同时运行多个任务而无需切换上下文。
+   * 同时保持编码、调试和运维的可视性。
+   * 协作使用 AI 助手以实现更快的迭代。
+
+   :::tip
+   多代理工作流让你能够并行调试、编码和分析——在不离开终端的情况下提高吞吐量。
+   :::
+
+</Steps>

@@ -1,0 +1,114 @@
+---
+title: Agent 规划与执行
+sidebar:
+  label: "规划"
+description: >-
+  将请求转化为结构化的可编辑计划，Agent 逐步执行并带有版本控制。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 具有原生规划功能，帮助您将复杂的工程任务分解为结构化的可执行步骤。规划与 Warp 的编码 agent 紧密集成，提供持久的计划编辑器、版本历史、选择性执行以及指向工作区的深链。
+
+<VideoEmbed url="https://youtu.be/DawcFWyudV0?si=OzvuInMl8DoNR97R" />
+
+---
+
+### 创建计划
+
+您可以使用 `/plan` [斜杠命令](/agent-platform/capabilities/slash-commands/)或通过自然语言向 agent 请求来生成计划。
+
+<figure>
+![使用斜杠命令提示 agent 创建计划。](../../../../../assets/agent-platform/plan-slash-command.png)
+<figcaption>使用 /plan 命令创建计划。</figcaption>
+</figure>
+
+然后 agent 在 Warp 的原生富文本编辑器中创建结构化计划，该编辑器专为长流程、多步骤工作流设计。编辑器包括清晰的格式、内联代码块和可点击的文件路径，因此您可以立即在 Warp（见下文）或外部编辑器中打开引用的文件。
+
+### 审查和编辑
+
+计划生成后，您可以审查它、重新组织步骤或优化细节。您可以手动编辑文档或要求 agent 为您修改部分。
+
+<figure>
+![Warp 中的计划编辑器。](../../../../../assets/agent-platform/planning-main-view.png)
+<figcaption>Warp 中的计划编辑器。</figcaption>
+</figure>
+
+agent 所做的任何更新**都会创建新版本**。版本历史让您比较过去的迭代，并在想要回退时恢复旧版本，随着计划的演变保留清晰的决策轨迹。
+
+<figure>
+![访问您计划的先前版本。](../../../../../assets/agent-platform/agent-plans-versioning.png)
+<figcaption>访问您计划的先前版本。</figcaption>
+</figure>
+
+### 执行计划
+
+当您准备好开始实施时，提示 agent 运行计划。您可以要求它执行完整步骤集或仅执行特定部分，例如"实施计划的阶段 1。"
+
+<figure>
+![使用 @ 手动引用计划以启动计划。](../../../../../assets/agent-platform/manually-trigger-plan.png)
+<figcaption>使用 @ 引用计划。</figcaption>
+</figure>
+
+Agent 逐步应用更改并更新文件。这使您可以轻松验证早期步骤，然后再继续前进，在运行中调整计划，或尝试替代路径而不承诺完整工作流。
+
+如果您在 agent 运行时修改计划，可以直接通知它；agent 将根据您的更新调整其执行。
+
+<figure>
+![计划在运行时更改时，将新计划传递给 agent 的选项。](../../../../../assets/agent-platform/update-agent-mid-plan.png)
+<figcaption>提示在执行期间更新 agent 的计划。</figcaption>
+</figure>
+
+### 监控进度
+
+在 agent 运行时，您可以随时通过选择输入中的"查看计划"重新打开计划。您还可以通过[代码审查](/code/code-review/)面板实时跟踪每个更改，并使用[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)添加评论或指导。
+
+<figure>
+![使用任务列表和计划视图监控进度。](../../../../../assets/agent-platform/agent-plans-tasks.png)
+<figcaption>使用任务列表和计划视图监控进度。</figcaption>
+</figure>
+
+这为您提供清晰的监督，帮助确认预期行为，让您在需要纠正时快速干预。
+
+### 保存和共享
+
+Warp 自动将所有计划保存在 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 的 _Plans_ 文件夹中。当您的计划同步时，您会看到确认信息。
+
+<figure>
+![计划自动同步到 Warp Drive。](../../../../../assets/agent-platform/agent-plans-synced.png)
+<figcaption>计划自动同步到 Warp Drive。</figcaption>
+</figure>
+
+您可以将任何计划导出为 Markdown、检入到仓库或共享链接——对于 GitHub PR、设计审查或异步协作很有用。
+
+<figure>
+![共享计划的不同方式。](../../../../../assets/agent-platform/export-notebooks.png)
+<figcaption>共享计划的不同方式。</figcaption>
+</figure>
+
+由于计划保存在 Warp Drive 中，您可以稍后返回它们、为新工作重用它们，或将其作为正在进行项目的文档。这也自然地作为上下文传递给 agent。
+
+<figure>
+![可以直接从 Warp Drive 侧面板访问计划。](../../../../../assets/agent-platform/plans-in-warp-drive-side-panel.png)
+<figcaption>可以直接从 Warp Drive 侧面板访问计划。</figcaption>
+</figure>
+
+您可以在 [Agent 配置文件与权限](/agent-platform/capabilities/agent-profiles-permissions/)中的**设置** > **Agent** > **配置文件**下配置您的计划是否自动添加和同步到 Warp Drive。
+
+![Agent 配置文件与权限中的开关，可自动将 agent 生成的计划同步到 Warp Drive。](../../../../../assets/agent-platform/auto-sync-plans-1.png)
+
+### 跨对话使用计划
+
+计划可在不同任务和会话之间重用。您可以在未来的提示中引用它们、从上次中断的地方继续，或构建依赖先前工作的后续计划。
+
+**@plans** 命令帮助您快速搜索和重新打开之前保存的计划，使规划成为开发工作流中持续的一部分，而非一次性步骤。在此处了解有关使用 @ 附加上下文的更多信息[](/agent-platform/local-agents/agent-context/using-to-add-context/)。
+
+![使用 @plans 命令搜索和重新打开之前保存的计划。](../../../../../assets/agent-platform/@-reference-plans.png)
+
+---
+
+## 后续步骤
+
+当 agent 执行您的计划时，您将审查代码更改并可能希望将工作扩展到云端。
+
+* **[交互式代码审查](/agent-platform/local-agents/interactive-code-review/)** - 在 agent 生成的差异上留下内联评论，让 agent 一次性修订。
+* **[云 Agent 快速入门](/agent-platform/cloud-agents/quickstart/)** - 在云端运行 agent 以处理更长时间的任务、后台自动化或跨仓库的并行工作。

@@ -1,0 +1,42 @@
+---
+title: 托管：快速入门
+description: >-
+  在不到 10 分钟内让托管的自托管 Oz worker 在 Docker 上运行，并将您的第一个云 Agent 运行路由到它。
+sidebar:
+  label: "快速入门"
+---
+
+使用托管架构和 Docker 后端在您自己的基础设施上运行您的第一个云 Agent，大约 10 分钟——这是最快、最默认的自托管路径。
+
+## 前提条件
+
+* **启用自托管的 Enterprise 计划**
+* **带有 Docker 的 Linux 机器**
+* **团队 API 密钥**
+* **Oz CLI**
+
+## 运行您的第一个自托管 Agent
+
+### 1. 导出您的 API 密钥
+
+```bash
+export WARP_API_KEY="your_team_api_key"
+```
+
+### 2. 启动 worker
+
+```bash
+docker run -v /var/run/docker.sock:/var/run/docker.sock \
+  -e WARP_API_KEY="$WARP_API_KEY" \
+  warpdotdev/oz-agent-worker --worker-id "my-worker"
+```
+
+### 3. 路由运行到您的 worker
+
+```bash
+oz agent run-cloud --prompt "List the files in the current directory" --host "my-worker"
+```
+
+### 4. 验证运行
+
+打开 [Oz 仪表板](https://oz.warp.dev)，找到新任务并确认会话记录显示 Agent 在您的 worker 上运行。

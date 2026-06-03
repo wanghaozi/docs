@@ -1,0 +1,215 @@
+---
+title: 完整终端使用
+description: >-
+  完整终端使用意味着 Warp 的 agent 可以与活动的终端应用交互，以监控实时输出和运行命令。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+完整终端使用（Full Terminal Use）让 Warp 的 agent 直接在交互式终端应用中操作，如数据库外壳、调试器、文本编辑器和长时间运行的服务器。Agent 可以看到实时终端缓冲区、写入命令、响应提示，并随时将控制权交还给您。
+
+Agent 可以看到实时终端缓冲区（终端状态）、写入 PTY 以运行命令、响应提示，并在您保持控制的同时在正在运行的进程中继续工作。
+
+<VideoEmbed url="https://youtu.be/gBdehHrtb94?si=-vvl4ipGwwoWxEJq" />
+
+## 概述
+
+借助完整终端使用，Warp 的 agent 可以附加到 `psql`、`vim`、`python`、`gdb`、`top` 或您的开发服务器等交互式工具，读取终端输出的变化，并像您正在打字一样与应用程序交互。
+
+您可以要求 agent 启动交互式程序，也可以自己启动，然后在工具已经运行时将 agent 标记进来。在这两种情况下，agent 看到的是与您相同的终端缓冲区（和 PTY 会话），并可以对其执行操作。
+
+## 完整终端使用的工作原理
+
+#### 启动交互式命令
+
+您可以要求 agent 运行交互式命令，或手动启动一个然后标记 agent 进来：
+
+* **要求 agent 启动交互式工具**
+  * 示例：
+    * "打开 Postgres 外壳，帮我检查订单表。"
+    * "启动开发服务器，调试这个 500 错误。"
+* **或者自己启动命令，然后标记 agent 进来**
+  * 示例：
+    * 如果您已经启动了交互式工具（例如 `psql` 或 `npm run dev`），您可以使用终端底部的"使用 Agent"按钮或通过 `CMD + I` 将 agent 带入正在运行的会话。
+
+    <figure>
+    ![将 agent 标记到正在运行的命令中的选项。](../../../../../assets/agent-platform/full-terminal-use-tag-hint.png)
+    <figcaption>将 agent 标记到正在运行的命令中的选项。</figcaption>
+    </figure>
+    *   agent 被标记进来后，您可以跟进自然语言请求，例如：
+
+        "监控这个进程，帮助调试 /session 端点上的错误。"
+    * Warp 然后将 agent 附加到活动的 PTY，以便它可以查看当前的终端缓冲区并在会话中提议操作。
+
+<VideoEmbed url="https://www.loom.com/share/bcedc521071a4b6a9bbcf74b5156f903" title="Tagging in the agent." />
+
+<figure>
+![运行构建命令。](../../../../../assets/agent-platform/full-terminal-use-build.png)
+<figcaption>运行构建命令。</figcaption>
+</figure>
+
+<figure>
+![标记 Agent 进入以监控开发服务器。](../../../../../assets/agent-platform/full-terminal-use-dev-monitor.png)
+<figcaption>标记 Agent 进入以监控开发服务器。</figcaption>
+</figure>
+
+Warp 将 agent 附加到正在运行的命令，以便它可以查看和控制终端缓冲区。
+
+#### Agent 在会话中提议操作
+
+一旦附加，您可以继续使用自然语言，agent 将您的请求转化为具体的终端操作。例如，在 Postgres 外壳中：
+
+* 您："显示所有表并描述 orders 表。"
+* Agent：提议运行如下命令：`\dt` --> `\d+ orders`
+
+在 UI 中，您将看到一个请求：
+
+* 运行特定命令
+* 可选地启用此会话中类似命令的自动批准
+
+#### 用户和 agent 之间的控制切换
+
+您可以随时交换控制权。
+
+**接管**
+
+* 使用接管控制停止 agent 输入或执行任何操作。
+* Shell 保持打开状态，您可以直接在同一个会话中键入。
+
+<figure>
+![在底部栏中从 agent 接管控制的选项。](../../../../../assets/agent-platform/full-terminal-use-takeover.png)
+<figcaption>在底部栏中从 agent 接管控制的选项。</figcaption>
+</figure>
+
+**交还控制权**
+
+* 当您准备好让 agent 继续时，再次点击控制按钮。
+* Agent 从您停止的地方继续，可以完全访问当前终端状态。
+
+<figure>
+![在对话底部栏中交给 agent 的选项。](../../../../../assets/agent-platform/full-terminal-use-handoff.png)
+<figcaption>在对话底部栏中交给 agent 的选项。</figcaption>
+</figure>
+
+这使您可以轻松地：
+
+* 让 agent 做机械性工作（翻页输出、尝试命令的变体）
+* 对精细或安全敏感的操作亲自介入
+* 然后在关键步骤完成后让 agent 继续
+
+#### 终端视图与 agent 视图中的长时间运行命令
+
+根据您启动长时间运行命令的位置，行为有所不同：
+
+<Tabs>
+  <TabItem label="从终端视图">
+    1. 运行交互式命令（例如 `python`、`psql`）
+    2. 按下 `⌘↩`（macOS）或 `Ctrl+Shift+Enter`（Windows/Linux），或使用 `⌘I`（macOS）/ `Ctrl+I`（Windows/Linux）标记 agent
+    3. 输入切换到具有完整控制功能的 Agent 模式
+    4. 退出时，agent 对话块出现在您的终端块列表中
+    5. 点击该块以打开完整的对话，包含您的 LRC 交互上下文
+  </TabItem>
+  <TabItem label="从 agent 视图">
+    1. Agent 作为对话的一部分运行交互式命令
+    2. 使用 `⌘↩`（macOS）或 `Ctrl+Shift+Enter`（Windows/Linux）标记进来（如果 agent 尚未交互）
+    3. UI 保持不变，因为您已经在 agent 视图中
+    4. 退出时，交互仍是对话的一部分。终端块列表中不会创建单独的块
+    5. 在 agent 视图中运行的命令自动包含为上下文
+  </TabItem>
+</Tabs>
+
+:::note
+您也可以使用 `CMD + I`（macOS）或 `CTRL + I`（Windows/Linux）在任一视图中切换 agent 控制。
+:::
+
+#### 显示和隐藏 agent 响应
+
+Warp 让您控制在完整终端使用中显示多少 agent 输出。
+
+**切换可见性**
+
+使用交互式命令底部栏中的"隐藏响应"或"显示响应"按钮或 `CMD + G` 在显示所有 agent 输出或从终端视图隐藏之间切换。
+
+请注意，这仅影响 agent 的消息和提议；您的终端状态和命令输出保持不变。
+
+**隐藏时的行为**
+
+* 当 agent 响应被隐藏时，您自己的 agent 请求会在 **4 秒**后自动关闭以保持终端清晰。
+* 您也可以随时手动关闭任何用户查询，方法是悬停并点击 X。
+
+<VideoEmbed url="https://www.loom.com/share/c639fb4ab33343a39037b2083c66858a" />
+
+---
+
+### 配置 Agent 权限和自主性
+
+您控制 agent 与终端交互时的自主程度。
+
+#### 会话级批准
+
+每次 agent 想要在交互式 shell 内执行操作时，您将看到 agent 的推理、简要说明和提议的命令。从这里您可以：
+
+* 允许该命令一次（例如通过批准或按 `ENTER`）。
+* 为此会话中的类似命令开启自动批准（例如使用 `CMD + SHIFT + I`）。
+* 使用 `CTRL + C` 优化请求，这将清除提议的操作并让您跟进不同的查询。
+* 使用 `CMD + I` 手动接管，这会阻止 agent 发出任何进一步的 PTY 写入，直到您交还控制权。
+
+<figure>
+![允许、优化或接管 agent 响应。](../../../../../assets/agent-platform/allow-refine-takeover.png)
+<figcaption>允许、优化或接管 agent 响应。</figcaption>
+</figure>
+
+![接受或自动批准未来交互的能力。](../../../../../assets/agent-platform/full-terminal-use-options-2.png)
+
+这使您可以根据当前任务收紧或放宽控制：
+
+* 对于探索性工作，使用**始终允许**以减少摩擦。
+* 对于生产系统或敏感操作，使用**允许一次**并审查每个步骤。
+
+#### 全局权限设置
+
+您可以从 [Agent 配置文件与权限](/agent-platform/capabilities/agent-profiles-permissions/) 设置中配置全局默认值：
+
+* **首次写入时询问**：对 shell 进程的第一次写入需要批准。之后，该特定进程/命令的所有后续写入将被批准。
+* **始终询问**：agent 对 shell 进程的每次写入都需要您的明确批准。
+* **始终允许**：agent 可以写入 shell 进程而无需每次都提示您。
+
+这些设置适用于使用完整终端使用的每个会话。您仍然可以在提示时按会话覆盖它们。例如，您可以使用快进控制为当前会话中的类似命令启用**自动批准**，或切换到具有自己的权限设置的**不同 AI 配置文件**以进行该对话。
+
+:::note
+**注意**：所有[秘密编辑](/support-and-community/privacy-and-security/secret-redaction/)功能在完整终端使用期间仍然适用，因此您的环境或输出中的敏感值仍然受到保护。
+:::
+
+### 积分使用
+
+完整终端使用的所有 AI 交互都消耗[积分](/support-and-community/plans-and-billing/credits/)，包括理解您的自然语言请求。
+
+积分的消耗方式与使用相同模型和类似上下文大小的其他 Oz 操作类似。
+
+**交互式会话可能消耗更多积分，如果：**
+
+* Agent 代表您在交互式 shell 中运行许多命令。
+* 有大量终端输出需要读取和总结。
+
+**管理积分使用：**
+
+* 使用更紧密的范围：
+  * "只描述 orders 表。"而不是"解释整个数据库。"
+* 对于有大量终端输出的高量任务暂停自主权：
+  * 运行大批量或长日志时接管手动控制。
+* 使用更严格的权限：
+  * 将全局权限设置为"首次写入时询问"或"始终询问"，然后只批准您需要的。
+
+:::note
+要了解更多关于什么构成一个积分以及如何从 Warp 的 AI 使用中获得更多价值的信息，请参阅：[_Getting the most out of credits in Warp_](https://www.warp.dev/blog/warp-ai-requests)。
+:::
+
+## 示例工作流
+
+以下是我们工程师 Maggie 的演示，演示了几个完整终端使用示例。
+
+<VideoEmbed url="https://www.loom.com/share/d47ee09153df417983df65a339a9d6f2" />
+
+以下是完整终端使用特别有用的一些常见交互式工具：数据库外壳（Postgres、MySQL、SQLite）、如 gdb 之类的调试器、如 python 或 node 之类的语言特定 REPL、文本编辑器和文件浏览器，以及长时间运行的开发服务器或监控工具，如 top 和 htop。
+
+<table><thead><tr><th width="158.5418701171875">工具</th><th width="326.64208984375">示例任务</th><th>Agent 可以...</th></tr></thead><tbody><tr><td><strong>数据库外壳（REPL）</strong><br /><br />例如 <code>psql</code>、<code>mysql</code>、<code>sqlite</code> 等</td><td><ul><li>"列出所有表并描述 users 和 orders 表。"</li><li>"创建一个新表来存储归档的用户会话。"</li><li>"显示过去 30 天 orders 中的所有行，按状态分组。"</li><li>"生成并运行一个查询，查找前 10 名创收客户。"</li></ul></td><td><ul><li>导航 <code>\d</code>、<code>\dt</code>、<code>DESCRIBE</code> 等</li><li>编写和执行 SQL 查询</li><li>用通俗语言总结结果</li></ul></td></tr><tr><td><strong>文本编辑器</strong><br /><br />例如 <code>vim</code>、<code>nano</code> 等</td><td><ul><li>"在 vim 中打开此文件并添加 Markdown 标题和样板部分。"</li><li>"在此函数上方插入一个文档字符串，解释其功能。"</li><li>"生成一个 CSS 工具类块并将其插入此文件。"</li></ul></td><td><ul><li>使用按键在编辑器内导航</li><li>插入、编辑和删除文本</li><li>完成后保存并退出</li></ul></td></tr><tr><td><strong>Python REPL</strong><br /><br />例如 <code>python</code>、<code>ipython</code></td><td><ul><li>"启动 Python REPL 并定义一个计算移动平均值的函数。"</li><li>"为此函数编写单元测试并运行它。"</li><li>"绘制从 0 到 10 的 x 和 y = sin(x)。"</li></ul></td><td><ul><li>导入模块</li><li>定义函数和类</li><li>运行测试和小脚本</li><li>向您打印或总结结果</li></ul></td></tr><tr><td><strong>调试器</strong><br /><br />例如 <code>gdb</code>、<code>lldb</code>、语言特定调试器</td><td><ul><li>"为此二进制文件启动 gdb 并在 <code>handle_request</code> 上设置断点。"</li><li>"运行到断点，然后显示堆栈和局部变量。"</li><li>"检查此指针并告诉我它是否看起来无效。"</li></ul></td><td><ul><li>发出调试器命令（break、run、next、continue、bt 等）</li><li>逐步执行</li><li>总结相关状态，这样您就不必记住每个命令</li></ul></td></tr><tr><td><strong>长时间运行的服务器和服务</strong><br /><br />例如 <code>npm run dev</code>、<code>uvicorn</code>、Rails 服务器等</td><td><ul><li>"运行开发服务器并调试 /session 上的内部服务器错误。"</li><li>"向此端点发送示例请求并解释失败原因。"</li><li>"识别错误后终止服务器并提出代码差异。"</li></ul></td><td><ul><li>实时监控服务器日志</li><li>注意出现的新错误</li><li>在适当时停止服务器</li><li>基于观察到的内容提议代码更改（例如通过差异）</li></ul></td></tr><tr><td><strong>版本控制工作流</strong><br /><br />例如 <code>git rebase -i</code>、复杂 git 命令</td><td><ul><li>"将 master 交互式 rebase 到 <code>feature-branch</code> 上，将这些提交压缩为一个。"</li><li>"解决这些合并冲突并确保测试通过。"</li></ul></td><td><ul><li>导航交互式 rebase 提示</li><li>编辑提交消息</li><li>应用您批准的冲突解决方案</li></ul></td></tr><tr><td><strong>云提供商 CLI</strong><br /><br />例如 <code>gcloud</code>、<code>aws</code>、<code>az</code> 等</td><td><ul><li>"使用 gcloud 使用这些设置创建一个新的 Kubernetes 集群。"</li><li>"为 staging 配置一个新的 RDS 实例并显示连接详情。"</li></ul></td><td><ul><li>逐步执行多步骤 CLI 工作流</li><li>处理提示和确认</li><li>总结生成的资源</li></ul></td></tr></tbody></table>

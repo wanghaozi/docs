@@ -1,0 +1,78 @@
+---
+title: Warp 中的 Claude Code
+sidebar:
+  label: "Claude Code"
+description: >-
+  在 Warp 中设置 Claude Code，支持完整的通知、丰富输入、代码审查等功能。
+---
+
+Claude Code 是 Anthropic 的 agent 编码工具，可直接在终端中运行。它能理解您的代码库、执行命令、编辑文件和管理 Git 工作流——全部通过自然语言实现。有关完整文档，请参阅[官方 Claude Code 文档](https://code.claude.com/docs)。
+
+当您运行 Claude Code 时，Warp 会自动检测它，使您能够使用丰富的输入控件、代码审查、agent 通知和其他集成功能。有关产品概述，请参阅 [Warp 中的 Claude Code](https://www.warp.dev/agents/claude-code)。
+
+有关安装、身份验证、项目配置和生产效率提示，请参阅[如何设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) 指南。
+
+:::note
+Claude Code 也可作为 Oz 中的 harness 用于云编排。请参阅[Claude Code 与 Oz](/agent-platform/cloud-agents/harnesses/claude-code/)。
+:::
+
+## 设置通知
+
+Warp 通过插件支持 Claude Code 的 agent 通知。安装后，当 Claude Code 需要您的输入时——如命令批准、代码审查或错误干预——Warp 会显示应用内和桌面提醒。
+
+### 自动安装
+
+每次您在没有安装通知插件的情况下在 Warp 中运行 Claude Code 时，会出现一个通知芯片提供一键安装。点击芯片以自动安装插件。安装后，Warp 立即开始接收来自 Claude Code 的通知。
+
+### 手动安装
+
+:::note
+通知插件需要 `jq`。如果尚未安装，请使用包管理器安装（例如 macOS 上使用 `brew install jq`）。
+:::
+
+如果自动安装芯片没有出现或安装插件失败，请手动安装。在 Claude Code 内部，运行：
+
+```bash
+/plugin marketplace add warpdotdev/claude-code-warp
+/plugin install warp@claude-code-warp
+```
+
+或者在终端中（在 Claude Code 外部）：
+
+```bash
+claude plugin marketplace add warpdotdev/claude-code-warp
+claude plugin install warp@claude-code-warp
+```
+
+安装后，重启 Claude Code 或运行 `/reload-plugins` 以激活插件。
+
+:::note
+如果安装失败或您有旧版本的插件，请先使用 `claude plugin marketplace remove claude-code-warp` 删除它，然后重新运行上面的安装命令。
+:::
+
+### 安装说明横幅
+
+如果自动安装芯片不起作用，或者您通过 SSH 或在远程机器上运行 Claude Code，Warp 会在终端中直接显示安装说明横幅。横幅显示您可以就地运行的逐步命令——无需在标签页之间切换或从外部文档复制粘贴。
+
+有关插件源和更新，请参阅 [claude-code-warp GitHub 仓库](https://github.com/warpdotdev/claude-code-warp)。
+
+## 受支持的 Warp 功能
+
+Claude Code 支持 Warp 的全套 agent 集成功能：
+
+* **Agent 通知** - 当 Claude Code 需要您的关注时接收应用内和桌面提醒。通知 UI 显示您当前的 git 分支以及 agent 状态。
+* **丰富输入编辑器** - 按下 `Ctrl-G` 打开扩展输入编辑器以编写更长的提示。
+* **代码审查** - 从 Warp 的代码审查面板直接向内联审查评论发送给 agent。
+* **附加代码作为上下文** - 选择代码并将其作为上下文发送给 agent。
+* **带有 agent 元数据的垂直标签** - 在 Warp 的标签栏中使用状态指示器监控 Claude Code 会话。
+* **标签配置** - 保存和恢复 Claude Code 会话配置。
+* **远程控制** - 通过会话共享与团队成员共享您的 Claude Code 会话。
+
+## 相关页面
+
+* [如何设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) — 逐步设置指南
+* [Warp 中的 Claude Code](https://www.warp.dev/agents/claude-code) — 产品概述
+* [第三方 CLI Agent 概述](/agent-platform/cli-agents/overview/) — 受支持的 CLI agent 集成
+* [Claude Code 与 Oz](/agent-platform/cloud-agents/harnesses/claude-code/) — Claude Code 作为云 harness
+* [OpenCode](/agent-platform/cli-agents/opencode/) — Warp 中的 OpenCode
+* [Codex](/agent-platform/cli-agents/codex/) — Warp 中的 Codex

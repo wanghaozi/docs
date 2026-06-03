@@ -1,0 +1,92 @@
+---
+title: Markdown 查看器
+description: >-
+  在终端中打开 Markdown 文件并运行命令。
+sidebar:
+  label: "Markdown 查看器"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Warp 可用于在 [拆分窗格](/terminal/windows/split-panes/) 中编辑和查看渲染后的 Markdown 文件。任何带有 `.md` 或 `.markdown` 扩展名的本地文件都被视为 Markdown 文件。目前不支持远程文件。打开 **设置** > **功能** > **通用** > **默认在 Warp 的 Markdown 查看器中打开 Markdown 文件** 将使 Markdown 查看器成为默认选项，否则 Markdown 文件将在 Warp 的编辑器中打开。
+
+### 在块中打开文件链接
+
+<Tabs>
+  <TabItem label="macOS">
+    对于块中指向 Markdown 文件的任何链接，您可以通过在链接上 `CMD`-单击、从链接工具提示或链接上的右键单击上下文菜单在 Warp 中打开该文件。
+  </TabItem>
+  <TabItem label="Windows">
+    对于块中指向 Markdown 文件的任何链接，您可以通过在链接上 `CTRL`-单击、从链接工具提示或链接上的右键单击上下文菜单在 Warp 中打开该文件。
+  </TabItem>
+  <TabItem label="Linux">
+    对于块中指向 Markdown 文件的任何链接，您可以通过在链接上 `CTRL`-单击、从链接工具提示或链接上的右键单击上下文菜单在 Warp 中打开该文件。
+  </TabItem>
+</Tabs>
+
+<figure>
+![在 ls 的输出中点击 Markdown 文件链接以在 Warp 中打开它](/assets/terminal/open-markdown-viewer.gif)
+<figcaption>通过链接工具提示打开 Markdown 文件。</figcaption>
+</figure>
+
+### Markdown 查看命令
+
+如果您运行类似 `cat myfile.md` 的 Markdown 查看命令，Warp 将显示一个横幅，其中包含打开 Markdown 文件的按钮。
+
+以下命令被视为 Markdown 查看器：
+
+* `cat`
+* `glow`
+* `less`
+
+### 从 Finder 打开 Markdown 文件
+
+从 Finder 中，您可以通过右键单击文件时出现的"打开方式"菜单在 Warp 中打开 Markdown 文件。
+
+### 在编辑器和查看器之间切换
+
+您可以通过窗格溢出菜单在 Markdown 编辑器和查看器之间切换。
+
+<figure>
+![在 ls 的输出中点击 Markdown 文件链接以在 Warp 中打开它](/assets/terminal/markdown-raw-rendered-toggle.gif)
+<figcaption>在编辑器和查看器之间切换。</figcaption>
+</figure>
+
+## Markdown 文件中的 Shell 命令
+
+Warp 可以在您的活动终端会话中运行 Markdown 代码块中的 shell 命令。点击运行图标 `>_` 将命令插入到终端输入中。
+
+:::note
+shell 命令必须位于三个反引号 ` ``` ` 的代码块中，而不能是内联代码，Warp 才会将该代码视为可运行命令。
+:::
+
+Markdown shell 块还支持键盘导航。有两种方式进入键盘导航模式：
+
+<Tabs>
+  <TabItem label="macOS">
+    * 点击一个 shell 块。
+    * 按 `CMD-UP` 或 `CMD-DOWN`。
+
+    选择 shell 块后，按 `CMD-ENTER` 将其插入到终端输入中。您还可以使用 `UP`、`DOWN`、`CMD-UP` 和 `CMD-DOWN` 在 shell 块之间导航。当 Markdown 文件获得焦点时，按 `CMD-L` 将焦点切换回终端，而不插入命令。
+  </TabItem>
+  <TabItem label="Windows">
+    * 点击一个 shell 块。
+    * 按 `CTRL-UP` 或 `CTRL-DOWN`。
+
+    选择 shell 块后，按 `CTRL-ENTER` 将其插入到终端输入中。您还可以使用 `UP`、`DOWN`、`CTRL-UP` 和 `CTRL-DOWN` 在 shell 块之间导航。当 Markdown 文件获得焦点时，按 `CTRL-SHIFT-L` 将焦点切换回终端，而不插入命令。
+  </TabItem>
+  <TabItem label="Linux">
+    * 点击一个 shell 块。
+    * 按 `CTRL-UP` 或 `CTRL-DOWN`。
+
+    选择 shell 块后，按 `CTRL-ENTER` 将其插入到终端输入中。您还可以使用 `UP`、`DOWN`、`CTRL-UP` 和 `CTRL-DOWN` 在 shell 块之间导航。当 Markdown 文件获得焦点时，按 `CTRL-SHIFT-L` 将焦点切换回终端，而不插入命令。
+  </TabItem>
+</Tabs>
+
+如果命令包含使用花括号 `{{param}}` 语法的任何参数，它们将被视为工作流参数。了解更多关于 [工作流](/knowledge-and-collaboration/warp-drive/workflows/) 的信息。
+
+<DemoVideo src="/assets/terminal/run-markdown-file-command.mp4" label="在 Warp 中从 Markdown 文件运行两个命令的演示" />
+
+此外，所有 shell 和代码块都有一个复制按钮，可快速将块的文本复制到剪贴板。
+
+没有设置语言或属于以下语言之一的代码块被视为 shell 命令：`sh`、`shell`、`bash`、`fish`、`zsh`、`warp-runnable-command`。

@@ -1,0 +1,69 @@
+---
+title: 内置代码编辑器
+description: >-
+  使用 Warp 内置编辑器进行上下文内代码编辑，具备语法高亮、标签页和 Vim 键位。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 带有一个原生代码编辑器，专为在智能体对话旁进行快速的流程内编辑而设计。无需来回切换到 IDE，你就可以直接在 Warp 中打开和编辑文件——具备语法高亮、标签式文件查看器、查找和替换、Vim 键位以及用于浏览和添加文件作为上下文的文件树等基本功能。
+
+该编辑器专为对智能体生成的代码进行快速更改而构建：重命名变量、调整文本或重写短函数。在上下文中拥有足够的编辑能力，使得落地智能体的更改并保持动力变得更加容易。
+
+### 在 Warp 中打开文件
+
+**你可以通过多种方式在编辑器中打开文件：**
+
+1. **从终端输出或 AI 对话中点击文件路径**，然后选择"在 Warp 中打开"。
+2.  **在 Git 跟踪的仓库中，使用命令面板中的文件菜单**（macOS 上为 `CMD + O`，Windows 或 Linux 上为 `CTRL + SHIFT + O`）搜索并打开该仓库中的文件。
+
+    1. 你也可以通过窗格左上角的窗格编码工具带中的放大镜图标访问。
+
+    ![用于打开文件搜索的窗格编码工具带中的放大镜图标。](../../../../../assets/terminal/search-files-icon.png)
+3. **通过[文件树（项目浏览器）](/code/code-editor/file-tree/)浏览**以打开或创建文件。
+4. **从智能体对话中打开生成的代码差异**：[智能体对话中的代码差异](/agent-platform/local-agents/code-diffs/)。
+
+<VideoEmbed url="https://screen.studio/share/H7hTUgf2" />
+
+**保存对文件的更改**：在 macOS 上使用 `CMD + S`，在 Windows 或 Linux 上使用 `CTRL + S`。
+
+### 标签式文件查看器
+
+Warp 可以将多个文件分组到单个标签式查看器中，减少混乱并更轻松地跨多个文件工作。
+
+![Warp 代码编辑器中将多个文件分组到单个标签式文件查看器中。](../../../../../assets/terminal/tabbed-file-viewer.png)
+
+* 新用户默认启用（可在**设置** > **功能** > **通用** > **将文件分组到单个编辑窗格**中切换）
+* 重新排序、关闭或在标签页之间拖拽文件查看器。
+* 通过将一个窗格拖入另一个窗格来合并整个窗格。
+
+**以下是更深入的演示：**
+
+<VideoEmbed url="https://www.loom.com/share/a682461da66944f583e2fa3d27b71189?sid=679ce8f6-e530-4c0d-99ab-0613d1269f8b" />
+
+### **文件布局选项**
+
+在以下位置选择新文件在 Warp 中打开的默认方式：**设置** > **功能** > **通用** > **选择在 Warp 中打开文件的布局**
+
+* **分屏窗格**：新文件与当前编辑器并排打开
+* **新标签页**：新文件在其自己的标签式查看器中打开
+
+### 支持的语言
+
+编辑器支持广泛的语法高亮和编辑，包括：
+
+Rust、Go、YAML、Python、JavaScript/TypeScript、JSX/TSX、Java/Groovy、C++、Shell/Bash、C#、HTML、CSS、C、JSON、HCL/Terraform、Lua、Ruby、PHP、TOML、Swift、Kotlin、Starlark、SQL、Powershell 和 Elixir。
+
+我们正在持续扩展语言支持。
+
+### 共享缓冲区
+
+当你在多个标签页或窗格中打开同一文件时，Warp 会自动保持它们同步。在一个视图中进行的编辑会立即反映在其它所有视图中，当文件在磁盘上发生更改时（例如切换分支后），所有视图都会一起更新。
+
+### 其他编辑器功能
+
+Warp 的原生代码编辑器还支持以下功能：
+
+* [语言服务器协议 (LSP)](/code/code-editor/language-server-protocol/) - 通过 Rust、Go、Python、TypeScript/JavaScript 和 C/C++ 的语言服务器获取悬停信息、转到定义、查找引用、内联诊断和保存时格式化。
+* [文件树（项目浏览器）](/code/code-editor/file-tree/) - 使用 Warp 的原生文件树浏览、打开和管理你的项目。
+* [查找和替换](/code/code-editor/find-and-replace/) - 使用 Warp 内置的查找和替换快速在文件中搜索、在匹配项之间跳转，并使用正则表达式、区分大小写和智能大小写保留选项进行精确编辑。
+* [代码编辑器 Vim 键位](/code/code-editor/code-editor-vim-keybindings/) - 在 Warp 的原生代码编辑器中，使用 Vim 键位编辑代码和文本。

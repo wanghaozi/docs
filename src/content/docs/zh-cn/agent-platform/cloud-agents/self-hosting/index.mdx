@@ -1,0 +1,38 @@
+---
+title: 自托管概述
+description: >-
+  在您自己的基础设施上运行云 Agent。在由 Oz 编排的托管 worker 守护进程或您控制的非托管基于 CLI 的执行之间选择。
+---
+
+自托管让您的团队在您自己的基础设施上运行云 Agent 工作负载，而非 Warp 管理的服务器。您控制执行环境、计算资源和网络访问。仓库克隆、源文件、构建制品、运行时密钥和 Agent 执行工作区保留在您的基础设施上，Agent 可以访问 VPN 或防火墙后的服务。
+
+**刚接触自托管？** 从[自托管快速入门](/agent-platform/cloud-agents/self-hosting/quickstart/)开始，在不到 10 分钟内让托管 worker 在 Docker 上运行。
+
+:::note
+**企业功能**：自托管 Agent 仅对 Enterprise 计划上的团队可用。要为您的团队启用自托管，[联系销售](https://www.warp.dev/contact-sales)。
+:::
+
+## 托管与非托管
+
+自托管有两种架构。核心区别是**谁编排 Agent 运行**——而不是谁拥有计算资源。两种模型都将代码和执行保留在您的基础设施上。
+
+* **托管** — Oz 编排 Agent 运行。您在基础设施上运行 `oz-agent-worker` 守护进程；它连接到 Oz 并等待工作。
+* **非托管** — 您编排 Agent 运行。直接从现有 CI 流水线、Kubernetes Pod、VM 或开发机调用 `oz agent run`。
+
+## 架构决策指南
+
+1. Agent 需要在 Windows 或 macOS 上运行？ → 使用非托管
+2. 希望 Oz 处理启动和停止 Agent？ → 使用托管
+3. 开发环境可以在 Docker 或 Kubernetes 中运行？ → 托管 Docker/托管 Kubernetes
+4. 有自己的编排器？ → 非托管
+
+## 托管架构
+
+运行 `oz-agent-worker` 守护进程，支持三个后端：
+* **Docker 后端**（默认）— 在隔离的 Docker 容器中运行每个任务
+* **Kubernetes 后端** — 每个任务在集群中作为 Kubernetes Job 运行
+* **Direct 后端** — 直接在主机上运行，无容器运行时
+
+## 非托管架构
+
+使用[非托管架构](/agent-platform/cloud-agents/self-hosting/unmanaged/)，您在自有编排器或开发环境中运行 `oz agent run`。

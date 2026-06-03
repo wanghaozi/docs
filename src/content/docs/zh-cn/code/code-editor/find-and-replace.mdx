@@ -1,0 +1,38 @@
+---
+title: 查找和替换
+description: >-
+  在 Warp 的代码编辑器中搜索和替换文本，支持正则表达式、区分大小写和智能大小写保留。
+sidebar:
+  label: "查找和替换"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+
+Warp 的代码编辑器内置了查找和替换功能，支持正则表达式、区分大小写和智能大小写保留。在文件中搜索，在匹配项之间跳转，以及替换文本，自动调整 PascalCase、camelCase 和连字符模式的大小写。
+
+## 查找
+
+在 macOS 上按 `CMD-F`，在 Windows 和 Linux 上按 `CTRL-SHIFT-F` 打开查找菜单。输入时，文件中所有匹配项都会高亮显示，离光标最近的匹配项被选中。
+
+* 按 `ENTER` 或使用向下箭头跳转到下一个匹配项
+* 按 `SHIFT-ENTER` 或使用向上箭头跳转到上一个匹配项
+* 点击"全选"以高亮所有匹配项并关闭菜单
+
+你可以在查询编辑器中直接切换正则表达式和区分大小写的搜索选项。
+
+<DemoVideo src="/assets/terminal/code-find-menu.mp4" label="在代码编辑器中使用查找" />
+
+## 替换
+
+点击查找菜单左侧的下拉菜单以打开替换选项。
+
+* 按 Enter 替换当前选中的匹配项
+* 使用全部替换来替换所有匹配项
+
+切换保留大小写以保持替换文本的原始大小写。包含 PascalCase、camelCase、连字符和下划线的文本会保留大小写。例如：
+
+* 将"old"替换为"new"会将"Old"变为"New"，"OLD"变为"NEW"
+* 将"oldValue"替换为"NewValue"会得到"newValue"
+* 将"OldValue"替换为"newValue"会得到"NewValue"
+* 将"my-Old-VALUE"替换为"my-new-value"会得到"my-New-VALUE"
+
+<DemoVideo src="/assets/terminal/code-replace-menu.mp4" label="在代码编辑器中使用替换" />

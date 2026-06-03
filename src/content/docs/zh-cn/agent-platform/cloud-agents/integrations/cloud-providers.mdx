@@ -1,0 +1,209 @@
+---
+title: 云提供商（预览）
+description: >-
+  将云 Agent 连接到您的 AWS 和 GCP 服务。
+sidebar:
+  label: "AWS、GCP 和其他云提供商"
+---
+
+云 Agent 可以使用短期的 OpenID Connect (OIDC) 凭据安全地访问 AWS、GCP 和其他云提供商。使用 Warp 内置的 OIDC 联合支持，配置您的云 agent 环境以自动向您的云提供商进行身份验证，无需存储长期密钥。
+
+---
+
+## 前提条件
+
+* Warp 账户（[在 oz.warp.dev 创建账户](https://oz.warp.dev)）
+* 云提供商账户
+
+请按照您的云提供商对应的部分进行操作。
+
+---
+
+## AWS
+
+### 第 1 步：创建 OIDC 身份提供商
+
+第一步是配置您的 AWS 账户以信任 Oz 产生的 OIDC 令牌。
+
+1. 打开 AWS IAM 控制台 [https://console.aws.amazon.com/iam](https://console.aws.amazon.com/iam)。
+2. 点击**身份提供商**，然后点击**添加提供商**。
+3. 将提供商类型设置为 **OpenID Connect**。
+4. 将**提供商 URL** 设置为 `https://app.warp.dev`。
+5. 将**受众**设置为 `sts.amazonaws.com`。
+6. 复制新身份提供商的 ARN，格式如下：`arn:aws:iam::<account-id>:oidc-provider/app.warp.dev`。
+
+:::note
+通过以下方式验证提供商创建正确：
+1. 在身份提供商列表中点击 `app.warp.dev` 链接。
+2. 点击**端点验证**
+3. 检查指纹是否为 `08745487e891c19e3078c1f2a07e452950ef36f6`
+:::
+
+---
+
+### 第 2 步：配置 IAM 角色
+
+接下来，您需要设置一个 AWS IAM 角色，其信任策略将其链接到 OIDC 提供商。
+
+1. 打开 AWS IAM 控制台 [https://console.aws.amazon.com/iam](https://console.aws.amazon.com/iam)。
+2. 点击**角色**，然后点击**创建角色**。
+3. 选择**自定义信任策略**，并填写以下 JSON 信任策略：
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowOzFederation",
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "<oidc-provider-arn>"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "app.warp.dev:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "app.warp.dev:sub": "scoped_principal:<team-uid>/*"
+                }
+            }
+        }
+    ]
+}
+```
+
+您需要替换：
+* `<oidc-provider-arn>` 替换为第 1 步中添加的 OIDC 提供商的 ARN。
+* `<team-uid>` 替换为您的 Warp 团队 UID。这是您的[管理面板](/enterprise/team-management/admin-panel/) URL 的最后一部分。例如，如果管理面板 URL 是 `https://app.warp.dev/admin/abc123def456`，您的团队 UID 是 `abc123def456`。您也可以从 `oz whoami` 命令获取团队 UID。
+
+上述示例使用 `StringLike` 和 `scoped_principal:<team-uid>/*` 模式来允许您团队中的任何用户或自动化担任该角色。参见[subject 声明](#subject-sub)了解 `app.warp.dev:sub` 的完整格式。
+
+要将角色限制为特定用户，使用 `StringEquals` 和完全限定的 subject：
+
+```json
+...
+"Condition": {
+    "StringEquals": {
+        "app.warp.dev:aud": "sts.amazonaws.com",
+        "app.warp.dev:sub": "scoped_principal:<team-uid>/user:<user-uid>"
+    }
+}
+...
+```
+
+要允许多个特定主体，使用 subject 列表：
+
+```json
+...
+"Condition": {
+    "StringEquals": {
+        "app.warp.dev:aud": "sts.amazonaws.com",
+        "app.warp.dev:sub": [
+            "scoped_principal:<team-uid>/user:<user-uid-1>",
+            "scoped_principal:<team-uid>/user:<user-uid-2>",
+            "scoped_principal:<team-uid>/service_account:<sa-uid>"
+        ]
+    }
+}
+...
+```
+
+4. 点击**下一步**并添加权限策略。这些策略决定了 agent 在您的 AWS 账户中可以访问的内容。
+5. 点击**下一步**并输入角色名称和可选描述。
+6. 点击**创建角色**，然后打开角色并记下角色 ARN。格式为 `arn:aws:iam::<account-id>:role/<role-name>`。
+
+---
+
+### 第 3 步：在云 Agent 环境中启用 AWS 联合
+
+最后，配置云 agent 环境以使用您的新 AWS 角色。
+
+1. 打开 Oz Web 应用 [https://oz.warp.dev](https://oz.warp.dev)。
+2. 创建或编辑环境。请参阅[环境](/agent-platform/cloud-agents/oz-web-app/#environments)获取说明。
+3. 展开 **AWS** 部分并输入第 2 步中的 AWS 角色 ARN。
+4. 保存环境。
+
+:::caution
+目前，AWS 联合只能在 Oz Web 应用中配置，不能在 CLI 中配置。
+:::
+
+在此环境中运行的 Agent 现在将在使用 `aws` CLI 或兼容的 SDK 时自动担任配置的角色。
+
+:::note
+Oz 使用 [**Assume role with web identity**](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-role.html#cli-configure-role-oidc) AWS 身份验证机制。Agent 运行时设置以下环境变量：
+* `AWS_ROLE_ARN`：上面配置的角色的 ARN
+* `AWS_WEB_IDENTITY_TOKEN_FILE`：包含 Agent 的 Oz OIDC 令牌的临时文件路径
+* `AWS_ROLE_SESSION_NAME`：衍生会话名称，格式为 `Oz_Run_<run-id>`。
+:::
+
+---
+
+## GCP
+
+### 第 1 步：创建工作负载身份池和提供商
+
+Oz GCP 集成使用[工作负载身份联合](https://docs.cloud.google.com/iam/docs/workload-identity-federation)。您需要配置一个池和提供商以信任 Oz 产生的 OIDC 令牌。
+
+这些说明使用 `gcloud` 工具。您也可以按照[使用其他身份提供商配置工作负载身份联合](https://docs.cloud.google.com/iam/docs/workload-identity-federation-with-other-providers)中的 OIDC 说明使用 GCP 控制台或 Terraform。
+
+1. 使用 `gcloud` CLI 创建工作负载身份池：
+
+```bash
+gcloud iam workload-identity-pools create "<pool-id>" --location=global
+```
+
+将 `<pool-id>` 替换为所需的池标识符，例如 `oz-agent-pool`。
+
+2. 在池中创建提供商：
+
+```bash
+gcloud iam workload-identity-pools providers create-oidc \
+    "<provider-id>" \
+    --location=global \
+    "--workload-identity-pool=<pool-id>" \
+    --issuer-uri="https://app.warp.dev" \
+    "--attribute-mapping=google.subject=assertion.sub,google.groups=assertion.teams,attribute.environment=assertion.environment" \
+    "--attribute-condition='<team-uid>' in assertion.teams"
+```
+
+将 `<pool-id>` 替换为您上面使用的 ID，`<provider-id>` 替换为所需的提供商标识符，例如 `oz-oidc-provider`。
+
+将 `<team-uid>` 替换为您的 Warp 团队的 UID。
+
+:::caution
+如果您不设置属性条件，那么_任何云 agent_ 都可以使用您的工作负载身份联合提供商，即使它不属于您的团队。
+:::
+
+### 第 2 步：配置 IAM 策略
+
+您需要在 GCP 中配置允许工作负载身份联合池中的 Agent 访问资源的 IAM 策略。
+
+要使团队中的所有 Agent 对项目中的所有 Compute Engine 资源具有只读访问权限，例如，运行：
+
+```bash
+gcloud projects add-iam-policy-binding <project-id> \
+    --member "principalSet://iam.googleapis.com/projects/<project-number>/locations/global/workloadIdentityPools/<pool-id>/attribute.teams/<team-id>" \
+    --role "roles/compute.viewer"
+```
+
+### 第 3 步：在云 Agent 环境中启用工作负载身份联合
+
+1. 打开 Oz Web 应用 [https://oz.warp.dev](https://oz.warp.dev)。
+2. 创建或编辑环境。
+3. 展开 **GCP** 部分并输入项目编号、池 ID 和提供商 ID。
+4. 保存环境。
+
+---
+
+## OIDC 令牌声明
+
+所有 Oz OIDC 令牌包括标准声明如 `iss`（签发者）和 `iat`（签发时间）。
+
+### 受众
+
+`aud` 声明将反映您云提供商的默认值。对于 AWS，始终是 `sts.amazonaws.com`。对于 GCP，根据工作负载身份联合提供商派生。
+
+### Subject (`sub`)
+
+`sub` 声明设置为 agent 执行时的身份。可以是 Warp 用户 ID 或团队作用域 agent 运行的自动生成账户 ID。

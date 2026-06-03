@@ -1,0 +1,36 @@
+---
+title: Agent 代码差异与审查
+sidebar:
+  label: "代码差异"
+description: >-
+  如何使用 Agent 对话中的内置差异编辑器审查、优化和应用 Warp 的 Agent 生成的代码更改。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+当 Warp 的 Agent 生成代码更改时，它们在内置编辑器中显示为视觉差异。逐行审查建议的更改，使用自然语言优化它们，进行手动编辑，或接受它们以将修改应用到您的文件。
+
+## 审查代码差异
+
+在 Agent 对话期间，Warp 可以生成直接在差异编辑器中打开的代码差异。
+
+:::caution
+如果**应用代码差异**权限在[Agent 配置文件与权限](/agent-platform/capabilities/agent-profiles-permissions/)中设置为`始终允许`，代码差异会自动应用而无需呈现审查。
+:::
+
+## 导航和应用差异
+
+Agent 生成代码差异时，Warp 在内置文本编辑器中打开它，显示视觉差异视图。更改分为清晰的块以便于检查。
+
+* 使用 `UP` 和 `DOWN` 箭头键在块之间移动
+* 对于多文件更改，使用 `LEFT` 和 `RIGHT` 箭头键在文件之间切换
+* 满意后，使用 `ENTER` 或点击"接受更改"应用修改
+
+## 优化或编辑差异
+
+* `R` — 提供后续自然语言指令，Agent 重新生成差异
+* `E` — 切换到可编辑视图以手动调整代码
+* `CTRL-C` — 取消待处理操作
+
+## 接受差异并在 Agent 模式中继续
+
+当 Agent 在活动对话之外生成代码差异时，您可以接受差异并无缝在 Agent 模式中继续。接受后，Warp 打开（或返回）Agent 对话，将应用的更改作为上下文。

@@ -1,0 +1,66 @@
+---
+title: 云 Agent 的 MCP 服务器
+description: >-
+  使用 MCP 服务器将云 Agent 连接到外部工具、API 和内部服务。
+sidebar:
+  label: "MCP 服务器"
+---
+
+云 Agent 可以通过[模型上下文协议（MCP）服务器](/agent-platform/capabilities/mcp/)调用外部工具。这让 Agent 可以超越终端，在工作流需要时自动与 GitHub、dbt、Sentry 或任何自定义内部服务等系统交互。
+
+## 何时使用 MCP 服务器
+
+当云 Agent 需要以下功能时，向其添加 MCP 服务器：
+
+* 读取或写入外部 API（问题跟踪器、监控工具、云服务）
+* 调用暴露 MCP 端点的本地进程
+* 使用您已包装在 MCP 接口中的内部开发工具
+
+Agent 根据任务的需求自动调用 MCP 工具，无需明确指示。
+
+## MCP 配置如何工作
+
+您可以通过两种方式提供 MCP 配置：
+
+* **运行时** — 调用 `oz agent run` 或 `oz agent run-cloud` 时传递 `--mcp`
+* **在 Agent 配置文件中** — 直接在 YAML 或 JSON agent 配置文件中定义 `mcp_servers`
+
+## 配置架构
+
+每个 MCP 服务器条目由您选择的名称作为键名。服务器配置必须具有**精确一种**传输类型：
+
+| 传输 | 字段 | 何时使用 |
+|-----------|----------|-------------|
+| Warp 共享服务器 | `warp_id` | 引用已在 Warp 中配置的 MCP 服务器 |
+| Stdio（本地进程） | `command`、`args` | 启动本地可执行文件作为 MCP 服务器 |
+| 可流式 HTTP / SSE | `url` | 连接到远程或本地托管的 MCP 端点 |
+
+## 使用 Agent 配置文件中的 MCP 服务器
+
+对于可重复的云 Agent 工作流，在传递给 `-f / --file` 的 Agent 配置文件中声明您的 MCP 服务器。
+
+```json
+{
+  "mcp_servers": {
+    "github": {
+      "url": "https://mcp.example.com/github"
+    },
+    "dbt": {
+      "command": "uvx",
+      "args": ["dbt-mcp"],
+      "env": {
+        "DBT_HOST": "https://example.us1.dbt.com",
+        "DBT_SERVICE_TOKEN": "{{DBT_SERVICE_TOKEN}}"
+      }
+    }
+  }
+}
+```
+
+## 限制
+
+:::caution
+Warp 目前不支持云 Agent 的基于 OAuth 的 MCP 服务器。这意味着需要基于浏览器的身份验证的 MCP 服务器（如某些托管的 Figma 配置）不能直接使用。
+
+作为变通方法，您可以向 agent 传递 Figma 模型作为**图像上下文**，然后可以构建和测试 UI 以匹配这些图像。
+:::

@@ -1,0 +1,120 @@
+---
+title: "Sentry MCP：修复 Empower 网站中的 Sentry 错误"
+description: >-
+  将 Sentry MCP 服务器连接到 Warp，获取实时错误数据、诊断堆栈跟踪并自动生成生产问题的修复方案。
+sidebar:
+  label: "Sentry MCP：修复 Empower 网站中的 Sentry 错误"
+tags:
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+本教程完全基于提供的视频记录。它教你如何在 Warp 中使用 **Sentry MCP 服务器**从 Sentry 获取实时错误数据、分析堆栈跟踪并自动为代码库中的问题生成修复方案。
+:::
+
+<VideoEmbed url="https://youtu.be/rrxfS9u1XRA?si=fVUfjQJSOlyLFBJT" />
+
+### 概述
+
+**Sentry MCP 服务器**让 Warp 的代理能够访问经过身份验证的 Sentry 错误数据。\
+这使得仅靠 AI 无法实现的详细诊断和自动修复成为可能。
+
+你将学习如何：
+
+* 在 Warp 中连接 Sentry MCP 服务器。
+* 从 Sentry 触发实时错误检索。
+* 诊断代码问题并自动生成补丁。
+* 将 Sentry 调试集成到你的日常开发循环中。
+
+<Steps>
+
+1. #### 设置 Sentry MCP 服务器
+
+   在 Warp 中打开 MCP 面板：
+
+   * Mac：Cmd + Shift + P
+   * Windows/Linux：Ctrl + Shift + P\
+     搜索"MCP"并选择 **MCP 面板**。
+
+   点击**添加**，然后粘贴你的配置：
+
+   ```json
+   {
+     "sentry": {
+       "command": "npx",
+       "args": [
+         "-y",
+         "mcp-remote@latest",
+         "https://mcp.sentry.dev/mcp"
+       ],
+       "env": {},
+       "working_directory": null
+     }
+   }
+   ```
+   保存配置并确保它出现在 MCP 面板中。
+
+2. #### 运行你的应用并触发错误
+
+   我们使用的是 [**Empower Plant** 仓库](https://github.com/sentry-demos/empower)——Sentry 的官方演示项目。这个模拟电商应用包括一个 React 前端和多个后端，每个都包含用于测试的故意错误。
+
+   在本地运行应用：
+
+   ```bash
+   npm install
+   npm start
+   ```
+
+   在浏览器中打开网站并触发几个已知错误。
+
+3. #### 在 Sentry 中捕获错误
+
+   1. 前往你的 **Sentry 仪表板**。
+   2. 找到触发的问题（例如 `TypeError`）。
+   3. 从 Sentry 界面复制问题的 URL。
+
+   示例：
+
+   ```
+   https://sentry.io/organizations/demo/issues/12345/
+   ```
+
+4. #### 使用 Warp 诊断错误
+
+   返回 Warp，提示代理获取并分析问题：
+
+   ```
+   Diagnose this Sentry error and show where it's coming from in my code.
+   Create a fix.
+   ```
+
+   Sentry MCP 调用 `getIssueDetails`，直接从 Sentry 获取堆栈跟踪和错误元数据。Warp 然后扫描你的本地代码库，交叉引用错误位置，并识别根本原因。
+
+   从这个示例中：
+
+   > 问题是由于在数组而不是字符串上调用了 `.toUpperCase()` 引起的。
+
+   Warp 的代理自动编写修复方案——修改代码以正确处理数组。
+
+5. #### 应用生成的修复方案
+
+   Warp 提供内联建议的代码更改。审查差异并一键自动应用。
+
+6. #### 集成到你的工作流
+
+   每当你遇到生产或暂存错误时，使用 Sentry MCP。Warp 可以拉取最新问题、分析它们并建议补丁。
+
+   适用于：
+
+   * 调试实时生产错误。
+   * 分类复杂的堆栈跟踪。
+   * 创建即时热修复，无需切换工具。
+
+   :::tip
+   使用 Sentry MCP，Warp 成为一个实时调试控制台——将你的代码编辑器、终端和 Sentry 连接成一个智能反馈循环。
+   :::
+
+</Steps>

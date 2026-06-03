@@ -1,0 +1,99 @@
+---
+title: 更新 Warp
+description: >-
+  检查更新、排查自动更新权限问题以及刷新签名密钥。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+
+Warp 在启动时以及运行期间定期通过连接 `releases.warp.dev` 自动检查更新。当有新版本可用时，Warp 窗口右上角会出现通知。
+
+![更新可用](../../../../../assets/support-and-community/update-available.png)
+
+要检查更新，请在[命令面板](/terminal/command-palette/)中搜索"update"，或前往**设置** > **账户**并点击"检查更新"。
+
+<DemoVideo src="/assets/support-and-community/check-for-update.mp4" label="手动检查更新" />
+
+如果没有任何反应，说明您已拥有最新的稳定版本。
+
+## macOS：自动更新权限问题
+
+如果 Warp 没有替换正在运行的 Warp 版本的适当权限，则无法自动更新。如果是这种情况，会有一个横幅提示您手动更新 Warp。
+
+![更新可用](../../../../../assets/support-and-community/update-available-bar.png)
+
+主要有 2 个原因：
+
+1. 您直接从挂载的卷打开了 Warp，而不是将其拖入 Applications 目录。如果是这样，最简单的解决方法是退出 Warp，将应用程序拖到 /Applications 中，然后重新启动 Warp。
+2. 您是非管理员用户。如果您使用具有多个配置文件的计算机，可能会发生这种情况。如果您在计算机上拥有管理员访问权限，使用管理员用户打开应用应该可以解决自动更新问题。
+
+:::note
+（2022 年 10 月）：[macOS Ventura 上的自动更新](/support-and-community/troubleshooting-and-support/known-issues/#auto-update-on-macos-ventura)存在已知问题。
+:::
+
+## Linux：刷新软件包签名密钥
+
+如果您在 Linux 上尝试更新 Warp 时遇到签名验证错误，可能需要刷新软件包签名密钥。这可能是由于您系统上的密钥已过期造成的。
+
+### Debian / Ubuntu (apt)
+
+您可能会看到类似以下的错误：
+
+```
+W: GPG error: https://releases.warp.dev/linux/deb stable Release: The following signatures were invalid: EXPKEYSIG 31F4254AFE49E02E Warp Linux Maintainers (Package Signing Authority) <linux-maintainers@warp.dev>
+E: The repository 'https://releases.warp.dev/linux/deb stable Release' is not signed.
+```
+
+要获取更新的签名密钥，请运行：
+
+```bash
+curl -fsSL https://releases.warp.dev/linux/keys/warp.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/warpdotdev.gpg > /dev/null
+```
+
+然后重试更新：
+
+```bash
+sudo apt update && sudo apt install warp-terminal
+```
+
+### Fedora / RHEL / CentOS (dnf/yum)
+
+您可能会看到类似以下的错误：
+
+```
+OpenPGP check for package "warp-terminal-v0.2026.01.28.08.14.stable_04-1.x86_64" (/var/cache/libdnf5/warpdotdev-4ac10ef632833104/packages/warp-terminal-v0.2026.01.28.08.14.stable_04-1.x86_64.rpm) from repo "warpdotdev" has failed: Problem occurred when opening the package.
+```
+
+要获取更新的签名密钥，请运行：
+
+```bash
+sudo rpm --import https://releases.warp.dev/linux/keys/warp.asc
+```
+
+然后重试更新：
+
+```bash
+sudo dnf upgrade warp-terminal
+# 或对于较旧的系统：
+sudo yum upgrade warp-terminal
+```
+
+### Arch Linux (pacman)
+
+您可能会看到类似以下的错误：
+
+```
+error: warpdotdev: signature from "Warp Linux Maintainers (Package Signing Authority) <linux-maintainers@warp.dev>" is expired
+```
+
+要获取更新的签名密钥，请运行：
+
+```bash
+sudo pacman-key --recv-keys "linux-maintainers@warp.dev" --keyserver hkp://keys.openpgp.org:80
+sudo pacman-key --lsign-key "linux-maintainers@warp.dev"
+```
+
+然后重试更新：
+
+```bash
+sudo pacman -Syu warp-terminal
+```

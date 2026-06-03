@@ -1,0 +1,129 @@
+---
+title: 第三方云 Agent 身份验证
+description: >-
+  将您的 Anthropic 或 OpenAI 凭据连接到 Oz，然后从桌面应用、Oz Web 应用或 API 启动 Claude Code 或 Codex 作为云 Agent。
+sidebar:
+  label: "身份验证"
+---
+
+Oz 中的第三方云 Agent 身份验证将提供商凭据存储为 Warp 管理的密钥，用于云运行。第三方云 Agent，如 [Claude Code](#connecting-claude-code-credentials) 和 [Codex](#connecting-codex-credentials)，直接调用其提供商，因此在启动第三方 harness 前一次性设置 Anthropic 或 OpenAI 凭据。
+
+Auth 密钥可以限定为**团队**（所有团队成员的运行均可使用）或**个人**（仅您自己的运行），与任何其他 Warp 管理的密钥一样。
+
+:::note
+在 Warp 桌面应用中配置的[自带密钥 (BYOK)](/agent-platform/inference/bring-your-own-api-key/) 仅适用于本地 agent 运行。Claude Code 和 Codex 的云运行始终使用 Warp 管理的密钥。
+:::
+
+## 连接 Claude Code 凭据
+
+Claude Code 是 Anthropic 的 agent 编码工具。有关 Claude Code 身份验证的更多信息，请参阅 [Anthropic 的 Claude Code 身份验证文档](https://code.claude.com/docs/en/authentication)。
+
+### 创建 Anthropic API 密钥
+
+1. 前往 [Anthropic Console](https://platform.claude.com/login?returnTo=/?)，登录或创建账户。
+2. 确认您的账户有 API 积分。Claude Code 运行将向您的 Anthropic API 余额计费。
+3. 导航到 API 密钥部分，然后点击**获取 API 密钥**。
+4. 创建新的 API 密钥并复制值。
+
+如果您的团队通过 AWS 消耗 Anthropic 模型，Oz 还支持 Bedrock 路由的凭据（**Anthropic Bedrock API 密钥**和**Anthropic Bedrock 访问密钥**）。
+
+### 在 Oz 中存储 API 密钥
+
+#### Warp 桌面应用
+
+启动新的云 agent 运行，并从 **Agent harness** 下拉菜单中选择 **Claude Code**。在 harness 身份验证密钥字段中，添加或选择您的 Anthropic 凭据。
+
+#### Oz Web 应用
+
+启动[新运行](https://oz.warp.dev/runs/new)，选择 **Claude Code** 作为 harness，并在 Claude Code 身份验证密钥对话框中添加新密钥。
+
+<figure style={{ maxWidth: "563px" }}>
+![Oz Web 应用中用于添加新 Claude Code 身份验证密钥的对话框。](../../../../../../assets/agent-platform/claude-code-auth-secret-setup.png)
+<figcaption>Claude Code 身份验证密钥对话框。</figcaption>
+</figure>
+
+#### Oz CLI
+
+```bash
+oz secret create claude api-key --team <KEY_NAME>
+```
+
+添加 `--description "..."` 以记录轮换注释或所有者信息。将 `--team` 替换为 `--personal` 以使密钥仅对您自己的运行可用。
+
+**预期结果。** `oz secret list` 显示具有匹配 Anthropic 凭据类型的新密钥。值不会显示。
+
+## 连接 Codex 凭据
+
+Codex 是 OpenAI 的编码 agent。有关 Codex 身份验证的更多信息，请参阅 [OpenAI 的 Codex 身份验证文档](https://developers.openai.com/codex/auth)。
+
+:::caution
+ChatGPT 订阅（Plus、Pro、Team）不包括 API 访问。您需要一个单独的开云 API 密钥，并带有 API 积分。
+:::
+
+### 创建 OpenAI API 密钥
+
+1. 前往 [OpenAI Platform](https://platform.openai.com/)，登录（或创建账户）。
+2. 确认您的账户有 API 积分。Codex 运行将向您的 OpenAI API 余额计费，而非 ChatGPT 订阅。
+3. 导航到 API 密钥部分，然后点击**创建 API 密钥**。
+4. 在**创建新密钥**对话框中，选择密钥的所有者、项目和权限。
+5. 点击**创建密钥**，然后复制值。
+
+### 在 Oz 中存储 API 密钥
+
+#### Warp 桌面应用
+
+启动新的云 agent 运行，并从 **Agent harness** 下拉菜单中选择 **Codex**。在 harness 身份验证密钥字段中，添加或选择您的 OpenAI 凭据。
+
+#### Oz Web 应用
+
+启动[新运行](https://oz.warp.dev/runs/new)，选择 **Codex** 作为 harness，并在 Codex 身份验证密钥对话框中添加新密钥。
+
+#### Oz CLI
+
+```bash
+oz secret create codex api-key --team <KEY_NAME>
+```
+
+添加 `--description "..."` 以记录轮换注释或所有者信息。将 `--team` 替换为 `--personal` 以使密钥仅对您自己的运行可用。
+
+**预期结果。** `oz secret list` 显示具有匹配 OpenAI 凭据类型的新密钥。值不会显示。
+
+## 管理 Harness Auth 密钥
+
+Auth 密钥遵循与任何其他 Warp 管理密钥相同的管理命令。请参阅[云 Agent 密钥](/agent-platform/cloud-agents/secrets/)获取完整参考。常见任务：
+
+```bash
+# 列出您可以查看的密钥
+oz secret list
+
+# 轮换密钥值（提示输入新值）
+oz secret update --team --value ANTHROPIC_API_KEY
+
+# 更新描述
+oz secret update --team --description "Rotated 2026-05-12; owned by platform team" ANTHROPIC_API_KEY
+
+# 删除密钥（不可逆）
+oz secret delete --team ANTHROPIC_API_KEY
+```
+
+:::caution
+删除身份验证密钥会破坏任何按名称引用它的计划或集成触发运行。先更新计划和集成，使其指向新的密钥。
+:::
+
+## 故障排除
+
+**Claude Code 或 Codex 运行失败并出现身份验证错误。**\
+确认运行启动时选择了 harness 身份验证密钥。从 Oz Web 应用的运行详情窗格中，**Harness auth secret** 字段显示使用了哪个密钥（如果有）。使用正确的密钥重新启动运行，或者如果您的团队还没有密钥则创建一个。
+
+**Harness auth secret 下拉菜单为空。**\
+下拉菜单仅列出类型与所选 harness 匹配的密钥——Claude Code 的 Anthropic 类型，Codex 的 OpenAI 类型。如果您将凭据存储为原始值，请使用上面的类型化流程重新创建。
+
+**所选 harness 被禁用。**\
+您的团队管理员已为您的工作区禁用了该 harness。联系您的管理员或为运行选择不同的 harness。
+
+## 相关页面
+
+* [Oz 中的 Harnesses](/agent-platform/cloud-agents/harnesses/) — Oz 中第三方 harness 的概述。
+* [Warp 中的 Claude Code](/agent-platform/cli-agents/claude-code/) — 在 Warp 终端中本地运行 Claude Code。
+* [Warp 中的 Codex CLI](/agent-platform/cli-agents/codex/) — 在 Warp 终端中本地运行 Codex。
+* [云 Agent 密钥](/agent-platform/cloud-agents/secrets/) — Warp 管理密钥的完整参考。

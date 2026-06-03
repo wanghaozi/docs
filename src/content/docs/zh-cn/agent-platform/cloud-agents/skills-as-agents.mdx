@@ -1,0 +1,51 @@
+---
+title: 技能作为 Agent
+description: >-
+  基于技能运行 Agent 以实现一致、可重复的工作流。从 CLI、Oz Web 应用、API 或按计划将技能与本地或云 Agent 一起使用。
+sidebar:
+  label: "技能作为 Agent"
+---
+
+您可以从[技能](/agent-platform/capabilities/skills/)——一组定义 Agent 应做什么的可重用指令——启动 Agent。当您运行基于技能的 Agent 时，技能提供基础提示和行为，同时您为该特定运行提供额外上下文。
+
+技能适用于**本地 Agent**（在您的机器上运行）和**云 Agent**（在 Warp 的基础设施上运行）。
+
+这在以下情况下很有用：
+
+* **一致的行为** — 相同的技能每次产生相同的工作流，无论谁触发它或在哪里运行。
+* **可重复的自动化** — 按计划运行技能以进行维护任务，如代码清理、依赖更新或问题分类。
+* **可共享的工作流** — 技能存在于仓库中，因此您的团队可以版本控制、审查和协作 Agent 行为。
+
+## 技能如何变得可用
+
+技能发现取决于您运行的是本地还是云 Agent。
+
+### 本地 Agent
+
+对于本地 Agent 运行（`oz agent run`），技能自动从当前仓库发现。Warp 扫描这些目录。
+
+### 云 Agent
+
+对于云 Agent 运行（`oz agent run-cloud`），技能从您的[环境](/agent-platform/cloud-agents/environments/)中配置的仓库中发现。
+
+## 运行基于技能的 Agent
+
+### Oz Web 应用 - 从 Web 应用浏览所有可用技能并启动运行
+### CLI - 使用 `--skill` 标志
+
+```sh
+oz agent run --skill "owner/repo:skill-name" --prompt "additional context"
+oz agent run-cloud --environment <ENV_ID> --skill "owner/repo:skill-name" --prompt "additional context"
+```
+
+### API & SDK - 使用 `skill_spec` 参数
+
+## 按计划运行技能
+
+```sh
+oz schedule create \
+  --name "Weekly Code Cleanup" \
+  --cron "0 10 * * 1" \
+  --environment <ENV_ID> \
+  --prompt "Scan for dead code and unused feature flags. Open a PR with removals."
+```

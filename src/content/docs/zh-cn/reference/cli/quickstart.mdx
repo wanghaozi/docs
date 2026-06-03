@@ -1,0 +1,94 @@
+---
+title: CLI 快速入门
+description: >-
+  在不到 5 分钟内设置并通过 Oz CLI 运行您的第一个云端代理。
+sidebar:
+  label: "快速入门"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+本指南将引导您在不到 5 分钟内完成使用 Oz CLI 的基本操作：安装 CLI、认证、运行第一个本地代理，以及可选地连接 MCP 服务器以让代理访问外部工具。
+
+观看这个 Oz CLI 工作流的简短演示：
+<VideoEmbed url="https://youtu.be/WpcChBNDCXQ" />
+
+## 1. 安装 CLI
+
+如果您已经安装了 [Warp 桌面应用](/getting-started/quickstart/installation-and-setup/)，**CLI 已包含在其中**，并可在 Warp 中使用。
+
+如果没有，请参见[安装 CLI](/reference/cli/#installing-the-cli) 了解所有平台的安装选项。
+
+## 2. 认证
+
+对于本地开发和首次设置，使用 `oz login` 命令交互式认证。
+
+**例如，在 macOS 上：**
+
+```sh
+oz login
+```
+
+此命令会在您的终端中打印一个登录 URL。在浏览器中打开该 URL 以登录 Warp。您的凭据将安全地存储以供将来 CLI 使用。
+
+交互式登录既适用于**本地**也适用于**远程**机器，并且不需要 API 密钥。
+
+:::note
+**在 CI 或无头环境中运行？** 使用 API 密钥代替 `oz login`。在任何 `oz` 命令之前导出它：
+
+```sh
+export WARP_API_KEY="wk-..."
+```
+
+在 Warp 应用中，通过 **设置** > **云平台** > **Oz Cloud API 密钥**创建一个 API 密钥。参见 [API 密钥](/reference/cli/api-keys/) 了解个人密钥与团队密钥的选择以及安全最佳实践。
+:::
+
+## 3. 运行代理
+
+从任何目录，运行：
+
+```sh
+oz agent run --prompt "总结此目录"
+```
+
+这使用默认的代理配置文件，加载任何可用的 MCP 服务器，并在本地执行运行。输出直接显示在您的终端中。
+
+过程如下：
+
+* 代理在您当前的工作目录中本地运行。
+* 会话在 Warp 的后端进行跟踪，以便进行可观察性和协作。
+* 代理自主执行命令并将输出流式传输到您的终端。
+
+## 4. 运行云端代理（可选）
+
+云端代理在远程环境中运行，已克隆您的仓库并安装了依赖，使其非常适合需要完全代码库访问的任务。
+
+如果您还没有创建环境，请在 Warp 中运行 `/create-environment` 或按照[云端代理快速入门](/agent-platform/cloud-agents/quickstart/)操作。然后运行以下命令：
+
+```sh
+oz agent run-cloud --environment <ENV_ID> --prompt "扫描此仓库中过时的依赖项"
+```
+
+将 `<ENV_ID>` 替换为您的环境 ID，您可以通过在 Oz CLI 上运行 `oz environment list` 找到。
+
+## 5. 添加 MCP 上下文（可选）
+
+您可以连接 MCP 服务器，让代理访问 GitHub 或 Linear 等外部工具。使用 `--mcp` 标志以内联方式或从文件传递 MCP 配置：
+
+```sh
+oz agent run --mcp '{"github": {"url": "https://api.githubcopilot.com/mcp/"}}' --prompt "打开一个修复此仓库中 TODO 的拉取请求"
+```
+
+参见 [MCP 服务器](/reference/cli/mcp-servers/) 了解所有支持的格式，包括 UUID 引用和多服务器配置。
+
+## 后续步骤
+
+成功设置并运行代理后，使用 Oz CLI 探索其他配置和工作流：
+
+* 使用[代理配置文件](/reference/cli/agent-profiles/)自定义行为。
+* 使用 `--saved-prompt` [重用提示](/reference/cli/warp-drive/)。
+* 使用 [MCP 服务器](/reference/cli/mcp-servers/)将代理连接到外部系统。
+* 使用 [API 密钥](/reference/cli/api-keys/)为自动化环境或工作流进行认证。
+* 使用 [`oz help` 命令](/reference/cli/troubleshooting/#getting-help)获取 Oz CLI 的最新信息。
+* 使用 [GitHub Actions 快速入门](/agent-platform/cloud-agents/integrations/quickstart-github-actions/)在 CI 中运行代理。
+
+继续阅读 [Oz CLI 参考](/reference/cli/)了解如何在不同平台上安装 CLI、在不同环境中认证以及为真实世界工作流配置代理。

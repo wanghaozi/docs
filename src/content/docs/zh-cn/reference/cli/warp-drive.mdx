@@ -1,0 +1,41 @@
+---
+title: Warp Drive 上下文
+description: >-
+  在 CLI 代理命令中使用已保存的提示、笔记本、工作流和来自 Warp Drive 的规则作为上下文。
+sidebar:
+  label: "Warp Drive 上下文"
+---
+
+在 Oz CLI 命令中引用已保存的 Warp Drive 对象，以重用提示、笔记本、工作流和规则作为代理上下文。使用 `--saved-prompt` 传递已保存的提示 ID，或使用 `<workflow:id>`、`<notebook:id>` 或 `<rule:id>` 语法内联引用 Warp Drive 对象。
+
+## 重用已保存的提示
+
+当您发现效果良好的提示时，将其保存在 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 中，以便在会话间重用、与队友共享并集成到自动化工作流中。更多信息，请参见[提示](/knowledge-and-collaboration/warp-drive/prompts/)。
+
+要重用已保存的提示，找到其 ID。ID 是其 Warp Drive 共享链接的最后一段。
+
+例如，在 URL 中：
+
+```
+https://www.warp.dev/drive/prompt/Fix-compiler-error-sgNpbUgDkmp2IImUVDc8kR
+```
+
+...ID 是 `sgNpbUgDkmp2IImUVDc8kR`。
+
+然后使用 `--saved-prompt` 标志传递 ID：
+
+```bash
+$ oz agent run --saved-prompt sgNpbUgDkmp2IImUVDc8kR
+```
+
+## 引用 Warp Drive 对象作为上下文
+
+在提示中使用 `<workflow:id>`、`<notebook:id>` 或 `<rule:id>` 将 [Warp Drive 对象](/knowledge-and-collaboration/warp-drive/)和[规则](/agent-platform/capabilities/rules/)作为代理的上下文附加。
+
+:::note
+**提示：** 在 Warp 中使用 [@ 上下文菜单](/agent-platform/local-agents/agent-context/using-to-add-context/)构建带有正确引用的提示，然后将其复制到您的 CLI 命令中。
+:::
+
+```bash
+$ oz agent run --prompt "按照 <notebook:gq1CMAUWLtaL1CpEoTDQ3y> 中的说明操作"
+```

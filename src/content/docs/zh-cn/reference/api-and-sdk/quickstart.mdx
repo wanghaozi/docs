@@ -1,0 +1,96 @@
+---
+title: "API 和 SDK 快速入门"
+description: >-
+  在约 5 分钟内通过 Oz API 或 SDK 创建并监控你的第一个云端代理运行。
+sidebar:
+  label: "快速入门"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Oz API 让你可以在任何地方运行和管理云端代理——CI/CD 流水线、后端服务、脚本或自定义工具——无需 Warp 桌面应用。本快速入门将引导你创建第一个运行并检查其状态。
+
+观看这个简短的演示，了解 REST API 如何驱动基于代理的应用，例如 Warp 团队构建的问题分类机器人 [PowerFixer](https://github.com/warpdotdev/power-fixer-setup)：
+<VideoEmbed url="https://youtu.be/N6qMe641K34" />
+
+---
+
+## 前置条件
+
+* **一个 Warp API 密钥** - 在 Warp 应用中，点击你的头像，然后进入 **设置** > **云平台** > **Oz Cloud API 密钥** 创建密钥并复制原始值。参见 [API 密钥](/reference/cli/api-keys/) 了解分步说明。
+* **一个 Oz 云环境** - 代理在配置好的环境中运行，该环境包含仓库和其他依赖。如果你还没有环境，请先按照[云端代理快速入门](/agent-platform/cloud-agents/quickstart/)操作。
+
+---
+
+## 1. 设置你的 API 密钥
+
+导出你的 API 密钥，以便 API 可以自动认证你的请求——本指南中的所有命令都引用 `WARP_API_KEY` 环境变量。
+
+```bash
+export WARP_API_KEY="wk-..."
+```
+
+将 `wk-...` 替换为你之前创建的密钥。
+
+## 2. 创建你的第一个运行
+
+提交提示以启动代理运行：
+
+```bash
+curl -X POST https://app.warp.dev/api/v1/agent/run \
+  -H "Authorization: Bearer $WARP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "扫描仓库中过时的依赖项并总结发现。",
+    "config": {
+      "environment_id": "<ENV_ID>"
+    }
+  }'
+```
+
+将 `<ENV_ID>` 替换为你的环境 ID。可以通过 Oz CLI 的 `oz environment list` 或在 [Oz web 应用](https://oz.warp.dev)中查找。
+
+:::note
+更喜欢类型化请求？官方的 [Python SDK](https://github.com/warpdotdev/oz-sdk-python) 和 [TypeScript SDK](https://github.com/warpdotdev/oz-sdk-typescript) 使用类型化模型、重试和错误处理封装了相同的 API。
+:::
+
+API 会立即返回一个 `run_id`。代理会异步启动——你可以随时使用运行 ID 检查其状态。
+
+## 3. 检查运行状态
+
+使用以下命令获取运行的当前状态。将 `<RUN_ID>` 替换为第 2 步中的 `run_id`。
+
+```bash
+curl "https://app.warp.dev/api/v1/agent/runs/<RUN_ID>" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+`state` 的可能值如下：
+
+* `QUEUED` - 运行正在等待启动。
+* `INPROGRESS` - 代理正在主动运行。
+* `SUCCEEDED` - 运行成功完成。
+* `FAILED` - 运行遇到错误。查看响应中的 `status_message` 字段了解详情，然后使用 [API 错误参考](/reference/api-and-sdk/troubleshooting/errors/) 解释错误码。
+
+这些是最常见的状态。有关所有可能的值，请参见[完整 API 参考](/reference/api-and-sdk/)。
+
+列出所有最近的运行：
+
+```bash
+curl "https://app.warp.dev/api/v1/agent/runs" \
+  -H "Authorization: Bearer $WARP_API_KEY"
+```
+
+## 4. 查看结果
+
+一旦运行达到 `SUCCEEDED` 状态，响应中包含一个 `session_link`——一个指向完整运行记录的直接 URL，包括执行的命令、更改的文件和代理输出。
+
+你还可以在 [Oz 仪表板](https://oz.warp.dev/runs)中查看和管理所有运行。
+
+---
+
+## 后续步骤
+
+* **阅读完整的 API 参考** - [Oz API](/reference/api-and-sdk/) 记录了所有端点参数、查询过滤器和响应模式。
+* **探索 SDK** - [Python SDK](https://github.com/warpdotdev/oz-sdk-python) 和 [TypeScript SDK](https://github.com/warpdotdev/oz-sdk-typescript) 包含类型化请求/响应模型、重试和错误处理。
+* **查看真实世界示例** - [演示：使用 SDK 进行 Sentry 监控](/reference/api-and-sdk/demo-sentry-monitoring-with-sdk/) 展示了如何构建一个从生产错误触发代理的 webhook 处理器。
+* **调度和自动化** - 参见[定时代理快速入门](/agent-platform/cloud-agents/triggers/scheduled-agents-quickstart/) 以在 cron 上运行代理，或[集成快速入门](/agent-platform/cloud-agents/integrations/quickstart/) 以从 Slack 或 Linear 触发代理。

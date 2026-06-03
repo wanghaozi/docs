@@ -1,0 +1,41 @@
+---
+title: 管理云 Agent
+description: >-
+  使用 Warp 的 Agent 管理面板和 Oz Web 应用的 Runs 页面监控和管理跨团队的 Agent 活动。
+sidebar:
+  label: "管理云 Agent"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 提供两个管理界面用于跟踪和观察跨账户及团队的 Agent 活动：Warp 应用中的 **Agent 管理面板**和 [Oz Web 应用中的 **Runs** 页面](/agent-platform/cloud-agents/oz-web-app/#runs)（网址 [oz.warp.dev](https://oz.warp.dev)），后者也适用于移动设备。
+
+使用这些界面作为 Warp 中实时 Agent 可观测性的起点。它们帮助您查看哪些 Agent 处于活动状态、哪些运行被阻塞或失败、每个运行从哪里启动，以及哪个会话链接打开提示、计划、命令、日志、输出和后续消息。
+
+## 管理界面中的内容
+
+Agent 管理面板和 Oz Web 应用 Runs 页面包括两类 Agent 活动。
+
+### 交互式 Agent
+* 从 Warp 应用发起
+* 对话归您所有
+
+### 云 Agent 运行
+* 由集成和自动化等触发器发起的后台执行
+* 每次运行产生一个可共享的会话
+
+## 检查或审查 Agent 运行
+
+1. 在 Agent 列表中，使用筛选菜单按来源、日期、创建者或状态筛选。
+2. 选择匹配的行以打开共享会话或本地对话。
+3. 检查提示、计划、命令、日志、输出和后续消息。
+4. 与团队成员共享会话链接。
+
+## Agent 列表
+
+每行代表 Agent 列表中的单个项目。来源包括：交互式、CLI、API、Slack/Linear、计划。
+
+状态包括：工作中（Working）、阻塞（Blocked）、已取消（Canceled）、失败/错误（Failed/Errored）、成功（Success）。
+
+## 编排运行（父级和子级）
+
+当父 Agent 通过[多 Agent 编排](/agent-platform/cloud-agents/orchestration/)生成一个或多个子 Agent 时，父级和每个子级被跟踪为独立的运行。

@@ -1,0 +1,26 @@
+---
+title: 会话导航
+description: >-
+  使用会话导航面板快速导航到 Warp 中的任何终端会话。
+sidebar:
+  label: "会话导航"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何访问会话导航
+
+1. 使用 [命令面板](/terminal/command-palette/) 打开会话导航面板，点击 **session >_** 或输入 "sessions:"。
+2. 使用鼠标或 `UP ↑`/`DOWN ↓` 箭头键和 `ENTER` 跳转到某个会话。
+3. 通过按提示符、当前正在运行的命令、上次运行的命令和命令状态（例如："运行中…"、"10 分钟前完成"、"空会话"）搜索会话来细化会话结果。
+
+:::note
+会话按最近使用顺序排列，因此最近聚焦的会话会首先显示。会话导航面板不支持 **PS1**，只能显示 Warp 的原生提示符。
+:::
+
+### CTRL-TAB 行为
+
+`CTRL-TAB` 快捷键默认为激活上一个/下一个 [标签](/terminal/windows/tabs/)。您可以在 **设置** > **功能** > **键** > **Ctrl-Tab 行为** 中配置快捷键为循环最近会话，包括任何 [拆分窗格](/terminal/windows/split-panes/)。
+
+## 会话导航的工作原理
+
+<VideoEmbed url="https://www.loom.com/share/2147adc6749c4f4ea5da432eadda7995" title="会话导航演示" />

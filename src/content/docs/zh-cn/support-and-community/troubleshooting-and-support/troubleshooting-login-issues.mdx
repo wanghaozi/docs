@@ -1,0 +1,107 @@
+---
+title: 登录问题排查
+description: >-
+  解决常见的登录问题，包括 SSO、代理、广告拦截器和认证令牌。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+
+## 无法注册或登录 Warp
+
+点击按钮应打开注册或登录弹出窗口。如果点击按钮打开一个空白弹出窗口，请尝试使用代理。您的 ISP 或防火墙可能阻止了应用对 `*.googleapis.com` 的调用。
+
+:::note
+在某些较旧的 Ruby 开发环境中，`.dev` 域名无法正确解析，您可能需要删除 `/etc/resolver/dev`，更多信息请参阅[此处](https://superuser.com/questions/1374892/dev-domains-dont-resolve)。
+:::
+
+## 所有浏览器
+
+如果您安装了广告拦截器或浏览器 cookie 过期（包括我们的 Firebase 认证弹出窗口），可能会出现此错误。**要修复它：**
+
+1. 禁用 `app.warp.dev` 的广告拦截器
+2. 清除所有 cookie 和缓存，或打开隐身/私密浏览器窗口
+3. 再次尝试 [https://app.warp.dev/login](https://app.warp.dev/login)
+
+### Safari
+
+如果您使用 Safari，可能会在控制台中看到以下消息：
+
+1. `Unable to access localStorage`
+2. 每次点击"注册"按钮时，都会出现 `Unhandled Promise Rejection: Error: This operation is not supported in the environment the application is running on. "location.protocol" must be http, https, or chrome-extension and web storage must be enabled.`
+
+此错误可能是因为您在 Safari 的安全设置中阻止了所有 cookie，但 Firebase Auth 需要 cookie 来记录用户是否已登录。**要修复它：**
+
+1. 前往 Safari 偏好设置 > 隐私
+2. 取消勾选"阻止所有 cookie"复选框
+
+## 代理
+
+当位于代理后面时，一种可能的解决方法是在浏览器中禁用 QUIC。然后将回退到 TCP，很可能可以登录。
+
+* 在 Chrome 或基于 Chromium 的浏览器（如 Edge、Opera 和 Arc）中，在地址栏中输入 `chrome://flags`。
+  1. 在 flags 页面的搜索栏中，输入 `Experimental QUIC protocol`。
+  2. 找到"Experimental QUIC protocol"标志，点击旁边的下拉菜单。
+  3. 选择"Disabled"。
+  4. 重新启动 Chrome 以使更改生效。
+* 在 Firefox 中，在地址栏中输入 `about:config`。
+  1. 您将看到一条警告消息。点击"接受风险并继续"按钮。
+  2. 在搜索栏中，输入 `network.http.http3.enable`。
+  3. 双击 `network.http.http3.enable` 首选项以将其值设置为 `false`。这将禁用 Firefox 中的 QUIC。
+  4. 重新启动 Firefox 以使更改生效。
+* 在 Safari 中，遗憾的是没有内置选项可以禁用 QUIC。Safari 使用 QUIC 作为其默认传输协议，并且不提供用户可访问的设置来禁用它。
+
+## SSO 登录
+
+### 无法从 SSO 打开 Warp
+
+当直接从 Okta 或其他 SSO 提供商启动 Warp 时，您可能会看到类似"`Unable to process request due to missing initial state...`"的错误消息。这是由于 Warp 认证 API 的限制。请改为执行以下操作：
+
+1. 前往 [app.warp.dev/login](https://app.warp.dev/login)
+2. 选择"继续使用 SSO"
+3. 使用您正常的 SSO 凭据登录
+
+### 我之前使用其他方法登录，现在无法使用 SSO
+
+如果您之前使用其他方法登录，请执行以下操作以修复 SSO 登录：
+
+1. 前往 [app.warp.dev/login](https://app.warp.dev/login)
+2. 使用您创建 Warp 账户的原始方法（电子邮件、Google、GitHub）登录。
+3. 登录后，前往 [app.warp.dev/link_sso](https://app.warp.dev/link_sso)
+4. 这会将您的登录与 SSO 关联。您现在可以使用"继续使用 SSO"登录。
+
+## 被标记为欺诈
+
+如果您收到"此账户已被标记为欺诈"的消息，表示您未通过我们欺诈检测系统中的一项或多项检查，您将无法通过 Warp 认证或使用 AI 功能。
+
+请注意，创建多个账户或使用临时邮箱违反了我们的[服务条款](https://www.warp.dev/terms-of-service)，并会显著增加触发此系统的可能性。
+
+### 误报
+
+有时，广告拦截器或 Pi-hole 等系统可能错误地触发此系统。您可以尝试暂时禁用这些工具并再次尝试登录来解决此错误。
+
+### 请求申诉
+
+如果您仍然无法通过认证，可以发送邮件至 [appeals@warp.dev](mailto:appeals@warp.dev) 请求申诉。请附上您遇到问题的账户邮箱，以便我们的支持团队成员进行调查。这可能需要 5-10 天。
+
+如果您有有效的订阅并且仍然有登录问题，请参阅[此页面](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/#get-help-with-login-issues)上的其他建议。
+
+## 如何获取认证令牌以登录
+
+如果点击"注册"或"登录"时浏览器没有直接从 Warp 打开。请前往[注册](https://app.warp.dev/signup)页面创建账户，或如果您已有账户请前往[登录](https://app.warp.dev/login)页面，然后从 logged_in 页面的"此处"链接复制认证令牌并粘贴到 Warp 中。
+
+如果在登录页面上点击"带我前往 Warp"没有任何反应。如果遇到此情况，请复制网页登录页面 (https://app.warp.dev/logged\_in) 上的"此处"链接以复制认证令牌，然后将其粘贴到应用中，如下所示。
+
+:::caution
+在 Linux 和 Windows 上，默认的复制粘贴[键盘快捷键](/getting-started/keyboard-shortcuts/)分别是 `CTRL+SHIFT+C` 和 `CTRL+SHIFT+V`。\
+\
+在 Linux 和 WSL 上，您应该安装并将默认的 `$BROWSER` 设置为 `brave-browser` 以解决任何复制粘贴问题。请参阅下面的解决方法指南。
+:::
+
+<DemoVideo src="/assets/support-and-community/auth-token-demo.mp4" label="Linux 认证令牌" />
+
+![macOS 认证令牌](../../../../../assets/support-and-community/auth-token-flow.png)
+
+如果"带我前往 Warp"仍然无效，可能是由于[代理问题](/support-and-community/troubleshooting-and-support/troubleshooting-login-issues/#proxies)，请参阅[此文章](https://embiid.blog/post/WARP-does-not-work-after-submitting-an-invite-code/)了解更多关于解决方法的信息。
+
+## 获取登录问题帮助
+
+如果在尝试上述步骤后注册或登录仍然无法正常工作，请[联系我们](https://www.warp.dev/contact)获取支持。

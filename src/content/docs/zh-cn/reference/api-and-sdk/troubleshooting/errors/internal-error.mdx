@@ -1,0 +1,59 @@
+---
+title: internal_error
+description: >-
+  发生了意外的服务器端错误。平台将自动重试。如果问题持续存在，请联系支持。
+---
+
+`internal_error` 是意外服务器端错误的通用捕获。平台会在任务标记为失败之前自动重试这些错误。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `500 内部服务器错误`
+* **可重试：** 是（自动）
+* **任务状态：** ERROR
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 服务器上发生了与任何特定错误类别都不匹配的意外情况
+* 内部服务依赖失败或超时
+* 任务处理过程中发生了未分类的错误
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/internal-error/",
+  "title": "发生了意外错误。请稍后重试。如果问题仍然存在，请联系支持。",
+  "status": 500,
+  "instance": "/api/v1/agent/tasks",
+  "error": "发生了意外错误。请稍后重试。如果问题仍然存在，请联系支持。",
+  "retryable": true,
+  "trace_id": "abc123..."
+}
+```
+
+---
+
+## 解决方法
+
+通常无需操作——平台会自动重试任务。
+
+如果错误持续存在：
+
+1. 等待几分钟后再试。
+2. 联系 [Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)，并提供错误响应中的 `trace_id`。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理任务的工作原理
+* [云端代理常见问题](/agent-platform/cloud-agents/faqs/) — 关于云端代理的常见问题

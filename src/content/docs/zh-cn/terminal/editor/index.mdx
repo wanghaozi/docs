@@ -1,0 +1,52 @@
+---
+title: 现代文本编辑概览
+description: >-
+  与其他终端不同，Warp 的输入编辑器开箱即用，就像现代 IDE 和我们已经习惯的文本编辑器一样。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的输入编辑器的工作方式类似于现代 IDE 文本编辑器，内置光标移动、点击定位、多行编辑、复制粘贴、单词选择和软换行。与传统终端不同，您可以像编辑代码一样编辑命令——无需记住特定于 shell 的快捷方式。
+
+:::note
+文本编辑器输入同样适用于 [SSH 会话](/terminal/warpify/ssh/)。
+:::
+
+### 软换行
+
+Warp 支持输入编辑器中的软换行。如果自动建议超出屏幕范围，输入编辑器将变为水平可滚动以使其可见。某些操作将软换行的行视为逻辑行（`三击`），而其他操作将软换行的行视为可见的不同行（`UP`/`DOWN`、`SHIFT-UP`/`SHIFT-DOWN`）。
+
+### 选择时复制
+
+Warp 支持对 [块](/terminal/blocks/) 内的可选文本进行选择时复制。
+
+* 在 **设置** > **功能** > **终端** 中切换此功能，或在 [命令面板](/terminal/command-palette/) 中搜索"选择时复制"。
+
+### 自动补全引号、圆括号和方括号
+
+Warp 可以像您在 IDE 中习惯的那样自动补全引号、括号和方括号。
+
+* 在 **设置** > **功能** > **文本编辑** 中切换此功能，或在 [命令面板](/terminal/command-palette/) 中搜索"自动补全引号"。
+
+## 如何使用
+
+<Tabs>
+  <TabItem label="macOS">
+    <table><thead><tr><th width="317">键盘绑定</th><th>快捷键描述</th></tr></thead><tbody><tr><td><code>ESCAPE</code></td><td>关闭输入建议或历史菜单</td></tr><tr><td><code>CTRL-L</code></td><td>清除终端</td></tr><tr><td><code>CTRL-H</code></td><td>退格键</td></tr><tr><td><code>CTRL-C</code></td><td>清除整个编辑器缓冲区</td></tr><tr><td><code>CTRL-U</code></td><td>复制并清除当前行</td></tr><tr><td><code>CMD-SHIFT-K</code></td><td>清除选定行</td></tr><tr><td><code>CMD-C</code>, <code>CMD-X</code>, <code>CMD-V</code></td><td>复制、剪切、粘贴</td></tr><tr><td><code>CTRL-W</code> / <code>OPT-D</code></td><td>剪切光标左侧/右侧的单词</td></tr><tr><td><code>OPT-BACKSPACE</code> / <code>OPT-D</code></td><td>删除光标左侧/右侧的单词</td></tr><tr><td><code>CTRL-K CMD-DELETE</code></td><td>删除光标右侧的所有内容</td></tr><tr><td><code>OPT-LEFT</code> / <code>OPT-RIGHT</code></td><td>移动到上一个/下一个单词的开头</td></tr><tr><td><code>CTRL-OPT-LEFT</code> / <code>CTRL-OPT-RIGHT</code></td><td>按子词向后/向前移动</td></tr><tr><td><code>CMD-LEFT</code> <code>CTRL-A</code>/ <code>CTRL-E</code> <code>CMD-DOWN</code> <code>CMD-RIGHT</code></td><td>移动光标到行的开始/结束</td></tr><tr><td><code>SHIFT-LEFT</code> / <code>SHIFT-RIGHT</code></td><td>选择光标左侧/右侧的字符</td></tr><tr><td><code>OPT-SHIFT-LEFT</code> / <code>OPT-SHIFT-RIGHT</code></td><td>选择光标左侧/右侧的单词</td></tr><tr><td><code>CMD-SHIFT-LEFT</code> / <code>CMD-SHIFT-RIGHT</code></td><td>选择光标左侧/右侧的所有内容</td></tr><tr><td><code>SHIFT-UP</code> / <code>SHIFT-UP</code></td><td>选择光标上方/下方的所有内容</td></tr><tr><td><code>CMD-A</code></td><td>选择整个编辑器缓冲区</td></tr><tr><td><code>SHIFT-ENTER</code> <code>CTRL-ENTER</code> <code>OPT-ENTER</code></td><td>插入新行</td></tr><tr><td><code>CTRL-R</code></td><td>命令搜索</td></tr><tr><td><code>CMD-D</code></td><td>拆分窗格</td></tr></tbody></table>
+  </TabItem>
+  <TabItem label="Windows">
+    <table><thead><tr><th width="317">键盘绑定</th><th>快捷键描述</th></tr></thead><tbody><tr><td><code>ESCAPE</code></td><td>关闭输入建议或历史菜单</td></tr><tr><td><code>CTRL-L</code></td><td>清除终端</td></tr><tr><td><code>CTRL-H</code></td><td>退格键</td></tr><tr><td><code>CTRL-C</code></td><td>清除整个编辑器缓冲区</td></tr><tr><td><code>CTRL-U</code></td><td>复制并清除当前行</td></tr><tr><td><code>CTRL-SHIFT-K</code></td><td>清除选定行</td></tr><tr><td><code>CTRL-C</code>, <code>CTRL-X</code>, <code>CTRL-V</code></td><td>复制、剪切、粘贴</td></tr><tr><td><code>CTRL-W</code> / <code>ALT-D</code></td><td>剪切光标左侧/右侧的单词</td></tr><tr><td><code>ALT-BACKSPACE</code> / <code>ALT-D</code></td><td>删除光标左侧/右侧的单词</td></tr><tr><td><code>CTRL-K</code></td><td>删除光标右侧的所有内容</td></tr><tr><td><code>ALT-LEFT</code> / <code>ALT-RIGHT</code></td><td>移动到上一个/下一个单词的开头</td></tr><tr><td><code>CTRL-LEFT</code> / <code>CTRL-RIGHT</code></td><td>按子词向后/向前移动</td></tr><tr><td><code>CTRL-A</code>/ <code>CTRL-E</code></td><td>移动光标到行的开始/结束</td></tr><tr><td></td><td>选择光标左侧/右侧的字符</td></tr><tr><td><code>META-SHIFT-B</code> / <code>META-SHIFT-F</code></td><td>选择光标左侧/右侧的单词</td></tr><tr><td></td><td>选择光标左侧/右侧的所有内容</td></tr><tr><td><code>SHIFT-UP</code> / <code>SHIFT-UP</code></td><td>选择光标上方/下方的所有内容</td></tr><tr><td><code>CTRL-A</code></td><td>选择整个编辑器缓冲区</td></tr><tr><td><code>SHIFT-ENTER</code> <code>CTRL-ENTER</code> <code>ALT-ENTER</code></td><td>插入新行</td></tr><tr><td><code>CTRL-R</code></td><td>命令搜索</td></tr><tr><td><code>CTRL-SHIFT-D</code></td><td>拆分窗格</td></tr></tbody></table>
+  </TabItem>
+  <TabItem label="Linux">
+    <table><thead><tr><th width="317">键盘绑定</th><th>快捷键描述</th></tr></thead><tbody><tr><td><code>ESCAPE</code></td><td>关闭输入建议或历史菜单</td></tr><tr><td><code>CTRL-L</code></td><td>清除终端</td></tr><tr><td><code>CTRL-H</code></td><td>退格键</td></tr><tr><td><code>CTRL-C</code></td><td>清除整个编辑器缓冲区</td></tr><tr><td><code>CTRL-U</code></td><td>复制并清除当前行</td></tr><tr><td><code>CTRL-SHIFT-K</code></td><td>清除选定行</td></tr><tr><td><code>CTRL-C</code>, <code>CTRL-X</code>, <code>CTRL-V</code></td><td>复制、剪切、粘贴</td></tr><tr><td><code>CTRL-W</code> / <code>ALT-D</code></td><td>剪切光标左侧/右侧的单词</td></tr><tr><td><code>ALT-BACKSPACE</code> / <code>ALT-D</code></td><td>删除光标左侧/右侧的单词</td></tr><tr><td><code>CTRL-K</code></td><td>删除光标右侧的所有内容</td></tr><tr><td><code>ALT-LEFT</code> / <code>ALT-RIGHT</code></td><td>移动到上一个/下一个单词的开头</td></tr><tr><td><code>CTRL-LEFT</code> / <code>CTRL-RIGHT</code></td><td>按子词向后/向前移动</td></tr><tr><td><code>CTRL-A</code>/ <code>CTRL-E</code></td><td>移动光标到行的开始/结束</td></tr><tr><td></td><td>选择光标左侧/右侧的字符</td></tr><tr><td><code>META-SHIFT-B</code> / <code>META-SHIFT-F</code></td><td>选择光标左侧/右侧的单词</td></tr><tr><td></td><td>选择光标左侧/右侧的所有内容</td></tr><tr><td><code>SHIFT-UP</code> / <code>SHIFT-UP</code></td><td>选择光标上方/下方的所有内容</td></tr><tr><td><code>CTRL-A</code></td><td>选择整个编辑器缓冲区</td></tr><tr><td><code>SHIFT-ENTER</code> <code>CTRL-ENTER</code> <code>ALT-ENTER</code></td><td>插入新行</td></tr><tr><td><code>CTRL-R</code></td><td>命令搜索</td></tr><tr><td><code>CTRL-SHIFT-D</code></td><td>拆分窗格</td></tr></tbody></table>
+  </TabItem>
+</Tabs>
+
+## 工作原理
+
+<VideoEmbed url="https://loom.com/share/1517049fefc34227bf1abaf19cc7e6ea?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="文本编辑器输入演示" />
+
+<figure>
+![Warp 输入编辑器中的软换行文本](../../../../../assets/terminal/soft-wrapping.png)
+<figcaption>编辑器中应用于长行的软换行。</figcaption>
+</figure>

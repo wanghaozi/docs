@@ -1,0 +1,241 @@
+---
+title: 云 Agent 常见问题解答
+description: >-
+  关于云 agent 的常见问题，包括 agent 的运行位置、运行方式、受支持的模型、安全性和常见工作流。
+sidebar:
+  label: "云 Agent 常见问题解答"
+---
+
+此页面回答关于云 agent 的常见问题，包括它们的运行位置、配置方式以及团队如何在日常工程工作中使用云 agent。
+
+## 架构与执行
+
+### 云 agent 在哪里运行？架构是什么？
+
+Agent 要么**本地**运行（在您的 Warp 会话内），要么**在云端**作为**云 agent 运行**，在**环境**内运行（参见[环境](/agent-platform/cloud-agents/environments/)）。
+
+云 agent 平台围绕模块化、可观察的执行构建：
+
+- **触发器**启动工作（手动、计划/cron、Webhook 或集成如 Slack/GitHub）。
+- **agent** 在**环境**内执行（Warp 托管的云沙箱或您基础设施上的**自托管沙箱**，取决于计划/支持）。
+- 每一步都被记录：**记录、工具调用、日志和输出**，使工作可审计且可调试，而非黑盒。
+
+同一 agent 可以跨入口点（Warp 对话、云 agent Web 应用、CLI、API/SDK、Slack/GitHub 触发器）一致调用，无需重写底层指令。
+
+### Warp 中的云 agent 到底是什么？
+
+**云 agent** 是一个打包的自动化单元，由以下部分组成：
+
+- **指令** — 可重用的技能/提示（它应该做什么）。
+- **配置文件** — 模型选择 + 工具 + 权限（它如何操作）。
+- **触发器** — 手动、cron/计划、Webhook 或集成事件（何时启动）。
+- **环境** — 仓库访问、依赖（Docker 镜像）、密钥、设置命令和运行时配置（在哪里运行）。
+- **主机** — 本地（交互）或云端（运行），以及可选的自托管执行（在受支持的地方）。
+
+由于 agent 定义是模块化的，同一云 agent 可以从不同的界面（终端、Web 应用、CLI、集成）启动，具有一致的接口。
+
+### 我们可以在运行中干预吗？
+
+是的。对于**云 agent 运行**，您可以：
+
+- 检查**运行状态**、工具调用和日志。
+- 在 agent 运行时**引导**它。
+- 用额外的指令或上下文解除阻塞。
+
+如果您对结果不满意，可以接管以完成任务。这种人工交接是使 agent 在演示之外可靠的核心部分。
+
+### 云 agent 可以访问代码库上下文和索引吗？
+
+是的。只要您的账户已启用[代码库上下文](/agent-platform/capabilities/codebase-context/)，它在所有云 agent 运行中都是启用的。这包括从 CLI、API/SDK、集成（Slack、Linear、GitHub Actions）和计划触发的运行。无需额外配置——如果代码库上下文已启用，云 agent 会自动使用它。
+
+### 我可以在云 agent 环境中访问 shell 吗？有限制吗（Docker、Playwright 等）？
+
+是的。云 agent 运行在完整的 Linux 环境中执行，行为类似于本地开发会话。您可以安装依赖、运行 Docker 和使用无头工具如 Playwright，但受标准沙箱资源限制。
+
+### 云 agent 支持完全自托管、本地或离线模式吗？
+
+云 agent 平台支持在您自己的基础设施上自托管 **agent 沙箱**（执行环境）。**控制平面**——处理编排、跟踪和可审计性——仍由 Warp 管理，不支持自托管。
+
+自托管执行在 **Enterprise** 计划上可用。详情请参阅[自托管](/agent-platform/cloud-agents/self-hosting/)和[部署模式](/agent-platform/cloud-agents/deployment-patterns/)。
+
+:::note
+[自带 API 密钥 (BYOK)](/agent-platform/inference/bring-your-own-api-key/) 不适用于云 agent。BYOK 密钥存储在您的本地设备上，不能传递给云托管或自托管的 agent 运行。所有云 agent 运行消耗 [Warp 积分](/support-and-community/plans-and-billing/credits/)。
+:::
+
+## 模型
+
+### 支持哪些模型？
+
+云 agent **设计上支持多模型**。您可以根据成本、延迟和能力选择模型，团队通常按工作流混合模型：
+
+- 更快/更便宜的模型用于分类和日常任务。
+- 更强的模型用于复杂更改（重构、多文件工作、更深入的推理）。
+
+模型选择按 **agent**（通常按环境/工作流）可配置，取决于您如何设置配置文件。
+
+### 我可以选择云 agent 使用的模型吗？
+
+是的。云 agent 支持 Warp 中可用的一套模型。模型选择可按 agent 或环境配置。
+
+### 我可以使用自己的 ChatGPT 或 Claude Pro / Max 计划对云 agent 进行身份验证吗？
+
+我们强烈支持这一点，但最终取决于模型提供商的策略。我们正在积极与提供商合作，探索直接第三方身份验证的可能性。
+
+### 为满足合规或气隙环境需求，你们支持本地或私有 LLM 吗？
+
+Enterprise 计划可以通过[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 通过您自己的云提供商账户路由推理，因此提示保留在您的云环境中。
+
+鉴于当前的云 agent 编排和运行时架构，完全本地、离线的 LLM 执行很困难，但通过 BYOLLM 提供的私有模型支持可通过企业云提供商获得。
+
+### 云 agent 会支持 Agent-to-Agent 协议 (A2A) 吗？
+
+这是我们正在积极探索的事情。我们的重点是构建持久的编排原语——运行、环境、可观测性、引导和协调——这些可以随时间支持 A2A 和其他新兴标准。
+
+## 安全与计费
+
+### 云存储用于 agent 定义、运行和对话会安全并加密吗？
+
+是的。存储在云中的所有云 agent 数据在静态和传输中都是加密的，并由 Warp 账户级访问控制保护。
+
+云 agent 环境默认沙箱化，对仓库、密钥和计算具有限定作用域的访问。安全性和隔离性是云 agent 运行时的一级设计约束。
+
+### 云 agent 包含在 Build 计划中吗，还是单独的附加功能？
+
+云 agent 包含在 Build 计划中。使用通过积分计量，定价基于 agent 运行和资源消耗。并发限制和积分分配详情仍在确定中。
+
+### 云 agent 如何处理 agent 的 API 密钥和密钥？
+
+密钥通过云 agent CLI 管理。密钥在静态时加密，作用域限定为您的 Warp 账户，并在运行时注入到 agent 环境中。它们永远不会硬编码到 agent 指令或日志中。
+
+要了解密钥在实际中如何工作，请参阅[云 Agent 密钥](/agent-platform/cloud-agents/secrets/)。
+
+## 工作流
+
+### Agent 如何处理分支、合并冲突以及云 agent 的多 agent 协调？
+
+云 agent 平台有意保持灵活。作为开发人员，您决定 agent 应如何分支、协调和解决冲突。
+
+交互式 agent 可以规划工作并生成子 agent 以并行化任务。云 agent 提供用于运行和协调多个并发 agent 的构建块，而非强制执行固定工作流。
+
+### 为什么专注于编排原语而不是立即采用新的 agent 标准？
+
+我们相信持久的基础设施比短暂的 standards 更重要。云 agent 平台旨在提供稳定的构建块——agent 运行、环境、可审计性、引导和协调——编排框架和新兴标准可以随时间接入。
+
+### 云 agent 可以与外部工具、API 或服务（如 n8n 连接器）集成吗？
+
+是的，云 agent 不依赖僵化、预定义的工作流。Agent 可以安装 CLI、调用外部 API、使用 MCP 服务器和直接访问互联网。
+
+意图是将灵活性委托给 agent，而不是用固定的连接器约束它们。
+
+### 我可以从云 agent 导出 agent 对话和运行吗？
+
+是的。对话可以直接从 UI 复制。云 agent CLI 和 API 也提供对完整对话文本、日志和输出的编程访问。
+
+### 与基于 SSH 的设置相比，云 agent 如何处理环境访问、文件和安全？
+
+访问通过 Warp 会话共享而非 SSH 密钥处理。身份验证绑定到 Warp 账户和访问控制，实现安全的人与人共享。
+
+配置文件和凭据可以使用加密的 .env 工作流（例如 dotenv 风格的加密）管理，避免重复的手动解密/加密周期。
+
+### 云 agent 能像团队成员一样审查 PR 吗？
+
+是的。**云 agent** 在 PR 审查中的常见模式：
+
+- 总结更改和意图。
+- 标记有风险的差异和边界情况。
+- 建议测试和缺失的覆盖率。
+- 提出可维护性重构。
+
+典型工作流是：agent 留下结构化的审查评论，并可选地打开后续 PR 进行机械修复（如果您选择允许，则提交到分支）。
+
+### 云 agent 可以编写单元测试吗？
+
+是的，特别是当：
+
+- 仓库有一致的测试框架。
+- **环境**是可重现的（依赖和设置可靠）。
+
+最强的循环是：云 agent 生成测试，在环境中运行它们，迭代直到通过，然后打开包含测试以及简要覆盖率和假设说明的 PR。
+
+### 云 agent 可以做大型重构吗？
+
+它可以提供帮助，但最佳实践是将其限定为更小、可审查的块。
+
+当 Agent 可以持续验证进度（测试、lint、类型检查）时它们最强。对于大型重构，采用带有检查点的分阶段方法（可能还有多个子 agent 进行并行探索）往往比一个巨大的提示效果更好。
+
+### 云 agent 可以自动分类问题/工单吗？
+
+是的。常见的云 agent 工作流：
+
+- 当工单/问题创建时（通过集成触发器），云 agent 收集上下文（最近的更改、日志/指标链接、所有权）。
+- 建议标签/优先级和可能的原因。
+- 起草后续步骤或响应。
+- 在需要时向报告者提出澄清性问题。
+
+### 云 agent 可以做依赖升级吗？
+
+是的。计划的依赖更新是典型的云 agent 用例：
+
+- 打开 PR。
+- 运行测试。
+- 解决简单冲突。
+- 附上风险摘要（可选）。
+
+这通常实现为产生重复**运行**的计划**云 agent**。
+
+### 云 agent 可以保持文档最新吗？
+
+是的。使用云 agent，agent 可以：
+
+- 扫描漂移（不再工作的命令、已更改的入门步骤）。
+- 在文档/测试环境中运行验证。
+- 将文档更新建议为 PR。
+
+这在"文档即代码"工作流（GitBook/Mintlify/Docusaurus 风格）中最成功，其中更新通过正常的审查流程。
+
+## 自托管
+
+### 使用自托管 agent，我的源代码去哪里？
+
+使用自托管时，仓库仅在您的基础设施上克隆和存储——Warp 从不托管您的代码库。Warp 使用分离架构：
+
+* **执行平面（您的基础设施）** — 仓库克隆、构建制品、运行时密钥和容器文件系统状态停留在您控制的机器上。
+* **控制平面（Warp 托管）** — 会话记录（包括来自 agent 交互的代码上下文）、编排元数据和 LLM 推理在 [Zero Data Retention (ZDR)](/enterprise/security-and-compliance/security-overview/#zero-data-retention-zdr) 协议下通过 Warp 的后端路由。Warp 不会持久存储您的源代码或将其用于模型训练。
+
+请参阅[自托管](/agent-platform/cloud-agents/self-hosting/)了解部署选项，以及[安全概述](/enterprise/security-and-compliance/security-overview/)获取完整详情。
+
+### 我可以在 CI 或现有运行器中使用 `oz agent run` 吗？
+
+是的。[非托管架构](/agent-platform/cloud-agents/self-hosting/unmanaged/)正是为此设计的。在您能执行 CLI 命令的任何环境中运行 `oz agent run`——GitHub Actions、Jenkins、Buildkite、Kubernetes Pod 或自定义编排器。这就是 [`warpdotdev/oz-agent-action`](https://github.com/warpdotdev/oz-agent-action) GitHub Action 的工作方式。Agent 在运行器上本地运行，其会话被跟踪在 Warp 的后端以用于可观测性。
+
+### 自托管 agent 可以访问 VPN 后的服务吗？
+
+是的。由于自托管 agent 在您的基础设施上运行，它们继承您的网络访问权限。这意味着 agent 可以访问自托管的 GitLab/Bitbucket 实例、内部 API、数据库以及 VPN 后的任何其他服务。这是团队选择自托管的主要原因之一。
+
+### 自托管适用于 GitLab 或其他非 GitHub SCM 吗？
+
+自托管 agent 可以使用您基础设施上可访问的任何 SCM。使用[非托管架构](/agent-platform/cloud-agents/self-hosting/unmanaged/)，agent 直接在您的主机上运行，并使用任何已可用的 Git 配置和 SCM 访问。使用[托管架构](/agent-platform/cloud-agents/self-hosting/#managed-architecture)，自动环境设置目前专注于 GitHub，但您可以通过卷挂载、环境变量、设置命令或 Kubernetes Secrets（当使用 [Kubernetes 后端](/agent-platform/cloud-agents/self-hosting/managed-kubernetes/)时）配置对其他 SCM 的访问。请参阅 [GitLab](/agent-platform/cloud-agents/integrations/gitlab/) 和 [Bitbucket](/agent-platform/cloud-agents/integrations/bitbucket/) 设置指南获取逐步说明。
+
+### LLM 请求在自托管时仍然通过 Warp 吗？
+
+是的。LLM 推理通过 Warp 的后端路由，Warp 与所有签约模型提供商签订了 [Zero Data Retention (ZDR)](/enterprise/security-and-compliance/security-overview/#zero-data-retention-zdr) 协议。需要完全控制推理路由的企业团队可以使用[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 通过他们自己的云提供商账户路由推理。BYOLLM 目前适用于交互式（本地）agent；云 agent 支持即将推出。
+
+### 大型单体仓库与环境设置时间长怎么办？
+
+[非托管架构](/agent-platform/cloud-agents/self-hosting/unmanaged/)非常适合大型单体仓库，因为 agent 直接在您预先配置的环境中运行——没有 Docker 镜像构建或仓库克隆步骤。对于[托管架构](/agent-platform/cloud-agents/self-hosting/#managed-architecture)，Docker 后端支持卷挂载（`-v` 标志）以从主机将预先存在的仓库检出挂载到任务容器中。对于 Kubernetes 后端，使用 `pod_template` 配置持久卷声明或预填充的存储以达到相同目的。
+
+:::note
+托管架构支持三个执行后端：**Docker**（默认）、**Kubernetes** 和 **Direct**（无容器运行时）。Kubernetes 后端将每个任务作为 Kubernetes Job 运行，并包含用于部署的 Helm chart。参见[自托管](/agent-platform/cloud-agents/self-hosting/#choosing-a-managed-backend)了解选择后端的详情。
+:::
+
+### Kubernetes Pod 为自托管 agent 提供足够的沙箱化吗？
+
+这取决于您的集群配置和风险配置文件。根据您组织的安全需求评估您的 Pod 安全策略、网络策略和 RBAC 设置。
+
+## 当前限制
+
+### 云 agent 支持图片附件吗？
+
+云 agent 对话目前不支持图片附件。图片附件（通过工具栏按钮、剪贴板粘贴或拖放）仅在[本地 agent 对话](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/)中可用。
+
+如果您需要向云 agent 提供视觉上下文，您可以在提示中描述图片内容或引用 agent 的[环境](/agent-platform/cloud-agents/environments/)中的图片文件路径。

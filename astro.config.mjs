@@ -43,7 +43,11 @@ export default defineConfig({
 		starlight({
 			// Site title kept as 'Warp' to match the suffix used by the legacy
 			// GitBook docs (e.g. `<title>Page | Warp</title>` and og:site_name).
-			title: 'Warp',
+				title: 'Warp',
+				locales: {
+					root: { label: "English", lang: "en" },
+					'zh-cn': { label: '简体中文', lang: 'zh-CN' },
+			},
 			logo: {
 				light: './src/assets/warp-logo-light.svg',
 				dark: './src/assets/warp-logo-dark.svg',

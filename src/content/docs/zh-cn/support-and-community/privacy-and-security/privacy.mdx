@@ -1,0 +1,689 @@
+---
+title: 隐私和数据控制
+sidebar:
+  label: "隐私"
+description: >-
+  Warp 的隐私理念以及您对数据的控制权
+---
+
+:::note
+如有疑问，请联系 [privacy@warp.dev](mailto:privacy@warp.dev)。对于安全问题，请发送邮件至 [security@warp.dev](mailto:security@warp.dev)。
+:::
+
+## 透明度和控制
+
+我们的理念是对离开您机器的任何数据保持完全透明和可控。这意味着您可以：
+
+* 阅读[所有发送用于应用分析的遥测事件](/support-and-community/privacy-and-security/privacy/#exhaustive-telemetry-table)的完整列表
+* 通过 Warp 的原生[网络日志](/support-and-community/privacy-and-security/network-log/)实时监控遥测
+* 随时[选择退出](/support-and-community/privacy-and-security/privacy/#how-to-disable-telemetry-and-crash-reporting)遥测
+* 在 [`warpdotdev/warp`](https://github.com/warpdotdev/warp) 阅读并审计 Warp 的客户端源代码，以 [AGPL v3](https://github.com/warpdotdev/warp/blob/master/LICENSE-AGPL) 协议开源
+
+## Warp 收集哪些遥测数据以及为什么？
+
+Warp 收集高级遥测和使用数据，以发现产品质量问题并指导功能优先级排序。
+
+如果您没有选择退出"帮助改进 Warp"，我们可能收集：
+
+1. 高级产品使用和分析数据，用于分析功能采用率和使用模式。请参阅下方的[完整遥测事件表](/support-and-community/privacy-and-security/privacy/#exhaustive-telemetry-table)。这些都是高级指标，不包括任何用户生成的内容。
+2. AI 交互和控制台输入，用于支持我们的 [AI 功能](/agent-platform/local-agents/overview/)。Warp 在所有 AI 交互中无条件下应用[秘密编辑](/support-and-community/privacy-and-security/secret-redaction/)，以确保任何敏感数据**永远不会**被收集或发送给第三方。
+
+:::note
+Free 计划上必须启用遥测才能使用 AI 功能，而付费计划可以随时选择退出并继续使用 Warp，包括 AI。
+:::
+
+:::caution
+Business 和 Enterprise 计划受我们的零数据保留（ZDR）协议保护。从不收集任何 AI 交互或控制台数据。
+:::
+
+出售使用数据永远不会成为 Warp 商业模式的一部分。这些数据仅用于改善最终用户体验。Warp 使用 Sentry 进行崩溃报告，使用 Rudderstack 进行应用分析。
+
+您可以阅读我们的[完整隐私政策](https://www.warp.dev/legal/privacy-policy)以及 [Warp 如何处理安全](https://www.warp.dev/legal/security)。
+
+### 如何禁用遥测和崩溃报告
+
+1. 导航到**设置** > **隐私**，或打开[命令面板](/terminal/command-palette/)并搜索"privacy"
+2. 关闭"帮助改进 Warp"、"发送崩溃报告"或同时关闭两者
+
+![隐私设置](../../../../../assets/support-and-community/privacy-settings-after-signup-1.png)
+
+禁用遥测后，没有控制台交互会持久保存到 Warp 的服务器。每个请求都包含一个 `X-Warp-Telemetry-Enabled` 标头，用于指定遥测是否禁用，即使请求中缺少此标头，我们的服务器也会假定它是禁用的。
+
+### 删除您的账户和数据
+
+Warp 提供了便捷的方式来删除您的账户和数据。删除时，与该账户关联的任何有效 Warp 订阅也将被取消。您可以通过以下方式删除 Warp 账户和数据：
+
+*   在 Warp 中，前往**设置** > **隐私** > **"访问数据管理页面"**
+
+    点击数据管理页面上的"删除"按钮，进入数据删除流程。
+* 通过网络，登录您的 Warp 账户 [https://app.warp.dev/login](https://app.warp.dev/login)，然后前往数据管理页面 [https://app.warp.dev/data_management](https://app.warp.dev/data_management)，点击"删除"按钮进入数据删除流程。
+
+:::note
+删除任务每 24 小时运行一次，因此如果您删除了账户并想使用相同的电子邮件重新注册，在删除任务完成之前无法这样做。
+:::
+
+:::caution
+如果您是[团队](/knowledge-and-collaboration/teams/)管理员，删除流程将要求您指派一名团队成员作为新管理员。
+:::
+
+
+### 完整遥测事件表
+
+| 事件名称 | 描述 |
+|---|---|
+| `AI Command Search opened` | 打开 AI 命令搜索模态框，您可以使用自然语言搜索命令 |
+| `AI Execution Profile Created` | 创建了新的 AI 执行配置文件 |
+| `AI Execution Profile Deleted` | 删除了一个 AI 执行配置文件 |
+| `AI Execution Profile: Added To Allowlist` | 向 AI 执行配置文件白名单添加了项目 |
+| `AI Execution Profile: Added To Denylist` | 向 AI 执行配置文件黑名单添加了项目 |
+| `AI Execution Profile: Context Window Selected` | 为执行配置文件的基础模型选择了上下文窗口限制 |
+| `AI Execution Profile: Model Selected` | 为 AI 执行配置文件选择了 AI 模型 |
+| `AI Execution Profile: Removed From Allowlist` | 从 AI 执行配置文件白名单移除了项目 |
+| `AI Execution Profile: Removed From Denylist` | 从 AI 执行配置文件黑名单移除了项目 |
+| `AI Execution Profile: Setting Updated` | 更新了 AI 执行配置文件设置 |
+| `AI Input Not Sent` | AI 输入未被发送 |
+| `AI Suggested Rule Added` | 点击了 AI 黑名单中的"添加建议规则"按钮 |
+| `AI Suggested Rule Content Changed` | 用户在建议规则对话框中更改了内容 |
+| `AI Suggested Rule Edited` | 点击了 AI 黑名单中的"编辑建议规则"按钮 |
+| `AIAutonomy.AutoexecutedRequestedCommand` | 自动执行了一个代理模式请求的命令 |
+| `AIAutonomy.ChangedAgentModeAskUserQuestionPermission` | 更改了代理模式询问用户问题的权限 |
+| `AIAutonomy.ChangedAgentModeCodingPermissions` | 更改了代理模式编码任务的权限 |
+| `AIAutonomy.ToggledAutoexecuteReadonlyCommandsSetting` | 切换了自动执行代理模式请求的只读命令设置 |
+| `Active Indexed Repos Changed` | 活跃的已索引仓库发生更改，影响代码库上下文。 |
+| `Add Added Subshell Command` | 添加了一个要通过 Warp 的子 shell 包装器自动 Warpify 的命令 |
+| `Add Denylisted SSH Tmux Wrapper Host` | 将 SSH 主机添加到 Tmux Wrapper 提示的黑名单中 |
+| `Add Denylisted Subshell Command` | 明确阻止命令通过 Warp 的子 shell 包装器进行 Warpify |
+| `Add Tab With Shell` | 使用特定 shell 添加了一个标签页 |
+| `Added Workflow Alias` | 为 Warp Drive 工作流添加了别名 |
+| `Agent Management View Copied Session Link` | 用户从代理管理视图复制了会话链接 |
+| `Agent Management View Opened Session` | 用户从代理管理视图打开了会话 |
+| `Agent Management View Toggled` | 用户切换了代理管理视图的打开或关闭 |
+| `Agent Mode Query Suggestion Accepted` | 接受了提示建议 |
+| `Agent Mode Query Suggestions Banner Shown` | 显示了提示建议横幅 |
+| `Agent Mode Setup Banner Accepted` | 接受了代理模式设置横幅 |
+| `Agent Mode Setup Banner Dismissed` | 关闭了代理模式设置横幅 |
+| `Agent Mode Setup Project Scoped Rules Action` | 用户在代理模式设置项目范围规则步骤中点击了按钮 |
+| `Agent Mode.Setup Codebase Context Action` | 用户在代理模式设置代码库上下文步骤中点击了按钮 |
+| `Agent Predict` | 完成了一次 Agent Predict 预测 |
+| `Agent Toolbar Dismissed` | 用户关闭了使用代理工具栏 |
+| `AgentManagement.AgentTypeSelectorOpened` | 用户从代理管理打开了代理类型选择器 |
+| `AgentManagement.ArtifactClicked` | 用户点击了工件按钮 |
+| `AgentManagement.CloudRunCancelled` | 用户取消了一次云运行 |
+| `AgentManagement.CloudRunOpened` | 用户打开了一次云运行 |
+| `AgentManagement.ConversationForked` | 用户分叉了一次对话 |
+| `AgentManagement.ConversationLinkCopied` | 用户复制了对话链接 |
+| `AgentManagement.ConversationOpened` | 用户打开了一次对话 |
+| `AgentManagement.DetailsPanelContinueLocally` | 用户在详情面板中点击了"继续本地运行" |
+| `AgentManagement.DetailsViewed` | 用户点击了"查看详情" |
+| `AgentManagement.DismissSetupGuide` | 用户关闭了 ambient 代理设置指南 |
+| `AgentManagement.FilterChanged` | 用户在管理视图中更改了筛选条件 |
+| `AgentManagement.OpenSetupGuide` | 用户打开了 ambient 代理设置指南 |
+| `AgentManagement.SessionLinkCopied` | 用户复制了会话链接 |
+| `AgentManagement.SetupGuideDocsLink` | 用户在设置指南中点击了文档 URL |
+| `AgentManagement.SetupGuideStepCopy` | 用户从设置指南复制了工作流步骤 |
+| `AgentManagement.SetupGuideStepRun` | 用户从设置指南运行了工作流步骤 |
+| `AgentManagement.SlashCommandContinueLocally` | 用户调用了 /continue-locally 以在本地分叉云对话 |
+| `AgentManagement.SpawnNewCloudAgent` | 用户从代理管理生成了一个新的云代理 |
+| `AgentManagement.SpawnNewLocalAgent` | 用户从代理管理生成了一个新的本地代理 |
+| `AgentManagement.TombstoneArtifactClicked` | 用户在墓碑视图中点击了工件 |
+| `AgentManagement.TombstoneContinueInCloud` | 用户点击了墓碑中的"继续在云端"以启动云跟进 |
+| `AgentManagement.TombstoneContinueLocally` | 用户点击了墓碑中的"继续本地运行" |
+| `AgentManagement.ViewToggled` | 用户切换了代理管理视图的打开或关闭 |
+| `AgentMode.AttachedContext` | 将块作为上下文附加到代理模式查询 |
+| `AgentMode.AttachedImages` | 将图像附加到代理模式查询 |
+| `AgentMode.ChangedInputType` | 输入类型从 shell -> AI 或 AI -> shell 更改 |
+| `AgentMode.ClickedEntrypoint` | 点击了代理模式入口点 |
+| `AgentMode.Code.DiffHunksNavigated` | 浏览了代理模式代码差异块 |
+| `AgentMode.Code.DiffMatchFailed` | 代码差异匹配失败 |
+| `AgentMode.Code.FileExceededContextLimit` | AI 中的文件超过上下文限制 |
+| `AgentMode.Code.FilesNavigated` | 浏览了代理模式代码文件 |
+| `AgentMode.Code.InvalidFile` | 代码差异中的文件无法找到 |
+| `AgentMode.Code.MalformedFinalLineProxy` | 建议的代码差异可能需要错误的尾随行修正（启发式） |
+| `AgentMode.Code.MissingLineNumbers` | 代码差异缺少行号 |
+| `AgentMode.Code.SuggestedCodeEditedByUser` | 用户编辑了代理模式代码建议 |
+| `AgentMode.Code.SuggestedEditAcceptAndContinueClicked` | 用户为代理模式中的代码差异建议选择了"接受并开始对话" |
+| `AgentMode.Code.SuggestedEditAcceptClicked` | 用户为代理模式中的代码差异建议选择了"接受" |
+| `AgentMode.Code.SuggestedEditReceived` | 代理模式建议了代码编辑 |
+| `AgentMode.Code.SuggestedEditResolved` | 代理模式待处理的代码编辑建议已解决 |
+| `AgentMode.CreatedAIBlock` | 在代理模式中创建了 AI 块 |
+| `AgentMode.Error` | 获取代理模式响应时遇到错误 |
+| `AgentMode.ExecutedWarpDrivePrompt` | 执行了已保存的提示。 |
+| `AgentMode.ExitedShellProcess` | 代理请求的命令导致 shell 进程退出 |
+| `AgentMode.FileGlob.Failed` | 文件通配工具未能完成 |
+| `AgentMode.FileGlob.Succeeded` | 文件通配工具成功完成 |
+| `AgentMode.FullEmbedCodebaseContextSearch.Failed` | 搜索完整嵌入代码库上下文失败 |
+| `AgentMode.FullEmbedCodebaseContextSearch.Success` | 成功搜索了完整嵌入代码库上下文 |
+| `AgentMode.Grep.Failed` | grep 工具未能完成 |
+| `AgentMode.Grep.Succeeded` | grep 工具成功完成 |
+| `AgentMode.MerkleTreeSnapshot.Diff.Failed` | Merkle 树快照差异失败 |
+| `AgentMode.MerkleTreeSnapshot.Diff.Success` | Merkle 树快照差异成功 |
+| `AgentMode.MerkleTreeSnapshot.Rebuild.Failed` | 从快照重建 Merkle 树失败 |
+| `AgentMode.MerkleTreeSnapshot.Rebuild.Success` | 从快照成功重建 Merkle 树 |
+| `AgentMode.NaturalLanguageDetection.InputBufferSubmitted` | 输入缓冲区已提交 |
+| `AgentMode.OpenedCitation` | 打开了代理模式中展示的引用 |
+| `AgentMode.Orchestration.AgentProposedConfig` | 一个代理编写的编排配置快照首次在计划卡片上对用户可见 |
+| `AgentMode.Orchestration.Entered` | 通过 /orchestrate 或 run_agents 确认卡片展示在对话中激活了编排。计划卡片的条目通过 AgentProposedConfig + PlanConfigApprovalToggled 单独跟踪。 |
+| `AgentMode.Orchestration.PillBarInteraction` | 用户与编排药丸条进行了交互（切换、固定、在窗格/标签页中打开、停止、终止等） |
+| `AgentMode.Orchestration.PlanConfigApprovalToggled` | 用户在计划卡片上切换了"使用编排"开关 |
+| `AgentMode.Orchestration.RunAgentsCardDecision` | 用户接受、接受但不编排、或拒绝了 run_agents 确认卡片。报告哪些配置字段与原始工具调用和/或活跃的已批准配置存在差异。 |
+| `AgentMode.Orchestration.TeamAgentCommunicationFailed` | 发送 TeamAgent 的编排消息或生命周期事件失败 |
+| `AgentMode.PotentialAutoDetectionFalsePositive` | 在输入被自动检测为自然语言后，手动将输入切换到 shell 模式。 |
+| `AgentMode.QueryAttemptAtLImit` | 尝试发送代理模式查询，但已达到查询限制 |
+| `AgentMode.RequestRetrySucceeded` | 代理模式请求在初始错误后重试成功 |
+| `AgentMode.SetupCreateEnvironmentAction` | 用户在代理模式设置创建环境步骤中点击了按钮 |
+| `AgentMode.SurfacedCitations` | 代理模式使用并引用了在其响应中使用的外部来源 |
+| `AgentMode.SyncCodebaseContext.BuildTree.Failed` | 为代码库上下文构建 Merkle 树失败 |
+| `AgentMode.SyncCodebaseContext.BuildTree.Success` | 为代码库上下文成功构建 Merkle 树 |
+| `AgentMode.SyncCodebaseContext.Failed` | 同步代码库上下文失败 |
+| `AgentMode.SyncCodebaseContext.Success` | 成功同步了代码库上下文 |
+| `AgentMode.ToggleAutoDetectionSetting` | 切换了输入中启用或禁用自然语言自动检测的设置。 |
+| `AgentNotification.Shown` | 向用户显示了代理通知（通知或邮件） |
+| `AgentTip Clicked` | 用户点击了代理提示中的链接或操作 |
+| `AgentTip Shown` | 选择了要在代理模式状态栏中显示的代理提示 |
+| `AgentView.Entered` | 用户进入了代理视图 |
+| `AgentView.Exited` | 用户退出了代理视图 |
+| `AgentView.InlineConversationMenuItemSelected` | 用户从内联对话菜单中选择了一个项目 |
+| `AgentView.InlineConversationMenuOpened` | 用户在代理视图中打开了内联对话菜单 |
+| `AgentView.ShortcutsViewToggled` | 用户在代理视图中切换了快捷键视图 |
+| `AgenticOnboarding.BlockSelected` | 选择了一个代理引导块来执行 |
+| `AmbientAgent.CloudMode.Entered` | 用户进入了云代理视图 |
+| `AmbientAgent.CloudMode.EnvironmentSelector.Opened` | 用户打开了环境选择器菜单 |
+| `AmbientAgent.CloudMode.EnvironmentSelector.Selected` | 用户从选择器中选择了环境 |
+| `AmbientAgent.CloudMode.EnvironmentSettings.GitHubAuth` | 用户从环境表单启动了 GitHub 身份验证 |
+| `AmbientAgent.CloudMode.EnvironmentSettings.LaunchedAgent` | 用户从环境表单启动了一个环境设置代理 |
+| `AmbientAgent.ConcurrencyModal.Dismissed` | 用户关闭了云代理容量模态框 |
+| `AmbientAgent.ConcurrencyModal.Opened` | 用户打开了云代理容量模态框 |
+| `AmbientAgent.ConcurrencyModal.UpgradeClicked` | 用户在云代理容量模态框中点击了升级按钮 |
+| `AmbientAgent.DispatchFailed` | Ambient 代理分发失败或遇到错误 |
+| `AmbientAgent.EnvironmentSettings.CreatedEnvironment` | 用户创建了新环境 |
+| `AmbientAgent.EnvironmentSettings.DeletedEnvironment` | 用户删除了环境 |
+| `AmbientAgent.EnvironmentSettings.Image.Suggested` | 为环境建议了 Docker 镜像 |
+| `AmbientAgent.EnvironmentSettings.Image.SuggestionFailed` | Docker 镜像建议失败 |
+| `AmbientAgent.EnvironmentSettings.Opened` | 用户打开了环境管理窗格 |
+| `AmbientAgent.EnvironmentSettings.UpdatedEnvironment` | 用户更新了现有环境 |
+| `AmbientAgent.Handoff.Initiated` | 用户发起了本地到云端的移交 |
+| `AmbientAgents.ThirdPartyHarness.RuntimeError.Detected` | 运行时输出扫描器在第三方 harness 块中检测到已知的失败子字符串。 |
+| `Anonymous User Attempted Login-Gated Feature` | 匿名用户尝试访问需要登录的功能 |
+| `Anonymous User Expiration Lockout` | 匿名用户在转换截止日期后打开 Warp 并被锁定 |
+| `Anonymous User Hit Cloud Object Limit` | 匿名用户尝试创建超过个人对象限制的云对象 |
+| `Anonymous User Initiated Signup` | 匿名用户发起了注册流程 |
+| `Anonymous User Linked from Browser` | 在浏览器中关联后从匿名用户收到认证负载 |
+| `App Download Source` | Warp 是从主页还是通过 homebrew 安装的 |
+| `App Startup` | 应用启动 |
+| `Attached Workflow Alias Environment Variables` | 为 Warp Drive 工作流别名添加或移除了环境变量 |
+| `Attempting to Relaunch for Update` | 安装更新后尝试重新启动应用 |
+| `Auth Common Question Clicked in App` | 登录时点击了"常见问题" |
+| `Auth: Open Privacy Settings Overlay` | 登录时隐私设置处于打开状态 |
+| `Auth: Toggle Common Questions` | 登录时切换了常见问题页面 |
+| `Autosuggestion Inserted` | 接受了自动建议 |
+| `Background Block Started` | Warp 创建了一个后台输出块（当进程后台运行并产生输出时） |
+| `BaselineCommand Latency` | 命令执行时间 |
+| `Block Creation` | 创建了块 |
+| `Block Filter Toolbelt Button Clicked` | 点击了块右上角的块筛选器图标 |
+| `Block Selection` | 选择了块 |
+| `Bootstrap Slow Contents` | 如果引导缓慢，引导块的内容 |
+| `Bootstrapping Slow` | 会话启动时引导缓慢 |
+| `Bootstrapping Succeeded` | 会话引导成功 |
+| `CLI Subagent Action Executed` | 用户批准了 CLI 子代理的被阻止操作 |
+| `CLI Subagent Action Rejected` | 用户拒绝了 CLI 子代理的被阻止操作 |
+| `CLI Subagent Control State Changed` | CLI 子代理的控制状态发生更改（代理控制中、代理被阻止、用户控制中或代理标记进入） |
+| `CLI Subagent Input Dismissed` | 用户关闭了 CLI 子代理中的输入 |
+| `CLI Subagent Responses Toggled` | 用户切换了 CLI 子代理中代理响应的可见性 |
+| `CLI.Execute.Agent.Create` | 从 Warp CLI 创建了代理 |
+| `CLI.Execute.Agent.Delete` | 从 Warp CLI 删除了代理 |
+| `CLI.Execute.Agent.Get` | 从 Warp CLI 获取了代理详情 |
+| `CLI.Execute.Agent.List` | 从 Warp CLI 列出了代理 |
+| `CLI.Execute.Agent.Profile.List` | 从 Warp CLI 列出了代理配置文件 |
+| `CLI.Execute.Agent.Run` | 从 Warp CLI 运行了代理 |
+| `CLI.Execute.Agent.RunAmbient` | 从 Warp CLI 运行了 ambient 代理 |
+| `CLI.Execute.Agent.Skills` | 从 Warp CLI 列出了代理技能 |
+| `CLI.Execute.Agent.Update` | 从 Warp CLI 更新了代理 |
+| `CLI.Execute.ApiKey.Create` | 从 Warp CLI 创建了 API 密钥 |
+| `CLI.Execute.ApiKey.Expire` | 从 Warp CLI 使 API 密钥过期 |
+| `CLI.Execute.ApiKey.List` | 从 Warp CLI 列出了 API 密钥 |
+| `CLI.Execute.Artifact.Download` | 从 Warp CLI 下载了工件 |
+| `CLI.Execute.Artifact.Get` | 从 Warp CLI 获取了工件元数据 |
+| `CLI.Execute.Artifact.Upload` | 从 Warp CLI 上传了工件 |
+| `CLI.Execute.Conversation.Get` | 从 Warp CLI 按 ID 获取了对话 |
+| `CLI.Execute.Environment.Create` | 从 Warp CLI 创建了云环境 |
+| `CLI.Execute.Environment.Delete` | 从 Warp CLI 删除了云环境 |
+| `CLI.Execute.Environment.Get` | 从 Warp CLI 获取了云环境详情 |
+| `CLI.Execute.Environment.Image.List` | 从 Warp CLI 列出了可用的基础镜像 |
+| `CLI.Execute.Environment.List` | 从 Warp CLI 列出了云环境 |
+| `CLI.Execute.Environment.Update` | 从 Warp CLI 更新了云环境 |
+| `CLI.Execute.Federate.IssueGcpToken` | 从 Warp CLI 发放了 GCP 联合身份令牌 |
+| `CLI.Execute.Federate.IssueToken` | 从 Warp CLI 发放了联合身份令牌 |
+| `CLI.Execute.HarnessSupport.FinishTask` | 通过 Warp CLI 的 harness-support 报告了任务完成 |
+| `CLI.Execute.HarnessSupport.NotifyUser` | 通过 Warp CLI 的 harness-support 发送了用户通知 |
+| `CLI.Execute.HarnessSupport.Ping` | 从 Warp CLI ping 了 harness-support |
+| `CLI.Execute.HarnessSupport.ReportArtifact` | 通过 Warp CLI 的 harness-support 报告了工件 |
+| `CLI.Execute.HarnessSupport.ReportShutdown` | 通过 Warp CLI 的 harness-support 报告了代理关闭 |
+| `CLI.Execute.Integration.Create` | 从 Warp CLI 创建了集成 |
+| `CLI.Execute.Integration.List` | 从 Warp CLI 列出了集成 |
+| `CLI.Execute.Integration.Update` | 从 Warp CLI 更新了集成 |
+| `CLI.Execute.Login` | 通过 Warp CLI 登录 |
+| `CLI.Execute.Logout` | 通过 Warp CLI 登出 |
+| `CLI.Execute.MCP.List` | 从 Warp CLI 列出了 MCP 服务器 |
+| `CLI.Execute.Model.List` | 从 Warp CLI 列出了模型 |
+| `CLI.Execute.Provider.List` | 从 Warp CLI 列出了提供商 |
+| `CLI.Execute.Provider.Setup` | 通过 Warp CLI 设置了提供商 |
+| `CLI.Execute.Run.Conversation.Get` | 从 Warp CLI 获取了运行对话 |
+| `CLI.Execute.Run.Message.List` | 从 Warp CLI 列出了运行消息 |
+| `CLI.Execute.Run.Message.MarkDelivered` | 从 Warp CLI 将运行消息标记为已送达 |
+| `CLI.Execute.Run.Message.Read` | 从 Warp CLI 读取了运行消息 |
+| `CLI.Execute.Run.Message.Send` | 从 Warp CLI 发送了运行消息 |
+| `CLI.Execute.Run.Message.Watch` | 从 Warp CLI 监听了运行消息 |
+| `CLI.Execute.Schedule.Create` | 从 Warp CLI 创建了计划代理 |
+| `CLI.Execute.Schedule.Delete` | 从 Warp CLI 删除了计划代理 |
+| `CLI.Execute.Schedule.Get` | 从 Warp CLI 获取了计划代理配置 |
+| `CLI.Execute.Schedule.List` | 从 Warp CLI 列出了计划代理 |
+| `CLI.Execute.Schedule.Pause` | 从 Warp CLI 暂停了计划代理 |
+| `CLI.Execute.Schedule.Unpause` | 从 Warp CLI 取消暂停了计划代理 |
+| `CLI.Execute.Schedule.Update` | 从 Warp CLI 更新了计划代理 |
+| `CLI.Execute.Secret.Create` | 从 Warp CLI 创建了密钥 |
+| `CLI.Execute.Secret.Delete` | 从 Warp CLI 删除了密钥 |
+| `CLI.Execute.Secret.List` | 从 Warp CLI 列出了密钥 |
+| `CLI.Execute.Secret.Update` | 从 Warp CLI 更新了密钥 |
+| `CLI.Execute.Task.Get` | 从 Warp CLI 获取了任务状态 |
+| `CLI.Execute.Task.List` | 从 Warp CLI 列出了任务 |
+| `CLI.Execute.Whoami` | 从 Warp CLI 打印了当前用户信息 |
+| `CLIAgentFooter.ImageAttached` | 用户从 CLI 代理页脚附加了图像 |
+| `CLIAgentFooter.SettingToggled` | 用户切换了 CLI 代理页脚设置 |
+| `CLIAgentFooter.Shown` | 向用户显示了 CLI 代理页脚 |
+| `CLIAgentFooter.VoiceInputUsed` | 用户从 CLI 代理页脚使用了语音输入 |
+| `CLIAgentPlugin.ChipClicked` | 用户点击了插件安装或更新标签 |
+| `CLIAgentPlugin.ChipDismissed` | 用户关闭了插件安装或更新标签 |
+| `CLIAgentPlugin.Detected` | 通过 SessionStart 事件检测到 CLI 代理插件 |
+| `CLIAgentPlugin.OperationFailed` | 自动插件安装或更新失败 |
+| `CLIAgentPlugin.OperationSucceeded` | 自动插件安装或更新成功完成 |
+| `CLIAgentRichInput.Closed` | CLI 代理富输入已关闭 |
+| `CLIAgentRichInput.Opened` | 用户打开了 CLI 代理富输入 |
+| `CLIAgentRichInput.Submitted` | 用户通过 CLI 代理富输入提交了提示 |
+| `Changed invite view option` | 在链接和邀请之间切换邀请视图选项 |
+| `Clicked Continue Conversation Button` | 用户在块页脚中点击了"继续对话"按钮 |
+| `Clicked Reset to Defaults Button in Settings Import` | 在设置导入引导块中重置了导入的设置 |
+| `Clone Repo Prompt Submitted` | 用户从克隆仓库视图提交了仓库 URL |
+| `Code Pane Opened` | 从各种来源打开了代码编辑器窗格 |
+| `CodePanels.FileOpened` | 从代码审查、项目浏览器或全局搜索打开了文件 |
+| `CodeReview.AddToContext` | 从代码审查向 AI 上下文添加了内容 |
+| `CodeReview.BaseChanged` | 代码审查中的差异基准发生更改 |
+| `CodeReview.CommentAdded` | 添加了内联代码审查评论 |
+| `CodeReview.CommentDeleted` | 删除了内联代码审查评论 |
+| `CodeReview.CommentEdited` | 编辑了内联代码审查评论 |
+| `CodeReview.CommentEditorOpened` | 打开了内联代码审查评论编辑器 |
+| `CodeReview.CommentListExpanded` | 展开了内联代码审查评论列表 |
+| `CodeReview.CommentListItemClicked` | 点击了内联代码审查评论列表项 |
+| `CodeReview.CommentRelocationFailed` | 内联代码审查评论重定位回退到近似行 |
+| `CodeReview.CommentResolved` | 内联代码审查评论已解决 |
+| `CodeReview.CommentsAttached` | 新导入的评论已针对编辑器行进行了重定位 |
+| `CodeReview.CommentsReceived` | 收到并处理了代理 insert_code_review_comments 工具调用 |
+| `CodeReview.DiffLoadCompleted` | 差异内容加载成功 |
+| `CodeReview.FileSaved` | 文件在代码审查窗格中保存 |
+| `CodeReview.FindBarModeChanged` | 代码审查搜索栏中的搜索模式更改 |
+| `CodeReview.FindBarToggled` | 代码审查搜索栏打开或关闭 |
+| `CodeReview.FindNavigated` | 在代码审查搜索栏中导航到上一个或下一个匹配项 |
+| `CodeReview.GitButtonTriggered` | 用户点击了代码审查标头中的 Git 操作按钮 |
+| `CodeReview.GitDialogCompleted` | Git 操作对话框达到终态（成功、失败或取消） |
+| `CodeReview.LoadDiffFailed` | 加载差异内容时失败 |
+| `CodeReview.LoadMetadataFailed` | 计算差异元数据时失败 |
+| `CodeReview.PaneOpened` | 代码审查窗格已打开 |
+| `CodeReview.PaneStateChanged` | 代码审查窗格最小化或最大化 |
+| `CodeReview.RevertHunkClicked` | 点击了恢复块按钮 |
+| `CodeReview.ReviewSubmitted` | 内联代码审查已提交给代理 |
+| `CodeView.SelectionAddedAsContext` | 从代码编辑器将选中的代码添加为上下文 |
+| `CodexModal.Opened` | 用户打开了 Codex 模态框 |
+| `CodexModal.UseCodexClicked` | 用户在 Codex 模态框中点击了"使用 Codex" |
+| `Command Correction Event` | 接受了命令纠错 |
+| `Command File Run` | 打开了一个 .cmd 或 Unix 可执行文件并在 Warp 中直接运行 |
+| `Command Palette Search Accepted` | 接受了命令面板搜索结果 |
+| `Command Palette Search Exited` | 退出命令面板搜索，未接受结果 |
+| `Command Search Async Query Completed` | 完成后台命令搜索 |
+| `Command Search Exited` | 退出命令搜索（通用搜索面板进行搜索）未接受结果 |
+| `Command Search Filter Changed` | 更改了命令搜索筛选器 |
+| `Command Search Opened` | 打开了命令搜索（通用搜索面板进行搜索） |
+| `Command Search Result Accepted` | 接受了命令搜索结果 |
+| `Complete Welcome Tip` | 完成了所有欢迎提示项目 |
+| `Completed Settings Import` | 通过设置导入引导块导入了终端的设置 |
+| `ComputerUse.Approved` | RequestComputerUse 操作被批准（手动或自动执行） |
+| `ComputerUse.Cancelled` | RequestComputerUse 操作被取消/拒绝 |
+| `Confirm Suggestion` | 接受了 Tab 补全建议 |
+| `Context Menu Copy` | 在上下文菜单中点击了"复制" |
+| `Context Menu Copy Prompt` | 在上下文菜单中点击了"复制提示" |
+| `Context Menu Copy Selected Text` | 在上下文菜单中点击了"复制选中的文本" |
+| `Context Menu Insert Selected Text into Input` | 在上下文菜单中点击了"插入选中文本到输入" |
+| `Context Menu Toggle Git Prompt Dirty Indicator` | 切换了脏 Git 提示指示器 |
+| `Context Menu: Find Within Blocks` | 在上下文菜单中点击了"在块内查找" |
+| `Context Menu: Initiate Block Sharing` | 通过上下文菜单打开了"分享"模态框 |
+| `Context Menu: Reinput Commands` | 在上下文菜单中点击了"重新输入命令" |
+| `ConversationList.ItemDeleted` | 从对话列表中删除了对话 |
+| `ConversationList.ItemOpened` | 从对话列表中打开了对话 |
+| `ConversationList.LinkCopied` | 从对话列表中复制了对话链接 |
+| `ConversationList.Opened` | 在左侧面板中打开了对话列表视图 |
+| `Copied Shared Session Link` | 复制了共享会话链接 |
+| `Copy Block Sharing Link` | 在上下文菜单中点击了"分享块..." |
+| `Copy Invite Link` | 在推荐模态框中点击了"复制链接" |
+| `Copy Obfuscated Secret` | 将密钥的混淆内容复制到剪贴板 |
+| `Copy Object To Clipboard` | 将对象复制到用户剪贴板 |
+| `Create Custom Theme` | 使用内置主题创建器创建了自定义主题 |
+| `Create Project Prompt Submitted` | 用户从创建项目视图提交了提示 |
+| `Create Project Prompt Submitted Content` | 用户从创建项目视图提交了自定义提示内容 |
+| `Custom Secret Regex Added` | 添加了自定义密钥正则表达式 |
+| `Database Read Error` | 尝试获取会话恢复的应用状态时出现数据库读取错误 |
+| `Database Startup Error` | 启动时初始化 sqlite 失败 |
+| `Database Write Error` | 尝试写入会话恢复的应用状态时出现数据库写入错误 |
+| `Decline Subshell Bootstrap` | 开发者拒绝了 Warp 横幅以 Warpify 当前会话 |
+| `Delete Custom Theme` | 使用内置主题创建器删除了自定义主题 |
+| `Deleted Notebook` | 从 Warp Drive 团队删除了笔记本 |
+| `Deleted Workflow` | 从 Warp Drive 团队删除了工作流 |
+| `Disable Input Sync Inputs` | 禁用/关闭输入同步（跨编辑器） |
+| `Dismiss Alias Expansion Banner` | 关闭了启用输入编辑器中自动别名扩展的横幅 |
+| `Dismiss Welcome Tips` | 关闭了欢迎提示 |
+| `Don't Show Sharer Grant Modal Again` | 当您勾选"不再显示"授予角色的确认模态框时 |
+| `Drag and Drop Tab` | 拖放标签页 |
+| `Duplicate Object` | 克隆了一个 Warp Drive 对象 |
+| `Edited Input Before Precmd` | 在 precmd 钩子完成之前编辑了输入 |
+| `Edited Workflow Alias Argument` | 编辑了 Warp Drive 工作流别名中的参数 |
+| `Enable Alias Expansion From Banner` | 从横幅启用了输入编辑器中的自动别名扩展 |
+| `Executed Conversation Rewind` | 用户执行了回退到之前的对话状态 |
+| `Expanded Code Suggestion` | 展开了被动代码差异建议 |
+| `Export Object` | 导出了 Warp Drive 对象 |
+| `Features Page Action` | 在功能页面中更改了设置 |
+| `File Tree Toggled` | 打开了文件树/项目浏览器 |
+| `FileTree.AttachedAsContext` | 从文件树附加了文件或目录作为上下文 |
+| `FileTree.ItemCreated` | 从文件树创建了新文件 |
+| `Find Option Toggled` | 在查找切换中更改了设置 |
+| `Focused Config in Settings Import` | 在设置导入引导块中选择了一个终端 |
+| `FreeTierLimitHitInterstitial.Closed` | 用户关闭了免费层限制到达插页 |
+| `FreeTierLimitHitInterstitial.Displayed` | 显示了免费层限制到达插页 |
+| `FreeTierLimitHitInterstitial.UpgradeButtonClicked` | 用户在免费层限制到达插页中点击了"升级"按钮 |
+| `Generate Block Sharing Link` | 生成了块共享链接 |
+| `Generate Metadata For Workflow Error` | 使用 Warp AI 为工作流生成元数据失败 |
+| `Generate Metadata For Workflow Success` | 使用 Warp AI 为工作流成功生成元数据 |
+| `Get Started Skip to Terminal` | 用户从开始使用视图点击了跳转到终端 |
+| `Global Search Opened` | 打开了全局搜索视图 |
+| `Global Search Query Started` | 开始了全局搜索（warp_ripgrep）搜索 |
+| `ITerm Profile has Multiple Hotkeys` | 尝试导入包含多个热键窗口绑定的 iTerm 配置文件 |
+| `Identified Antivirus Software` | 检测到用户机器上运行的防病毒软件 |
+| `Image Received` | 通过 pty 上的图像协议接收到图像 |
+| `InitialWorkingDirectoryConfigurationChanged` | 将默认工作目录替换为不同的路径 |
+| `Initiate Reauth` | 启动了重新认证客户端的流程 |
+| `Input Mode Changed` | 更改了输入编辑器模式（固定在底部、固定在顶部、经典/瀑布模式） |
+| `Input.AtMenuInteracted` | 与 @ 菜单进行了交互 |
+| `Input.ContextChipInteracted` | 与上下文标签进行了交互 |
+| `Input.InputUXModeChanged` | 更改了输入 UX 模式 |
+| `Input.VoiceInputUsed` | 使用了语音输入 |
+| `InputBoxAICommandSearch` | 通过输入编辑器的上下文菜单（右键缓冲区域）打开了 AI 命令搜索 |
+| `InputBoxAskWarpAI` | 从输入编辑器的上下文菜单点击了"询问 Warp AI" |
+| `InputBoxCommandSearch` | 通过输入编辑器的上下文菜单（右键缓冲区域）打开了命令搜索 |
+| `InputBoxCutSelectedText` | 从输入编辑器复制了选中的文本 |
+| `InputBoxPaste` | 通过其上下文菜单（右键缓冲区域）粘贴了文本到输入编辑器 |
+| `InputBoxSelectAll` | 通过其上下文菜单（右键缓冲区域）选择了输入编辑器中的所有文本 |
+| `Invited Teammates` | 发送电子邮件邀请队友加入 Warp Drive 团队 |
+| `Invoked Environment Variables` | 调用了环境变量对象 |
+| `Isolation.DetectedIsolationPlatform` | 检测到 Warp 在隔离沙箱中运行 |
+| `Joined Shared Session` | 当您使用共享会话加入另一个 Warp 实例时 |
+| `Jumped to Bookmark Block` | 跳转到已书签的块 |
+| `Jumped to Bottom of Block Button Clicked` | 使用了跳转到块底部的按钮 |
+| `Jumped to Previous Command` | 跳转到了上一个命令 |
+| `Jumped to Shared Session Participant` | 点击了共享会话参与者头像以跳转到他们在会话中的位置 |
+| `Keybinding Changed` | 编辑了自定义键绑定 |
+| `Keybinding Removed` | 移除/清除了键绑定 |
+| `Keybinding Reset to Default` | 将自定义键绑定重置为默认值 |
+| `Knowledge Pane Opened` | 知识窗格已打开 |
+| `Linear.IssueLinkOpened` | 用户打开了 warp://linear 深度链接以处理问题 |
+| `Log In Button Clicked in App` | 点击了"登录"按钮 |
+| `Log Out` | 登出了 Warp 客户端 |
+| `Log Out Modal Cancel Pressed` | 通过取消登出模态框退出了登出流程 |
+| `Log Out Modal Shown` | 当登出模态框显示时 |
+| `Logged in to native app` | 登录成功 |
+| `Logged-out App Startup` | 在已登出/未登录状态下启动了 Warp |
+| `Login Later Button Clicked` | 点击了"稍后登录"按钮 |
+| `Login Later Confirmation Button Clicked` | 点击了"是的，跳过登录"确认按钮 |
+| `Lsp.ControlAction` | 用户从页脚菜单执行了 LSP 控制操作 |
+| `Lsp.FindReferencesShown` | 通过 LSP 显示了查找引用卡片 |
+| `Lsp.GotoDefinition` | 用户通过 LSP 触发了跳转到定义 |
+| `Lsp.HoverShown` | 显示包含 LSP 内容或诊断的悬停提示 |
+| `Lsp.ServerEnabled` | 用户为工作区启用了 LSP 服务器 |
+| `Lsp.ServerEnablementSkipped` | 用户在 /init 过程中跳过了 LSP 启用 |
+| `Lsp.ServerFailed` | LSP 服务器启动失败 |
+| `Lsp.ServerInstallCompleted` | LSP 服务器安装完成 |
+| `Lsp.ServerRemoved` | 用户移除了 LSP 服务器 |
+| `Lsp.ServerStarted` | LSP 服务器成功启动并可用 |
+| `MCP Server Added` | 添加了 MCP 服务器 |
+| `MCP Server Collection Pane Opened` | 打开了 MCP 服务器集合窗格 |
+| `MCP Server Spawned` | 生成了 MCP 服务器 |
+| `MCP Template Created` | 创建了 MCP 模板 |
+| `MCP Template Installed` | 安装了 MCP 模板 |
+| `MCP Template Shared` | 共享了 MCP 模板 |
+| `MCP Tool Call Accepted` | 接受了 MCP 工具调用 |
+| `Move Active Tab` | 向左或向右移动活跃标签页 |
+| `Move Tab` | 向左或向右移动标签页 |
+| `Needs Reauth` | 用户需要重新认证 |
+| `New Session From Directory` | 将文件、文件夹等拖入 Warp 以启动会话 |
+| `Notebook Action` | 对笔记本执行了操作：编辑、删除、修改字体大小等 |
+| `Notebook Edited` | 编辑了笔记本 |
+| `Notebook Opened` | 打开了笔记本 |
+| `Notification Clicked` | 点击了从 Warp 发送的桌面通知 |
+| `Notification Failed to Send` | 发送桌面通知失败 |
+| `Notification Permissions Requested` | 请求了桌面通知权限 |
+| `Notification Request Permissions Outcome` | 记录了尝试请求桌面通知权限的结果 |
+| `Notification Sent` | 发送了桌面通知 |
+| `Notifications Discovery Banner Action` | 显示了介绍通知功能的横幅 |
+| `Notifications Error Banner Action` | 显示了通知功能的错误横幅 |
+| `Object Link Copied` | 对象的 Web 链接已被复制。 |
+| `Open Context Menu` | 打开了上下文菜单（如右键点击、点击块右上角的省略号等） |
+| `Open Launch Config` | 打开了会话的启动配置 |
+| `Open Launch Config File` | 成功保存后从模态框打开了启动配置 YAML 文件 |
+| `Open Palette` | 打开了面板 |
+| `Open Quake Mode Window` | 在之前隐藏或关闭时切换了 quake 模式窗口 |
+| `Open Repo Folder Submitted` | 用户从"打开仓库"按钮选择了要作为仓库打开的文件夹 |
+| `Open Save Config Modal` | 打开了保存启动配置模态框 |
+| `Open Slash Menu` | 打开了斜杠命令菜单 |
+| `Open Suggestions Menu` | 打开了建议菜单，如使用上箭头或 Tab 键 |
+| `Open Team from URI` | 在应用中显示了新加入团队的设置视图 |
+| `Open Theme Chooser` | 打开了主题选择器（不同主题列表及主题可视化） |
+| `Open Theme Creator Modal` | 打开了主题创建器模态框（创建新主题的模态框） |
+| `Open Welcome Tips` | 在应用中打开了欢迎提示 |
+| `Open Workflows Search` | 在命令搜索窗格中打开了工作流搜索 |
+| `OpenAndWarpifyDockerSubshell` | 使用 Docker 扩展时正在 Warpify 一个 Docker 子 shell |
+| `OpenInputBoxContextMenu` | 打开了输入编辑器的上下文菜单 |
+| `Opened Changelog Link` | 在应用内打开了更新日志链接 |
+| `Opened Link` | 打开了输入或输出中的高亮链接 |
+| `Opened Rewind Confirmation Dialog` | 用户打开了回退确认对话框 |
+| `Opened Save As Workflow Modal` | 打开了使用块的上下文（命令等）创建工作流的模态框 |
+| `Opened Sharing Dialog` | 打开了会话或 Warp Drive 对象的共享设置对话框 |
+| `Opened Warp AI` | 激活了 Warp AI |
+| `Opened alt screen find bar` | 在替代屏幕中打开了查找栏 |
+| `Page Up/Down In Editor Pressed` | 在输入编辑器中按下了 `PAGE-UP` 或 `PAGE-DOWN` |
+| `Pane Drag Ended` | 通过窗格标头结束了拖拽窗格 |
+| `Pane Drag Inititiated` | 通过标头发起了拖拽窗格 |
+| `Parameterized Workflow With Environment Variables` | 从环境变量下拉菜单选择以参数化工作流 |
+| `Parsed Config in Settings Import` | 作为设置导入的一部分解析了终端的设置 |
+| `Preview Pane Promoted` | 将预览代码标签页提升为普通标签页 |
+| `Prompt Edited` | 使用内置提示编辑器编辑了提示 |
+| `Prompt Editor Opened` | 打开了提示编辑器 |
+| `Pty Spawned` | 跟踪我们创建新 shell 进程的方式（新代码路径 vs 旧代码路径）。用于确保在更改基础设施的任何部分时不会出现问题。 |
+| `Quit Modal Cancel Pressed` | 警告模态框上的"取消"按钮被按下 |
+| `Quit Modal Disabled` | 退出模态对话框已被禁用，当用户在有运行进程时关闭 Warp 时将不会弹出 |
+| `Quit Modal Shown` | 显示警告模态框以警告用户关闭带有运行进程的应用/窗口 |
+| `Received Subshell RC File DCS` | 生成了一个子 shell 以自动 Warpify |
+| `Recent Menu Item Selected` | 用户从新标签页零状态下的最近列表中选择了一个项目 |
+| `RemoteCodebaseIndex.AutoIndexRequested` | 远程代码库自动索引请求了一个或多个仓库 |
+| `RemoteCodebaseIndex.StatusChanged` | 远程代码库索引状态发生更改 |
+| `RemoteServer.BinaryCheck` | 远程服务器二进制检查完成（找到、未找到或错误） |
+| `RemoteServer.ClientRequestError` | 客户端对远程服务器的请求失败 |
+| `RemoteServer.DaemonStartup` | 远程服务器守护进程启动完成，套接字已绑定 |
+| `RemoteServer.Disconnection` | 已建立的远程服务器连接被断开 |
+| `RemoteServer.HostUnsupported` | 预安装检查将远程主机归类为不支持，回退到传统 SSH 流程 |
+| `RemoteServer.Initialization` | 远程服务器连接和初始化完成（成功或失败） |
+| `RemoteServer.Installation` | 远程服务器二进制安装完成（成功或失败） |
+| `RemoteServer.MessageDecodingError` | 服务器消息无法解码（没有可解析的 request_id） |
+| `RemoteServer.ReconnectExhausted` | 自发断开后所有重新连接尝试均已用尽 |
+| `RemoteServer.Reconnection` | 自发断开后重新连接尝试成功 |
+| `RemoteServer.SetupDuration` | 远程服务器设置流程的端到端持续时间 |
+| `Remove Added Subshell Command` | 从要自动 Warpify 的命令列表中移除了一条命令 |
+| `Remove Denylisted SSH Tmux Wrapper Host` | 将 SSH 主机从 Tmux Wrapper 提示的黑名单中移除 |
+| `Remove Denylisted Subshell Command` | 从在尝试 Warpify 时要忽略的命令列表中移除了一条命令 |
+| `Removed Workflow Alias` | 从 Warp Drive 工作流中移除了别名 |
+| `Removed user from team` | 从 Warp Drive 团队移除了用户 |
+| `RepoMetadata.BuildTree.Failed` | 为仓库元数据构建文件树失败 |
+| `Resource Center Keybindings Page Opened` | 在资源中心内打开了键绑定页面 |
+| `Resource Center Opened` | 打开了资源中心窗格 |
+| `Resource Center Tips Completed` | 完成了资源中心提示 |
+| `Resource Center Tips Skipped` | 跳过了新用户的欢迎提示 |
+| `SSH Bootstrap Attempt` | 尝试为 SSH 会话进行引导 |
+| `SSH ControlMaster Error` | 在 SSH 会话期间遇到 ControlMaster 错误 |
+| `SSH Install Tmux Block Accepted` | 用户接受了 SSH 安装 tmux 块 |
+| `SSH Install Tmux Block Dismissed` | 用户关闭了 SSH 安装 tmux 块 |
+| `SSH Install Tmux Block Displayed` | 显示了 SSH 安装 tmux 块 |
+| `SSH Interactive Session Detected` | 检测到交互式 SSH 会话 |
+| `SSH Remote Server Choice Do Not Ask Again Toggled` | 在 SSH 远程服务器选择块上切换了"不再询问我"复选框 |
+| `SSH Tmux Warpification Error Block` | SSH tmux Warpification 出错 |
+| `SSH Tmux Warpification Succeeded` | SSH tmux Warpification 成功 |
+| `SSH Tmux Warpify Block Accepted` | 用户接受了 SSH tmux warpify 块 |
+| `SSH Tmux Warpify Block Dismissed` | 用户关闭了 SSH tmux warpify 块 |
+| `Save Launch Config` | 保存了当前窗口、标签页和窗格的启动配置 |
+| `Select App Icon` | 选择了应用图标 |
+| `Select Command Palette Option` | 从命令面板选择了选项（即 CMD-P） |
+| `Select Cursor Type` | 选择了光标类型 |
+| `Select Navigation Palette Item` | 从会话导航面板选择了会话（跨窗格、标签页和窗口搜索） |
+| `Select Theme` | 选择了主题 |
+| `Sent email invites` | 为 Warp Drive 团队发送了邮件邀请 |
+| `Session Abandoned Before Bootstrap` | 在引导完成前放弃了会话 |
+| `Set Line Height` | 通过设置 -> 外观设置行高 |
+| `Set New Windows at Custom Size` | 通过设置 -> 外观设置新窗口自定义大小 |
+| `Set SSH Extension Install Mode` | 更改了 SSH 扩展安装模式（总是询问/总是允许/总是跳过） |
+| `Set Window Blur Radius` | 从"设置 -> 外观"对话框更改了模糊半径 |
+| `Set Window Opacity` | 从"设置 -> 外观"对话框更改了不透明度（窗口透明度） |
+| `Settings Import Initiated` | 为新用户启动了导入设置流程 |
+| `Settings.Environments.PageOpened` | 用户打开了环境设置页面 |
+| `Shared Object Limit Hit Banner View Plans Button Clicked` | 点击了持久驱动器横幅上的"查看计划"按钮 |
+| `Sharer Cancelled Grant Role` | 当您取消授予共享会话参与者角色时 |
+| `Shell Terminated Prematurely` | Shell 进程提前终止 |
+| `Show Alias Expansion Banner` | 显示横幅询问 Warp 是否应在输入编辑器中自动扩展别名 |
+| `Show Subshell Banner` | 显示横幅询问 Warp 是否应通过 Warp 的子 shell 包装器 Warpify 当前会话 |
+| `Show Warpify SSH Banner` | 显示横幅询问 Warp 是否应通过 Warp 的 SSH 包装器 Warpify 当前 SSH 会话 |
+| `ShowNotificationsDiscoveryBanner` | 在块列表中显示了通知发现横幅 |
+| `ShowNotificationsErrorBanner` | 显示了通知功能的错误横幅 |
+| `Showed File in File Explorer` | 通过使用"在 Finder 中显示"在 Finder 中打开了文件 |
+| `Sign Up Button Clicked in App` | 点击了"注册"按钮 |
+| `Skill.Opened` | 从"打开技能"按钮或 /edit-skill 命令打开了技能 |
+| `Skill.Read` | 通过 ReadSkill 工具调用读取了技能 |
+| `Skip Onboarding Survey` | 整体跳过了入门调查 |
+| `Slash Command Accepted` | 用户接受了斜杠命令 |
+| `Split Pane` | 将标签页拆分为多个窗格 |
+| `Static Prompt Suggestion Accepted` | 接受了静态提示建议 |
+| `Static Prompt Suggestions Banner Shown` | 显示了静态提示建议横幅 |
+| `Suggested Code Diff Banner Shown` | 显示了建议代码差异横幅 |
+| `Suggested Code Diff Failed` | 建议代码差异失败 |
+| `Suggested Prompt Accepted` | 接受了建议提示 |
+| `Suggested Prompt Cancelled` | 取消了建议提示 |
+| `Suggested Prompt Shown` | 显示了建议提示 |
+| `Tab Creation` | 创建了标签页 |
+| `Tab Operations` | 对标签页执行了操作：更改颜色、关闭标签页、关闭相邻标签页等 |
+| `Tab Renamed` | 更改了标签页标题 |
+| `Tab Single Result Autocompletion` | 接受了 Tab 补全并插入到输入编辑器 |
+| `TabConfigs.ExistingConfigOpened` | 用户打开了现有的已保存标签页配置 |
+| `TabConfigs.GuidedModalOpened` | 用户打开了引导式"创建标签页配置"模态框 |
+| `TabConfigs.GuidedModalSubmitted` | 用户提交了引导式"创建标签页配置"模态框 |
+| `TabConfigs.MenuCreateNewTabConfigClicked` | 用户从标签页配置菜单点击了"新建标签页配置"条目 |
+| `TabConfigs.NewWorktreeConfigOpened` | 从子菜单或新建工作树模态框打开了新的工作树配置 |
+| `Team Created` | 创建了 Warp Drive 团队 |
+| `Team Joined` | 加入了 Warp Drive 团队 |
+| `Team Left` | 离开了 Warp Drive 团队 |
+| `Team Link Copied` | 复制了 Warp Drive 团队链接 |
+| `Thin Strokes Setting Changed` | 在设置 -> 外观中更改了细笔画设置 |
+| `Tier Limit Hit` | 用户达到了功能的层级限制 |
+| `Toggle Active AI Enablement` | 切换了活跃 AI 的启用状态。 |
+| `Toggle Agent Mode Codebase Context` | 切换了代理模式代码库上下文使用的启用/禁用。 |
+| `Toggle Agent Mode Query Suggestions Setting` | 切换了提示建议设置的启用/禁用 |
+| `Toggle Approvals Modal` | 打开或关闭了团队模态框 |
+| `Toggle Block Filter Case Sensitivity` | 在块筛选器编辑器中切换了大小写敏感的启用/禁用 |
+| `Toggle Block Filter Invert` | 在块筛选器编辑器中切换了反转的启用/禁用 |
+| `Toggle Block Filter Query` | 切换了块筛选器查询的启用/禁用 |
+| `Toggle Block Filter Regex` | 在块筛选器编辑器中切换了正则表达式的启用/禁用 |
+| `Toggle Code Suggestions Setting` | 切换了代码建议设置的启用/禁用 |
+| `Toggle Codebase Context Autoindexing` | 切换了代码库上下文自动索引的启用/禁用。 |
+| `Toggle Dim Inactive Panes` | 暗淡非活跃窗格功能是否已切换 |
+| `Toggle Focus Pane On Hover` | 切换了悬停时聚焦窗格功能的启用/禁用，该功能导致窗格在悬停时自动获得焦点 |
+| `Toggle Git Operations Autogen Setting` | 切换了 Git 操作自动生成设置的启用/禁用 |
+| `Toggle Global AI Enablement` | 切换了全局 AI 启用状态。 |
+| `Toggle Intelligent Autosuggestions Setting` | 切换了智能自动建议设置的启用/禁用 |
+| `Toggle Jump to Bottom of Block Button` | 启用或禁用了跳转到块底部按钮 |
+| `Toggle Ligature Rendering` | 切换了连字渲染 |
+| `Toggle New Windows at Custom Size` | 自定义大小新窗口功能是否已切换 |
+| `Toggle Obfuscate Secret` | 显示或隐藏了密钥 |
+| `Toggle Preserve Active Tab Color` | 启用或禁用了保留活跃标签页颜色 |
+| `Toggle Restore Session` | 切换了会话恢复（"启动时恢复窗口、标签页、窗格"） |
+| `Toggle SSH Tmux Wrapper` | 更改了 SSH 会话提示 Tmux Wrapper 的设置 |
+| `Toggle SSH Warpification` | 更改了 SSH 会话的 Warpification 设置 |
+| `Toggle Same Line Prompt` | 切换了同行的启用/禁用 |
+| `Toggle Secret Redaction` | 切换了密钥编辑设置的启用/禁用 - 尝试编辑密钥和敏感信息 |
+| `Toggle Settings Sync` | 切换设置同步 |
+| `Toggle SharedBlock Title Generation` | 切换了共享块标题生成设置的启用/禁用 |
+| `Toggle Show Agent Tips` | 在 AI 设置中切换了显示代理提示设置 |
+| `Toggle Show Block Dividers` | 启用或禁用了显示块分隔线按钮 |
+| `Toggle Sticky Command Header in Active Pane` | 展开或折叠了活跃窗格中的粘性命令标头 |
+| `Toggle Sync Inputs Across All Panes in All Tabs` | 启用将输入编辑器缓冲区同步到所有标签页中的所有窗格 |
+| `Toggle Sync Inputs Across All Panes in Current Tab` | 启用将输入编辑器缓冲区同步到当前标签页中的所有窗格 |
+| `Toggle Tab Indicators` | 启用或禁用了标签页指示器（失败命令等） |
+| `Toggle Voice Input Setting` | 切换了语音输入设置的启用/禁用 |
+| `Toggle Warp AI` | 切换了 Warp AI——一个帮助您调试错误、查找遗忘命令等的 AI 助手 |
+| `Toggled Bookmark Block` | 书签或取消书签块 |
+| `Toggled Tab Bar Visibility` | 切换了标签栏的显示时机 |
+| `Tried to Execute Before Precmd` | 尝试在 precmd（一个包含命令元数据如 SSH、提示信息等的 shell 阶段）之前执行命令 |
+| `Trigger Subshell Bootstrap` | 尝试通过 Warp 的子 shell 包装器 Warpify 当前会话 |
+| `Triggered Command XRay` | 触发了命令 X 射线（悬停在命令上以获取解释） |
+| `Unable to Update To New Version` | 更新可用但未授权安装 |
+| `Undo Close` | 重新打开了关闭的标签页或窗口（撤销关闭标签页或窗口） |
+| `Unhandled Editor Modifier Key` | 使用了当前不支持的修饰键键绑定击键 |
+| `Unsupported Shell` | 使用不受支持的 shell 启动了 Warp |
+| `Update Block Filter Query` | 当对块应用了新筛选器时 |
+| `Update Block Filter Query With Context Lines` | 当块筛选器查询的上下文行数更新时 |
+| `Update Tab Close Button Position` | 更新了标签页关闭按钮位置 |
+| `Updated Alt Screen Padding Mode` | 更新了替代屏幕的自定义填充设置 |
+| `Updated Sorting Choice` | 修改了 Warp Drive 对象的排序方案 |
+| `UseAgentToolbar.SettingToggled` | 用户切换了使用代理页脚设置 |
+| `Used Warp AI Prepared Prompt` | 使用了 Warp 提供的提示之一，如"显示示例" |
+| `User Initiated Closing Something` | 尝试退出应用或关闭窗口 |
+| `User Initiated Log Out` | 确认用户已明确登出应用 |
+| `User Menu Upgrade Clicked` | 点击了用户菜单中的"升级"菜单项 |
+| `VerticalTabs.DiffStatsChipClicked` | 用户点击了垂直标签面板或详情侧边栏中的差异统计标签 |
+| `VerticalTabs.DisplayOptionChanged` | 用户在垂直标签设置弹出窗口中更新了显示选项 |
+| `VerticalTabs.PrChipClicked` | 用户点击了垂直标签面板或详情侧边栏中的 GitHub PR 标签 |
+| `Vim Keybindings Banner Dismissed` | 关闭了启用输入编辑器中 Vim 键绑定的横幅 |
+| `Vim Keybindings Banner Displayed` | 显示横幅询问 Warp 是否应在输入编辑器中启用 Vim 键绑定 |
+| `Vim Keybindings Enabled from Banner` | 从横幅在输入编辑器中启用了 Vim 键绑定 |
+| `Warp AI Action` | 执行了 Warp AI 操作：重新启动、复制、插入到终端 |
+| `Warp AI Character Limit Exceeded` | 尝试向 Warp AI 提问超过 1k 个字符 |
+| `Warp AI Request Issued` | 向 Warp AI 发出了问题 |
+| `Warp Drive Opened` | 打开了 Warp Drive 面板 |
+| `Warp Drive Sharing onboarding block shown` | 显示了 Warp Drive 共享的引导块 |
+| `Warp Drive object opened on desktop` | 网页上的 Warp Drive 对象在桌面上打开 |
+| `Warpify Footer Accepted Warpify` | 用户在 warpify 页脚中点击了 Warpify |
+| `Warpify Footer Shown` | 为检测到的子 shell 或 SSH 会话显示了 warpify 页脚 |
+| `Web session opened on desktop` | 在网页上查看的共享会话在桌面上被打开 |
+| `Workflow Executed` | 执行了工作流 |
+| `Workflow Selected` | 选择了工作流并填充到输入编辑器 |
+| `Zero State Prompt Suggestion Used` | 使用了零状态提示建议 |
+| `experiments.client.enroll_client` | 客户端被分配到 A/B 测试 |
+| `onboarding_agent_slide_upgrade_clicked` | 用户在"自定义您的代理"幻灯片上点击了升级按钮 |
+| `onboarding_callout_completed` | 用户完成了引导提示流程 |
+| `onboarding_callout_displayed` | 向用户显示了引导提示 |
+| `onboarding_callout_next` | 用户点击了引导提示上的"下一步" |
+| `onboarding_folder_selected` | 用户选择了文件夹 |
+| `onboarding_folder_selection_started` | 用户开始了文件夹选择 |
+| `onboarding_free_user_no_ai_upgrade_clicked` | 用户在免费用户无 AI 实验幻灯片上点击了升级按钮 |
+| `onboarding_get_started_clicked` | 用户点击了"开始使用"按钮 |
+| `onboarding_setting_changed` | 用户在入门过程中更改了设置 |
+| `onboarding_slide_navigated_back` | 用户导航到了上一张幻灯片 |
+| `onboarding_slide_navigated_next` | 用户导航到了下一张幻灯片 |
+| `onboarding_slide_viewed` | 用户在入门流程中查看了一张幻灯片 |
+| `onboarding_slides_completed` | 用户完成了入门幻灯片 |
+| `onboarding_started` | 用户开始了入门流程 |
+| `onboarding_welcome_login_clicked` | 用户在欢迎/介绍幻灯片上点击了"登录"链接 |
+| `perf_metrics.memory_usage_high` | 应用程序总内存使用量超过了重要阈值 |
+| `perf_metrics.resource_usage` | 应用程序资源使用统计的定期报告 |
+| `revenue.AutoReloadModalClosed` | 用户关闭了自动充值模态框（关闭或启用了自动充值） |
+| `revenue.AutoReloadToggledFromBillingSettings` | 用户在账单和使用情况设置中切换了自动充值 |
+| `revenue.OutOfCreditsBannerClosed` | 用户关闭了"积分不足"横幅（关闭或购买了积分） |

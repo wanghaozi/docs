@@ -1,0 +1,49 @@
+---
+title: 粘性命令头
+description: >-
+  在滚动浏览大型块输出时，将正在运行的命令固定在屏幕顶部。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+对于占用全屏的长时间运行命令，粘性命令头仅在您开始向上滚动后显示。这是为了防止头部遮挡 `git log` 等模拟全屏应用程序的命令输出的顶部部分。
+:::
+
+## 如何访问粘性命令头
+
+<Tabs>
+  <TabItem label="macOS">
+    * 粘性命令头默认启用。
+    * 切换粘性命令头：前往 **设置** > **功能** > **通用** > 切换"显示粘性命令头"。
+    * 在 [命令面板](/terminal/command-palette/) 中搜索"粘性命令头"或按 `CTRL-CMD-S` 进行切换。
+    * 您也可以使用 `CTRL-S` 在活动窗格中"切换粘性命令头"。这不会完全禁用该功能，只是将其最小化在活动会话中。
+  </TabItem>
+  <TabItem label="Windows">
+    * 粘性命令头默认启用。
+    * 切换粘性命令头：前往 **设置** > **功能** > **通用** > 切换"显示粘性命令头"。
+    * 在 [命令面板](/terminal/command-palette/) 中搜索"粘性命令头"，或在 **设置** > **键盘快捷键** 中设置快捷键进行切换。
+    * 您也可以在命令面板中或在 **设置** > **键盘快捷键** 中设置快捷键来"在活动窗格中切换粘性命令头"。这不会完全禁用该功能，只是将其最小化在活动会话中。
+  </TabItem>
+  <TabItem label="Linux">
+    * 粘性命令头默认启用。
+    * 切换粘性命令头：前往 **设置** > **功能** > **通用** > 切换"显示粘性命令头"。
+    * 在 [命令面板](/terminal/command-palette/) 中搜索"粘性命令头"，或在 **设置** > **键盘快捷键** 中设置快捷键进行切换。
+    * 您也可以在命令面板中或在 **设置** > **键盘快捷键** 中设置快捷键来"在活动窗格中切换粘性命令头"。这不会完全禁用该功能，只是将其最小化在活动会话中。
+  </TabItem>
+</Tabs>
+
+## 如何使用粘性命令头
+
+* 如果块有较大的输出（例如 `seq 1 1000`），该块的头部将显示在活动窗口、标签或窗格的顶部。
+* 点击粘性命令头以快速跳转到块的顶部。
+* 活动时，您可以通过点击头部中间的向上/向下箭头，在活动窗格中最小化粘性命令头。
+
+## 粘性命令头的工作原理
+
+<VideoEmbed url="https://www.loom.com/share/a86967c057e44ab4bee4860ba80538b9?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="粘性命令头演示" />
+
+<figure>
+![切换活动头部和跳转到块底部演示](/assets/terminal/sticky-header-toggle-active-demo.gif)
+<figcaption>切换活动头部和跳转到块底部演示。</figcaption>
+</figure>

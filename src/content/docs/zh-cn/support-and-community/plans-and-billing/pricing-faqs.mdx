@@ -1,0 +1,418 @@
+---
+title: 定价和计费常见问题
+sidebar:
+  label: "定价常见问题"
+description: >-
+  关于升级、管理计费、退款以及 Warp 付费计划发票的常见问题。
+---
+
+### 如何升级和订阅 Warp 计划？
+
+所有付费 Warp 计划都比 Free 计划提供更高的月度积分限制。
+
+当您从 Free 升级到付费计划时，您的积分使用会重置。如果您在付费计划之间切换，您已累积的任何 AI 使用量将会结转。
+
+您可以作为个人或作为团队的一部分订阅 Warp 付费计划。要升级：
+
+* 在应用中：前往**设置** > **账单和使用情况**，然后点击升级链接
+* 在线：访问 [warp.dev/pricing](https://www.warp.dev/pricing)
+
+输入付款详细信息后，您将通过电子邮件收到发票和确认。
+
+### 如何充分利用我的 Warp 计划？
+
+Warp 的计划专为依赖 AI 编码、调试以及与团队一起更快前进的开发者设计。选择与您使用规模和团队所需控制相匹配的计划：
+
+* **Build** — 适合个人或小团队的按需付费计划，包含月度积分、能够[自带 API 密钥 (BYOK)](/agent-platform/inference/bring-your-own-api-key/) 或将 Warp 指向[自定义推理端点](/agent-platform/inference/custom-inference-endpoint/)，并可访问基于数量的折扣[附加积分](/support-and-community/plans-and-billing/add-on-credits/)。
+* **Max** — 适合使用量较大的个人或小团队的计划。包含比 Build 更大的月度积分配额，并且在 Build 上购买附加积分相比具有更好的有效积分费率。
+* **Business** — 适合团队的多席位计划。包含 Build 的所有功能，外加管理员可配置的数据控制、基于 SAML 的 SSO 和集中计费。席位限制见 [warp.dev/pricing](https://www.warp.dev/pricing)。
+* **Enterprise** — 适合需要更高席位数、[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 管理推理、精细管理员控制、高级安全和合规以及专属支持的组织。
+
+有关最新的功能和用量详情——包括当前每个计划的席位限制和月度积分配额——请访问 [warp.dev/pricing](https://www.warp.dev/pricing)。
+
+### 如何订阅 Warp Enterprise 计划？
+
+Warp 为大型团队和组织提供两种选择：
+
+* **Business 计划**：自助多席位计划，可立即升级。包含管理员可配置的数据控制和基于 SAML 的 SSO。请参阅 [warp.dev/pricing](https://www.warp.dev/pricing) 了解当前席位限制。
+* **Enterprise 计划**：自定义定价、积分配额和条款——专为大型工程组织或具有高级安全、合规或支持需求的团队设计。Enterprise 还包括[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 管理推理，由 Warp 提供路由、编排、治理和可观测性。
+
+:::tip
+如果您想了解 Enterprise，[联系我们的销售团队](https://www.warp.dev/contact-sales)，Warp 的人员将跟进。
+:::
+
+对于 Warp 管理的模型流量（Warp 代表您路由到 OpenAI、Anthropic 或 Google 的请求），所有计划都受 Warp 与基础模型提供商的零数据保留（ZDR）协议保护。通过您自己的 API 密钥或自定义推理端点路由的流量受该提供商的数保留政策约束，而非 Warp 的协议。管理员可配置的数据控制——包括团队范围的保留策略和训练退出选项——在 Business 和 Enterprise 上可用。
+
+### 什么是团队成员，成员如何计费？
+
+在 Warp 中，_团队成员_是指有权访问您团队（包括共享的 Warp Drive、Notebook、Workflow 和其他团队资源）的任何席位。所有计划都允许您邀请无限的 Warp Drive 协作者，但付费计划功能和积分分配受您计划的席位限制约束（请参阅下方[每个计划是否有新的席位限制？](#are-there-new-seat-limits-per-plan)）。升级适用于您的整个团队，包括您自己的账户和所有活跃成员。
+
+在 Free 计划上，您可以与其他 Free 用户共享有限数量的 Notebook 和 Workflow。如果您的团队超过该限制，系统会提示您[升级到付费计划](https://app.warp.dev/upgrade)。\
+\
+升级后，当团队成员接受邀请时，您将收到电子邮件通知。计费按**比例计算**，意味着您只需为每个成员在计费周期内拥有访问权限的天数付费。如果成员在周期中途离开，Warp 会自动为未使用的时间应用积分抵扣到您的下一张发票。
+
+**根据您的付款计划，成员计费方式有所不同：**
+
+* **月度计划**：新成员立即按当月剩余时间计费。
+* **年度计划**：新成员立即按当年剩余时间计费。
+
+例如，如果成员在月中加入您的月度计划，您只需支付半月费用（25 美元，而非 50 美元）。类似地，如果成员在年度计划还剩四个月时加入，您只需支付这四个月的费用，即 160 美元（年度 480 美元中的 4/12）。
+
+如果成员在计费周期中途离开，Warp 将根据其成员资格的未使用部分发放按比例计算的积分。该积分将应用于您团队的下一张发票，无论您是月度还是年度计划。
+
+:::caution
+团队的所有成员将拥有相同的订阅计划，您不能为团队中的每个成员混合搭配不同的计划。要拥有不同的计划，您当前必须创建单独的团队。
+:::
+
+### 在 Warp 上加入或创建团队的价值是什么？
+
+团队成员可以访问您的共享 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 对象以及 Warp 协作功能（包括会话共享和 Warp Drive 存储）的有限访问权限。
+
+**将团队升级到付费计划可解锁强大的协作和知识共享工具，帮助您的团队一起更快前进：**
+
+* 在 Warp Drive 中创建无限量的 [Notebook](/knowledge-and-collaboration/warp-drive/notebooks/) 和 [Workflow](/knowledge-and-collaboration/warp-drive/workflows/)，以组织和在团队内共享知识。
+* 使用无限量的[会话共享](/knowledge-and-collaboration/session-sharing/)，通过实时、共享的终端会话进行协作。
+
+### 我的同事在使用 Warp 但我们还没有组成团队。计费如何运作？
+
+拥有个人或工作电子邮件域的个人用户可以继续独立使用 Warp，而无需产生计费。一起加入 Warp 团队的好处是可以访问共享的团队 Drive 和协作功能。
+
+当您准备好更协作地使用 Warp 时，我们建议您指定一名管理员[创建团队](/knowledge-and-collaboration/teams/)并邀请成员加入。当您的团队超过 Warp Drive 限制时，系统会提示您升级计划。
+
+### 如果在多个设备上登录同一个账户，使用情况如何计算？
+
+当您使用同一个账户在不同设备上登录 Warp 时，例如一台电脑上用 Linux 另一台用 Windows，您对计量功能（如积分）的使用是在账户级别而非设备级别跟踪的。
+
+您可以在多台个人电脑上使用您的 Warp 账户。Warp 设计为在设备间提供一致的体验。当您在不同电脑上使用同一账户登录时，您的设置和偏好可以通过[设置同步](/terminal/more-features/settings-sync/)功能同步。
+
+### 在计费周期内降级会发生什么？
+
+订阅将在计费周期结束时降级到较低的计划限制。如果您在付费计划之间切换，您已累积的任何 AI 使用量将会结转。\
+\
+您可以在订阅期间的任何时候通过账单门户降级，前往**设置** > **账单和使用情况** > **管理计费**。
+
+### 在计费周期内取消会发生什么？
+
+您可以在订阅期间的任何时候通过账单门户取消，前往**设置** > **账单和使用情况** > **管理计费**。订阅将在**计费周期结束时**取消，无论是月度还是年度。
+
+**您可以在周期结束日期前继续使用 Warp 付费计划功能**。任何添加到您团队的额外成员将在计费周期结束时开具发票。
+
+### 如果我从月度升级到年度计费会怎样？
+
+从月度升级到年度计费周期时，计费按比例计算，意味着您只需支付尚未支付的年度部分。您将以折扣价支付计费年份的剩余部分。
+
+您可以在订阅期间的任何时候通过账单门户升级，前往**设置** > **账单和使用情况** > **管理计费**。
+
+### 未使用的积分会怎样？
+
+未使用的积分不会结转到下一周期，也不能转移到其他账户。您可以在**设置** > **账单和使用情况**菜单中查看积分何时重置。
+
+### 如果付款失败会怎样？
+
+如果付款失败，您将收到来自 Stripe 的电子邮件，您的 Warp 团队设置将显示逾期警报。当团队处于逾期状态时，某些付费计划功能和邀请新成员的能力将被锁定。通过账单门户支付最近的发票（前往**设置** > **账单和使用情况** > **管理计费**）将完全重新启用您的付费计划功能。
+
+### 什么算作一个积分？
+
+每次您在 Warp 中提交提示时，无论是生成代码、建议命令还是完成任务，您都发起了与代理的交互。更多详情请参阅我们的[积分](/support-and-community/plans-and-billing/credits/)页面。
+
+### 什么算作一个 AI 令牌？
+
+令牌是文本的片段，例如单词、部分代码或字符，大型语言模型（LLM）将其分解以分析和生成响应。LLM 有每次可以处理的最大令牌数。积分和建议与令牌不同，无论您使用哪个计划，令牌都有单独的限制。
+
+:::note
+Warp 现在抽象了令牌使用，因此您无需直接管理或跟踪它。您只需监控**积分使用**，这是根据您的计划限制进行衡量的。
+:::
+
+如果您感兴趣，可以阅读 [OpenAI 关于令牌的文章](https://help.openai.com/en/articles/4936856-understanding-tokens)，或参考定价页面了解计划级别的积分分配。如果您在 Free 计划上达到月度积分限制，高级模型将暂停，直到您的配额在下一个计费周期开始时重置。在付费计划上，您可以通过[附加积分](/support-and-community/plans-and-billing/add-on-credits/)和自动充值继续使用高级模型——请参阅[如果我的 AI 使用量超过计划包含的量怎么办？](#what-if-i-need-more-ai-usage-than-my-plan-includes)了解完整的选项列表。
+
+### 我的积分多久重置一次？
+
+分配的积分每 30 天从您的注册日期起补充。当您升级到[付费计划](https://www.warp.dev/pricing)时，您将立即获得更多积分。您可以通过参考**设置** > **账单和使用情况**来跟踪您的补充周期。或者，购买[附加积分](/support-and-community/plans-and-billing/add-on-credits/)，或启用具有月度支出限制的自动充值，以在包含的配额之外继续使用高级模型。
+
+:::note
+未使用的积分不会结转到下一周期，也不能转移到其他账户。
+:::
+
+### 多席位团队的积分如何运作？
+
+在新的多席位付费计划上，积分分配方式与 Warp 旧版共享积分团队不同：
+
+* **计划包含的月度积分** — 每个席位获得自己的月度积分配额，每 30 天根据团队的续费日期重置。请参阅 [warp.dev/pricing](https://www.warp.dev/pricing) 了解您计划的当前每席位配额。
+* **附加积分** — 自 2026 年 5 月 21 日起，[附加积分](/support-and-community/plans-and-billing/add-on-credits/)范围限定于购买或被分配的个人用户，而不是在团队中共享。单个使用量大的用户不再能耗尽整个团队购买的积分。
+* **已存续的共享积分** — 在 2026 年 5 月 21 日之前购买附加积分的团队保留其现有共享余额，直到用尽。共享积分首先在团队中使用；2026 年 5 月 21 日之后的所有新附加积分购买都是用户范围的。
+* **团队支出上限** — 管理员设置一个单一的团队范围的月度支出上限，管理整个团队的自动充值。请参阅下方[团队的自动充值如何运作？](#how-does-auto-reload-work-for-teams)。
+
+Enterprise 计划分别支持团队范围的积分池和每用户支出限制——请参阅[企业计费](/enterprise/support-and-resources/billing/)。
+
+### 平台积分如何影响计费？
+
+Warp 在三个桶之间计量积分：**AI 积分**（模型调用）、**计算积分**（云代理运行的沙箱）和**平台积分**（运行生命周期、集成、仪表板、API 和可观测性）。三者都从同一个池中扣除——首先使用您的月度 Warp 积分，然后用尽后使用[附加积分](/support-and-community/plans-and-billing/add-on-credits/)。
+
+平台积分适用于两种情况：
+
+* **每个计划的每次云代理运行。** Warp 的平台基础设施协调每次云运行，无论使用哪个代理或推理源。在自助计划（Free、Build、Max、Business）上，平台积分计费在 2026 年 6 月 30 日之前处于预览期——详情请参阅[自助计划何时开始收取平台积分？](#when-do-platform-credits-start-being-charged-on-self-serve-plans)。
+* **使用客户提供推理的 Business 和 Enterprise 本地代理运行** — BYOK、自定义推理端点或 BYOLLM。Warp 不支付模型调用费用，但 Warp 的平台基础设施仍在运行代理。这些运行的计费在自助计划上也处于预览期至 2026 年 6 月 30 日；计量于 2026 年 7 月 1 日开始。
+
+Free、Build 或 Max 上的本地代理运行——以及使用 Warp 管理推理的 Business 或 Enterprise 上的本地运行——不消耗平台积分。完整的细分请参见[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+### 如果我的 AI 使用量超过计划包含的量怎么办？
+
+如果您经常用完计划的月度积分配额，您有几种选择：
+
+* **升级到 Max** — 专为使用量较大的开发者设计。Max 包含比 Build 更高的月度积分配额，并且在 Build 上购买[附加积分](/support-and-community/plans-and-billing/add-on-credits/)相比具有更好的有效费率。请参阅 [warp.dev/pricing](https://www.warp.dev/pricing) 了解当前配额。
+* **购买附加积分** — 按需充值您的账户。较大面额具有更好的有效费率。附加积分逐月结转，并在 12 个月内有效，前提是您拥有有效的订阅——如果您转为 Free 计划，将失去对剩余附加积分的访问权限。请参阅[附加积分](/support-and-community/plans-and-billing/add-on-credits/)了解当前面额。
+* **启用自动充值** — 选择一个面额和月度支出上限，当您的余额低于 100 积分时，Warp 将自动购买附加积分，直至达到上限。
+* **自带 API 密钥 (BYOK)** — 将 Warp 指向您自己的 OpenAI、Anthropic 或 Google API 密钥。通过 BYOK 路由的请求不消耗 Warp 积分——您直接向模型提供商付费。请参阅[自带 API 密钥](/agent-platform/inference/bring-your-own-api-key/)。在 Business 和 Enterprise 上，本地代理运行可能适用平台积分（计费于 2026 年 7 月 1 日在自助计划上开始——请参阅[自助计划何时开始收取平台积分？](#when-do-platform-credits-start-being-charged-on-self-serve-plans)）。
+* **使用自定义推理端点** — 通过任何 OpenAI 兼容端点（OpenRouter、LiteLLM、z.ai、内部网关等）路由请求，不消耗 Warp 积分。请参阅[自定义推理端点](/agent-platform/inference/custom-inference-endpoint/)。在 Business 和 Enterprise 上，本地代理运行可能适用平台积分（计费于 2026 年 7 月 1 日在自助计划上开始——请参阅[自助计划何时开始收取平台积分？](#when-do-platform-credits-start-being-charged-on-self-serve-plans)）。
+
+*BYOK 和自定义推理端点的可用性受组织规模限制——详情请参阅[我可以自带 API 密钥吗？](#can-i-bring-my-own-api-key)*
+
+对于组织规模的需求（云提供商管理推理、精细管理员控制或更高席位数），Enterprise 计划包括[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/)。
+
+### 团队的自动充值如何运作？
+
+自动充值防止团队成员因积分耗尽而被阻塞。它对于个人和多席位付费计划的运作方式相同，只是团队多了一个控制选项。
+
+自动充值**开启**时：
+
+* 管理员选择一个附加积分**面额**。较大面额具有更好的每积分有效费率。
+* 当任何个人用户的余额（其计划积分加上其用户范围的附加积分余额）低于 **100 积分**时，Warp 自动代表团队购买另一包配置面额的积分。
+* 所有自动充值购买计入管理员设置的单个**团队月度支出上限**。当团队在给定月份达到上限时，自动充值暂停，直到下一个计费周期或管理员提高上限。
+* 自动充值开启时，**个人团队成员不能手动购买附加积分**——团队范围的自动充值配置管理所有购买。
+
+拥有 2026 年 5 月 21 日之前已存续共享附加积分余额的团队：该共享余额首先在团队中消耗，然后才使用用户范围的附加积分，并且不计入任何个人用户的 100 积分自动充值阈值。
+
+自动充值**关闭**时，符合条件的团队成员可以为自己购买附加积分，前提是团队保持在团队月度支出上限以下。用户只要有计划积分、先前购买的附加积分，或者已将 Warp 路由到自己的 API 密钥或[自定义推理端点](/agent-platform/inference/custom-inference-endpoint/)，就可以继续工作。一旦这些用尽，高级模型使用将被阻止，直到积分充值或下一个计费周期开始。
+
+自动充值可以随时在**设置** > **账单和使用情况**中启用、暂停或重新配置。
+
+### 团队计划中未由个人用户触发的云代理运行如何计费？
+
+某些云代理运行不是由特定团队成员发起的——例如计划运行或通过团队 API 密钥触发的运行。在自助计划（Build、Max、Business）上，这些运行向**团队所有者**计费。
+
+:::caution
+团队所有者：计划运行和通过团队 API 密钥触发的运行从您的个人积分池中扣除。如果您的账户启用了自动充值，自动化作业可能会消耗您的附加积分并计入您的支出上限。在依赖计划运行或 API 密钥触发的云代理之前，请在**设置** > **账单和使用情况**中查看您的自动充值设置和团队支出上限。
+:::
+
+所有者账户上的级联流程是：
+
+1. 首先消耗所有者的计划包含月度积分。
+2. 这些用完后，消耗所有者的附加积分。
+
+自动充值**关闭**时，两个桶都耗尽后请求将被阻止。自动充值**开启**时，云代理使用可能触发所有者池的自动充值，受团队支出上限约束；进一步的云代理运行随后从该充值余额中扣除，直到达到上限。
+
+"被阻止"意味着运行立即失败，返回积分不足错误，而不是排队或重试。对于无人值守的运行（计划作业、团队 API 密钥触发器），这表现为 Oz 仪表板中显示失败的运行，并带有[积分不足](/reference/api-and-sdk/troubleshooting/errors/insufficient-credits/)错误代码；运行不会自动重试。所有者应监控仪表板，并为关键的计划工作负载配置留有空间的支出上限。
+
+:::note
+Enterprise 计划支持团队范围的积分池，因此这些流量从团队池而非个人管理员账户中扣除。请参阅[企业计费](/enterprise/support-and-resources/billing/)了解超额和合同条款。
+:::
+
+### 如果我是大公司或组织的开发者，可以使用 Free 计划吗？
+
+可以。任何公司规模的开发者都可以使用 Warp 的 Free 计划。
+
+如果您需要高级协作功能或更高限制，升级计划可能对您有益，但 Warp 不要求大型组织升级。
+
+### Warp 是否为学生、非营利组织或开源团队提供折扣？
+
+Warp 目前不提供学生或非营利组织折扣。我们建议探索 Free 计划，其中包含所有核心终端功能，是个人或社区使用的绝佳起点。
+
+对于开源团队，有两种途径可用：
+
+* [Oz 开源合作伙伴](/support-and-community/community/open-source-partnership/)计划为高影响力开源项目提供免费代理积分。
+* Warp 的客户端本身以 [AGPL v3](https://github.com/warpdotdev/warp/blob/master/LICENSE-AGPL) 协议开源，因此您可以直接构建、运行和贡献。请参阅[为 Warp 做贡献](/support-and-community/community/contributing/)了解流程。
+
+### 我团队的 Warp Drive 数据存储在哪里？
+
+Warp Drive 数据安全存储在美国的 Google Cloud Platform 服务器上。所有数据在传输和静态存储时都经过加密。
+
+更多详情，请[访问安全概览页面](https://www.warp.dev/legal/security)或联系 [security@warp.dev](mailto:security@warp.dev)。
+
+### Warp 有 SOC 2 Type 2 认证吗？
+
+有。Warp 已获得经认可的第三方出具的 SOC 2 Type 2 认证。请参阅[信任中心](/enterprise/security-and-compliance/trust-center/)申请报告。
+
+### Warp 与 LLM 提供商有零数据保留政策吗？
+
+Warp 与多个 LLM 提供商集成——包括 Anthropic、OpenAI、Google 和 Fireworks AI——以支持其 AI 功能。Warp 与这些提供商签订了零数据保留（ZDR）协议。在所有计划上，这些协议意味着：
+
+* LLM 提供商承诺不会对通过 Warp 服务处理的任何客户生成数据进行模型训练。
+* LLM 提供商承诺在生成相关输出后，在规定时间内删除输入和输出。
+
+Warp 通过技术措施和与 LLM 提供商的合同保障来执行这些承诺。
+
+### 如何在 Warp 中启用零数据保留？
+
+零数据保留（ZDR）可以通过两种方式启用：
+
+* **个人层面** — 任何用户都可以在**设置** > **隐私**中禁用"帮助改进 Warp"，从而为自己的账户启用完全 ZDR。
+* **组织范围** — 在 Business 和 Enterprise 计划上，管理员可以从[管理面板](/enterprise/team-management/admin-panel/)为所有成员强制执行 ZDR，这样团队范围的合规不依赖于个人设置。
+
+要讨论您团队的组​​织范围 ZDR，请[联系我们的销售团队](https://www.warp.dev/contact-sales)。
+
+无论计划如何，Warp 绝不会允许 OpenAI、Anthropic、Google 或其他模型提供商存储、保留或在其模型上训练您的数据——详情请参阅[Warp 与 LLM 提供商有零数据保留政策吗？](#does-warp-have-zero-data-retention-policies-with-llm-providers)。
+
+### 我可以自带 API 密钥吗？
+
+可以。在 Free、Build、Max、Business 和 Enterprise 计划上，您可以在**设置** > **AI** > **管理模型**中配置自己的 OpenAI、Anthropic 或 Google API 密钥。通过您自己的密钥路由的请求不消耗 Warp 积分——您直接向模型提供商付费。
+
+请参阅[自带 API 密钥](/agent-platform/inference/bring-your-own-api-key/)了解设置步骤、支持的提供商和模型列表，以及 BYOK、自定义推理端点和 BYOLLM 之间的区别。
+
+BYOK 和自定义推理端点的支持适用于拥有 10 名或更少员工的个人用户和组织，受 Warp 服务条款约束。拥有超过 10 名员工的公司或组织需要 Warp Business 或 Enterprise 计划才能使用这些功能。
+
+在 Business 和 Enterprise 上，使用 BYOK 的本地代理运行仍会为 Warp 的平台基础设施消耗平台积分。请参阅[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+### Warp 支持自定义推理端点吗？
+
+支持。除了 BYOK 之外，Warp 还可以将请求路由到任何 OpenAI 兼容的推理端点——包括 OpenRouter、LiteLLM、z.ai 和您的团队已经运行的内部网关。自定义推理端点请求也不消耗 Warp 积分。
+
+自定义推理端点在 Free、Build、Max、Business 和 Enterprise 上可用。请参阅[自定义推理端点](/agent-platform/inference/custom-inference-endpoint/)了解配置步骤、计费行为以及自定义推理端点与 BYOK 以及 Enterprise 的[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 管理推理之间的区别。
+
+BYOK 和自定义推理端点的支持适用于拥有 10 名或更少员工的个人用户和组织，受 Warp 服务条款约束。拥有超过 10 名员工的公司或组织需要 Warp Business 或 Enterprise 计划才能使用这些功能。
+
+在 Business 和 Enterprise 上，使用自定义推理端点的本地代理运行仍会为 Warp 的平台基础设施消耗平台积分。请参阅[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+### Warp 支持其他模型路由器或"自带 LLM"吗？
+
+在 Enterprise 计划上，Warp 的[自带 LLM (BYOLLM)](/enterprise/enterprise-features/bring-your-own-llm/) 让您可以通过主要云提供商的模型即服务产品路由推理。BYOLLM 目前支持 AWS Bedrock，Azure Foundry 和 Google Vertex 即将推出。Warp 仍然管理模型支持、路由和编排，但推理在您的云环境中运行，因此您可以保持数据本地性、安全控制和现有的云支出承诺。
+
+此列表之外的自定义或内部模型路由器目前默认不受支持。如果您有特殊需求，请[联系我们的销售团队](https://www.warp.dev/contact-sales)。
+
+对于通过任何 OpenAI 兼容端点（OpenRouter、LiteLLM、z.ai、内部网关）进行的轻量级路由，请参阅上方的[Warp 支持自定义推理端点吗？](#does-warp-support-custom-inference-endpoints)。
+
+### 多 harness 编排测试版期间有哪些功能可用？
+
+多 harness 编排目前处于测试版，对所有用户开放。您可以在 Oz 云环境中同时使用 [Warp Agent](/agent-platform/cloud-agents/harnesses/warp-agent/)、[Claude Code](/agent-platform/cloud-agents/harnesses/claude-code/) 和 [Codex](/agent-platform/cloud-agents/harnesses/codex/)，并在工作流中混合搭配 harness。
+
+[代理记忆](/agent-platform/agent-memory/)目前处于研究预览阶段。它允许偏好、项目知识和过往会话的经验跨 harness 和未来的代理运行传递。[联系我们的销售团队](https://www.warp.dev/contact-sales)申请访问权限。
+
+随着这些功能退出测试版或研究预览阶段，可用性、限制和定价可能会发生变化。
+
+### Warp 的自助计划有哪些付款方式？
+
+Warp 使用 Stripe 作为我们的支付处理商，目前接受以下付款方式：信用卡、借记卡、Link、Apple Pay、Google Pay。
+
+我们目前不支持 ACH、支票、PayPal、加密货币或其他替代付款方式。
+
+:::note
+要使用 Apple Pay 结账，请在 Apple 设备上使用 Safari 浏览器。\
+要使用 Google Pay 结账，请使用 Chrome 浏览器，确保您在浏览器中登录了 Google Wallet 账户，并且在浏览器设置中启用了"保存和填写付款方式"。
+:::
+
+### 如何取消订阅？
+
+您可以在订阅期间的任何时候通过账单门户取消，前往**设置** > **账单和使用情况** > **管理计费**。
+
+取消的订阅将在计费周期结束前保持有效。
+
+### 如何获得退款？
+
+对于月度订阅，如果您在扣费后 24 小时内取消且未使用任何积分，我们可以发放全额退款。
+
+对于年度订阅，如果在 15 天内且未使用任何积分，我们可以发放全额退款，之后则按剩余月份比例退款。完整详情和例外情况请参阅 [Warp 的退款政策](/support-and-community/plans-and-billing/plans-pricing-refunds/#warps-refund-policies)。
+
+### 为什么我的促销代码无效或被禁用？
+
+Warp 的促销活动是在承诺订阅之前试用 Warp 的方式，而不是获得无限免费或廉价 AI 的方法。为防止滥用，我们将促销代码限制为首次使用，因此每个账户只能使用一个促销代码。\
+\
+此外，我们发放的某些促销代码仅对特定计划有效（并非所有计划），并在一定时间后过期。如果您为某个计划应用了促销代码，然后升级到另一个计划，促销不会转移到新计划，因此您将为升级支付全价。
+
+:::caution
+Warp 保留随时禁用任何促销代码的权利，如果我们发现代码被滥用，还可以取消相关订阅。
+:::
+
+### 如何以免税身份订阅 Warp？
+
+Warp 确实允许免税组织订阅，但需要完成一些额外步骤。
+
+1. 创建 Warp 账户，登录，前往[升级页面](https://app.warp.dev/upgrade)并选择一个计划，但**不要结账或付款**。这仅会在系统中设置您的计费账户，用于后续步骤。
+2. 发送邮件至 [billing@warp.dev](mailto:billing@warp.dev)，附上您组织的免税身份证明和您的 Warp 账户邮箱。
+3. Warp 团队将验证您的免税身份，并将您的账户更改为免税状态。
+4. 最后，订阅您选择的计划。您将看到账单上不应用税费。
+
+### 为什么我不能订阅 Warp？
+
+某些被禁止和限制的业务，Stripe 和主要信用卡网络不处理付款。有关最新信息，请参阅完整列表[此处](https://stripe.com/legal/restricted-businesses)。
+
+### 我有问题需要帮助。如何联系 Warp 的人工客服？
+
+Warp 团队随时准备提供帮助。订阅者的技术问题请发送邮件至 [support@warp.dev](mailto:support@warp.dev)，订阅者的账单问题请发送邮件至 [billing@warp.dev](mailto:billing@warp.dev)，安全问题请发送邮件至 [security@warp.dev](mailto:security@warp.dev)，隐私问题请发送邮件至 [privacy@warp.dev](mailto:privacy@warp.dev)。
+
+---
+
+### 2026 年 5 月定价变更
+
+2026 年 5 月 21 日的更新引入了新的席位限制，改变了附加积分的归属方式，向所有计划开放 BYOK，添加了自定义推理端点，并开始对云代理运行计量平台积分。以下问题涵盖了变更内容以及如果影响到您该怎么办。
+
+#### 每个计划是否有新的席位限制？
+
+是的。自 2026 年 5 月 21 日起，每个计划都有明确的席位限制。请参阅 [warp.dev/pricing](https://www.warp.dev/pricing) 了解当前每个计划的上限。
+
+席位限制管理付费计划功能和积分分配。它不同于每个计划都支持的无限 Warp Drive 协作者。您可以继续邀请无限用户共享 Notebook、Workflow 和其他 Warp Drive 资源，而不会达到席位上限。该上限仅在用户占用您团队中的付费席位时适用。
+
+#### 如果我的团队已经超过新的席位限制怎么办？
+
+您团队的当前访问权限不会改变。现有成员保留其席位，并可以继续像今天一样使用 Warp。
+
+该上限仅管理**添加新成员**。当您的团队达到或超过上限时，您无法添加新成员或在成员离开后补充席位。要突破上限，随时在**设置** > **账单和使用情况**中切换到下一个计划（或 Enterprise）。
+
+#### 附加积分的归属方式有何不同？
+
+2026 年 5 月 21 日之前，多席位团队上的附加积分是**共享的**。每位团队成员从一个单一的共享余额中扣除。自 2026 年 5 月 21 日起，**附加积分是用户范围的**。每个用户有自己的余额，单个使用量大的用户不再能耗尽整个团队购买的积分。
+
+对团队有两个实际变化：
+
+* **团队中的任何人都可以为自己的使用购买附加积分**，受管理员在**设置** > **账单和使用情况**中设置的团队支出上限约束。以前，管理员通常代表团队管理共享池。
+* **已存续的共享积分**：2026 年 5 月 21 日之前购买的现有共享附加积分余额将得到保留。它们首先在团队中消耗，然后才会消耗任何用户范围的附加积分。不会向共享余额添加新积分。一旦用尽，所有未来的附加积分购买都是用户范围的。
+
+详情请参阅[附加积分](/support-and-community/plans-and-billing/add-on-credits/)。
+
+#### 如果我离开团队，我的附加积分会怎样？
+
+附加积分与支付它们的团队绑定，因此团队成员资格变更会影响访问权限：
+
+* **您离开团队**：您失去与该团队相关的所有附加积分的访问权限。如果您稍后重新加入同一团队，您将重新获得对任何未使用、未过期积分的访问权限。管理员在重新加入时按比例支付您的座位费用。
+* **管理员将您从团队中移除**：您失去与该团队相关的所有附加积分的访问权限。如果您稍后重新加入，将重新获得对任何未使用、未过期积分的访问权限。
+* **管理员删除团队**：与该团队相关的任何剩余附加积分将无法再被任何人使用。
+
+未使用的附加积分自购买之日起 12 个月内有效，前提是您拥有有效的订阅。完整详情请参阅附加积分页面上的[团队成员变更时](/support-and-community/plans-and-billing/add-on-credits/#when-team-membership-changes)。
+
+#### 我现在可以在 Free 计划上自带 API 密钥吗？
+
+可以。自 2026 年 5 月 21 日起，**自带 API 密钥 (BYOK)** 在所有计划上可用，包括 Free。以前，BYOK 需要 Build、Business 或 Enterprise 订阅。您可以在**设置** > **AI** > **管理模型**下配置您的 OpenAI、Anthropic 或 Google 密钥。
+
+请参阅[自带 API 密钥](/agent-platform/inference/bring-your-own-api-key/)了解完整的支持提供商列表和设置步骤。
+
+#### 新的自定义推理端点功能是什么？
+
+**自定义推理端点**让您可以通过任何 OpenAI 兼容的推理端点路由 Warp 的 AI 流量，包括 OpenRouter、LiteLLM、z.ai 和您的团队已经运行的内部网关。支持在 Free、Build、Max、Business 和 Enterprise 上可用。
+
+自定义推理端点与 BYOK 和 BYOLLM 的区别如下：
+
+* **BYOK** 使用您自己的提供商 API 密钥直接向 OpenAI、Anthropic 或 Google 发送请求。
+* **自定义推理端点**将请求发送给您控制或您的团队运行的任何 OpenAI 兼容 URL。
+* **BYOLLM** 是 Enterprise 独有的管理推理功能。Warp 通过您的云提供商（目前为 AWS Bedrock，Azure Foundry 和 Google Vertex 即将推出）路由流量，并处理路由、编排、治理和可观测性。
+
+设置和详情请参阅[自定义推理端点](/agent-platform/inference/custom-inference-endpoint/)。
+
+#### 自助计划何时开始收取平台积分？
+
+[平台积分](/support-and-community/plans-and-billing/platform-credits/)适用于每次云代理运行，以及 Business 上使用 BYOK 或自定义推理端点的本地代理运行。**对于自助计划（Free、Build、Max、Business），平台积分计费于 2026 年 7 月 1 日开始。**
+
+2026 年 5 月 21 日至 6 月 30 日之间，所有自助计划处于**预览期**。此期间不消耗平台积分，因此它们不会从您的月度 Warp 积分、附加积分余额或支出上限中扣除。
+
+在 **Enterprise** 上，平台积分使用受您的合同约束。详情请参阅[企业计费](/enterprise/support-and-resources/billing/)。
+
+**2026 年 7 月 1 日**，Warp 开始消耗平台积分用于：
+
+* Free、Build、Max 或 Business 上的每次云代理运行。
+* Business 上使用 BYOK 或自定义推理端点的本地代理运行。
+
+#### 我是团队管理员。我需要做什么？
+
+处理 2026 年 5 月变更的简短清单：
+
+* **检查您的席位计数。** 前往**设置** > **团队**查看您的团队是否达到或超过了计划的新的席位限制。如果是，请参阅[如果我的团队已经超过新的席位限制怎么办？](#what-if-my-team-is-already-above-the-new-seat-limit)。
+* **设置团队的附加积分支出上限。** 在**设置** > **账单和使用情况**下，配置应用于团队附加积分购买的月度上限。团队成员现在可以购买自己的附加积分，但每次购买都计入此上限。
+* **告知您的团队附加积分现在是用户范围的。** 每个成员可以为自己购买附加积分，而不会影响其他人的余额。
+* **为 2026 年 7 月 1 日的平台积分做好准备。** 如果您的团队使用 Business 计划并在本地使用 BYOK 或自定义推理端点，这些本地运行将在预览期结束后开始消耗平台积分。请参阅[自助计划何时开始收取平台积分？](#when-do-platform-credits-start-being-charged-on-self-serve-plans)。

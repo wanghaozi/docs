@@ -1,0 +1,84 @@
+---
+title: 从 VS Code 终端迁移到 Warp
+description: >-
+  在 Warp 中复制你的 VS Code 集成终端设置——shell、字体、键位——或者将 Warp 作为功能更丰富的终端与 VS Code 一起使用。
+---
+
+Warp 让 VS Code 用户可以选择自己的路径：保留 VS Code 进行编辑，将 Warp 作为其旁边的终端运行；或者用 Warp 内置的代码编辑器替代两者。本页将介绍为任一路径重新配置终端设置的步骤。
+
+## Warp 可以帮助迁移的内容
+
+Warp 没有 VS Code 导入工具，因为它是一个独立的应用程序，而不是 VS Code 扩展。由于你的 VS Code 终端设置存储在可读的 `settings.json` 中，Warp 的智能体可以将匹配的 `terminal.integrated.*` 值翻译成 Warp 的 `settings.toml`：
+
+```json
+{
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.profiles.osx": {
+    "zsh": {
+      "path": "zsh"
+    }
+  }
+}
+```
+
+## 使用 Warp 的智能体迁移设置（推荐）
+
+迁移 VS Code 终端设置的最快方式是让 Warp 的智能体直接翻译 `settings.json`。Warp 自带一个 [`settings.toml` 文件](/terminal/settings/)和一个内置的 `modify-settings` 技能，让智能体读取你现有的配置并将等效的值写入 Warp 的设置中。
+
+1. 在 Warp 应用中，打开一个新标签页，使用 `⌘+I`（macOS）或 `Ctrl+I`（Linux/Windows）切换到[智能体模式](/agent-platform/local-agents/overview/)。
+2. 将以下提示粘贴到智能体模式输入框中，然后按 `Enter`。
+
+   > 读取我的 VS Code `settings.json`（macOS 上位于 `~/Library/Application Support/Code/User/settings.json`），并使用 `modify-settings` 技能将等效的终端设置（`terminal.integrated.*` 键）移植到我的 Warp `settings.toml` 中。在应用前显示差异对比。
+
+3. 查看建议的差异对比，然后批准更改。Warp 会热重载 `settings.toml`。
+
+如果你希望通过设置 UI 手动配置每个设置，下面的步骤涵盖了最常见的情况。
+
+## 需要手动重新配置的内容
+
+### Shell
+
+Warp 会自动检测你的登录 shell。如需覆盖（例如，匹配 `terminal.integrated.defaultProfile.*`），请在 Warp 应用中打开**设置** > **功能** > **会话**，然后从**新会话的启动 shell**中选择一个 shell。
+
+### 字体和光标
+
+在 Warp 应用中，打开**设置** > **外观** > **文本、字体和光标**，然后设置字体族和大小以匹配 `terminal.integrated.fontFamily` 和 `terminal.integrated.fontSize`。
+
+### 主题
+
+VS Code 的终端使用编辑器整体主题中的配色方案。在 Warp 应用中，从**设置** > **外观** > **主题**中选择一个可比较的主题，或者[创建自定义主题](/terminal/appearance/custom-themes/)以匹配你的 VS Code 主题的 `terminal.*` 颜色令牌。
+
+### 键位
+
+Warp 的[默认键盘快捷键](/getting-started/keyboard-shortcuts/)与 VS Code 终端快捷键（分屏、新建标签页、查找）基本一致。对于你在 VS Code 中配置的任何自定义键位，请在 Warp 应用中的**设置** > **键盘快捷键**中添加。
+
+## 选择你的设置
+
+### 将 Warp 与 VS Code 一起使用
+
+许多开发人员保留 VS Code 作为编辑器，将 Warp 作为终端，用于长时间运行的命令、SSH 会话或 AI 辅助工作流。你无需更改 VS Code。安装 Warp，在需要更丰富的终端时打开它。
+
+VS Code 的集成终端仍然可用；用它执行快速的一次性命令，当需要[块](/terminal/blocks/)、[智能体模式](/agent-platform/local-agents/overview/)或[持久会话](/terminal/sessions/session-restoration/)时，切换到 Warp。
+
+### 用 Warp 取代 VS Code
+
+Warp 包含一个内置的[代码编辑器](/code/code-editor/)，支持语言服务器协议（LSP）、[文件树](/code/code-editor/file-tree/)、[查找和替换](/code/code-editor/find-and-replace/)以及 [Vim 键位](/code/code-editor/code-editor-vim-keybindings/)。结合[代码审查](/code/code-review/)，许多开发人员将 Warp 用作主要编辑器，完全放弃 VS Code。
+
+在命令行中使用 `warp .` 打开一个目录即可开始编辑。
+
+## Warp 原生等效功能
+
+使用此表查找你在切换后可能寻找的 VS Code 终端功能在 Warp 中的对应项：
+
+| VS Code 终端中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| 拆分终端 | [分屏窗格](/terminal/windows/split-panes/) |
+| 多个终端（标签栏） | [标签页](/terminal/windows/tabs/)、[垂直标签页](/terminal/windows/vertical-tabs/) |
+| 任务（`tasks.json`） | [YAML 工作流](/terminal/entry/yaml-workflows/)或[标签页配置](/terminal/windows/tab-configs/) |
+| 终端配置文件 | [标签页配置](/terminal/windows/tab-configs/) + 每会话 shell 覆盖 |
+| Shell 集成 | 通过 [Warpify](/terminal/warpify/) 内置；支持工作目录跟踪和命令级[块](/terminal/blocks/) |
+
+有关 Warp 在终端之外提供的功能的概述，请参阅[在 Warp 中编码](/getting-started/quickstart/coding-in-warp/)。

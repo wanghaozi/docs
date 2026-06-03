@@ -1,0 +1,94 @@
+---
+title: Warp Drive 提示
+description: >-
+  保存并重复使用参数化的代理模式提示，按需运行。
+sidebar:
+  label: "提示"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+提示是参数化的自然语言查询，你可以保存在 Warp Drive 中并与代理重复使用。为提示命名，添加动态值的参数，然后从命令面板或 Warp Drive 执行，无需重新输入即可重复复杂的代理工作流。
+
+## 什么是提示？
+
+提示是一种参数化的自然语言查询，你可以命名并保存在 Warp 中，与[代理模式](/agent-platform/local-agents/interacting-with-agents/)一起使用。
+
+提示可通过[命令面板](/terminal/command-palette/)搜索和轻松访问，你无需切换上下文即可找到并执行它们。它们允许你保存和重复使用特定的复杂 AI 工作流，使重复执行多步骤任务更加容易。
+
+<figure>
+![Warp Drive 中提示的命令视图界面](../../../../../assets/terminal/prompts-command-view.png)
+<figcaption>Warp Drive 中提示的命令视图。</figcaption>
+</figure>
+
+### 演示：使用保存的提示触发可重复操作
+
+以下是 [Warp 指南](/guides/)中的一个示例，Zach 介绍了他在 PR 和 Git 提交中使用的提示：
+
+<VideoEmbed url="https://www.youtube.com/watch?ab_channel=Warp&v=pE15zjJmB4E" />
+
+[Do Things](https://dothings.warp.dev/) 和 [Warp 指南](/guides/)上还有更多优秀的提示示例。
+
+## 如何保存和编辑提示
+
+你可以通过点击 Warp Drive 中的 + 按钮并选择"Prompt"来创建新提示。
+
+* 命名你的提示
+* 编辑自然语言查询以及任何参数（也称为参数）
+* 添加将为搜索建立索引的有意义的描述（可选）
+* 添加参数、参数描述和默认值（可选）
+
+<figure>
+![提示编辑器界面，显示包含名称、查询、描述和参数字段的编辑表单](../../../../../assets/terminal/prompts-edit-view.png)
+<figcaption>Warp Drive 中提示的编辑视图。</figcaption>
+</figure>
+
+提示创建后，只要你有互联网连接，就可以随时编辑它。
+
+### 使用参数
+
+在提示编辑器中，你可以通过"New argument"手动添加参数，或在命令字段中输入双花括号（`{{argument}}`）。如果你在选择了文本的情况下点击"New argument"，Warp 会用花括号包裹该文本以创建参数。
+
+创建有效参数有一些规则：
+
+* 参数名称只能包含字符 `A-Za-z0-9`、连字符 `-` 和下划线 `_`
+* 参数的第一个字符不能是数字
+
+参数可以是两种类型之一：文本或枚举。默认情况下，所有新参数都是文本类型。
+
+#### 枚举类型参数
+
+枚举允许你指定提示参数的预期输入。当你将带有枚举的提示插入到输入编辑器时，系统会提示你填充参数的建议。你可以通过在选择参数时按 `SHIFT-TAB` 来打开建议菜单。
+
+有关创建和使用枚举类型参数的详细信息，请参见[工作流文档中的枚举类型参数部分](/knowledge-and-collaboration/warp-drive/workflows/#enum-type-arguments)。
+
+### 与团队一起编辑提示
+
+如果提示与团队共享，所有团队成员都有权编辑它，更新将立即为所有团队成员同步。
+
+如果在 Warp Drive 中的提示已被其他团队成员或另一设备上的用户在尝试编辑相同提示时编辑，你将无法保存更改；你需要检查最新版本并重试。
+
+## 如何执行提示
+
+你可以通过多种方式执行提示：
+
+* 从 Warp Drive，点击提示
+* 从[命令面板](/terminal/command-palette/)或[命令搜索](/terminal/entry/command-search/)，按名称搜索提示，或输入"prompts:"查看所有可用提示和你的提示历史
+* 选中提示后，你可以使用 `SHIFT-TAB` 循环切换参数
+
+<figure>
+![命令面板界面显示提示搜索及结果](../../../../../assets/terminal/prompts-command-palette.png)
+<figcaption>在命令面板中搜索提示。</figcaption>
+</figure>
+
+<figure>
+![命令搜索界面显示提示搜索及结果](../../../../../assets/terminal/prompts-command-search.png)
+<figcaption>在命令搜索中搜索提示。</figcaption>
+</figure>
+
+这些选项会将提示粘贴到你当前活动的终端输入中。提示名称以及任何相关的描述和参数将显示在对话框中，以便你了解如何使用该提示。
+
+在输入编辑器中运行提示之前，你可以对参数进行任何需要的调整。
+
+### 在 Warp Drive 中导入和导出提示
+
+请参见我们的 [Warp Drive 导入和导出](/knowledge-and-collaboration/warp-drive/#import-and-export)说明。

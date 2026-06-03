@@ -1,0 +1,94 @@
+---
+title: 企业版账单
+sidebar:
+  label: "账单"
+description: >-
+  了解 Warp Enterprise 的账单信息，包括积分、云代理成本和账单管理。
+---
+
+本页涵盖关于积分、云代理成本和 BYOLLM 账单的一般信息，面向企业团队。如果你对自定义定价、积分分配或合同条款有具体问题，请联系你的 Warp 客户经理。
+
+## 积分
+
+Warp 使用基于积分的计费模型。与代理的任何交互都会根据任务的复杂性、使用的模型以及处理的上下文量消耗积分。
+
+### 积分如何运作
+
+* 每次代理交互消耗**至少一个积分**，不过复杂交互可能消耗多个积分。
+* 积分使用受 LLM 模型、工具调用次数、任务复杂性、上下文量和提示缓存行为的影响。
+* 积分使用是**非确定性的**。两个相似的提示可能消耗不同数量的积分。
+
+关于积分计算方式的详细信息，请参见[积分](/support-and-community/plans-and-billing/credits/)。
+
+### 积分分配
+
+企业版计划包含一个自定义的团队积分池，作为合同的一部分。积分主要在团队之间共享，而不是按席位分配。也可能存在个人积分授予（例如支持退款），但核心分配是团队范围的。
+
+:::note
+积分分配因合同而异。请联系你的客户经理了解团队的具体分配详情。
+:::
+
+## 云代理计费
+
+云代理消耗推理的 AI 积分、运行沙箱的计算积分以及编排层的平台积分。关于每种积分类型如何计量的完整说明，请参见[积分](/support-and-community/plans-and-billing/credits/)。
+
+### 积分如何消耗
+
+在企业版计划中，本地和云代理使用都从同一个团队积分池中提取所有三种积分类型（AI 积分、计算积分和平台积分）。运行消耗的积分类型取决于其使用的基础设施，而不是它是本地还是云代理。
+
+对于团队 API 密钥运行（例如 CI/CD 流水线、定时任务），积分也从团队的共享池中提取，因为这些运行不与任何个人用户关联。
+
+更多详情，请参见[访问、账单和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/)。
+
+## BYOLLM 计费
+
+使用[自带 LLM（BYOLLM）](/enterprise/enterprise-features/bring-your-own-llm/)时，Warp 将请求路由到你的云基础设施（目前是 AWS Bedrock，Azure Foundry 和 Google Vertex 即将支持）。BYOLLM 请求**以较低费率消耗积分**，比标准使用低约 80%。推理成本也直接计入你的云账户。
+
+如果 BYOLLM 请求失败，Warp 回退到直接 API 模型，该回退请求以标准费率消耗 Warp 积分。
+
+## 管理账单
+
+你的 Warp 客户经理负责处理企业合同的所有账单事宜。联系你的客户经理或专属的 Slack/Teams 频道处理以下事项：
+
+* 发票和付款变更
+* 合同修改
+* 积分分配调整
+
+对于紧急账单问题，请发送邮件至 [billing@warp.dev](mailto:billing@warp.dev)。
+
+### 支出控制
+
+管理员可以配置每月支出限制并接收告警，以防意外费用。在[管理面板](https://app.warp.dev/admin/)的**账单**标签页中配置这些控制。
+
+#### 每月支出限制
+
+企业管理员可以在以下四个类别中设置每月支出限制：
+
+* **云支出限制** - 限制云代理使用的月度支出。
+* **本地支出限制** - 限制 Warp 应用中本地代理使用的月度支出。
+* **总支出限制** - 限制云和本地代理的合并月度支出。
+* **每用户支出限制** - 限制任何个人用户的月度支出。设置适用于所有用户的默认值，或按用户配置限制以实现可预测的个人支出。
+
+支出会跨所有支付类型（附加积分、按需付费使用）进行跟踪，因此无论使用如何出资，限制都能一致应用。
+
+:::note
+团队范围的支出限制（云、本地和总计）也适用于 Warp 的自助付费计划，通过管理员管理的附加积分设置实现。**每用户支出限制仅限企业版。** 要更深入地了解个人用户如何消耗积分，请参见[企业分析 API](/enterprise/enterprise-features/analytics-api/)。
+:::
+
+#### 每月支出告警
+
+当团队使用接近每个配置的支出限制时，Warp 会向管理员发送告警，以便你在代理使用达到上限被阻止之前调整上限、购买更多积分或与团队沟通。
+
+#### 积分池耗尽告警
+
+对于具有积分池的企业，管理员会在团队积分池接近完全消耗时收到告警。这使你有时间补充积分或更改重载配置，以免整个团队的代理使用被中断。
+
+## 相关资源
+
+* [积分](/support-and-community/plans-and-billing/credits/) - 积分如何计算和消耗
+* [附加积分](/support-and-community/plans-and-billing/add-on-credits/) - 购买额外积分并配置自动重载
+* [平台积分](/support-and-community/plans-and-billing/platform-credits/) - 除了 AI 积分和计算积分之外的第三种积分桶，涵盖 Warp 的平台基础设施
+* [定价常见问题](/support-and-community/plans-and-billing/pricing-faqs/) - 常见计费问题
+* [自带 LLM](/enterprise/enterprise-features/bring-your-own-llm/) - BYOLLM 计费和配置
+* [企业分析 API](/enterprise/enterprise-features/analytics-api/) - 通过编程方式访问团队使用和支出数据
+* [管理面板](/enterprise/team-management/admin-panel/) - 配置支出限制和账单设置

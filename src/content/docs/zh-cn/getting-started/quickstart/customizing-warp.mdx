@@ -1,0 +1,83 @@
+---
+title: 自定义 Warp
+description: >-
+  自定义 Warp 的完整指南：主题、垂直标签页、标签页配置、提示符标签、键位、AI 模型等。
+---
+
+Warp 具有高度可定制性。无论你是将 Warp 主要用作现代化终端还是 AI 驱动的开发环境，都可以根据你的工作方式定制体验。可以独立配置终端方面（主题、键位、垂直标签页、标签页配置）和 AI 方面（模型选择、智能体自主性、默认模式）。
+
+使用快速参考表查找你需要的内容，或浏览下方各节了解更多详情。如果你想进一步操作而不仅仅是配置，Warp 的客户端在 [AGPL v3](https://github.com/warpdotdev/warp/blob/master/LICENSE-AGPL) 下开源——请参阅[为 Warp 做贡献](/support-and-community/community/contributing/)以构建自定义变体或向上游贡献更改。
+
+## 快速参考
+
+| 自定义内容 | 在哪里找到 | 快速操作 |
+| --- | --- | --- |
+| 主题 | **设置** > **外观** | 选择预设或[创建自定义 YAML 主题](/terminal/appearance/custom-themes/) |
+| 提示符标签 | 右键点击提示区域 > **编辑提示符** | 拖放上下文标签（目录、git 分支、时间等） |
+| AI 模型 | 智能体对话中的模型选择器 | 选择 Claude、GPT、Gemini 或 Auto |
+| 键位 | **设置** > **键盘快捷键** | 从其他终端导入或设置自定义快捷键 |
+| 垂直标签页 | **设置** > **外观** > **标签页** | 切换到侧边栏标签布局以获得更多水平空间 |
+| 标签页配置 | **设置** > **功能**或 `/` 菜单 | 保存和恢复带启动命令的标签页布局 |
+| 设置文件 | 设置页脚的**打开设置文件**按钮 | 直接编辑 [`settings.toml`](/terminal/settings/) 以进行版本控制和脚本化 |
+| 输入格式 | **设置** > **外观** > **输入** | 选择标准或经典 |
+| 应用图标 | **设置** > **外观** > **图标** | 选择自定义图标（macOS） |
+| 字体和文本 | **设置** > **外观** > **文本** | 更改字体、大小和光标样式 |
+| 智能体自主性 | **设置** > **智能体** > **配置文件** | 设置智能体无需询问即可执行的操作 |
+| 默认模式 | **设置** > **智能体** > **Warp 智能体** > **输入** | 选择新标签页默认打开终端模式还是智能体模式 |
+
+---
+
+## 外观
+
+在 Warp 中，导航至**设置** > **外观**以访问这些选项并控制 Warp 的外观：
+
+* **[主题](/terminal/appearance/themes/)** - 从预加载的主题中选择，或使用 YAML 或背景图像创建自己的[自定义主题](/terminal/appearance/custom-themes/)。
+* **[提示符标签](/terminal/appearance/prompt/)** - 自定义 Warp 提示符中的上下文标签。右键点击提示区域并选择**编辑提示符**以拖放目录、git 分支、Kubernetes 上下文和时间等标签。
+* **[应用图标](/terminal/appearance/app-icons/)** - 选择自定义应用图标以在 dock 中区分 Warp（macOS）。
+* **[文本、字体和光标](/terminal/appearance/text-fonts-cursor/)** - 更改字体类型、大小和光标样式。
+* **[输入位置](/terminal/appearance/input-position/)** - 将提示符和命令行移动到窗口的顶部或底部。
+* **[大小、不透明度和模糊](/terminal/appearance/size-opacity-blurring/)** - 调整窗口透明度和模糊效果。
+* **[窗格变暗](/terminal/appearance/pane-dimming/)** - 变暗非活动窗格以聚焦活动窗格。
+
+## 布局
+
+使用标签页、窗格和窗口配置组织你的工作空间。
+
+* **[垂直标签页](/terminal/windows/vertical-tabs/)** - 切换到垂直侧边栏标签布局，为你提供更多水平空间，并在打开多个会话时具有更好的可见性。
+* **[标签页](/terminal/windows/tabs/)** - 将会话组织到具有自定义标题和颜色的标签页中。右键点击标签页选择颜色。
+* **[分屏窗格](/terminal/windows/split-panes/)** - 将任何标签页分割为多个面板，可并排或堆叠。
+* **[标签页配置](/terminal/windows/tab-configs/)** - 保存和恢复具有预定义窗格排列和启动命令的标签页布局。
+* **[全局热键](/terminal/windows/global-hotkey/)** - 设置一个专用的热键窗口（Quake 模式），通过键盘快捷键显示和隐藏。
+
+## 输入和编辑器
+
+配置你的打字方式和与终端输入的交互方式。
+
+* **[标准 vs 经典输入](/terminal/input/classic-input/)** - 标准输入提供更便捷的 AI 功能访问，是新用户的默认选项。经典输入类似传统终端提示符。在**设置** > **外观** > **输入**中切换。
+* **[键盘快捷键](/getting-started/keyboard-shortcuts/)** - Warp 支持常用快捷键，并允许你创建自定义快捷键。从**设置** > **键盘快捷键**管理它们，或在[迁移](/getting-started/migrate-to-warp/)期间从其他终端导入键位。
+* **[Vim 键位](/terminal/editor/vim/)** - 在输入编辑器中启用 Vim 键位以进行键盘驱动的文本编辑。
+* **Tab 键行为** - 在**设置** > **功能**中配置 `Tab` 键的行为。选项包括接受自动建议或触发补全。
+
+## AI 和模型
+
+控制 Warp 的智能体行为及其使用的模型。
+
+* **[模型选择](/agent-platform/inference/model-choice/)** - 在任何智能体对话中，从模型选择器中选择你偏好的 AI 模型（Claude、GPT、Gemini 或 Auto）。
+* **[智能体配置文件和权限](/agent-platform/capabilities/agent-profiles-permissions/)** - 配置智能体的自主程度：它可以自动执行哪些操作，哪些需要批准，以及命令允许/拒绝列表。
+* **新会话的默认模式** - 选择新标签页默认打开终端模式还是智能体模式。在**设置** > **智能体** > **Warp 智能体** > **输入**中设置。
+
+## 导入和同步
+
+将你现有的设置导入 Warp，或跨机器保持设置同步。
+
+* **[从其他终端迁移](/getting-started/migrate-to-warp/)** - 按来源划分的切换到 Warp 的指南，涵盖 iTerm2、Ghostty、macOS 终端、Windows 终端、VS Code、Cursor、Claude Code 等。包括 iTerm2 的自动设置导入。
+* **[设置同步](/terminal/more-features/settings-sync/)** - 跨机器同步你的 Warp 设置（测试版）。
+
+---
+
+## 下一步
+
+现在 Warp 已具备你想要的外观和感觉，下一步是将其用于实际项目。打开一个代码库以解锁上下文感知的智能体，或启动智能体对话以查看终端命令和 AI 如何协同工作。
+
+* **[代码库上下文](/agent-platform/capabilities/codebase-context/)** - 打开一个项目并索引你的代码库，以便智能体针对你的代码提供上下文感知的回答。
+* **[终端和智能体模式](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/)** - 了解终端模式和智能体对话如何协同工作。

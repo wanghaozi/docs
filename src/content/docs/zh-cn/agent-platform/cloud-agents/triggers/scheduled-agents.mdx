@@ -1,0 +1,70 @@
+---
+title: 计划 Agent
+description: >-
+  按 cron 计划运行云 Agent 以进行自动化维护和重复任务。
+sidebar:
+  label: "计划 Agent"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的计划 Agent 让您按**重复计划**自动运行云 Agent。它们专为应无需手动干预即可发生的常规、可重复任务而设计，如死代码清理、依赖维护、问题分类或定期重构。
+
+## 什么是计划 Agent？
+
+计划 Agent 是基于 cron 计划运行的[云 Agent](/agent-platform/cloud-agents/overview/)。
+
+**关键特征：**
+* 基于 cron 表达式自动运行
+* 使用计划创建时定义的固定提示
+* 每次运行启动全新的 Agent 会话
+* 在指定的 Warp 环境中执行（如果提供）
+* 运行时消耗积分
+* 可以随时暂停、更新或删除
+
+## 使用 Oz CLI 调度 Agent
+
+```bash
+oz schedule create \
+  --name=NAME \
+  --cron=SCHEDULE \
+  --prompt=PROMPT \
+  [--environment=ENVIRONMENT_ID] \
+  [--skill=SPEC] \
+  [--host=WORKER_ID] \
+  [--mcp=SPEC] \
+  [--model=MODEL_ID] \
+  [--file=PATH]
+```
+
+### Cron 计划格式
+
+```
+minute hour day-of-month month day-of-week
+```
+
+例如：`0 10 * * *` 每天上午 10:00 运行，`0 10 */4 * *` 每四天上午 10:00 运行。
+
+### 列出计划 Agent
+
+```bash
+oz schedule list
+```
+
+### 暂停和取消暂停计划
+
+```bash
+oz schedule pause SCHEDULE_ID
+oz schedule unpause SCHEDULE_ID
+```
+
+### 编辑计划 Agent
+
+```bash
+oz schedule update SCHEDULE_ID [--name=NAME] [--cron=SCHEDULE] [--prompt=PROMPT] ...
+```
+
+### 删除计划 Agent
+
+```bash
+oz schedule delete SCHEDULE_ID
+```

@@ -1,0 +1,96 @@
+---
+title: 企业版快速入门
+description: >-
+  在 10 分钟内快速上手 Warp Enterprise。登录、设置终端并运行你的第一个代理。
+sidebar:
+  label: "快速入门"
+---
+
+本快速入门将带你了解基本流程：通过 SSO 登录、设置 Warp 以及运行你的第一个代理。你可以在 10 分钟内完成。
+
+## 第 1 步：通过 SSO 登录
+
+1. 访问 [app.warp.dev/login](https://app.warp.dev/login)。
+2. 点击 **Continue with SSO**。
+3. 输入你的工作邮箱或组织域名。
+4. 使用你的身份提供商完成认证。
+
+:::caution
+不要从你的 SSO 提供商应用门户（例如 Okta 仪表板）启动 Warp。始终通过 [app.warp.dev/login](https://app.warp.dev/login) 登录。
+:::
+
+如果你在组织启用 SSO 之前已有 Warp 账户，请[先将其链接到 SSO](https://app.warp.dev/link_sso)。
+
+## 第 2 步：下载并设置 Warp
+
+1. 访问 [warp.dev/download](https://www.warp.dev/download) 并选择你的平台（macOS、Linux 或 Windows）。
+2. 安装 Warp：
+   * **macOS** - 打开 `.dmg` 并将 Warp 拖到 Applications 文件夹。
+   * **Linux** - 通过 `.deb`、`.rpm` 或安装脚本进行安装。
+   * **Windows** - 运行 `.exe` 安装程序。
+3. 启动 Warp 并使用 SSO 登录（参照第 1 步）。
+4. 在**设置** > **团队**中确认你看到了团队名称。
+
+## 第 3 步：配置并运行你的第一个代理
+
+在 Warp 中使用代理时，你实际上是在使用 **Warp 的内置代理**。Oz 是 Warp 的可编程代理，用于大规模运行和协调代理——无论是在本机运行还是在云端运行。
+
+### 索引你的代码库
+
+1. 在 Warp 中导航到一个 Git 仓库。
+2. Warp 自动检测仓库并开始索引。
+3. （可选）运行 `/init` 手动触发索引，或在重大代码变更后重新索引。
+4. 索引完成后，代理能够理解你的代码结构、模式和约定。
+
+### 在本地运行你的第一个代理
+
+直接在终端中开始一个对话。尝试以下提示：
+
+```
+解释这个项目的架构
+```
+
+Oz 读取你的代码库，理解其结构，并给出上下文相关的解释。
+
+### 尝试更多提示
+
+* **编写代码** - "为注册表单添加输入验证"
+* **调试** - "这个测试为什么失败？"（粘贴错误输出）
+* **探索** - "这个仓库在错误处理上采用了什么模式？"
+* **规划** - 使用 `/plan` 让 Oz 为复杂功能创建结构化任务计划
+
+## 第 4 步：运行云代理
+
+云代理在云端运行，适合后台工作、无限并行化和长时间运行的任务。
+
+### 创建环境
+
+环境定义了云代理的执行上下文（仓库访问、依赖项、密钥、计算资源）。你可以通过几种方式创建环境：
+
+**方式 1：Warp 中的斜杠命令**
+
+在 Warp 应用终端输入中运行以下命令：
+```
+/create-environment
+```
+这将启动一个交互式流程，引导你完成环境设置。
+
+**方式 2：Oz Web 应用**
+
+访问 [app.warp.dev/environments](https://app.warp.dev/environments) 并点击 **Create Environment**。
+
+### 运行云代理
+
+环境就绪后，使用以下命令启动云代理（使用上述的环境 ID）：
+
+```bash
+oz agent run-cloud --env my-env --prompt "Review the open PRs in this repo"
+```
+
+从 Oz 仪表板或直接在 Warp 中监控和引导云代理。
+
+## 后续步骤
+
+* **设置关键功能** - 跟随完整的[开发者入门指南](/enterprise/getting-started/getting-started-developers/)配置代码库上下文、Warp Drive、MCP 集成和代理配置文件。
+* **探索云代理** - 了解[云代理](/agent-platform/cloud-agents/overview/)，用于后台自动化和并行工作流。
+* **了解更多** - 访问 [Warp 指南](/guides/)获取视频教程和端到端工作流。

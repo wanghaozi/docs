@@ -1,0 +1,61 @@
+---
+title: agent_process_failed
+description: >-
+  代理进程在任务执行期间意外退出。重试任务，如果持续出现则联系支持。
+---
+
+`agent_process_failed` 错误发生在环境设置完成后、任务达到正常终止状态之前，代理进程意外退出时。
+
+:::note
+这被归类为**平台错误**（任务状态 → ERROR），而非用户错误。它与 [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/) 不同，后者涵盖环境初始化期间发生的失败（克隆仓库、运行设置命令、启动 MCP 服务器）。`agent_process_failed` 涵盖代理主动执行阶段发生的失败。
+:::
+
+---
+
+## 详情
+
+* **HTTP 状态：** `500 内部服务器错误`
+* **可重试：** 否
+* **任务状态：** ERROR
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* 环境设置完成后，代理进程以非零退出码退出
+* 代理进程在处理任务时发生不可恢复的运行时错误
+* 代理进程被操作系统终止（例如，因内存不足被杀死或段错误）
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/agent-process-failed/",
+  "title": "代理进程意外退出。",
+  "status": 500,
+  "instance": "/api/v1/agent/tasks",
+  "error": "代理进程意外退出。",
+  "retryable": false,
+  "trace_id": "abc123..."
+}
+```
+
+---
+
+## 解决方法
+
+1. 重试任务。偶尔的进程失败是暂时性的。
+2. 如果错误持续出现，检查任务本身的触发因素：非常大的提示或附加上下文、代理生成的内存密集型工具，或将环境置于降级状态的设置步骤。
+3. 如果问题仍然存在，联系 [Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)，并提供错误响应中的 `trace_id`。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理任务的工作原理
+* [environment_setup_failed](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/) — 环境设置期间的错误
+* [internal_error](/reference/api-and-sdk/troubleshooting/errors/internal-error/) — 意外服务器端错误的通用捕获

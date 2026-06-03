@@ -1,0 +1,327 @@
+---
+title: 统一输入（旧版）
+description: >-
+  统一输入是 Warp 以前的默认输入界面，已被终端和代理模式取代。
+sidebar:
+  hidden: true
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::caution
+**这是旧版文档。** 统一输入已被 [代理模态](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/) 取代，后者提供更简洁的终端体验，并为代理交互提供专门的对话视图。
+:::
+
+**统一输入** 曾是使用 Warp 的主要输入界面。
+
+<figure>
+![带有代理提示和多个活动上下文芯片的统一输入。](../../../../../assets/terminal/universal-input-header.png)
+<figcaption>带有上下文芯片的统一输入。</figcaption>
+</figure>
+
+<VideoEmbed url="https://www.youtube.com/watch?v=4c05OEqzQIA" title="使用统一输入" />
+
+### 统一输入详解
+
+统一输入将 Warp 的所有输入功能整合到一个精简的编辑器中：
+
+* **自然语言自动检测**：Warp 可以自动检测您何时在写普通英语（而非 shell 命令），并将您切换到 [代理模式](/agent-platform/local-agents/interacting-with-agents/#what-is-agent-mode)。
+* **上下文芯片**：在输入中嵌入查看当前目录、之前的对话、Git 状态、节点版本等。
+* [**现代文本编辑**](/terminal/editor/)：享受类似 IDE 的编辑功能，如 [补全](/terminal/command-completions/)、[语法高亮](/terminal/editor/syntax-error-highlighting/)、鼠标支持、[矩形选择](/terminal/more-features/text-selection/) 和 [下一个命令](/agent-platform/local-agents/active-ai/) 预测。
+* **输入工具带**：快速访问 [@-context](/agent-platform/local-agents/agent-context/using-to-add-context/)、[斜杠命令](/agent-platform/capabilities/slash-commands/)、[语音输入](/agent-platform/local-agents/interacting-with-agents/voice/)、[图片附件](/agent-platform/local-agents/agent-context/images-as-context/) 和其他 AI 功能。
+
+如果您更喜欢更传统的终端输入体验，您可以在 **设置** > **外观** > **输入** 中切换到 [经典输入](/terminal/input/classic-input/)。经典输入也支持 oh-my-posh、PS1 自定义和 [同行提示符](/terminal/appearance/prompt/#same-line-prompt)。
+
+## 输入模式
+
+统一输入支持三种模式，显示在输入切换器中：
+
+#### 1. 代理模式（自然语言）
+
+让 Warp 的代理用自然语言构建、调试或运行任务。Warp 使用领先的 LLM 来解释您的请求、运行正确的命令、显示代码差异，并将结果直接流式传输到您的会话中。
+
+_指示：_ 切换器中的代理图标高亮显示。
+
+<figure>
+![锁定在代理模式的统一输入。](../../../../../assets/terminal/agent-mode-locked-universal-input.png)
+<figcaption>锁定在代理模式的统一输入。</figcaption>
+</figure>
+
+#### 2. 终端模式（shell 命令）
+
+像任何终端一样输入 shell 命令，同时享受 Warp 的现代编辑器功能——包括补全、语法高亮、错误下划线等。
+
+_指示：_ 切换器中的终端图标高亮显示。
+
+<figure>
+![锁定在终端模式的统一输入。](../../../../../assets/terminal/universal-input-terminal-mode.png)
+<figcaption>锁定在终端模式的统一输入。</figcaption>
+</figure>
+
+#### 3. 自动检测模式
+
+Warp 自动检测您的输入是自然语言还是 shell 命令。您可以保持在检测模式，或明确锁定到终端或代理模式。
+
+_指示：_ 两种模式均不高亮。
+
+<figure>
+![处于空/零状态的统一输入。](../../../../../assets/terminal/zero-state-universal-input.png)
+<figcaption>处于空/零状态的统一输入。</figcaption>
+</figure>
+
+当 Warp 检测到输入类型时，输入切换器会柔和地高亮相应的模式。
+
+<figure>
+![统一输入自动检测自然语言代理提示。](../../../../../assets/terminal/auto-detection-agent-mode-1.png)
+<figcaption>检测到代理（自然语言）模式。</figcaption>
+</figure>
+
+<figure>
+![统一输入自动检测 shell 命令。](../../../../../assets/terminal/auto-detection-terminal-mode.png)
+<figcaption>检测到终端（shell）模式。</figcaption>
+</figure>
+
+:::note
+Warp 用于自动检测自然语言的模型完全是本地的。
+:::
+
+#### 禁用自然语言自动检测
+
+默认情况下，自动检测已启用。这意味着 Warp 决定是将您的输入视为命令还是代理提示。
+
+* **关闭自动检测**：前往 **设置** > **AI** > **输入** > **自然语言检测**
+* 禁用后：您将明确处于终端或代理模式。使用以下键盘快捷键在模式之间切换：
+  * `CMD+I` (macOS)
+  * `CTRL+I` (Windows/Linux)
+
+<figure>
+![关闭自动检测后处于代理模式的统一输入。](../../../../../assets/terminal/auto-detection-off-agent-mode.png)
+<figcaption>代理（自然语言）模式已启用。</figcaption>
+</figure>
+
+<figure>
+![关闭自动检测后处于终端模式的统一输入。](../../../../../assets/terminal/auto-detection-off-terminal-mode.png)
+<figcaption>终端（shell）模式已启用。</figcaption>
+</figure>
+
+### 进入代理模式
+
+[代理模式](/agent-platform/local-agents/interacting-with-agents/) 是您直接与 Warp 的 AI 交互以提出问题、运行任务和用自然语言协作的方式。根据您在工作流程中的位置，有多种方式进入代理模式：
+
+<Tabs>
+  <TabItem label="macOS">
+    * **直接输入自然语言**：如果启用了自动检测，您可以在输入中键入任务或问题，Warp 将使用其本地自动检测功能识别自然语言。
+    * **使用键盘快捷键**：使用 `CMD + I` 快速切换到代理模式。
+    * **附加块到提示**：从任何您想用作上下文的块中，点击工具带中的 ✨ 图标或从块的上下文菜单中选择"附加块到 AI 查询"。
+    * **使用特殊字符强制模式**：
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换模式**：点击输入切换器中的代理图标以锁定到代理模式，或点击终端图标切换到终端模式。
+  </TabItem>
+  <TabItem label="Windows">
+    * **直接输入自然语言**：如果启用了自动检测，您可以在输入中键入任务或问题，Warp 将使用其本地自动检测功能识别自然语言。
+    * **使用键盘快捷键**：使用 `CTRL + I` 快速切换到代理模式。
+    * **附加块到提示**：从任何您想用作上下文的块中，点击工具带中的 ✨ 图标或从块的上下文菜单中选择"附加块到 AI 查询"。
+    * **使用特殊字符强制模式**：
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换模式**：点击输入切换器中的代理图标以锁定到代理模式，或点击终端图标切换到终端模式。
+  </TabItem>
+  <TabItem label="Linux">
+    * **直接输入自然语言**：如果启用了自动检测，您可以在输入中键入任务或问题，Warp 将使用其本地自动检测功能识别自然语言。
+    * **使用键盘快捷键**：使用 `CTRL + I` 快速切换到代理模式。
+    * **附加块到提示**：从任何您想用作上下文的块中，点击工具带中的 ✨ 图标或从块的上下文菜单中选择"附加块到 AI 查询"。
+    * **使用特殊字符强制模式**：
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换模式**：点击输入切换器中的代理图标以锁定到代理模式，或点击终端图标切换到终端模式。
+  </TabItem>
+</Tabs>
+
+当您处于代理模式时，**代理图标** 将在[统一输入](/terminal/input/universal-input/)中高亮显示。
+
+<figure>
+![统一输入中的代理图标表示代理模式已激活。](../../../../../assets/terminal/using-agents-universal-input.png)
+<figcaption>统一输入中的代理模式指示器。</figcaption>
+</figure>
+
+在经典输入中，您还会看到一个 ✨ 闪烁指示器在内联显示。
+
+<figure>
+![命令行上的闪烁图标表示代理模式已激活。](../../../../../assets/terminal/undo_my_git_commit.png)
+<figcaption>经典输入中的代理模式活动指示器。</figcaption>
+</figure>
+
+默认情况下，进入代理模式会在 _配对模式_ 中启动，您可以通过提出后续问题或分配任务来继续正在进行的对话。从这里，您可以根据需要要求代理构建、调试、修复甚至部署代码。
+
+### 退出代理或终端模式
+
+您可以通过几种方式离开代理或终端模式：
+
+<Tabs>
+  <TabItem label="macOS">
+    * **键盘快捷键**
+      * 按 `ESC` 退出当前模式。
+      * 使用 `CMD + I` 切换模式
+    * **使用特殊字符强制模式**
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换**：点击输入切换器中的代理图标或终端图标直接切换模式。
+  </TabItem>
+  <TabItem label="Windows">
+    * **键盘快捷键**
+      * 按 `ESC` 退出当前模式。
+      * 使用 `CTRL + I` 切换模式
+    * **使用特殊字符强制模式**
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换**：点击输入切换器中的代理图标或终端图标直接切换模式。
+  </TabItem>
+  <TabItem label="Linux">
+    * **键盘快捷键**
+      * 按 `ESC` 退出当前模式。
+      * 使用 `CTRL + I` 切换模式
+    * **使用特殊字符强制模式**
+      * 输入开头的 `!` 强制终端模式。
+      * 输入开头的 `*` 强制代理模式。
+    * **手动切换**：点击输入切换器中的代理图标或终端图标直接切换模式。
+  </TabItem>
+</Tabs>
+
+### 自然语言自动检测设置
+
+Warp 可以自动检测您何时在用普通英语写作，并将您切换到代理模式。如果需要，您可以自定义或禁用此行为。
+
+#### 修复错误检测
+
+如果某些 shell 命令被误检测为自然语言，您可以将它们添加到拒绝列表中：**设置** > **AI** > **输入** > **自然语言拒绝列表**
+
+#### 关闭自动检测
+
+要完全禁用自然语言检测，请前往：**设置** > **AI** > **输入自动检测**
+
+当自动检测关闭时，您需要使用 `CMD + I`（macOS）或 `CTRL + I`（Windows/Linux）在终端模式和代理模式之间显式切换。
+
+#### 首次设置
+
+第一次进入代理模式时，Warp 将显示一个横幅，提供禁用命令行的自然语言检测的选项：
+
+<figure>
+![Warp 显示用于切换自然语言检测开/关的选项](../../../../../assets/terminal/banner_for_auto-detection_first_experience.png)
+<figcaption>自然语言检测开关。</figcaption>
+</figure>
+
+---
+
+## 上下文输入芯片
+
+<figure>
+![统一输入的上下文输入芯片，从左到右：对话管理、node 版本、活动目录、Git 和代码差异，以及 2 个附加图片。](../../../../../assets/terminal/universal-input.png)
+<figcaption>统一输入上下文芯片。</figcaption>
+</figure>
+
+统一输入包括 **上下文芯片**，提供有关当前环境的内联信息。这些芯片显示相关细节，如目录路径、Git 状态、对话或运行时版本，使导航、管理上下文和执行快速操作更加容易，而无需离开输入。
+
+#### 对话管理芯片
+
+对话管理芯片显示您最近的 [代理对话](/agent-platform/local-agents/interacting-with-agents/)，允许您直接引用或重新打开它们。
+
+这些芯片在代理模式和终端模式中都会出现，因此您可以继续之前的对话而无需从头开始。更多详情请参见 [代理对话](/agent-platform/local-agents/interacting-with-agents/)。
+
+<figure>
+![对话管理芯片显示最近的代理对话，让您直接从输入中继续或重新打开它们。](../../../../../assets/terminal/conversation-management-chip-universal-input.png)
+<figcaption>对话管理芯片。</figcaption>
+</figure>
+
+这些芯片在代理模式和终端模式中都会出现，帮助您继续之前的对话而无需从头开始。更多详情请参阅 [代理对话](/agent-platform/local-agents/interacting-with-agents/)。
+
+#### 活动目录芯片
+
+活动目录芯片显示您当前的工作目录，并支持简单的文件导航。点击文件夹可进入该文件夹，而点击文件会在 [Warp 的原生代码编辑器](/code/code-editor/) 中打开该文件。这使得您可以从输入中无缝地在工作区中移动。
+
+<figure>
+![活动目录芯片让您直接从输入中浏览目录和打开文件。](../../../../../assets/terminal/active-directory-chip.png)
+<figcaption>活动目录芯片。</figcaption>
+</figure>
+
+#### Git 状态芯片
+
+当您在 Git 托管的仓库中时，Git 状态芯片显示文件和行级别的更改。您可以通过点击分支名称切换分支，或在 Warp 的 [原生代码审查面板](/code/code-review/) 中查看修改后的文件。
+
+芯片会在文件被添加、删除或更改时自动更新，为您提供仓库状态的实时视图。
+
+<figure>
+![Git 状态芯片高亮显示仓库更改，并提供对代码审查的快速访问。](../../../../../assets/terminal/git-branch-chip.png)
+<figcaption>Git 状态芯片。</figcaption>
+</figure>
+
+#### 文件附件芯片
+
+文件附件芯片让您将图像和其他文件直接附加到提示中。您可以使用工具带中的上传按钮或通过拖放文件到输入中，一次最多上传五张 [图像（作为代理上下文）](/agent-platform/local-agents/agent-context/images-as-context/)。这使得可以将截图、图表、PDF 或其他参考资料直接添加到您的查询中，为代理提供更丰富的上下文。
+
+<figure>
+![文件附件芯片允许您添加图像或文件作为查询的上下文。](../../../../../assets/terminal/images-as-context-chip.png)
+<figcaption>文件附件芯片。</figcaption>
+</figure>
+
+**节点版本芯片**
+
+在包含 `package.json` 的仓库中，会出现一个节点版本芯片，显示检测到的 Node.js 版本。这让您无需运行额外命令即可了解运行时环境。
+
+<figure>
+![节点版本芯片显示在您的仓库中检测到的 Node.js 版本。](../../../../../assets/terminal/node-version-chip.png)
+<figcaption>节点版本芯片。</figcaption>
+</figure>
+
+:::note
+目前，上下文芯片不可配置，但它们会根据您的工作区和仓库状态自动更新。
+:::
+
+---
+
+## 输入工具带
+
+**输入工具带** 提供与统一输入并排的快速访问控件。这些工具允许您附加上下文、运行快捷方式以及配置代理行为，无需离开输入字段。根据您所在的模式，某些功能会自动启用或将您置于代理模式。
+
+<figure>
+![Warp 统一输入中的输入工具带，显示上下文、斜杠命令、语音输入、附件、配置文件选择和模型选择的快速访问控件。](../../../../../assets/terminal/input-toolbar.png)
+<figcaption>统一输入中的输入工具带。</figcaption>
+</figure>
+
+#### @ - 上下文
+
+[@ 上下文芯片](/agent-platform/local-agents/agent-context/using-to-add-context/) 在您在 Git 仓库中工作时可用。在 Git 仓库之外，它显示为灰色。
+
+此功能允许您附加特定文件、文件夹、代码符号、Warp Drive 对象或其他会话中的块作为提示的上下文。在输入中输入 **@** 也会打开一个上下文菜单，您可以在其中搜索和选择要包含的文件或目录。
+
+使用 @ 附加上下文在代理模式（与代理交互时）和经典终端命令（用于引用文件路径）中都有效。
+
+**斜杠命令**
+
+[斜杠命令](/agent-platform/capabilities/slash-commands/) 在代理模式和自动检测模式中可用。它们允许您在不离开输入字段的情况下快速运行内置操作或已保存的提示。输入 / 会显示可用命令的菜单，这些命令可以自定义或扩展。
+
+**语音输入**
+
+[语音输入](/agent-platform/local-agents/interacting-with-agents/voice/) 会自动将您置于代理模式。直接对着 Warp 说话，让您可以用自然语言表达任务、命令或查询，Warp 会像您键入一样解释它们。当您想要免提交互或口述较长的任务时，此功能尤其有用。
+
+**图片附件**
+
+您可以将 [图片作为上下文](/agent-platform/local-agents/agent-context/images-as-context/) 直接附加到提示中，这会自动将您置于代理模式。当您希望代理参考截图、图表或其他视觉素材时，这非常有用。
+
+您可以使用工具带中的图片上传按钮（位于底部左侧或右侧，取决于您的输入布局）添加图片。有关附加图片的其他方法，请参见 [图片作为上下文](/agent-platform/local-agents/agent-context/images-as-context/)。
+
+**快进**
+
+快进让代理完全自主地完成任务的剩余部分或整个对话。启用后，您输入的下一个提示允许代理执行命令、读取文件和应用代码差异，而无需每次都请求确认。这对于复杂的、分步审批会拖慢速度的工作流非常有用。
+
+#### 配置文件选择器
+
+配置文件选择器允许您从不同的 [代理配置文件](/agent-platform/capabilities/agent-profiles-permissions/) 中选择，每个配置文件都有自己的自主性、工具和默认模型配置。如果您只有一个配置文件，则选择器不会出现在 UI 中。
+
+从配置文件选择器中，您可以查看所有可用的配置文件，在它们之间切换，并快速查看每个配置文件的默认模型。配置文件使得针对不同类型的任务或项目定制代理行为成为可能。
+
+### 模型选择器
+
+模型选择器与您当前的代理配置文件相关联。每个配置文件都有一个默认模型，但您可以随时使用选择器覆盖它。Warp 精选了一系列顶级大语言模型（LLM）供您选择，根据您的需求平衡速度、质量和推理能力。
+
+有关受支持模型的完整列表以及何时使用它们的指导，请参见 [模型选择](/agent-platform/inference/model-choice/)。

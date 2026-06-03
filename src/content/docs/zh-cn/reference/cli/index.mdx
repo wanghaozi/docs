@@ -1,0 +1,418 @@
+---
+title: Oz CLI 参考
+sidebar:
+  label: "Oz CLI"
+description: >-
+  使用 Oz CLI 从终端运行、配置和管理代理。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Oz CLI 是从任何终端、脚本或 CI 流水线运行和管理 Warp 云端代理的命令行工具。用它来在本地或云端启动代理、连接 MCP 服务器、配置集成，以及在不使用 Warp 桌面应用的情况下进行认证。
+
+:::note
+**`warp-cli` 已弃用，已被 `oz` 取代。** 如果您已安装 `warp-cli`，它会自动更新为 `oz`。所有命令保持不变，只需在您的脚本和工作流中将 `warp-cli` 替换为 `oz`。
+:::
+
+## 什么是 Oz CLI？
+
+Oz CLI 是命令行工具，让您可以从任何地方运行[云端代理](/agent-platform/cloud-agents/overview/)，包括终端、脚本、自动化系统或服务。
+
+它是标准的运行时入口点，将一个**提示**加上**配置**转化为一个**可执行的代理任务**，该任务可以在 **Warp 托管或[自托管](/agent-platform/cloud-agents/self-hosting/)的执行器**上运行。
+
+使用 Oz CLI，您可以：
+
+* 在本地运行代理以进行开发和调试
+* 在远程机器上运行代理
+* 将代理连接到 GitHub 和 Linear 等 MCP 服务器
+* 配置将代理连接到 Slack、Linear 和其他触发面的集成
+
+## 安装 CLI
+
+您可以作为 Warp 桌面应用的一部分安装 Oz CLI，也可以作为独立包安装。
+
+### 随 Warp 捆绑
+
+Oz CLI 随 Warp 桌面应用自动分发，可以在 Warp 中直接使用。要使 CLI 全局可用，请将其添加到您的 `PATH`。
+
+<Tabs>
+  <TabItem label="macOS">
+    要将 Oz CLI 添加到您的 `PATH`：
+
+    1. 打开[命令面板](/terminal/command-palette/)（`CMD+P`）
+    2. 在搜索字段中，找到并选择 **安装 Oz CLI 命令** 操作。
+
+    :::note
+    **注意：** 需要管理员权限才能将 CLI 安装到 `/usr/local/bin`。
+    :::
+  </TabItem>
+  <TabItem label="Windows">
+    在 Warp 安装程序中，选择 **将 Warp 添加到 PATH**。如果您为所有用户安装，这将把 CLI 放在系统路径上。否则，CLI 只会被添加到您账户的路径中。
+  </TabItem>
+  <TabItem label="Linux">
+    要在 Linux 上运行 Oz CLI，请使用与正常启动 Warp 相同的命令。如果您通过包管理器安装了 Warp，它应该已经在系统 `PATH` 上。
+  </TabItem>
+</Tabs>
+
+### 独立包
+
+Warp 在 macOS 和 Linux 上为 CLI 提供独立包，无需 Warp 应用。
+
+<Tabs>
+  <TabItem label="macOS">
+    在 macOS 上，我们建议使用 [Homebrew](https://brew.sh/) 通过 [`warpdotdev/warp` tap](https://github.com/warpdotdev/homebrew-warp) 安装和更新独立 CLI：
+
+    ```sh
+    $ brew tap warpdotdev/warp
+    $ brew update
+    $ brew install --cask oz
+    ```
+
+    如果您使用的是 Warp Preview，请安装预览版的 CLI：
+
+    ```sh
+    brew install --cask oz@preview
+    ```
+
+    ***
+
+    您也可以直接从以下 URL 下载 CLI：
+
+    * [Apple Silicon](https://app.warp.dev/download/cli?os=macos\&package=tar\&arch=aarch64)
+    * [Intel](https://app.warp.dev/download/cli?os=macos\&package=tar\&arch=x86_64)
+    * [Apple Silicon, Warp Preview](https://app.warp.dev/download/cli?os=macos\&channel=preview\&package=tar\&arch=aarch64)
+    * [Intel, Warp Preview](https://app.warp.dev/download/cli?os=macos\&channel=preview\&package=tar\&arch=x86_64)
+
+    :::note
+    **注意：** 这些构建不会自动更新。
+    :::
+  </TabItem>
+  <TabItem label="Linux">
+    在 Linux 上，我们建议通过您的发行版的包管理器安装和更新独立 CLI。我们支持 `apt`、`yum` 和 `pacman`。
+
+    1. 为您的发行版添加 Warp 包仓库（参见[安装说明](/getting-started/quickstart/installation-and-setup/)）。
+    2. 安装稳定版或预览版包（根据需要将 `apt` 替换为 `yum` 或 `pacman`）：
+
+    ```sh
+    # 稳定版
+    sudo apt install oz-stable
+
+    # 预览版（beta/早期访问）
+    sudo apt install oz-preview
+
+    ```
+
+    :::note
+    **注意：** 包名（`oz-stable`）与 CLI 命令可执行文件（`oz`）不同。安装后，通过 `oz` 命令使用 CLI。
+    :::
+
+    ***
+
+    您也可以通过直接下载包来安装 CLI。这些安装程序会自动添加 Warp 仓库，使未来的更新通过您的包管理器进行：
+
+    * x86-64：[`.deb`](https://app.warp.dev/download/cli?os=linux\&package=deb\&arch=x86_64)、[`.rpm`](https://app.warp.dev/download/cli?os=linux\&package=rpm\&arch=x86_64)、[pacman](https://app.warp.dev/download/cli?os=linux\&package=pacman\&arch=x86_64)
+    * aarch64：[`.deb`](https://app.warp.dev/download/cli?os=linux\&package=deb\&arch=aarch64)、[`.rpm`](https://app.warp.dev/download/cli?os=linux\&package=rpm\&arch=aarch64)、[pacman](https://app.warp.dev/download/cli?os=linux\&package=pacman\&arch=aarch64)
+  </TabItem>
+  <TabItem label="Windows">
+    Windows 上目前没有独立的 CLI 包。要在 Windows 上使用 Oz CLI，请安装 Warp 应用，其中包含 CLI。
+
+    您可以使用 [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) 安装 Warp：
+
+    ```powershell
+    winget install Warp.Warp
+    ```
+
+    安装完成后，请参见[随 Warp 捆绑](#bundled-with-warp)了解将 CLI 添加到 `PATH` 的说明。
+  </TabItem>
+</Tabs>
+
+## 运行 CLI
+
+无论您的操作系统或安装方式如何，CLI 命令都是 `oz`。如果您使用的是 [Warp Preview](/support-and-community/community/warp-preview-and-alpha-program/)，请改用 `oz-preview`。
+
+## 登录
+
+Oz CLI 支持两种认证方法，取决于您在何处以及如何运行代理。
+
+* **交互式登录 —** 最适合在安装了 Warp 且可以通过浏览器认证的本地机器上使用。
+* **API 密钥 —** 最适合需要无需人工交互即可认证的自动化或远程环境。
+
+### 交互式登录（本地机器）
+
+当您在使用 Warp 应用的机器上工作时，或者当您可以打开浏览器完成认证时，请使用交互式登录。
+
+如果您在已登录 Warp 的主机上使用 CLI，它会自动重用您现有的凭据。
+
+要交互式认证：
+
+```bash
+oz login
+```
+
+CLI 会打印一个 URL，您可以在任何浏览器中打开以登录 Warp。
+
+### 检查当前登录身份
+
+使用 `oz whoami` 打印当前已认证主体的信息：
+
+```sh
+oz whoami
+```
+
+输出包括您的用户或服务帐户 ID、显示名称、电子邮件和团队（可用时）。当 CLI 以服务帐户主体身份认证时，该主体是您团队中的[代理身份](/agent-platform/cloud-agents/agents/)。对于机器可读的输出，设置 `--output-format json` 或 `--output-format text`。
+
+```sh
+# 脚本用的 JSON 输出
+oz whoami --output-format json
+
+# 紧凑的 "type:id" 输出
+oz whoami --output-format text
+```
+
+如果 `oz whoami` 报告无法确定您的用户 ID，则您的凭据缺失或无效。运行 `oz login`（或设置 `WARP_API_KEY`）并重试。
+
+### 登出
+
+使用 `oz logout` 清除此机器上 CLI 缓存的凭据：
+
+```sh
+oz logout
+```
+
+如果您之前未登录，命令会打印 `您尚未登录。` 并退出。登出后，运行 `oz login` 重新认证。
+
+:::note
+`oz logout` 只会影响 CLI 存储的凭据。通过 `WARP_API_KEY` 或 `--api-key` 认证的 API 密钥不受影响——取消设置环境变量或省略标志即可停止使用它们。
+:::
+
+### API 密钥认证
+
+当环境需要自行认证时，例如 CI 流水线、无头服务器、VM、Codespaces 或容器，请使用 API 密钥。API 密钥让 CLI 可以非交互式地认证。
+
+有关创建、管理和使用 API 密钥的详细说明，请参见 [API 密钥](/reference/cli/api-keys/)。
+
+**快速开始：**
+
+```sh
+$ export WARP_API_KEY="wk-xxx..."
+$ oz agent run --prompt "分析这个代码库"
+```
+
+---
+
+## 运行代理
+
+Oz CLI 提供了两种运行代理的方式，取决于您希望工作在哪里执行：
+
+**在以下情况下使用 `oz agent run`：**
+
+* 您正在本地开发并希望立即获得反馈
+* 您需要代理与当前目录中的文件一起工作
+* 您希望实时检查和修改代理的工作
+* 您正在调试或迭代提示
+
+**在以下情况下使用 `oz agent run-cloud`：**
+
+* 您希望代理在远程机器或标准化环境上运行
+* 您从 CI/CD 或自动化系统触发代理工作
+* 您希望代理独立于您本地会话运行
+* 您委派不需要立即关注的工作
+
+### 本地运行：`oz agent run`
+
+要启动代理，请使用 `oz agent run` 子命令。您需要指定一个提示，以及可选的 [MCP 服务器](/agent-platform/capabilities/mcp/)和[代理配置文件](/agent-platform/capabilities/agent-profiles-permissions/)。
+
+```sh
+oz agent run --prompt "创建一个名为 warp-cli 的新 Rust crate"
+我将运行几个终端命令：
+- 检查这是否是 Git 仓库和 Cargo 工作区
+- 创建一个名为 warp-cli 的新二进制 crate
+```
+
+**关键标志：**
+
+* `--cwd <PATH>` (`-C`) — 从不同目录运行。
+* `--name <NAME>` (`-n`) — 为运行打标签以进行分组和跟踪。
+* `--share` — 与队友共享会话（参见[协作](/reference/cli/#collaboration)）。
+* `--profile <ID>` — 使用特定的代理配置文件（参见[使用代理配置文件](/reference/cli/#using-agent-profiles)）。
+* `--model <MODEL_ID>` — 覆盖默认模型（参见[模型选择](/agent-platform/inference/model-choice/)）。
+* `--skill <SPEC>` — 使用技能作为基础提示（参见[使用技能](/reference/cli/#using-skills)）。
+* `--mcp <SPEC>` — 在执行前启动一个或多个 MCP 服务器（UUID、JSON 文件路径或内联 JSON）。可重复。
+* `--environment <ID>` (`-e`) — 在特定的云环境中运行。
+* `--file <PATH>` (`-f`) — 从 YAML 或 JSON 文件加载运行配置。
+
+代理会自动执行您交给它的任务，并在工作时打印出工具调用和响应。
+
+默认情况下，代理在您当前的工作目录中运行。要从不同的目录运行，请使用 `-C/--cwd` 标志。
+
+### 远程运行代理：`oz agent run-cloud`
+
+云端运行将任务分发到远程环境。在以下情况下使用云端运行：
+
+* 后台处理
+* 标准化的团队配置
+* 在您不直接访问的服务器上进行远程执行
+
+```sh
+oz agent run-cloud \
+  --environment <ENVIRONMENT_ID> \
+  --name "仓库摘要" \
+  --prompt "总结此仓库并列出前 5 个高风险领域" \
+  --open
+```
+
+**关键标志**
+
+* `--environment <ENVIRONMENT_ID>` (`-e`) — 选择要运行的环境。
+* `--no-environment` — 在没有环境的情况下运行（不推荐）。
+* `--open` — 在 Warp 中查看代理的会话（可用时）。
+* `--name <NAME>` (`-n`) — 为运行打标签以进行分组和跟踪（参见下面的[命名运行](/reference/cli/#naming-runs)）。
+* `--mcp <SPEC>` — 在执行前启动一个或多个 MCP 服务器（UUID、JSON 文件路径或内联 JSON）。可重复。
+* `--model <MODEL_ID>` — 覆盖默认模型。
+* `--skill <SPEC>` — 使用环境仓库中的技能作为基础提示（参见[使用技能](/reference/cli/#using-skills)）。
+* `--host <WORKER_ID>` — 在特定的自托管工作节点上运行，而不是 Warp 托管的基础设施。
+* `--attach <PATH>` — 附加图像文件到代理查询。可重复（最多 5 个）。
+* `--computer-use` / `--no-computer-use` — 为此运行启用或禁用[计算机使用](/agent-platform/capabilities/computer-use/)。
+* `--file <PATH>` (`-f`) — 从 YAML 或 JSON 文件加载运行配置。
+
+**与 `run` 的关键区别**
+
+* 没有 `--cwd` — 环境决定工作目录。
+* 没有 `--share` — 共享选项在 `run` 中可用，而非 `run-cloud`。
+* 没有 `--profile` — 云端运行不使用代理配置文件。
+
+#### 命名运行
+
+`--name` 标志为运行分配一个配置名称。用它来将相关运行分组到一个共享标签下，以便将来进行筛选、搜索和跟踪。
+
+**名称的工作方式：**
+
+* **基于技能的名称** — 当您从[技能](/agent-platform/capabilities/skills/)运行代理时，名称会自动设置为技能名称。您不需要显式传递 `--name`。
+* **自定义名称** — 当您构建自己的自动化（通过 CLI、API 或 SDK）时，将 `--name` 设置为描述工作流意图的一致值。
+
+**命名的重要性：**
+
+当您的团队跨调度、集成和临时触发器运行许多代理时，`name` 让您可以回答诸如"我们正在运行多少个不同的工作流？"和"这个特定工作流多久运行一次？"之类的问题。您可以通过 [Oz API](/reference/api-and-sdk/) 中的 `GET /agent/runs` 的 `name` 查询参数按名称筛选运行。
+
+**示例：**
+
+```sh
+# 为易于跟踪命名一个重复工作流
+oz agent run-cloud \
+  --environment <ENVIRONMENT_ID> \
+  --name "nightly-dependency-check" \
+  --prompt "检查过时的依赖项并打开一个包含更新的 PR"
+
+# 基于技能的名称会自动设置
+oz agent run-cloud \
+  --environment <ENVIRONMENT_ID> \
+  --skill "myorg/backend:code-review" \
+  --prompt "审查最新的 PR"
+```
+
+**当云端运行失败时**
+
+* 验证您的环境具有正确的仓库和上下文。
+* 检查您的配置文件是否允许所需的命令和 MCP 服务器。
+* 确保环境变量在环境中设置，而不是在本地 shell 中。
+
+#### 重用已保存的提示和 Warp Drive 对象
+
+您可以使用 `--saved-prompt` 重用已保存的提示，并在任何 `--prompt` 字符串中内联引用笔记本、工作流和规则。详情请参见[引用 Warp Drive 对象](/reference/cli/warp-drive/)。
+
+## 使用代理配置文件
+
+代理配置文件控制代理可以做什么、如何运作以及可以在何处行动。使用 `oz agent run` 的 `--profile` 标志应用特定配置文件。
+
+参见[代理配置文件](/reference/cli/agent-profiles/)了解如何查找配置文件 ID 并应用它们。
+
+## 使用 MCP 服务器
+
+MCP 服务器将代理连接到 GitHub、Linear 或 Sentry 等外部系统。使用 `--mcp` 标志，支持三种格式：Warp MCP 服务器 UUID、内联 JSON 或指向 JSON 配置文件的路径。
+
+参见 [MCP 服务器](/reference/cli/mcp-servers/) 了解完整详情，包括如何查找 UUID、组合多个服务器以及在远程机器上处理环境变量。
+
+## 使用技能
+
+[技能](/agent-platform/capabilities/skills/)是可重用的指令集，教会代理如何执行特定任务。使用 `--skill` 标志从存储在仓库中的技能运行代理。
+
+参见[技能](/reference/cli/skills/)了解支持的规范格式以及本地和云端代理运行的示例。
+
+## 协作
+
+除了基于文本的输出外，CLI 还可以共享代理的会话，供您在其他设备或浏览器上访问。要启用[代理会话共享](/agent-platform/local-agents/session-sharing/)，请使用 `--share` 标志。
+
+默认情况下，会话仅对运行 CLI 的用户可访问，但您也可以与[团队](/knowledge-and-collaboration/teams/)或其他 Warp 用户共享：
+
+```sh
+# 与您自己共享代理的会话：
+$ oz agent run --share --prompt "修复编译器错误"
+
+# 授予特定用户会话的只读访问权限：
+$ oz agent run --share firstuser@example.com --share otheruser@example.com --prompt "修复编译器错误"
+
+# 让团队中的任何用户编辑会话：
+$ oz agent run --share team:edit --prompt "修复编译器错误"
+```
+
+`--share` 标志可以重复，并使用以下语法：
+
+* `--share user@email.com` 或 `--share user@email.com:view` — 授予指定用户会话的只读访问权限。
+* `--share user@email.com:edit` — 授予指定用户 `user@email.com` 会话的读写访问权限。
+* `--share team` 或 `--share team:view` — 授予团队所有成员会话的只读访问权限。
+* `--share team:edit` — 授予团队所有成员会话的读写访问权限。
+
+## 其他命令
+
+以下命令可用于管理和检查 Oz 资源。
+
+### `oz agent list`
+
+列出从您的环境中发现的所有可用技能。可选地按仓库筛选：
+
+```sh
+oz agent list
+oz agent list --repo owner/repo
+```
+
+### `oz run list` / `oz run get`
+
+列出和检查云端代理运行：
+
+```sh
+# 列出最近的运行（默认：10）
+oz run list
+oz run list --limit 20
+
+# 获取特定运行的详情
+oz run get <RUN_ID>
+```
+
+### `oz model list`
+
+列出所有可用模型：
+
+```sh
+oz model list
+```
+
+### `oz environment image list`
+
+列出建议用于云环境的基础镜像：
+
+```sh
+oz environment image list
+```
+
+### `oz artifact get` / `oz artifact download`
+
+检查和检索代理在运行期间生成的文件。详情请参见[工件](/reference/cli/artifacts/)。
+
+### `oz federate issue-token`
+
+从正在运行的代理内部签发一个短期的 OIDC 身份令牌，用于向云提供商认证，无需长期凭据。详情请参见[联合身份令牌](/reference/cli/federate/)。
+
+---
+
+## 故障排除
+
+有关内置 CLI 帮助命令和常见错误的解决方案——包括认证问题、代理故障、环境问题和 Docker 镜像问题——请参见[故障排除](/reference/cli/troubleshooting/)。

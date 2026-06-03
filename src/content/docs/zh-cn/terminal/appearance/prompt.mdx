@@ -1,0 +1,236 @@
+---
+title: 终端提示符
+description: >-
+  配置 Warp 的原生提示符（包含上下文芯片）或使用您自己的 Shell 提示符（PS1）。
+sidebar:
+  label: "提示符"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 支持两种提示符类型：**Warp 提示符** 和 **Shell 提示符（PS1）**。
+
+## 选择提示符类型
+
+要切换提示符类型：
+
+1. 打开 **设置** > **外观**。
+2. 在 **输入** 下，将 **输入类型** 设置为 **Warp** 或 **Shell (PS1)**。
+
+使用 Warp 提示符时，您可以右键单击提示区域以复制整个提示符、工作目录、当前 git 分支、git 未提交文件数量等。
+
+使用 Shell 提示符时，您可以右键单击提示区域以复制整个提示符，或选择会话中之前运行的块中的提示符的任何部分。
+
+## Warp 提示符
+
+Warp 有一个原生提示符，显示上下文芯片，展示诸如当前工作目录、git 分支、svn 状态、Kubernetes 上下文、pyenv、日期和时间等信息。当 **输入类型** 设置为 **Warp** 时，Warp 提示符是默认选项。
+
+要自定义您的 Warp 提示符显示哪些上下文芯片：
+
+1. 右键单击提示区域并选择 **编辑提示符**。
+
+<figure>
+![右键单击上下文菜单显示编辑提示符选项](../../../../../assets/terminal/edit-prompt-modal.png)
+<figcaption>通过右键单击编辑提示符。</figcaption>
+</figure>
+
+2. 选择 **Warp 提示符**。
+3. 拖放上下文芯片以配置提示符显示的信息片段。
+
+{/* TODO: Add an updated screenshot of the Edit prompt chip customization view (drag-and-drop interface) here, and delete the outdated edit-prompt-modal (1).png from assets. */}
+
+### Git 和 Subversion
+
+Git 和 Subversion 上下文芯片显示您本地所在的分支，以及未提交的已更改文件数量。这包括已暂存或未暂存的任何新文件、修改文件和已删除文件。
+
+### Kubernetes
+
+Kubernetes 上下文芯片在使用以下命令之一时显示相关信息：
+
+`kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold|kubent|kubecolor|cmctl|sparkctl|etcd|fubectl`
+
+:::note
+Warp 尊重 `KUBECONFIG` 环境变量。请确保将其设置为您的首选配置文件位置（如果不是默认路径 `~/.kube/config`）。
+:::
+
+{/* TODO: Same-line prompt was removed in the current release. May return in a future version (V2/V3). Uncomment when the feature ships. */}
+{/* ### Same line prompt
+
+By default, Warp's prompt displays on two lines where the command-line input is one line below the prompt.
+
+To enable same-line prompt:
+
+1. Right-click the prompt area and select **Edit prompt**.
+2. Select **Warp Prompt**.
+3. Check the box for **Same line prompt**. */}
+
+## Shell 提示符（PS1）
+
+您可以通过配置 **PS1** 变量或安装受支持的 shell 提示符插件（参见 [Shell 提示符兼容性表](/terminal/appearance/prompt/#shell-prompt-compatibility-table)）来使用 Shell 提示符代替 Warp 提示符。
+
+要启用 Shell 提示符：
+
+1. 打开 **设置** > **外观**。
+2. 在 **输入** 下，将 **输入类型** 设置为 **Shell (PS1)**。
+3. 在 shell 的 RC 文件中配置 PS1 变量，或安装受支持的提示符插件。
+
+:::note
+PS1 是 shell 用来生成提示符的变量，它代表主要提示符字符串（因此称为"PS"）——终端通常在键入新命令之前显示它。
+:::
+
+### 多行和右侧提示符
+
+Shell 提示符在 zsh 和 fish 中支持多行或右侧提示符，但不支持 bash。但是，您不能拥有多行右侧提示符，只能拥有多行左侧提示符。
+
+:::note
+如果您想向 Shell 提示符添加新行，请根据您的 shell 或提示符运行以下命令：
+
+```sh
+# Bash
+echo -e '\nPS1="${PS1}"$'\''\\n'\''' >> ~/.bashrc
+
+# Zsh
+echo -e '\nPROMPT="${PROMPT}"$'\''\\n'\''' >> ~/.zshrc
+
+# Fish
+echo -e '\nfunctions --copy fish_prompt fish_prompt_orig; function fish_prompt; fish_prompt_orig; echo; end' >> ~/.config/fish/config.fish
+
+# Powershell
+$rawString = @'
+$originalPrompt = Get-Item Function:\prompt
+Set-Item -Path Function:\prompt_original -Value $originalPrompt
+function prompt {
+    "$(& prompt_original)`n"
+}
+'@
+Add-Content -Path $PROFILE -Value "`n$rawString`n"
+
+# Powerlevel10k
+p10k configure
+
+# Starship Prompt
+echo '[line_break]\ndisabled = false' >> ~/.config/starship.toml
+```
+:::
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/warp-custom-prompt-demo.mp4" label="Warp 提示符 + 自定义提示符演示" />
+
+{/* Outdated screenshot removed; see TODO after step 3 in the Warp prompt section. */}
+
+### Shell 提示符兼容性表
+
+| Shell                       | 工具                                                                     | 是否可用？                                                   |
+| --------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| bash \| zsh                 | [PS1](https://www.warp.dev/blog/whats-so-special-about-ps1)              | 可用                                                         |
+| bash \| zsh \| fish \| pwsh | [Starship](https://github.com/starship/starship)                         | [可用\*](/terminal/appearance/prompt/#starship)                                 |
+| bash \| zsh \| fish \| pwsh | [oh-my-posh](https://github.com/JanDeDobbeleer/oh-my-posh)               | 可用                                                         |
+| zsh                         | [Powerlevel10k](https://github.com/romkatv/powerlevel10k)                | [可用\*](/terminal/appearance/prompt/#powerlevel10k)                            |
+| zsh                         | [Spaceship](https://github.com/spaceship-prompt/spaceship-prompt)        | [可用\*](/terminal/appearance/prompt/#spaceship)                                |
+| zsh                         | [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh)                          | 可用                                                         |
+| zsh                         | [prezto](https://github.com/sorin-ionescu/prezto)                        | [可用\*](/terminal/appearance/prompt/#prezto)                                   |
+| ssh                         |                                                                          | 可用                                                         |
+| bash                        | [oh-my-bash](https://github.com/ohmybash/oh-my-bash)                     | 不支持                                                   |
+| bash                        | [bash-it](https://github.com/Bash-it/bash-it)                            | 不支持                                                   |
+| bash                        | [SBP](https://github.com/brujoand/sbp)                                   | 不支持                                                   |
+| bash                        | [synth-shell-prompt](https://github.com/andresgongora/synth-shell-prompt)| 不支持                                                   |
+| bash \| zsh                 | [Powerline-shell](https://github.com/b-ryan/powerline-shell)             | 不支持                                                   |
+| zsh                         | [zplug](https://github.com/zplug/zplug)                                  | 不支持                                                   |
+| fish                        | [tide](https://github.com/IlanCosman/tide)                               | [不支持](https://github.com/warpdotdev/Warp/issues/3358) |
+| fish                        | [oh-my-fish](https://github.com/oh-my-fish/oh-my-fish)                   | [不支持](https://github.com/warpdotdev/Warp/issues/3796) |
+
+## 已知不兼容问题
+
+如果您遇到提示符问题，请参阅下方内容或我们的 [已知问题](/support-and-community/troubleshooting-and-support/known-issues/#configuring-and-debugging-your-rc-files) 获取更多故障排除步骤。
+
+### Starship
+
+#### Starship 设置
+
+某些 `~/.config/starship.toml` 设置已知会导致 Warp 中出错。请 `#` 注释或 `DEL` 删除以下行以解决已知错误：
+
+```
+# Get editor completions based on the config schema
+'' = 'https://starship.rs/config-schema.json'
+
+# Disables the custom module
+[custom]
+disabled = false
+```
+
+对于 `fish` shell，`bash|zsh` 可选，通过在 `~/.config/starship.toml` 中添加以下内容来禁用 Starship 中的多行提示符：
+
+```
+[line_break]
+disabled = true
+```
+
+您可能还会看到与超时相关的错误。您可以在 `~/.config/starship.toml` 中设置 `command_timeout` 变量来修复此问题。更多信息请参阅 [starship 文档](https://starship.rs/config/#prompt)。
+
+#### Starship + bash
+
+如果您的 [默认 shell](/getting-started/supported-shells/#changing-what-shell-warp-uses) 是 `/bin/bash`，Starship 提示符可能无法正确渲染。要 [解决](https://github.com/warpdotdev/Warp/issues/3066#issuecomment-1548643121) 此问题，我们建议您升级 bash，使用 `echo $(which bash)` 找到路径，然后将该路径放入 **设置** > **功能** > **会话** > **"新会话的启动 shell"**。
+
+#### Starship + zsh
+
+如果您想在 `zsh` 上的 Starship 提示符后恢复附加行，请在 `~/.zshrc` 文件底部添加以下内容：`PROMPT="${PROMPT}"$'\n'`
+
+### Powerlevel10k
+
+安装 Powerlevel10k (P10k) 提示符时，我们建议您使用 [Meslo Nerd Font](https://github.com/romkatv/powerlevel10k/blob/master/font.md)。\
+\
+P10K 可能将箭头分隔符显示为灰色而不是彩色。由于 Warp 的最小对比度设置，这些字符的颜色被渲染为灰色。要 [解决](https://github.com/warpdotdev/Warp/issues/2851#issuecomment-1605005256) 此问题，请前往 **设置** > **外观** > **文本** > **强制最小对比度** 并将其设置为"从不"。
+
+<figure>
+![p10k 中灰色分隔符的示例](../../../../../assets/terminal/p10k-grey-arrow-prompt.png)
+<figcaption>p10k 中灰色分隔符的示例。</figcaption>
+</figure>
+
+Warp 支持 [p10k](https://github.com/romkatv/powerlevel10k#installation) 1.19.0 及以上版本。确保您已安装最新版本，并在安装/更新 p10k 后重启 Warp。然后按照 [上述](/terminal/appearance/prompt/#choosing-your-prompt-type) 方式启用自定义提示符，它应该可以正常工作。
+
+:::note
+Warp 仍未完全支持某些 p10k 功能，如瞬态提示符和渐变等视觉功能。
+:::
+
+<VideoEmbed url="https://www.youtube.com/watch?t=18s&v=dIV9Cso4Mi8" title="安装 Powerlevel10k" />
+
+:::caution
+请注意，安装 Powerlevel10k 视频提到在 **设置** > **功能** > **尊重用户自定义提示符 (PS1)** 中启用自定义提示符，但现在位于 **设置** > **外观** > **输入** > **经典** > **当前提示符** > **Shell 提示符 (PS1)**。
+:::
+
+### Spaceship
+
+此提示符可能会导致 Warp 输入编辑器中的提前输入（typeahead）出现问题。要 [解决](https://github.com/warpdotdev/Warp/issues/1973#issuecomment-1340150521) 此问题，请运行 `echo "SPACESHIP_PROMPT_ASYNC=FALSE" >>! ~/.zshrc`。
+
+### Prezto
+
+虽然 Warp 确实支持 prezto 的提示符，但在 `.zpreztorc` 中启用 [prezto 实用模块](https://github.com/sorin-ionescu/prezto/blob/master/modules/utility/README.md) 不受支持，与许多其他 [不兼容的自动补全插件](/support-and-community/troubleshooting-and-support/known-issues/#list-of-incompatible-tools) 一样。
+
+### 为 Warp 禁用不受支持的提示符
+
+我们建议使用 Warp 的默认提示符或安装受支持的工具之一，参见 [兼容性表](/terminal/appearance/prompt/#shell-prompt-compatibility-table)。您可以像这样为 Warp 禁用不受支持的提示符：
+
+```
+if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+##### 您想为 Warp 禁用的内容 - 下方
+
+    # 不受支持的自定义提示符代码
+
+##### 您想为 Warp 禁用的内容 - 上方
+fi
+```
+
+#### iTerm2
+
+iTerm2 shell 集成会破坏 Warp，启用此功能后您的自定义提示符将无法显示。如果您从 iTerm2 迁移过来，请检查您的 dotfiles。我们建议像这样为 Warp 禁用集成：
+
+```
+if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+##### 您想为 Warp 禁用的内容 - 下方
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+##### 您想为 Warp 禁用的内容 - 上方
+fi
+```

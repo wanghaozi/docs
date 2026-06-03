@@ -1,0 +1,273 @@
+---
+title: 自定义主题
+description: >-
+  Warp 支持自定义主题，可以手动创建或从我们的仓库下载。
+sidebar:
+  label: "自定义主题"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+示例和主题集合可在 [Warp 主题仓库](https://github.com/warpdotdev/themes) 中找到。
+:::
+
+## Warp 的自定义主题仓库
+
+我们有一个 [托管在 GitHub 上的主题仓库](https://github.com/warpdotdev/themes)。
+
+每个主题在 README 中都有预览图。
+
+"标准"主题和"base16"主题之间的主要区别在于，"标准"主题遵循典型的颜色设置，而"base16"主题遵循 [@chriskempson](https://github.com/chriskempson/base16) 建议的框架。
+
+从该仓库安装主题有 2 种方法：
+
+1. 下载单个文件并按照下面章节中的步骤操作。
+2. 将整个仓库克隆到基于您的操作系统的适当位置：
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    mkdir -p $HOME/.warp
+    cd $HOME/.warp/
+    git clone https://github.com/warpdotdev/themes.git
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    New-Item -Path "$env:APPDATA\warp\Warp\data\" -ItemType Directory
+    Set-Location -Path $env:APPDATA\warp\Warp\data\
+    git clone https://github.com/warpdotdev/themes.git
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal
+    cd ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/
+    git clone https://github.com/warpdotdev/themes.git
+    ```
+  </TabItem>
+</Tabs>
+
+这是一个逐步讲解上述两个步骤的 YouTube 视频。请注意，文件的位置是基于 macOS 的。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=UTYgwD-cLbk" title="向 Warp 添加自定义主题" />
+
+## 如何在 Warp 中使用自定义主题？
+
+1. 首先，创建以下目录：
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    mkdir -p $HOME/.warp/themes/
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    New-Item -Path "$env:APPDATA\warp\Warp\data\themes\" -ItemType Directory
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/themes/
+    ```
+  </TabItem>
+</Tabs>
+
+:::note
+Warp 初次发现新的主题目录可能需要几分钟时间。您可以等待或重启 Warp。之后，对该目录的所有未来更改将在几秒钟内反映出来。
+:::
+
+2. 将您新的自定义主题 yaml 文件添加到该目录：
+
+```bash
+cp ~/Downloads/my_awesome_theme.yaml {{path_to_your_themes_directory_from_step1}}
+```
+
+您的新主题现在应该会出现在可用主题列表中。
+
+## 手动创建自定义主题
+
+Warp 支持使用 .yaml 文件创建自定义主题。
+
+格式可能会有变化，但我们尽力避免破坏性更改并保持向前兼容。我们还计划支持在 Warp 内直接分享和创建自定义主题。
+
+Warp 中的自定义主题具有以下 `.yaml` 结构：
+
+```yaml
+name: Custom Theme # 主题名称
+accent: '#268bd2' # UI 元素的强调色
+cursor: '#95D886' # 输入光标颜色（可选；省略时默认为强调色）
+background: '#002b36' # 终端背景颜色
+foreground: '#839496' # 前景色
+details: darker # 主题是更深色还是更浅色
+terminal_colors: # Ansi 转义颜色
+  bright:
+    black: '#002b36'
+    blue: '#839496'
+    cyan: '#93a1a1'
+    green: '#586e75'
+    magenta: '#6c71c4'
+    red: '#cb4b16'
+    white: '#fdf6e3'
+    yellow: '#657b83'
+  normal:
+    black: '#073642'
+    blue: '#268bd2'
+    cyan: '#2aa198'
+    green: '#859900'
+    magenta: '#d33682'
+    red: '#dc322f'
+    white: '#eee8d5'
+    yellow: '#b58900'
+```
+
+:::note
+每种颜色以十六进制表示，且必须以 `#` 开头。
+:::
+
+* `name`: 主题名称，将显示在主题选择器中。
+* `accent`: 用于 Warp UI 中高亮的颜色
+* `cursor`: 输入光标的颜色（可选；省略时默认为强调色）
+* `background`: 背景颜色
+* `foreground`: 前景色
+* `details`: 用于细节选项的颜色
+  * `darker`: 用于深色主题的颜色
+  * `lighter`: 用于浅色主题的颜色
+* `terminal_colors`: 普通和亮色（共 16 种）颜色的集合，用于其他终端主题（ANSI 颜色）
+
+## 自动创建自定义主题
+
+基于背景图像自动创建新主题。点击主题选择器中的 **+** 按钮 **设置** > **外观** > **主题**，或在 [命令面板](/terminal/command-palette/) 中搜索"打开主题选择器"。
+
+## 浏览主题并使用主题创建器
+
+浏览 Warp 的 [主题仓库](https://github.com/warpdotdev/themes) 获取现成主题，或使用应用内主题创建器为您的自定义主题生成适当的 RGB 值。创建 YAML 文件后，您可以编辑文件以添加背景图像或渐变。
+
+## 背景图像和渐变
+
+要添加背景图像，您可以使用此属性：`background_image:`，后跟要用作背景的图像名称。
+
+:::note
+注意：Warp 目前仅支持 _.jpg_ 文件格式的图片：
+
+* `.jpeg`
+* `.jpg`
+* `.JPEG`
+:::
+
+`.yaml` 配置如下所示：
+
+```yaml
+name: Custom Theme
+accent: '#268bd2'
+cursor: '#95D886'
+background: '#002b36'
+details: darker
+foreground: '#839496'
+
+############################################################### 见下方
+background_image:
+  # 路径相对于您平台的主题目录：
+  #   macOS:   ~/.warp/themes/
+  #   Windows: %APPDATA%\warp\Warp\data\themes\
+  #   Linux:   ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/themes/
+  # 例如，在 macOS 上，下方图片的完整路径为：
+  #   ~/.warp/themes/warp.jpg
+  path: warp.jpg
+  # 不透明度值是必需的，范围从 0 到 100
+  opacity: 60
+############################################################### 见上方
+
+terminal_colors:
+  bright:
+    black: '#002b36'
+    blue: '#839496'
+    cyan: '#93a1a1'
+    green: '#586e75'
+    magenta: '#6c71c4'
+    red: '#cb4b16'
+    white: '#fdf6e3'
+    yellow: '#657b83'
+  normal:
+    black: '#073642'
+    blue: '#268bd2'
+    cyan: '#2aa198'
+    green: '#859900'
+    magenta: '#d33682'
+    red: '#dc322f'
+    white: '#eee8d5'
+    yellow: '#b58900'
+```
+
+要设置渐变，请在 accent 下创建子级别，包含两个键值对：
+
+* "left" 和 "right" 或
+* "top" 和 "bottom"。
+
+```yaml
+accent:
+  top: '#abcdef'
+  bottom: '#fedcba'
+```
+
+```yaml
+accent:
+   left: '#abcdef'
+   right: '#fedcba'
+```
+
+Warp 还支持为背景设置渐变。
+
+```yaml
+# accent 有渐变
+accent:
+  left: '#474747'
+  right: '#ffffff'
+# background 有渐变
+background:
+  top: '#474747'
+  bottom: '#ffffff'
+```
+
+### 贡献
+
+欢迎对此仓库做出贡献！
+
+1. 复刻（Fork）该项目
+2. 使用 `git checkout -b theme/AwesomeTheme` 创建您的分支
+3. 重新生成缩略图
+4. 提交并发起拉取请求（Pull Request）
+
+运行以下脚本来生成缩略图：
+
+```bash
+# 假设您将主题添加到 `standard` 目录：
+python3 ./scripts/gen_theme_previews.py standard
+```
+
+:::note
+注意：我们无法接受包含自定义背景图像的拉取请求，原因如下：
+
+* 许可限制
+* 尽量保持仓库的二进制大小尽可能小（仅包含 yaml 文件）
+
+如果您的主题有意包含自定义背景图像，请在 yaml 中添加注释，提供人们应从哪里下载的链接。
+:::
+
+## 社区
+
+所有其他与 Warp 相关的事情都可以讨论，请 [联系我们](/support-and-community/troubleshooting-and-support/sending-us-feedback/)。
+
+## 开源依赖
+
+我们想提几个帮助启动了 Warp 主题集的开源主题和仓库：
+
+* [iTerm colors pencil](https://github.com/mattly/iterm-colors-pencil)
+* [Alacritty-theme](https://github.com/eendroroy/alacritty-theme)
+* [base16-Alacritty](https://github.com/aarowill/base16-alacritty)
+* [base16](https://github.com/chriskempson/base16)
+* [Solarized](https://ethanschoonover.com/solarized/)
+* [Dracula](https://draculatheme.com/)
+* [Gruvbox](https://github.com/morhetz/gruvbox)

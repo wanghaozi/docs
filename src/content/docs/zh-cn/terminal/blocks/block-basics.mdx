@@ -1,0 +1,121 @@
+---
+title: 终端块基础
+description: >-
+  创建、选择和导航块的基础知识。
+sidebar:
+  label: "块基础"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 基础知识
+
+* 块将您的命令和命令输出分组在一起
+* 输入编辑器可以固定在底部、固定在顶部或从顶部开始。
+* 块从底部向顶部生长。
+* 块按颜色编码。以非零退出码退出的块具有红色背景和红色侧边栏。
+
+:::note
+自己试试！\
+输入 `xyz`（或其他不存在的命令）并按 `ENTER`
+:::
+
+## 创建块
+
+1. 在屏幕底部的输入编辑器中执行一个命令（输入 `ls` 并按 `ENTER`）。
+2. 您的命令和输出被分组到一个块中。
+3. 尝试执行不同的命令（输入 `echo hello` 并按 `ENTER`）。
+4. Warp 将您新创建的块添加到底部（直接在输入编辑器上方）。
+
+<VideoEmbed url="https://www.loom.com/share/4b435c78344d4dc0bb92af5d1da5e219?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="创建块" />
+
+## 选择单个块
+
+<Tabs>
+  <TabItem label="macOS">
+    * 使用鼠标：点击一个块。
+    * 或使用键盘：按 `CMD-UP`（如果输入固定在顶部则为 `CMD-DOWN`）选择最近执行的块，然后使用 `UP ↑` 和 `DOWN ↓` 箭头键导航到所需的块。
+    * 对于较长的块：
+      * 您可以点击"跳转到此块的底部"。
+      * 您可以按 `SHIFT-CMD-UP`/`SHIFT-CMD-DOWN` 滚动到所选块的顶部/底部。
+      * 从 [命令面板](/terminal/command-palette/) 中，您还可以"滚动到所选块的顶部/底部"。
+  </TabItem>
+  <TabItem label="Windows">
+    * 使用鼠标：点击一个块。
+    * 或使用键盘：按 `CTRL-UP`（如果输入固定在顶部则为 `CTRL-DOWN`）选择最近执行的块，然后使用 `UP ↑` 和 `DOWN ↓` 箭头键导航到所需的块。
+    * 对于较长的块：
+      * 您可以点击"跳转到此块的底部"。
+      * 您可以按 `CTRL-SHIFT-UP`/`CTRL-SHIFT-DOWN` 滚动到所选块的顶部/底部。
+      * 从 [命令面板](/terminal/command-palette/) 中，您还可以"滚动到所选块的顶部/底部"。
+  </TabItem>
+  <TabItem label="Linux">
+    * 使用鼠标：点击一个块。
+    * 或使用键盘：按 `CTRL-UP`（如果输入固定在顶部则为 `CTRL-DOWN`）选择最近执行的块，然后使用 `UP ↑` 和 `DOWN ↓` 箭头键导航到所需的块。
+    * 对于较长的块：
+      * 您可以点击"跳转到此块的底部"。
+      * 您可以按 `CTRL-SHIFT-UP`/`CTRL-SHIFT-DOWN` 滚动到所选块的顶部/底部。
+      * 从 [命令面板](/terminal/command-palette/) 中，您还可以"滚动到所选块的顶部/底部"。
+  </TabItem>
+</Tabs>
+
+<VideoEmbed url="https://www.loom.com/share/1cf8546daad548fbbe056c35edb23cdc?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="选择单个块" />
+
+## 选择多个块
+
+<Tabs>
+  <TabItem label="macOS">
+    * 按住 `CMD` 点击另一个块以切换对该块的选择，或
+    * 按住 `SHIFT` 点击另一个块以选择一块范围，或
+    * 使用 `SHIFT-UP ↑` 或 `SHIFT-DOWN ↓` 向上或向下扩展活动选择（具有较粗边框的块）。
+  </TabItem>
+  <TabItem label="Windows">
+    * 按住 `CTRL-SHIFT` 点击另一个块以切换对该块的选择，或
+    * 按住 `SHIFT` 点击另一个块以选择一块范围，或
+    * 使用 `SHIFT-UP ↑` 或 `SHIFT-DOWN ↓` 向上或向下扩展活动选择（具有较粗边框的块）。
+  </TabItem>
+  <TabItem label="Linux">
+    * 按住 `CTRL-SHIFT` 点击另一个块以切换对该块的选择，或
+    * 按住 `SHIFT` 点击另一个块以选择一块范围，或
+    * 使用 `SHIFT-UP ↑` 或 `SHIFT-DOWN ↓` 向上或向下扩展活动选择（具有较粗边框的块）。
+  </TabItem>
+</Tabs>
+
+<VideoEmbed url="https://www.loom.com/share/5058ab0dc3d244d4a2ce576331440821?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="选择多个块" />
+
+## 导航块
+
+<Tabs>
+  <TabItem label="macOS">
+    * **鼠标或滚动条** - 使用鼠标、触控板或滚动条滚动。
+    * **箭头键** - 选择一个块，然后使用 `UP ↑` 和 `DOWN ↓` 在块之间移动。
+    * **页面滚动** - 按 `PAGE UP` 或 `PAGE DOWN` 一次滚动一页。
+    * **跳转到顶部或底部** - 按 `HOME` 或 `END` 滚动到终端输出的顶部或底部。
+    * **在选定的块内滚动** - 按 `SHIFT-CMD-UP` 或 `SHIFT-CMD-DOWN` 滚动到所选块的顶部或底部。
+    * **一次滚动一行** - "将终端输出向上/向下滚动一行"可以在设置 > 键盘快捷键中配置键盘快捷键，或从 [命令面板](/terminal/command-palette/) 访问。
+    * 当命令输出被截断时，Warp 会在顶部固定一个 [粘性命令头](/terminal/blocks/sticky-command-header/)，显示该块对应的命令。点击标题将滚动屏幕到块的起始位置。
+  </TabItem>
+  <TabItem label="Windows">
+    * **鼠标或滚动条** - 使用鼠标、触控板或滚动条滚动。
+    * **箭头键** - 选择一个块，然后使用 `UP ↑` 和 `DOWN ↓` 在块之间移动。
+    * **页面滚动** - 按 `PAGE UP` 或 `PAGE DOWN` 一次滚动一页。
+    * **跳转到顶部或底部** - 按 `HOME` 或 `END` 滚动到终端输出的顶部或底部。
+    * **在选定的块内滚动** - 按 `CTRL-SHIFT-UP` 或 `CTRL-SHIFT-DOWN` 滚动到所选块的顶部或底部。
+    * **一次滚动一行** - "将终端输出向上/向下滚动一行"可以在设置 > 键盘快捷键中配置键盘快捷键，或从 [命令面板](/terminal/command-palette/) 访问。
+    * 当命令输出被截断时，Warp 会在顶部固定一个 [粘性命令头](/terminal/blocks/sticky-command-header/)，显示该块对应的命令。点击标题将滚动屏幕到块的起始位置。
+  </TabItem>
+  <TabItem label="Linux">
+    * **鼠标或滚动条** - 使用鼠标、触控板或滚动条滚动。
+    * **箭头键** - 选择一个块，然后使用 `UP ↑` 和 `DOWN ↓` 在块之间移动。
+    * **页面滚动** - 按 `PAGE UP` 或 `PAGE DOWN` 一次滚动一页。
+    * **跳转到顶部或底部** - 按 `HOME` 或 `END` 滚动到终端输出的顶部或底部。
+    * **在选定的块内滚动** - 按 `CTRL-SHIFT-UP` 或 `CTRL-SHIFT-DOWN` 滚动到所选块的顶部或底部。
+    * **一次滚动一行** - "将终端输出向上/向下滚动一行"可以在设置 > 键盘快捷键中配置键盘快捷键，或从 [命令面板](/terminal/command-palette/) 访问。
+    * 当命令输出被截断时，Warp 会在顶部固定一个 [粘性命令头](/terminal/blocks/sticky-command-header/)，显示该块对应的命令。点击标题将滚动屏幕到块的起始位置。
+  </TabItem>
+</Tabs>
+
+:::note
+在长时间运行或全屏命令期间，`PAGE UP`、`PAGE DOWN`、`HOME` 和 `END` 会转发到正在运行的程序。请查看 [键盘快捷键](/getting-started/keyboard-shortcuts/) 页面上滚动快捷键的完整列表。
+:::
+
+<VideoEmbed url="https://www.loom.com/share/21ebb0a79c1248a98846cba12a4b7020?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="在块之间导航" />

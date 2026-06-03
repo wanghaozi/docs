@@ -1,0 +1,41 @@
+---
+title: 命令搜索
+description: >-
+  使用模糊匹配搜索命令历史、工作流、提示符和代理对话。
+sidebar:
+  label: "命令搜索"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+命令搜索面板提供跨所有终端输入、已保存命令以及 [终端和代理模式](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/) 对话历史的统一搜索。使用它来快速查找和重用命令、工作流或过去的代理交互。
+
+![命令搜索面板](../../../../../assets/terminal/command-search-panel.png)
+
+:::note
+通过在 **设置** > **功能** > **工作流** 中关闭"显示全局工作流"来定制您的命令搜索体验。禁用后，您的搜索将仅包含 YAML 和 Warp Drive 工作流。
+:::
+
+## 快速入门
+
+1. 按 `CTRL-R` 打开命令搜索面板
+2. 在输入框中输入搜索查询
+3. 按 `ENTER` 将选定的命令输入到 Warp 的输入编辑器中
+
+## 搜索过滤器
+
+您可以通过在搜索词前添加以下内容来过滤搜索结果：
+
+<table><thead><tr><th width="215.78436279296875">过滤器</th><th>快捷方式</th></tr></thead><tbody><tr><td>命令历史</td><td><code>history:</code>, <code>h:</code>, 或 <code>H-TAB</code></td></tr><tr><td>提示符</td><td><code>prompts:</code>, <code>p:</code>, 或 <code>P-TAB</code></td></tr><tr><td><a href="/agent-platform/local-agents/interacting-with-agents/">代理模式</a> 历史</td><td><code>ai_history:</code>, <code>a:</code>, 或 <code>A-TAB</code></td></tr></tbody></table>
+
+:::note
+当过滤器激活时，它将在搜索面板中以粗体和斜体显示。
+:::
+
+## 附加功能
+
+* 您可以通过拖动右侧边缘来水平展开菜单
+* 面板支持模糊搜索，并按相关性对结果排序
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/21a6f58a33754ee7913edbff6d33d8d1?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="命令搜索演示" />

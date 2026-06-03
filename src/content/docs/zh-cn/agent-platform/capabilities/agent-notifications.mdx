@@ -1,0 +1,119 @@
+---
+title: Agent 通知
+description: >-
+  Warp 从编码 agent 中展示通知，包括应用内和桌面提醒，让您确切知道 agent 何时需要您的关注。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 从所有受支持的编码 agent 传递通知，因此您始终知道 agent 何时完成任务、遇到错误或需要您的输入。无论您是在不同标签页还是不同应用中，通知都能正常工作。
+
+<VideoEmbed url="https://youtu.be/0l-7fZJClkE" title="Agent notifications in Warp" />
+
+## 通知类型
+
+Warp 根据发生的事件对 agent 通知进行分类：
+
+* **完成（Complete）** - agent 成功完成任务。您可以查看输出并继续工作。
+* **请求（Request）** - agent 被阻塞，需要您的输入。这包括命令批准、权限请求以及 agent 正在等待您的空闲提示。
+* **错误（Error）** - agent 遇到需要您关注的错误。
+
+## 应用内通知
+
+当您在 Warp 中工作但未查看 agent 的标签页时，Warp 提供多种视觉信号。
+
+### Toast 通知
+
+当另一个标签页中的 agent 需要关注时，浮动 toast 通知会出现在 Warp 窗口的角落。Toasts 会在几秒后自动消失。悬停在 toast 上可暂停计时器，或点击直接跳转到 agent 的会话。
+
+最多同时显示两个 toasts。如果有更多通知到达，最早的 toast 将被替换。
+
+<figure>
+![Warp 右上角的 toast 通知，显示 agent 任务已完成，带有"打开对话"操作和键盘快捷键提示](../../../../../assets/agent-platform/toast-notification.png)
+<figcaption>Agent 任务完成通知。</figcaption>
+</figure>
+
+### 通知邮箱
+
+通知邮箱是一个侧边栏面板，将所有 agent 通知集中在一处。通过 Warp 右上角的铃铛图标打开。
+
+<figure>
+![Warp 通知邮箱在窗口右上角打开，带有"所有标签"和"未读"筛选标签、"全部标记为已读"操作和通知条目](../../../../../assets/agent-platform/notification-mailbox.png)
+<figcaption>Agent 通知邮箱。</figcaption>
+</figure>
+
+邮箱包括：
+
+* **筛选标签** - 在**所有标签**、**未读**和**错误**之间切换以查找需要关注的内容。如果没有未读或错误，这些筛选标签不会显示。
+* **全部标记为已读** - 一键清除所有未读指示器
+* **点击导航** - 点击任何通知直接跳转到该 agent 的标签页
+
+**键盘快捷键：**
+
+* `↑` / `↓` - 选择上一条 / 下一条通知
+* `Enter` - 打开所选通知的会话
+* `Shift-Tab` - 循环切换筛选标签
+* `Esc` - 关闭邮箱
+
+### 标签页状态指示器
+
+每个标签页显示反映其 agent 当前状态的图标——工作中、已阻塞、已完成或出错。带有未读通知的标签页显示关注徽章，因此即使打开了许多标签页，您也可以发现哪些会话需要操作。
+
+{/* TODO: 添加显示带有状态图标和关注徽章的标签栏截图 */}
+
+当您导航到 agent 的标签页时，通知会自动标记为已读。
+
+## 桌面通知
+
+当 Warp 在后台或最小化时，agent 通知会作为本机系统级别的桌面提醒传递。这确保即使在使用其他应用程序时，您也能了解 agent 的活动。
+
+{/* TODO: 添加显示 Warp 原生桌面通知的截图 */}
+
+:::note
+桌面通知需要系统权限。如果您未收到它们，请检查操作系统中 Warp 的通知设置。有关设置和故障排除，请参阅[桌面通知](/terminal/more-features/notifications/)。
+:::
+
+## 受支持的 Agent
+
+Agent 通知目前适用于：
+
+* **Warp Agent** - 开箱即用，无需设置。
+* **Claude Code** - 通过通知插件完全支持。
+* **Codex** - 通过原生 Codex 配置完全支持。
+* **OpenCode** - 通过通知插件完全支持。
+
+## 设置通知
+
+对于 **Warp Agent**，通知开箱即用——无需设置。
+
+对于**第三方 CLI agent**，每个 agent 需要一次性设置。过程因 agent 而异：
+
+* **Claude Code** - 通过 Warp 中的功能芯片一键自动安装，或手动插件命令。请参阅 [Claude Code 设置](/agent-platform/cli-agents/claude-code/#setting-up-notifications)。
+* **Codex** - 在 `~/.codex/config.toml` 的 `[tui]` 下添加 `notification_condition = "always"`，然后重启 Codex。请参阅 [Codex 设置](/agent-platform/cli-agents/codex/#setting-up-notifications)。
+* **OpenCode** - 在 OpenCode 配置的 `plugin` 数组中添加 `"@warp-dot-dev/opencode-warp"`。请参阅 [OpenCode 设置](/agent-platform/cli-agents/opencode/#setting-up-notifications)。
+
+<figure>
+![agent 工具栏中的"启用 Claude Code 通知"芯片，工具提示显示"安装 Warp 插件以启用 Warp 中的丰富 agent 通知"](../../../../../assets/agent-platform/enable-cli-agent-notifications.png)
+<figcaption>通知插件安装芯片。</figcaption>
+</figure>
+
+如果自动安装不起作用，或者您通过 SSH 运行 agent，Warp 会在终端中显示包含安装步骤的说明芯片，您可以直接跟随操作。
+
+## 编排运行中的通知
+
+在[多 agent 编排](/agent-platform/cloud-agents/orchestration/)中，父 agent 和每个子 agent 是独立的对话。目前，应用内通知仅在父对话上触发：子 agent 对话被排除在 toast 流和通知邮箱之外，以免邮箱被每个子级的状态变更塞满。
+
+这意味着：
+
+* **Toast 和邮箱** - 监视父对话的 `Complete`、`Request` 和 `Error` 通知。
+* **各子级状态** - 使用 agent 视图上方的编排药丸栏（在 Warp 应用中）或运行页面上的父级 **Sub-agents** 选项卡（在 Oz Web 应用中）查看每个子级的实时状态。两个界面都随子级在 `INPROGRESS`、`SUCCEEDED`、`BLOCKED`、`FAILED`、`ERROR` 和 `CANCELLED` 状态间转换而更新。
+* **受阻的子级** - 如果子级因用户输入而阻塞（例如命令批准请求），从药丸栏打开该子级以解决阻塞。父级的记录也会反映子级的 `BLOCKED` 状态，以便父级可以等待、发送后续指令或取消子级。
+
+## 相关页面
+
+* [桌面通知](/terminal/more-features/notifications/) - 配置系统级通知权限并排查传递问题
+* [管理 Agent](/agent-platform/cloud-agents/managing-cloud-agents/) - 监控所有 agent 对话，按状态筛选，检查会话
+* [多 agent 编排](/agent-platform/cloud-agents/orchestration/) - 父/子模型、运行状态转换和编排药丸栏
+* [第三方 CLI Agent](/agent-platform/cli-agents/overview/) - 受支持的 CLI agent 和 Warp 功能概述
+* [Claude Code](/agent-platform/cli-agents/claude-code/) - 设置和通知插件安装
+* [Codex](/agent-platform/cli-agents/codex/) - 设置和通知配置
+* [OpenCode](/agent-platform/cli-agents/opencode/) - 设置和通知插件安装

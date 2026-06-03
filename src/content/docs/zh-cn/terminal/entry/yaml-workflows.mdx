@@ -1,0 +1,228 @@
+---
+title: YAML 工作流
+description: >-
+  工作流是在 Warp 中更轻松地执行和共享命令的方式。
+sidebar:
+  label: "YAML 工作流"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+:::danger
+您可以继续使用基于 YAML 的工作流，但我们建议使用新的 [Warp Drive 中的工作流](/knowledge-and-collaboration/warp-drive/workflows/) 以获得更好的编辑体验。
+:::
+
+## 什么是工作流
+
+工作流可以通过名称、描述或命令参数轻松参数化和搜索。Warp 团队和社区提供的 [常用工作流](https://github.com/warpdotdev/workflows) 已在应用程序中可用。此外，您可以在本地或针对 Git 仓库创建和作用域工作流。
+
+## 如何使用
+
+* 打开 [命令搜索](/terminal/entry/command-search/) 或工作流搜索 `CTRL-SHIFT-R` 面板以查找工作流。
+* 进入菜单后，开始在搜索栏中键入以过滤现有的工作流（例如 git、android、npm 等）。
+* 当使用 `ENTER` 选择了工作流后，您可以使用 `SHIFT-TAB` 在参数之间循环。
+* 您还可以用鼠标在右侧边缘拖动以水平展开菜单。
+
+:::note
+通过在 **设置** > **功能** > **工作流** 中关闭"显示全局工作流"来定制您的 [命令搜索](/terminal/entry/command-search/) 体验。禁用后，您的搜索将仅包含 YAML 和 Warp Drive 工作流。
+:::
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/yaml_workflows_demo.mp4" label="YAML 工作流演示" />
+
+### 这与别名有何不同？
+
+工作流解决了别名的几个主要痛点，具体如下：
+
+1. 需要上下文切换
+   1. 离开 vim、source dotfiles 或重置 shell
+2. 附上文档的困难
+3. 无法轻松搜索或分享
+4. 无法轻松参数化
+
+## 创建自定义工作流
+
+### 如何使用 YAML 创建工作流
+
+您可以将本地工作流（限定到您的机器）存储在：
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    $HOME/.warp/workflows/
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    $env:APPDATA\warp\Warp\data\workflows\
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/workflows/
+    ```
+  </TabItem>
+</Tabs>
+
+或者，您可以通过将它们保存在 `{{path_to_git_repo}}/.warp/workflows/` 中与团队共享。本地和仓库工作流可以分别在工作流菜单的"我的工作流"和"仓库工作流"选项卡下访问。
+
+查看 [工作流仓库](https://github.com/warpdotdev/Workflows/tree/main/specs) 中的现有工作流规范以获取示例。此外，我们在下面概述了文件格式：
+
+<details>
+
+<summary><a href="https://github.com/warpdotdev/Workflows/blob/main/FORMAT.md">工作流文件格式</a></summary>
+
+工作流文件格式是一个 [yaml](https://yaml.org/) 文件，必须具有 `.yml` 或 `.yaml` 扩展名。如果您是 YAML 新手并想了解更多，请参见 [在 Y 分钟内学会 YAML](https://learnxinyminutes.com/docs/yaml/)。
+
+---
+
+**`name`**
+
+工作流的名称。必填。
+
+**`command`**
+
+选择工作流时执行的命令。必填。
+
+**`tags`**
+
+用于对工作流进行分类的标签数组。可选。
+
+```yaml
+tags: ["git", "GitHub"]
+```
+
+**`description`**
+
+工作流的描述及其作用。可选。
+
+**`source_url`**
+
+工作流最初来源的 URL。为归属目的在 [commands.dev](https://www.commands.dev/) 上显示。可选。
+
+**`author`**
+
+工作流的原作者。例如，如果此工作流来自 StackOverflow，则 `author` 为 StackOverflow 帖子的作者。为归属目的在 [commands.dev](https://www.commands.dev/) 上显示。可选。
+
+**`author_url`**
+
+工作流原作者的 URL。例如，如果此工作流来自 StackOverflow，则 `author_url` 为 StackOverflow 作者的个人资料页面。为归属目的在 [commands.dev](https://www.commands.dev/) 上显示。可选。
+
+**`shells`**
+
+此工作流有效的 shell 列表。如果未指定，则假定该工作流在所有 shell 中均有效。必须是 `zsh`、`bash` 或 `fish` 之一。
+
+**`arguments`**
+
+工作流可以有参数化的参数，以指定工作需要用户填写的部分。
+
+您可以通过用双花括号（`{{<argument>}}`）包围来指定工作流命令的哪部分映射到参数。
+
+例如，工作流命令：
+
+```bash
+for {{variable}} in {{sequence}}; do
+  {{command}}
+done
+```
+
+包含 3 个参数：`variable`、`sequence` 和 `command`。
+
+**`arguments.name`**
+
+参数的名称。参数名称在命令中用于指定参数的范围。必填。
+
+```yaml
+name: Example Workflow
+command: echo {{string}}
+arguments:
+  - name: string
+    description: 要回显的值
+```
+
+**`arguments.description`**
+
+参数的描述。在 [commands.dev](https://www.commands.dev/) 和 Warp 中都会显示，以帮助用户填写工作流参数。可选。
+
+**`arguments.default_value`**
+
+参数的默认值。如果指定，`default_value` 将在命令中替换参数名称。可选。
+
+---
+
+</details>
+
+### 在哪里保存工作流
+
+本地工作流作用域限定到您的机器。仓库工作流作用域限定到 Git 仓库，任何克隆了该仓库的人都可以访问。
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    # 本地工作流路径
+    $HOME/.warp/workflows/
+
+    # 仓库工作流路径
+    {{path_to_git_repo}}/.warp/workflows
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    # 本地工作流路径
+    $env:APPDATA\warp\Warp\data\workflows\
+
+    # 仓库工作流路径
+    {{path_to_git_repo}}\.warp\workflows
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    # 本地工作流路径
+    ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/workflows/
+
+    # 仓库工作流路径
+    {{path_to_git_repo}}/.warp/workflows
+    ```
+  </TabItem>
+</Tabs>
+
+#### 本地工作流
+
+首先，在工作流子目录中创建
+
+<Tabs>
+  <TabItem label="macOS">
+    ```bash
+    mkdir -p $HOME/.warp/workflows/
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    ```powershell
+    New-Item -Path "$env:APPDATA\warp\Warp\data\workflows\" -ItemType Directory
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/warp-terminal/workflows/
+    ```
+  </TabItem>
+</Tabs>
+
+将您的工作流 `.yaml` 文件添加到该目录；如果文件格式有效，Warp 应自动将其加载到工作流菜单中。
+
+`cp ~/path/to/my_awesome_workflow.yaml {{path_to_local_workflow_folder}}`
+
+#### 仓库工作流
+
+您可以像添加本地工作流一样添加仓库工作流。在仓库的根目录中创建工作流文件夹，并像这样保存您的 `.yaml` 文件：
+
+```
+cd {{repository_path}}
+mkdir -p .warp/workflows/
+cp ~/path/to/my_awesome_workflow.yaml {{path_to_local_workflow_folder}}
+```
+
+#### 全局工作流
+
+您可以通过复刻 [工作流仓库](https://github.com/warpdotdev/workflows/tree/main/specs) 并打开拉取请求，贡献可供其他 Warp 用户使用的工作流。详情请参见 [贡献](https://github.com/warpdotdev/workflows#contributing) 部分。

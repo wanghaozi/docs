@@ -1,0 +1,18 @@
+---
+title: 终端对比概览
+description: >-
+  将 Warp 的性能和终端功能支持与其他流行的终端模拟器（如 iTerm2、Alacritty 和 WezTerm）进行比较。
+---
+
+Warp 是一个用 Rust 构建的现代终端，具有 GPU 渲染、代理支持和类似代码编辑器的输入。使用此部分了解 Warp 在原始性能和功能覆盖方面与其他流行终端的对比情况。
+
+## Warp 的不同之处
+
+* **AGPL v3 开源** — Warp 的客户端位于 [`warpdotdev/warp`](https://github.com/warpdotdev/warp)。您可以阅读代码、从源码构建并贡献。参见 [贡献给 Warp](/support-and-community/community/contributing/) 了解流程。
+* **内置代理** — Warp 附带 Warp Agent（由 Oz 提供支持），并支持在同一个终端中使用第三方 CLI 代理，如 Claude Code、Codex 和 Gemini CLI。
+* **现代编辑** — 光标放置、多行输入、基于块的输出和集成代码审查，使用体验类似文本编辑器而非传统终端模拟器。
+* **跨平台 Rust 核心** — Warp 在 macOS、Linux 和 Windows 上通过统一的 Rust + GPU 渲染代码库运行。
+
+## 基准测试
+
+* [性能基准测试](/terminal/comparisons/performance/) — 比较 Warp 与 Terminal.app、iTerm2、Alacritty 和 WezTerm 的 VTE 和 Termbench 结果。

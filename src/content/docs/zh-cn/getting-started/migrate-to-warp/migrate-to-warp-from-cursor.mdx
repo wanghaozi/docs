@@ -1,0 +1,77 @@
+---
+title: 从 Cursor 迁移到 Warp
+description: >-
+  从 Cursor 切换到 Warp 时重新配置终端和智能体设置，或将 Warp 作为智能体终端与 Cursor 一起使用。
+---
+
+Warp 为 Cursor 用户提供了两种迁移路径：保留 Cursor 作为编辑器，使用 Warp 进行终端和智能体工作；或者完全迁移到 Warp 内置的代码编辑器和智能体模式。本页将介绍这两种选项。
+
+## Warp 可以帮助迁移的内容
+
+Warp 没有一键导入 Cursor 的工具。Cursor 基于 VS Code 代码库，其终端设置存储在 `settings.json` 中，键名如 `terminal.integrated.fontFamily` 和 `terminal.integrated.defaultProfile.*`。由于该文件可读，Warp 的智能体可以将匹配的终端值翻译成 Warp 的 `settings.toml`。在 Cursor 中，打开命令面板并选择**首选项：打开用户设置 (JSON)** 以参考你的设置，同时重新配置 Warp。
+
+## 使用 Warp 的智能体迁移设置（推荐）
+
+迁移 Cursor 终端设置的最快方式是让 Warp 的智能体直接翻译你的 `settings.json`。Warp 自带一个 [`settings.toml` 文件](/terminal/settings/)和一个内置的 `modify-settings` 技能，让智能体读取你现有的配置并将等效的值写入 Warp 的设置中。
+
+1. 在 Warp 应用中，打开一个新标签页，使用 `⌘+I`（macOS）或 `Ctrl+I`（Linux/Windows）切换到[智能体模式](/agent-platform/local-agents/overview/)。
+2. 将以下提示复制粘贴到智能体模式输入框中，然后按 `Enter`。
+
+   > 读取我的 Cursor `settings.json`（macOS 上位于 `~/Library/Application Support/Cursor/User/settings.json`），并使用 `modify-settings` 技能将等效的终端设置（字体、光标样式、默认配置文件）移植到我的 Warp `settings.toml` 中。在应用前显示差异对比。
+
+3. 查看建议的差异对比，然后批准更改。Warp 会热重载 `settings.toml`，因此更改会立即生效。
+
+如果你希望通过设置 UI 手动配置每个设置，下面的步骤涵盖了最常见的情况。
+
+## 需要手动重新配置的内容
+
+### 终端设置
+
+Cursor 中的终端设置遵循与 VS Code 相同的架构。迁移步骤与 VS Code 终端迁移相同。请参阅[从 VS Code 终端迁移到 Warp](/getting-started/migrate-to-warp/migrate-to-warp-from-vs-code-terminal/)了解有关 shell、字体、主题和键位设置的逐步指导。
+
+### 智能体和 AI 设置
+
+Cursor 的 Composer 和 Agent 功能没有一对一的迁移路径；它们映射到不同的 Warp 概念。
+
+* **Composer / Agent** - 在 Cursor 中，这些功能对应 Warp 的[智能体模式](/agent-platform/local-agents/overview/)。在任何标签页中启动智能体对话。
+* **规则文件** - Warp 使用存储在 Warp Drive 中或作为 `AGENTS.md`（或 `WARP.md`）提交到仓库的[规则](/agent-platform/capabilities/rules/)。在智能体模式下运行 `/init` 生成 `AGENTS.md`，或直接复制你的 `.cursorrules` 内容。
+* **MCP 服务器** - Warp 原生支持 MCP。请参阅 [MCP](/agent-platform/capabilities/mcp/) 了解配置。
+
+### 模型选择
+
+Cursor 允许你为每个对话选择模型。Warp 也提供同样的功能；在任何智能体对话中使用模型选择器。请参阅[模型选择](/agent-platform/inference/model-choice/)。
+
+### 键位
+
+Warp 的[键盘快捷键](/getting-started/keyboard-shortcuts/)与 Cursor 不同。最值得注意的是，`⌘+I`（在 Linux/Windows 上是 `Ctrl+I`）用于在终端和智能体模式之间切换。在终端模式下，你也可以按 `⌘+Enter`（或 `Ctrl+Shift+Enter`）作为进入智能体模式的替代快捷键。
+
+## 选择你的设置
+
+### 将 Warp 与 Cursor 一起使用
+
+保留 Cursor 作为编辑器，用于紧密的文件内 AI 辅助，并将 Warp 作为终端用于：
+
+* 长时间运行的命令和 SSH。
+* 执行命令（不仅仅是编辑文件）的[智能体模式](/agent-platform/local-agents/overview/)对话。
+* 管理差异对比的[代码审查](/code/code-review/)。
+* 团队知识的 [Warp Drive](/knowledge-and-collaboration/warp-drive/)。
+
+### 用 Warp 取代 Cursor
+
+Warp 内置的[代码编辑器](/code/code-editor/)支持语言服务器协议（LSP）、[文件树](/code/code-editor/file-tree/)、[查找和替换](/code/code-editor/find-and-replace/)以及 [Vim 键位](/code/code-editor/code-editor-vim-keybindings/)。结合智能体模式、代码审查和 Warp Drive，无需单独的编辑器即可在 Warp 中实现完整的 Cursor 工作流。
+
+## Warp 原生等效功能
+
+使用此表查找你在切换后可能寻找的 Cursor 功能在 Warp 中的对应项：
+
+| Cursor 中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| Composer / Agent 面板 | 任何标签页中的[智能体模式](/agent-platform/local-agents/overview/)（macOS 上用 `⌘+I` 或 Linux/Windows 上用 `Ctrl+I` 切换） |
+| 智能体标签页 | 跨标签页的多个[并行智能体](/agent-platform/local-agents/overview/) |
+| `.cursorrules` | 项目根目录下的 `AGENTS.md` / `WARP.md`，自动识别为[规则](/agent-platform/capabilities/rules/) |
+| MCP 服务器 | [MCP](/agent-platform/capabilities/mcp/) |
+| 每个对话的模型选择 | [模型选择器](/agent-platform/inference/model-choice/) |
+| 代码库索引 | [代码库上下文](/agent-platform/capabilities/codebase-context/) |
+| 内联差异审查 | [代码审查](/code/code-review/) |
+
+请参阅[在 Warp 中编码](/getting-started/quickstart/coding-in-warp/)了解开发工作流概述。

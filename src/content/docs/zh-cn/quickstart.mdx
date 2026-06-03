@@ -1,0 +1,119 @@
+---
+title: Warp 快速入门
+description: >-
+  大约 10 分钟即可开始使用 Warp。安装、运行你的第一条命令、与智能体对话，发现 Warp 的与众不同之处。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+大约 10 分钟即可开始使用 Warp。安装应用、使用 Blocks（块）和现代化文本编辑器运行你的第一条命令，然后启动智能体对话来编写代码、调试问题或探索你的代码库——所有这些都通过终端内的自然语言提示完成。
+
+---
+
+## 前提条件
+
+* **macOS、Windows 或 Linux** - 请参阅[安装与设置](/getting-started/quickstart/installation-and-setup/)了解每个平台的最低要求。
+
+---
+
+## 1. 安装 Warp
+
+从 [warp.dev](https://www.warp.dev/download) 下载 Warp，然后按照适用于你平台的安装程序进行操作。
+
+<Tabs>
+  <TabItem label="macOS">
+    下载并将 Warp 拖入 Applications 文件夹，或使用 Homebrew 安装：
+
+    ```bash
+    brew install --cask warp
+    ```
+  </TabItem>
+  <TabItem label="Windows">
+    下载并运行安装程序，或使用 WinGet 安装：
+
+    ```powershell
+    winget install Warp.Warp
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    从 [warp.dev/download](https://www.warp.dev/download) 下载适用于你的发行版的软件包。对于 Debian/Ubuntu：
+
+    ```bash
+    sudo apt install ./warp-terminal.deb
+    ```
+
+    查看[安装与设置](/getting-started/quickstart/installation-and-setup/)了解所有 Linux 选项。
+  </TabItem>
+</Tabs>
+
+启动 Warp 后，你会看到一个等待输入的终端会话。你可以选择登录账户（右上角），或者跳过并立即开始使用 Warp。
+
+## 2. 运行命令并查看 Blocks
+
+运行任何常用的命令，例如：
+
+```bash
+ls -la
+```
+
+你会注意到输出看起来与传统终端不同。每条命令及其输出都被分组到一个 **Block**（块）中——这是一个独立的单元，你可以独立地复制、搜索、筛选和导航。Blocks 是 Warp 组织终端内容的基础。
+
+**使用 Blocks 可以做什么：**
+
+* 点击一个 Block 将其选中，然后按 `⌘C`（macOS）或 `Ctrl+Shift+C`（Windows/Linux）复制输出
+* 使用 `⌘↑`/`⌘↓`（macOS）或 `Ctrl+↑`/`Ctrl+↓`（Windows/Linux）在 Blocks 之间导航
+* 点击 Block 上的筛选图标，在其输出内搜索
+
+在 [Block 基础](/terminal/blocks/block-basics/)中了解更多有关导航、选择和处理输出的内容。
+
+## 3. 尝试输入编辑器
+
+Warp 的输入不是标准终端提示符，而是一个真正的文本编辑器。尝试以下功能：
+
+* **多行编辑** - 按 `Shift+Enter` 添加新行。尝试输入三个独立的 `echo` 行，每行之间按 `Shift+Enter`，然后按 `Enter` 一次性全部运行。
+* **点击定位光标** - 在输入内容中的任意位置点击以移动光标，就像文本编辑器一样。
+* **选择和编辑** - 点击并拖动以选择文本，然后输入以替换它。
+
+以上三条命令按顺序运行，每条命令都会产生自己的 Block。无需一次只运行一条命令。
+
+在[现代化文本编辑](/terminal/editor/)中了解更多关于光标移动、选择和多行输入的内容。
+
+## 4. 体验自动建议和自动补全
+
+开始输入你之前运行过的命令。你会看到基于你的 shell 历史记录内联显示一个淡化的建议。按 `→` 立即接受。
+
+在输入时按 `Tab` 查看命令、标志和文件路径的自动补全建议。Warp 提供比你的 shell 原生功能更强大的补全能力。
+
+如果你输错了命令，Warp 会检测到错误并建议更正。接受修正或忽略并继续。
+
+了解更多关于[自动建议](/terminal/command-completions/autosuggestions/)和[Tab 补全](/terminal/command-completions/completions/)的信息。
+
+## 5. 向智能体提出第一个问题
+
+到目前为止，你一直在**终端模式**下操作，像往常一样运行 shell 命令。Warp 还提供了**智能体模式**，这是一个专用的对话视图，你可以使用自然语言与 Warp 内置的智能体 Oz 进行交互。
+
+按 `⌘↩`（macOS）或 `Ctrl+Shift+Enter`（Windows/Linux）启动智能体对话。然后输入提示：
+
+```
+解释这个项目的架构
+```
+
+Oz 会读取你的代码库，理解其结构，并返回一个上下文感知的解释。你可以在此基础上提出后续问题，让 Oz 编写或重构代码、调试错误，或代表你运行命令——所有这些都在同一对话中完成。
+
+:::note
+你并不总是需要手动切换模式。如果你在终端模式下输入自然语言提示，Warp 会自动检测并提供将其发送给智能体。
+:::
+
+Warp 也支持第三方 CLI 智能体，如 Claude Code 和 Codex。了解更多关于[第三方 CLI 智能体](/agent-platform/cli-agents/overview/)的信息。
+
+要了解更多关于在模式间切换的内容，请参阅[终端和智能体模式](/agent-platform/local-agents/interacting-with-agents/terminal-and-agent-modes/)。
+
+---
+
+## 接下来可以探索什么
+
+现在你已经掌握了基础知识，来看看使 Warp 成为一个完整开发环境的功能：
+
+* **[自定义 Warp](/getting-started/quickstart/customizing-warp/)** —— 选择主题、配置提示符、选择你的 AI 模型，并从其他终端导入快捷键。
+* **[代码库上下文](/agent-platform/capabilities/codebase-context/)** —— 索引你的 Git 仓库，使智能体能够理解你的代码，并在大型多仓库系统中提供上下文感知的回答。
+* **[云端智能体](/agent-platform/cloud-agents/overview/)** —— 在后台运行智能体，用于 PR 审查、问题分类、依赖更新和其他不需要你立即关注的任务。
+* **[键盘快捷键](/getting-started/keyboard-shortcuts/)** —— 面向高级用户的完整快捷键参考。

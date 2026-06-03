@@ -1,0 +1,58 @@
+---
+title: Oz 中的 Harnesses
+description: >-
+  运行第三方 harness，如 Claude Code 或 Codex，作为云 Agent。它们继承与 Warp Agent 相同的触发器、环境、密钥和可观测性。
+sidebar:
+  label: "概述"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Oz 可以运行第三方 Agent harness（如 [Claude Code](/agent-platform/cloud-agents/harnesses/claude-code/) 和 [Codex](/agent-platform/cloud-agents/harnesses/codex/)）作为云 Agent，与 Warp Agent 并存。您选择适合任务的 harness（agent 运行时）；运行周围的平台保持不变。
+
+观看此演示，了解如何将 Warp Agent、Claude Code 或 Codex 作为云 Agent 运行。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=ZUYyuA5i1VU" title="使用 Oz 在云端运行任何 Agent - Claude Code、Codex 或 Warp Agent" />
+
+## 不变的内容
+
+第三方 Harness 继承与 Warp Agent 相同的 Oz 平台特性：
+
+* **触发器** — Slack、Linear、计划、CI 和 API [触发器](/agent-platform/cloud-agents/triggers/)可以启动任何 Harness。
+* **环境和密钥** — 重用相同的[环境](/agent-platform/cloud-agents/environments/)和[Agent 密钥](/agent-platform/cloud-agents/secrets/)。
+* **技能和规则** — 已保存的[技能](/agent-platform/capabilities/skills/)和[规则](/agent-platform/capabilities/rules/)跨 Harness 适用。
+* **可观测性** — 每次运行在 [Oz 仪表板](/agent-platform/cloud-agents/managing-cloud-agents/)中产生记录和可共享的会话。
+
+## 计费
+
+Claude Code 和 Codex 各自使用您提供的凭据直接调用其提供商，提供商向您的账户收取推理费用。Warp 为运行的沙箱计量[计算积分](/support-and-community/plans-and-billing/credits/#compute-credits)，并为编排层计量[平台积分](/support-and-community/plans-and-billing/platform-credits/)。
+
+## 如何切换 Harness
+
+### Warp 应用
+
+在云模式中，从输入上方的 **Agent harness** 下拉菜单中选择一个 Harness。
+
+<figure style={{ maxWidth: "375px" }}>
+![Warp 应用中的 Agent harness 下拉菜单显示云 Agent 的第三方 harness 选项。](../../../../../../assets/agent-platform/cloud-agent-harness-selector-warp-app.png)
+<figcaption>Agent harness 选择器。</figcaption>
+</figure>
+
+:::note
+您可以通过创建新的**云 Agent** 标签页或使用 `/cloud-agent` 斜杠命令进入云模式。
+:::
+
+### Oz Web 应用
+
+在新运行或新计划窗格中，在 **Harness** 字段中选择 harness。
+
+### API 和 SDK
+
+在 agent 配置上设置 `harness` 字段。请参见 [API 参考](/reference/api-and-sdk/)了解确切的字段名称。
+
+## 相关页面
+
+* [Warp Agent 与 Oz](/agent-platform/cloud-agents/harnesses/warp-agent/) — Oz 的默认第一方 Harness。
+* [Claude Code 与 Oz](/agent-platform/cloud-agents/harnesses/claude-code/) — Claude Code 作为云 Harness。
+* [Codex 与 Oz](/agent-platform/cloud-agents/harnesses/codex/) — Codex 作为云 Harness。
+* [身份验证](/agent-platform/cloud-agents/harnesses/authentication/) — 连接凭据并启动 Claude Code 或 Codex。
+* [Warp 终端中的第三方 CLI Agent](/agent-platform/cli-agents/overview/) — 本地运行 Claude Code、Codex 和其他 CLI Agent。

@@ -1,0 +1,66 @@
+---
+title: "Linear MCP：检索问题数据"
+description: >-
+  将 Linear MCP 服务器添加到 Warp，直接从终端查询你的问题、任务和分配。
+tags:
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+了解如何在 Warp 中连接 Linear MCP 服务器，使你的代理能够直接从你的 Linear 工作区访问实时数据——如问题、工单和用户分配。
+
+<VideoEmbed url="https://youtu.be/jxeMfuS1pXk" />
+
+---
+
+#### 概述
+
+本教程涵盖如何：
+
+* 在 Warp 中添加和配置 Linear MCP 服务器
+* 使用 MCP 查询和检索问题数据
+
+### 1. 添加 Linear MCP 服务器
+
+#### 在 Warp 中添加新服务器
+
+* 在 Warp 中，打开 Warp Drive → 个人 → MCP 服务器。\
+  或者，按 `⌘P` 并输入 **MCP servers** 打开面板。
+* 点击**添加新服务器**。
+* 粘贴此 JSON
+
+```json
+{
+  "linear": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.linear.app/sse"],
+      "env": {},
+      "working_directory": null
+    } 
+}
+```
+
+* 点击保存。
+* Warp 将立即启动服务器。\
+* 你现在应该看到 Linear MCP 显示为运行中。
+
+---
+
+### 2. 测试连接
+
+保存后，重新尝试你之前的查询：
+
+```
+Show me all Linear tasks assigned to me.
+```
+
+Warp 的代理现在将调用 Linear MCP 服务器来获取你的数据。你可以点击响应面板内部查看**原始 API 响应**——非常适合调试或了解正在获取的内容。
+
+如果服务器无法找到你的用户，可能是由于你的 Linear 登录地址所致。尝试查询队友以确认连接：
+
+```
+Show tasks assigned to [teammate name].
+```
+
+验证后，代理可以显示完整的任务列表。

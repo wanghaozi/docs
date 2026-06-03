@@ -1,0 +1,70 @@
+---
+title: 远程控制
+description: >-
+  将任何第三方 agent 会话发布到云端，以便您可以监控进度、引导 agent 并从手机或另一台计算机查看进展。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+远程控制（Remote Control）让您只需单击一下即可将正在运行的第三方 agent 会话——例如 Claude Code、Codex 或 OpenCode——发布到云端。发布后，您可以从手机、Web 浏览器或另一台计算机监控进度、审查输出和引导 agent，而无需停留在原始机器上。请参阅[第三方 CLI Agent](/agent-platform/cli-agents/overview/) 获取受支持 agent 的完整列表。
+
+这对于长时间运行的 agent 任务特别有用。启动编码 agent，发布会话，然后随时回来查看。
+
+<VideoEmbed url="https://youtu.be/6xsngiSX2KQ" title="编码 agent 会话的远程控制" />
+
+:::note
+远程控制建立在 [Agent 会话共享](/agent-platform/local-agents/session-sharing/)之上。它使用相同的基础设施来发布会话和生成可共享的链接。
+:::
+
+## 关键能力
+
+* **一键发布** - 点击 agent 实用栏中的 `/remote-control` 芯片立即发布。可共享链接自动复制到剪贴板。
+* **从任何地方监控** - 从手机、平板或另一台计算机检查 agent 进度——Web 查看器无需安装。
+* **远程引导** - 发送输入、批准命令或重定向 agent，无需在原机器上操作
+* **团队访问** - 与团队成员共享链接，以便他们观察或协作处理会话
+* **持久的云访问** - 会话在活动期间保持同步。新的 agent 输出和终端活动对所有查看者实时显示。当您关闭或停止发布会话时，同步停止。
+
+## 工作原理
+
+当您通过远程控制发布会话时，Warp 将会话状态上传到云端并生成可共享的链接。该链接保持活动状态并同步——任何新的 agent 输出、工具使用或终端活动都会对所有连接的查看者实时显示。您控制谁可以查看以及谁可以引导 agent。
+
+远程控制与标准 [Agent 会话共享](/agent-platform/local-agents/session-sharing/)在目的上有所不同：会话共享是为实时协作工作设计的（结对编程、交互式调试），而远程控制是为您离开机器时的异步监控和引导设计的。
+
+## 发布会话
+
+1. 在 Warp 中启动或恢复第三方 agent 会话（例如 Claude Code 或 Codex）。
+2. 点击 agent 实用栏中的 **`/remote-control`** 芯片。Warp 将会话发布到云端并将可共享链接复制到剪贴板。
+
+<figure>
+![agent 实用栏中的 /remote-control 芯片，带有"启动远程控制"工具提示。](../../../../../assets/agent-platform/remote-control.png)
+<figcaption>agent 实用栏中的 /remote-control 芯片。</figcaption>
+</figure>
+
+3. **共享链接已复制** toast 通知确认链接已在剪贴板上，窗格的状态图标更改为红色广播指示器，表示发布处于活动状态。
+4. 在另一台设备上打开链接，或与团队成员共享。
+
+要停止发布，点击 agent 实用栏中的**停止共享**按钮。状态图标将返回正常状态，确认会话不再可远程访问。
+
+## 访问远程会话
+
+已发布的会话可从以下位置访问：
+
+* **Web 浏览器** - 在任何浏览器中打开共享链接。无需安装应用。
+* **Warp 桌面应用** - 将链接粘贴到另一台机器上的 Warp 中以获得完整的桌面体验
+* **移动设备** - 在手机或平板浏览器上打开链接以在离开办公桌时查看进度
+
+Web 体验镜像桌面视图，显示完整的 agent 活动，包括思考步骤、工具使用和终端输出。
+
+## 权限
+
+当您发布会话时，您控制访问：
+
+* **查看访问** - 任何拥有链接的人都可以观看会话、查看 agent 输出和审查终端活动
+* **编辑访问** - 您可以授予查看者发送输入、批准命令或重定向 agent 的权限
+
+只有您（发布者）可以撤销访问或停止发布会话。
+
+## 相关页面
+
+* [Agent 会话共享](/agent-platform/local-agents/session-sharing/)
+* [第三方 CLI Agent](/agent-platform/cli-agents/overview/)
+* [查看云 Agent 运行](/agent-platform/cloud-agents/viewing-cloud-agent-runs/)

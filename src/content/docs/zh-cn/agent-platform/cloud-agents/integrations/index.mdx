@@ -1,0 +1,35 @@
+---
+title: 集成概述
+description: >-
+  通过创建环境、连接 GitHub 以及启用 Agent 运行您的代码和自动化开发工作流，配置 Warp 的第一方集成。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 集成让您的团队直接从终端或从 [Slack](/agent-platform/cloud-agents/integrations/slack/) 和 [Linear](/agent-platform/cloud-agents/integrations/linear/) 等工具触发 Agent。设置完成后，Agent 可以：
+
+* 读取对话或问题上下文
+* 在您的代码库中远程运行代码
+* 打开拉取请求并代表您执行其他多步骤 Agent 工作流
+
+如果您正在决定 agent 应从计划、Slack、Linear、GitHub Actions、Oz CLI 还是 API 运行，请参阅[使用计划和触发器运行无人值守 Agent](/guides/agent-workflows/how-to-run-unattended-agents/)。
+
+:::note
+有关 Warp 集成和可配置环境的完整演练，请参阅[集成设置](/reference/cli/integration-setup/)。
+:::
+
+所有这些均由 [Oz CLI](/reference/cli/) 提供支持。
+
+---
+
+## 开始使用
+
+使用下面的设置演练快速了解环境如何连接到集成，然后选择匹配您下一步目标的指南。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=ahFfInVD0HQ" />
+
+* [集成快速入门](/agent-platform/cloud-agents/integrations/quickstart/) - 从 Slack 触发您的第一个 Agent 并从头到尾观看运行。
+* [集成设置](/reference/cli/integration-setup/) - 更详细地配置环境、GitHub 授权、CLI 标志和集成。
+* [Slack](/agent-platform/cloud-agents/integrations/slack/) 和 [Linear](/agent-platform/cloud-agents/integrations/linear/) - 从团队对话、问题和评论中触发 Agent。
+* [GitHub Actions](/agent-platform/cloud-agents/integrations/github-actions/) - 从 CI 工作流和仓库事件运行 Agent。
+* [GitLab](/agent-platform/cloud-agents/integrations/gitlab/)、[Bitbucket](/agent-platform/cloud-agents/integrations/bitbucket/) 和 [Azure DevOps](/agent-platform/cloud-agents/integrations/azure-devops/) - 使用令牌和 Warp 管理的密钥连接非 GitHub 仓库。
+* [AWS、GCP 和其他云提供商](/agent-platform/cloud-agents/integrations/cloud-providers/) - 为云 Agent 提供对云服务的短时访问。

@@ -1,0 +1,61 @@
+---
+title: Slack 集成
+sidebar:
+  label: "Slack"
+description: >-
+  从 Slack 触发 Agent 以运行云任务、跟踪进度和创建拉取请求。
+---
+
+Slack 集成让您的团队直接从 Slack 对话触发云 Agent。在消息中标记 @Oz 或向机器人发送 DM 以启动云 Agent，它会克隆您的仓库、处理任务、发布进度更新，并在同一线程中打开拉取请求。
+
+### 概述
+
+当您在消息中标记 **@Oz** 或向机器人发送 DM 时，Warp 将在云端启动 agent，克隆环境中定义的仓库，并开始处理任务，充分利用您的代码库和 Slack 线程的上下文。
+
+Agent 在工作时保持您的更新，使用您的 GitHub 账户生成拉取请求，并共享实时远程会话的链接，以便您可以实时观看或引导工作流。
+
+### 触发 Agent
+
+您可以通过三种方式启动 agent：
+
+* **在频道消息中标记 @Oz**
+* **在线程内标记 @Oz**
+* **直接向 Oz 发送 DM**
+
+### 监控 Agent 进度
+
+Agent 通过以下方式在 Slack 中让您了解情况：
+
+* 显示运行进度的活动更新
+* 不断演变的任务列表和时间线
+* 指示已完成主要步骤的检查点
+* 运行会话的共享链接
+
+### 拉取请求和输出
+
+Agent 完成后，它将：
+
+* 使用您的 GitHub 账户提交更改
+* 通过 GitHub CLI 创建拉取请求
+* 生成引用您的 Slack 请求的清晰标题和描述
+* 将摘要和 PR 链接直接发布到 Slack 线程
+
+---
+
+### 要求
+
+* **团队成员资格** - 需要成为 [Warp 团队](/knowledge-and-collaboration/teams/)的一部分。
+* **计划和积分** - 您的团队必须在支持集成的计划上（Build、Max 或 Business）并至少有 20 个可用积分。
+* **GitHub 授权** - 您必须在首次触发集成请求时授权 **Warp GitHub 应用**。
+
+### 如何配置 Slack 集成
+
+#### 1. 创建环境
+
+环境定义 Agent 在云端运行代码所需的一切。
+
+#### 2. 创建 Slack 集成
+
+```bash
+oz integration create slack --environment <ENV_ID>
+```

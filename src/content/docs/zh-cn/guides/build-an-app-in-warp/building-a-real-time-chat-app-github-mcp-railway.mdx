@@ -1,0 +1,237 @@
+---
+title: 构建实时聊天应用（GitHub MCP + Railway）
+description: >-
+  使用 Python、FastAPI 和 JavaScript 构建并部署实时聊天应用——从构思到生产，全程在 Warp 内完成。
+sidebar:
+  label: "构建实时聊天应用"
+tags:
+  - "build-app"
+  - "mcp"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+在本教程中，我们将跟随 Tech With Tim 的《高级氛围编码教程与 Warp》视频。\
+\
+你将学习如何使用 **Warp**（智能开发环境）从零开始构建和部署一个全栈 AI 驱动的应用——包括使用 **GitHub MCP 服务器**进行设置、调试和部署。
+:::
+
+<VideoEmbed url="https://www.youtube.com/watch?v=Pxp9mB51U-A" title="Advanced Vibe Coding Tutorial w/ Warp (Build & Deploy Apps)" />
+
+### 概述
+
+本视频展示了如何从**构思 → 可工作的 Web 应用 → 生产部署**，全程在 Warp 内完成。\
+项目：一个使用 **Python（FastAPI）** 和 **JavaScript 前端**构建、通过 **Railway** 部署、并通过 **MCP（Model Context Protocol）** 与 **GitHub** 集成的**实时聊天应用**。
+
+<Steps>
+
+1. #### 设置与安装
+
+   :::note
+   Warp 对 Mac、Linux 和 Windows 免费。从 [https://www.warp.dev](https://www.warp.dev/) 下载并使用账户登录。
+   :::
+
+   打开 Warp 后，你会看到三种核心模式：
+
+   * **自动模式** – 检测你是在输入命令还是 AI 提示
+   * **终端模式** – 仅用于标准 shell 命令（`ls`、`pwd` 等）
+   * **代理模式** – 用于对话式 AI 提示（"帮我构建一个应用"、"添加功能 X"等）
+
+   你可以使用顶栏按钮切换模式。
+
+   专业提示：启用语音输入进行自然提示，或在调试 UI 问题时附加截图。
+
+2. #### 生成应用构思
+
+   Warp 支持_规划模型_，AI 在编码之前会生成详细的路线图。
+
+   ```
+   I would like to make something of simple to medium complexity that I could finish in about 30 minutes. I want this to be web based. I want to have some kind of interface and some kind of backend. Can you give me a fun idea that's not going to be too complicated to build out and to eventually deploy?
+   ```
+
+   AI 建议了几个项目，如个人心情追踪器、快速投票创建器、食谱随机化器等。\
+   \
+   我们选择的想法：**一个实时聊天应用**。
+
+3. #### 创建开发计划
+
+   提示：
+
+   ```bash
+   I like idea one. Can you come up with a detailed plan on how to build this?
+   ```
+
+   Warp 的代理生成了以下计划：
+
+   * **前端**（聊天室和消息的 UI）
+   * **后端**（用于实时通信的 FastAPI 服务器）
+   * 数据库集成和计划部署步骤
+
+   你可以通过提示交互式地优化或扩展计划：
+
+   ```
+   Make this more detailed.
+   ```
+
+   然后得到类似这样的结果：
+
+   ```
+
+   Here's your development roadmap:
+
+   🏗️ Architecture Decisions
+   Frontend Options:
+   •  React + Socket.IO Client (recommended for rich UI)
+   •  Vue.js + Socket.IO Client 
+   •  Vanilla JS + WebSockets (simpler but limited)
+
+   Backend Options:
+   •  Node.js + Socket.IO + Express (most popular for real-time)
+   •  Python + Flask-SocketIO
+   •  Go + Gorilla WebSocket
+
+   Database:
+   •  MongoDB (flexible for chat messages)
+   •  PostgreSQL (structured data with JSON fields)
+   •  Redis (for session management and caching)
+
+   🚀 Recommended Tech Stack
+   📋 Core Features to Implement
+   1. Real-time messaging (Socket.IO)
+   2. User authentication (JWT)
+   3. Multiple chat rooms
+   4. Online user presence
+   5. Message history
+   6. Typing indicators
+   7. File/image sharing (optional)
+
+   🛠️ Development Steps
+   1. Create project in ~/Documents/Coding_Projects/realtime-chat
+   2. Set up Node.js backend with Socket.IO
+   3. Create React frontend with real-time connection
+   4. Implement user auth and room management
+   5. Add message persistence and history
+   6. Style UI and add advanced features
+   ```
+
+   你可以在任何时候进入计划并直接修改它。当准备好时，你可以告诉 Warp：
+
+   ```bash
+   Please execute this plan.
+   ```
+
+4. #### 允许自主执行
+
+   一旦 Warp 开始执行，你可以让 Warp 自动运行命令：
+
+   1. 前往**设置 → AI → 代理**
+   2. 将**"始终询问"**改为**"始终允许"**
+   3. 确保受限命令（例如 `rm -rf`）保持屏蔽
+
+   这能实现安全、快速迭代的自主执行。Warp 将运行 shell 命令、创建目录、初始化文件和编写代码。
+
+5. #### 运行应用
+
+   首先，你可以点击任何文件（如 `main.py`）直接在 Warp 中编辑。Warp 在应用内直接显示你的文件，便于编辑，类似于常规 IDE 体验。
+
+   ![直接在 Warp 的内置代码编辑器中编辑 main.py](../../../../../assets/guides/Screenshot-2025-10-07-at-10.44.14-AM.png)
+
+   你也可以要求 Warp 运行应用并在本地测试：
+
+   ```
+   Can you run this app for me so I can test it? Tell me how to view it.
+   ```
+
+   可能会出现错误（例如内部服务器错误）。如果发生这种情况，你可以通过对话进行调试：
+
+   ```bash
+   I'm getting an internal server error. Can you fix this?
+   ```
+
+   Warp 可以修复问题并自动重新运行应用。
+
+6. #### 添加新功能
+
+   为了增强应用，你可以以对话方式请求功能：
+
+   ```
+   Can you add emoji reactions to the messages?
+   ```
+
+   Warp 将修改前端和后端代码，更新 WebSocket 逻辑以实现实时反应。测试后，多个用户现在可以在聊天界面中对消息做出反应。
+
+7. #### 准备部署
+
+   Warp 通过 **MCP 服务器**直接与版本控制和云部署工具集成。
+
+   连接 GitHub MCP：
+
+   1. 前往**设置 → AI → MCP 服务器 → 添加**
+   2. 为 GitHub MCP 添加 JSON 块：
+
+   ```json
+   {
+     "github": {
+       "command": "docker",
+       "args": [
+         "run",
+         "-i",
+         "--rm",
+         "-e",
+         "GITHUB_PERSONAL_ACCESS_TOKEN",
+         "ghcr.io/github/github-mcp-server"
+       ],
+       "env": {
+         "GITHUB_PERSONAL_ACCESS_TOKEN": "${<INSERT_YOURS_HERE>}"
+       }
+     }
+   }
+   ```
+
+   3. 生成 GitHub 个人访问令牌（设置 → 开发者设置 → 令牌）
+      * 为以下范围启用：`repo`、`workflow`、`secrets`、`pull_request` 和 `environments`。
+
+   保存并重启 Warp。
+
+   然后告诉代理：
+
+   ```
+   Can you make a new remote repo for me and upload my code?
+   ```
+
+   Warp 自动使用 Git 命令：
+
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin ...
+   git push
+   ```
+
+8. #### 通过 Railway 部署
+
+   提示：
+
+   ```
+   I have a FastAPI application built with Python. I want to deploy this. It just has an integrated frontend with JavaScript, HTML, and CSS. What's the easiest way to do that? Can you assist me?
+   ```
+
+   Warp 推荐 **Railway** 并引导完成：
+
+   * 创建 Railway 账户
+   * 连接你的 GitHub 仓库
+   * 直接从 GitHub 部署
+   * 生成公共域名
+
+   部署完成后，在浏览器中测试——你将看到你的实时聊天应用，表情反应功能实时工作。
+
+</Steps>
+
+### 附录
+
+* [GitHub MCP 服务器](https://github.com/github/github-mcp-server)
+* [Docker Desktop 下载](https://www.docker.com/products/docker-desktop/)
+* [Railway](https://railway.com/)

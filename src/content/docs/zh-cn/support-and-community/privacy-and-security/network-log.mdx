@@ -1,0 +1,28 @@
+---
+title: Warp 网络日志
+sidebar:
+  label: "网络日志"
+description: >-
+  当前终端会话中所有网络流量（请求和响应）的日志。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是网络日志
+
+您可以使用 Warp 的网络日志来帮助调试问题，或者仅用于了解在整个 Warp 会话期间信息何时通过网络发送或接收。
+
+每个日志项都是一个带时间戳的 Debug 格式字符串，对应 Warp 处理的请求或响应对象。消息通过 Warp 内部 HTTP 客户端的请求前和响应后钩子记录。
+
+## 如何使用
+
+1. 要访问网络日志，选择会话中的输入并打开[命令面板](/terminal/command-palette/)，然后搜索"Show Warp Network Log"。
+2. 这将在您的输入编辑器中插入一个命令——看起来应该像这样：`tail -f "some/path/to/warp_network.log"`。
+3. 按 Enter 运行此命令。然后您将看到相应的请求和响应记录在网络日志中。
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/0d9eaeb8715846f3a96d557abe23e7ac?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="网络日志演示" />
+
+## 网络日志的已知问题
+
+目前，源自崩溃报告和错误消息的网络流量不会被捕获到网络日志中。这是因为我们使用了 Sentry SDK，它封装了所有网络逻辑，目前不提供直接处理请求和响应的钩子。团队正在积极研究解决方案，以在未来的版本中将此类流量包含在日志中。您也可以在 Warp 的**设置** > **隐私**选项卡中完全禁用崩溃报告。

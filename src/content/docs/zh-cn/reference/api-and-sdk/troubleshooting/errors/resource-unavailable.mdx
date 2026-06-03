@@ -1,0 +1,74 @@
+---
+title: resource_unavailable
+description: >-
+  临时性基础设施问题阻止了任务运行。平台将自动重试。无需操作。
+---
+
+`resource_unavailable` 错误表示出现了临时性基础设施问题，阻止了云端代理任务的运行。平台会自动重试。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `429 请求过多` 或 `500 内部服务器错误`
+* **可重试：** 是（自动）
+* **任务状态：** ERROR
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* **容量已满 (429)** — 云端代理容量暂时饱和。您的任务将被排队并自动重试。
+* **沙箱创建失败 (500)** — 无法为代理创建沙箱实例。这通常是临时性问题。
+
+---
+
+## 示例响应
+
+### 容量已满
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/resource-unavailable/",
+  "title": "代理容量暂时已满。您的任务将自动重试，或者您可以稍后重试。",
+  "status": 429,
+  "instance": "/api/v1/agent/tasks",
+  "error": "代理容量暂时已满。您的任务将自动重试，或者您可以稍后重试。",
+  "retryable": true,
+  "trace_id": "abc123..."
+}
+```
+
+### 沙箱创建失败
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/resource-unavailable/",
+  "title": "为您的代理创建沙箱实例失败。这通常是临时性问题——您的任务将自动重试。",
+  "status": 500,
+  "instance": "/api/v1/agent/tasks",
+  "error": "为您的代理创建沙箱实例失败。这通常是临时性问题——您的任务将自动重试。",
+  "retryable": true,
+  "trace_id": "abc123..."
+}
+```
+
+---
+
+## 解决方法
+
+通常无需操作——平台会自动重试任务。
+
+如果重试后错误仍然存在：
+
+1. 稍后重试，待容量释放。
+2. 联系 [Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)，并提供错误响应中的 `trace_id`。
+
+---
+
+## 相关
+
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理执行的工作原理
+* [部署模式](/agent-platform/cloud-agents/deployment-patterns/) — 执行模型和基础设施

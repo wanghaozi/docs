@@ -1,0 +1,176 @@
+---
+title: Warp Drive 笔记本
+description: >-
+  保存交互式运行手册，简化入职和开发流程。
+sidebar:
+  label: "笔记本"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+笔记本是 Warp Drive 中的交互式可运行文档，结合了 Markdown 文本和可执行的 Shell 命令块。用于入职运行手册、调试操作手册以及队友可以直接从终端搜索、共享和执行的开发工作流。
+
+### 什么是笔记本？
+
+笔记本是可在终端会话中自动执行的可运行文档，包含 Markdown 文本和列表元素、代码块以及可运行的 Shell 片段。笔记本可通过[命令面板](/terminal/command-palette/)搜索和访问，让你无需离开终端即可访问和运行文档。你还可以随时以 .md 格式导出笔记本。
+
+### 如何保存和编辑笔记本
+
+你可以从 Warp 中的多个入口点创建新笔记本
+
+<Tabs>
+  <TabItem label="macOS">
+    * 从 Warp Drive，+ > 新建笔记本
+    * 从[命令面板](/terminal/command-palette/)，创建新的团队或个人笔记本。
+  </TabItem>
+  <TabItem label="Windows">
+    * 从 Warp Drive，+ > 新建笔记本
+    * 从[命令面板](/terminal/command-palette/)，创建新的团队或个人笔记本。
+  </TabItem>
+  <TabItem label="Linux">
+    * 从 Warp Drive，+ > 新建笔记本
+    * 从[命令面板](/terminal/command-palette/)，创建新的团队或个人笔记本。
+  </TabItem>
+</Tabs>
+
+上述任一入口点都会打开笔记本编辑器，你可以：
+
+* 为笔记本设置标题。
+* 开始添加文本和代码元素。
+
+:::note
+注意：在添加标题或正文文本之前，笔记本不会被保存。
+:::
+
+<figure>
+![编辑笔记本](/assets/terminal/notebooks_editor.gif)
+<figcaption>编辑笔记本。</figcaption>
+</figure>
+
+### 使用笔记本
+
+#### 添加新元素
+
+笔记本元素（文本、代码、列表项）可以通过多种方式添加：
+
+* 使用适当的 Markdown 快捷键（例如用 ### 表示三级标题）。
+* 输入 /，将打开支持元素的选择菜单。
+* 点击悬停在行上时出现的 + 图标，并从支持元素菜单中选择。
+
+<figure>
+![Markdown 元素类型](../../../../../assets/terminal/markdown-element-types.png)
+<figcaption>笔记本编辑器中可用的 Markdown 元素类型。</figcaption>
+</figure>
+
+#### 样式化现有元素
+
+现有笔记本元素可以通过多种方式样式化：
+
+* 选择现有元素并从悬停菜单中选择文字修饰（如加粗、斜体或内联代码）。
+* 使用 Markdown 语法进行文本样式化，如 \*\*加粗\*\* 或 \*斜体\*。
+* 选择现有元素并通过下拉元素菜单更改元素的整体类型。
+
+<div data-full-width="true">![样式菜单](../../../../../assets/terminal/styling-menu.png)</div>
+
+#### 使用命令和代码块
+
+命令和代码块具有一些独特属性，例如语法高亮和快速操作，让处理基于代码的文档变得简单。你可以通过以下方式创建代码或命令块：
+
+* 从新元素菜单中选择 Command 或 Code
+* 输入 ` ``` `（三个反引号）
+
+插入代码块后，你可以在块底部从众多选项中选择语言，如果可用则会应用适当的语法高亮（如果找不到你的语言，则默认为 Code）。所有代码和命令块都会应用语法高亮，并提供快速复制按钮以便快捷访问。
+
+<figure>
+![示例代码块](../../../../../assets/terminal/notebook-code-block.png)
+<figcaption>笔记本中带有语法高亮的代码块。</figcaption>
+</figure>
+
+#### 命令块的特殊属性
+
+如果你插入 Command 块或将语言指定为"Shell"，Warp 会提供额外的功能来简化终端工作。
+
+#### 执行命令块
+
+开发者可以通过以下方式执行 Shell 命令块：
+
+<Tabs>
+  <TabItem label="macOS">
+    * 使用块底部的插入按钮
+    * 在块被选中时按 `CMD-ENTER`（会出现蓝色高亮）
+  </TabItem>
+  <TabItem label="Windows">
+    * 使用块底部的插入按钮
+    * 在块被选中时按 `CTRL-ENTER`（会出现蓝色高亮）
+  </TabItem>
+  <TabItem label="Linux">
+    * 使用块底部的插入按钮
+    * 在块被选中时按 `CTRL-ENTER`（会出现蓝色高亮）
+  </TabItem>
+</Tabs>
+
+命令文本将被插入到开发者的活动终端会话中，如果没有活动会话则插入到新会话中。
+
+<figure>
+![命令块的运行选项](../../../../../assets/terminal/notebook-cmd-block-run.png)
+<figcaption>笔记本中命令块的运行按钮。</figcaption>
+</figure>
+
+#### 为命令块添加参数
+
+命令块接受与[工作流](/knowledge-and-collaboration/warp-drive/workflows/)相同格式的参数。要为命令块添加参数，请使用 `{{双花括号}}` 指定你的参数字段。
+
+<figure>
+![带有参数的命令块](../../../../../assets/terminal/notebook-cmd-with-params.png)
+<figcaption>带有可编辑参数的命令块。</figcaption>
+</figure>
+
+#### 使用键盘导航命令块
+
+命令块也支持键盘导航。有两种方式进入键盘导航模式：
+
+<Tabs>
+  <TabItem label="macOS">
+    * 点击 Shell 块。
+    * 按 `CMD-UP` 或 `CMD-DOWN`。
+
+    选中命令块后，按 `CMD-ENTER` 将其插入到终端输入中。你也可以使用 `UP`、`DOWN`、`CMD-UP` 和 `CMD-DOWN` 在命令块之间导航。当笔记本获得焦点时，按 `CMD-L` 将焦点切换回终端而不插入命令。
+  </TabItem>
+  <TabItem label="Windows">
+    * 点击 Shell 块。
+    * 按 `CTRL-UP` 或 `CTRL-DOWN`。
+
+    选中命令块后，按 `CTRL-ENTER` 将其插入到终端输入中。你也可以使用 `UP`、`DOWN`、`CTRL-UP` 和 `CTRL-DOWN` 在命令块之间导航。当笔记本获得焦点时，按 `CTRL-L` 将焦点切换回终端而不插入命令。
+  </TabItem>
+  <TabItem label="Linux">
+    * 点击 Shell 块。
+    * 按 `CTRL-UP` 或 `CTRL-DOWN`。
+
+    选中命令块后，按 `CTRL-ENTER` 将其插入到终端输入中。你也可以使用 `UP`、`DOWN`、`CTRL-UP` 和 `CTRL-DOWN` 在命令块之间导航。当笔记本获得焦点时，按 `CTRL-L` 将焦点切换回终端而不插入命令。
+  </TabItem>
+</Tabs>
+
+#### 将现有工作流添加到笔记本
+
+如果你有现有的[工作流](/knowledge-and-collaboration/warp-drive/workflows/)想要插入到笔记本中（而不是复制其内容），你可以从新元素菜单中选择"嵌入式工作流"，然后从可用工作流中选择。一旦嵌入到笔记本中，该工作流将像普通命令块一样可执行。要编辑嵌入式工作流的内容，你需要编辑源工作流，可以通过在[命令面板](/terminal/command-palette/)中搜索标题找到。
+
+<figure>
+![在笔记本中嵌入现有工作流。](../../../../../assets/terminal/embedding-a-workflow.png)
+<figcaption>在笔记本中嵌入现有工作流。</figcaption>
+</figure>
+
+### 在团队中使用笔记本
+
+如果笔记本与团队共享，所有团队成员都有权编辑该笔记本，更新将立即为所有团队成员同步。
+
+:::note
+注意：同一时间只允许一个编辑器。打开笔记本时如果有活动编辑器，则会在查看模式下打开。你的模式（查看与编辑）可以在笔记本标题上方切换。
+:::
+
+<figure>
+![查看模式示例](../../../../../assets/terminal/notebook-view-mode.png)
+<figcaption>在查看模式下显示的笔记本。</figcaption>
+</figure>
+
+### 在 Warp Drive 中导入和导出笔记本
+
+请参见我们的 [Warp Drive 导入和导出](/knowledge-and-collaboration/warp-drive/#import-and-export)说明。

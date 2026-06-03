@@ -1,0 +1,37 @@
+---
+title: 代码块作为上下文
+description: >-
+  从终端附加代码块作为上下文，以便 Warp 的 Agent 在响应查询时可以理解错误、输出或先前命令。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+将终端输出块附加到 Agent 提示，以便 Agent 可以理解当前或先前会话中的错误、命令和输出。代码块可以使用键盘快捷键、鼠标点击或在 Agent 对话中自动附加。
+
+## 附加代码块作为上下文
+
+Warp 的 Agent 可以使用 Agent 对话中的代码块作为上下文，以更好地理解您的查询并生成更相关的响应。
+
+您可以通过点击代码块上的 AI 火花图标并选择"附加为上下文"，直接从终端块列表附加代码块。
+
+最常见的用例是让 AI 修复错误。您可以在对 Agent 模式的查询中附加错误并输入"修复它"。
+
+**如果您已经在 Agent 模式中，使用以下方式附加或清除查询中的上下文：**
+
+<Tabs>
+  <TabItem label="macOS">
+    附加先前块：`CMD-UP`
+    清除先前块：`CMD-DOWN`
+  </TabItem>
+  <TabItem label="Windows">
+    附加先前块：`CTRL-UP`
+    清除先前块：`CTRL-DOWN`
+  </TabItem>
+  <TabItem label="Linux">
+    附加先前块：`CTRL-UP`
+    清除先前块：`CTRL-DOWN`
+  </TabItem>
+</Tabs>
+
+## 跨视图的代码块可见性
+
+Warp 中的代码块属于终端视图或特定 Agent 对话。终端块始终出现在终端块列表中。Agent 对话块仅出现在特定对话中。

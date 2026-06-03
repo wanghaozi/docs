@@ -1,0 +1,64 @@
+---
+title: 旧版 SSH 包装器
+description: >-
+  在没有 tmux 的情况下，在远程机器上引导 Warp 功能的旧版 SSH 包装器。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+
+:::note
+如果您正在寻找对 tmux SSH 功能进行故障排除的方法，请参见 [SSH](/terminal/warpify/ssh/)。
+:::
+
+当您 SSH 到远程机器时，无需任何配置即可获得所有 Warp 功能。输入编辑器、自动补全和历史搜索在所有机器上工作方式相同。
+
+:::caution
+[SSH 的限制](https://github.com/warpdotdev/Warp/issues/578)（截至 2024 年 5 月）：
+
+* SSH 包装器在远程会话中仅支持 `bash` 或 `zsh` shell。
+* 如果您使用不同的 shell，您需要直接使用 `command ssh`（更多详情如下）。
+* 对于 zsh，需要 xxd 来引导 warp。
+* 对于 Windows，需要 [Cygwin](https://www.cygwin.com/) 来引导 SSH 包装器。
+* RemoteCommand 会导致 ssh 包装器失败。
+* [Tmux 目前不支持。](https://github.com/warpdotdev/Warp/discussions/501)
+:::
+
+:::note
+如果您在远程主机上使用 zsh，Warp 会在引导过程中创建一个临时文件夹作为 ZDOTDIR，并在 shell 设置完成后将其移除。
+:::
+
+![SSH](../../../../../assets/terminal/ssh-1.png)
+
+## 实现
+
+我们创建了一个包装器（围绕 `/usr/bin/ssh`）来为 Warp 的功能集设置 shell。我们使用 `/usr/bin/ssh` 正常进行身份验证，并引导远程 shell 以使其与 Warp 块和输入编辑器协同工作。您可以通过直接调用 `command ssh` 来选择退出此功能。
+
+* Warp 接管提示符，这使我们能够构建一个现代化的输入编辑器。
+* Warp 配置 histcontrol 以忽略带有前导空格的命令。我们这样做是为了使我们的引导代码不会污染历史。
+
+您可以使用 `which warp_ssh_helper`（在 zsh 中）或 `type warp_ssh_helper`（在 bash 中）查看 SSH 包装器。
+
+_注意：_ SSH 包装器仅在您的本地机器上 _初始化_。我们目前不支持引导嵌套的 ssh 会话。
+
+:::note
+Warp 的 SSH [补全](/terminal/command-completions/completions/) 显示 `~/.ssh/config` 和 `~/.ssh/known_hosts` 中的条目。
+:::
+
+## SSH 故障排除
+
+### channel 2: open failed: connect failed: open failed
+
+如果您看到这些错误，您的服务器上可能有某些配置（通常在 `/etc/ssh/sshd_config` 中）阻止了 Warp 的 ControlMaster 连接工作。在此状态下，需要从远程主机获取信息的补全将无法工作，您的历史也无法工作。
+
+您应确保 `MaxSessions` 要么被注释掉，要么至少为 `2`。
+
+在 `/etc/ssh/` 中的写访问通常需要 sudo 权限。编辑后，您还需要重启 `sshd` 守护进程。
+
+### SSH 包装器失败
+
+有多个 [SSH 包装器的已知问题](https://github.com/warpdotdev/Warp/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-desc+label%3ABugs+label%3ASSH)。作为 SSH 包装器的解决方法，您可以将 `command ssh` 添加到您的 **设置** > **Warpify** > **子 shell** > **已添加的命令**，然后运行 `command ssh <user@server>` 连接到远程会话，这将尝试作为 [子 shell](/terminal/warpify/subshells/) 启用 Warp 功能。
+
+:::note
+如果子 shell 解决方法有帮助，我们建议您在 **设置** > **功能** > **会话** 中禁用 SSH 包装器。您需要在新会话开始后更改才会反映出来，或者尝试直接调用 `command ssh` 调用 SSH 二进制文件。
+:::
+
+<DemoVideo src="/assets/terminal/subshell-ssh-demo.mp4" label="Command SSH 子 shell 解决方法" />

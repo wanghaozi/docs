@@ -1,0 +1,97 @@
+---
+title: 终端主题
+description: >-
+  Warp 包含多个主题（开箱即用），并且还支持设置自定义主题。
+sidebar:
+  label: "主题"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import ImageGrid from '@components/ImageGrid.astro';
+import ImageGridItem from '@components/ImageGridItem.astro';
+import themeWarpDark from '../../../../../assets/terminal/warp-dark.png';
+import themeWarpLight from '../../../../../assets/terminal/warp-light.png';
+import themeDracula from '../../../../../assets/terminal/dracula.png';
+import themeSolarizedDark from '../../../../../assets/terminal/solarized-dark.png';
+import themeSolarizedLight from '../../../../../assets/terminal/solarized-light.png';
+import themeGruvboxDark from '../../../../../assets/terminal/gruvbox-dark.png';
+import themeGruvboxLight from '../../../../../assets/terminal/gruvbox-light.png';
+import themeJellyfish from '../../../../../assets/terminal/jellyfish.png';
+import themeKoi from '../../../../../assets/terminal/koi.png';
+import themeLeafy from '../../../../../assets/terminal/leafy.png';
+import themeMarble from '../../../../../assets/terminal/marble.png';
+import themePinkCity from '../../../../../assets/terminal/pink-city.png';
+import themeSnowy from '../../../../../assets/terminal/snowy.png';
+import themeDarkCity from '../../../../../assets/terminal/dark-city.png';
+import themeRedRock from '../../../../../assets/terminal/red-rock.png';
+import themeCyberWave from '../../../../../assets/terminal/cyber-wave.png';
+import themeWillowDream from '../../../../../assets/terminal/willow-dream.png';
+import themeFancyDracula from '../../../../../assets/terminal/fancy-dracula.png';
+import themePhenomenon from '../../../../../assets/terminal/phenomenon.png';
+import themeSolarFlare from '../../../../../assets/terminal/solar-flare.png';
+import themeAdeberry from '../../../../../assets/terminal/adeberry.png';
+
+### 主题选择器
+
+主题选择器可以通过以下方式访问：
+
+1. 导航至 **设置** > **外观**。
+2. 点击自定义主题（阴影）框。
+3. 选择主题后，Warp 的外观将相应更新。
+4. 按对勾保存选择，或按 X 还原。
+
+:::note
+主题设置会持久保存，这意味着 Warp 将在下一次会话中以相同的设置打开。
+:::
+
+### 主题创建器
+
+基于背景图像自动创建新主题。
+
+1. 前往 **设置** > **外观** > **主题**，或在 [命令面板](/terminal/command-palette/) 中搜索"打开主题选择器"。
+2. 在主题选择器中点击 **+** 按钮。
+3. 上传图像并选择背景颜色。
+4. 点击"创建主题"保存并接受新主题。
+
+### 操作系统主题同步
+
+Warp 支持将您的主题与操作系统的浅色和深色主题同步。要启用此功能：
+
+1. 打开 **设置** > **外观** 对话框。
+2. 点击"与操作系统同步"开关。
+3. 然后您可以为操作系统处于浅色模式和深色模式时分别选择特定主题。
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/theme-picker.mp4" label="主题选择器演示" />
+
+<DemoVideo src="/assets/terminal/theme-creator.mp4" label="主题创建器演示" />
+
+<DemoVideo src="/assets/terminal/theme-sync-demo.mp4" label="主题操作系统同步演示" />
+
+## 默认主题
+
+默认情况下，Warp 附带了这些主题：
+
+<ImageGrid>
+  <ImageGridItem src={themeWarpDark} label="Warp 深色" />
+  <ImageGridItem src={themeWarpLight} label="Warp 浅色" />
+  <ImageGridItem src={themeDracula} label="Dracula" />
+  <ImageGridItem src={themeSolarizedDark} label="Solarized 深色" />
+  <ImageGridItem src={themeSolarizedLight} label="Solarized 浅色" />
+  <ImageGridItem src={themeGruvboxDark} label="Gruvbox 深色" />
+  <ImageGridItem src={themeGruvboxLight} label="Gruvbox 浅色" />
+  <ImageGridItem src={themeJellyfish} label="水母" />
+  <ImageGridItem src={themeKoi} label="锦鲤" />
+  <ImageGridItem src={themeLeafy} label="绿叶" />
+  <ImageGridItem src={themeMarble} label="大理石" />
+  <ImageGridItem src={themePinkCity} label="粉红之城" />
+  <ImageGridItem src={themeSnowy} label="雪白" />
+  <ImageGridItem src={themeDarkCity} label="暗城" />
+  <ImageGridItem src={themeRedRock} label="红岩" />
+  <ImageGridItem src={themeCyberWave} label="赛博波浪" />
+  <ImageGridItem src={themeWillowDream} label="柳树之梦" />
+  <ImageGridItem src={themeFancyDracula} label="花哨 Dracula" />
+  <ImageGridItem src={themePhenomenon} label="现象" />
+  <ImageGridItem src={themeSolarFlare} label="太阳耀斑" />
+  <ImageGridItem src={themeAdeberry} label="Adeberry" />
+</ImageGrid>

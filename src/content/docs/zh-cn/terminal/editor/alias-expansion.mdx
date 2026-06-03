@@ -1,0 +1,44 @@
+---
+title: 别名展开
+description: >-
+  Warp 会在您在输入编辑器中输入时自动展开别名。
+sidebar:
+  label: "别名展开"
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何使用
+
+<Tabs>
+  <TabItem label="macOS">
+    当别名展开启用时，输入一个别名然后按 `SPACE` 将展开该别名。
+
+    要在不展开别名的情况下插入空格，默认快捷键是 `OPT-SPACE`。
+  </TabItem>
+  <TabItem label="Windows">
+    当别名展开启用时，输入一个别名然后按 `SPACE` 将展开该别名。
+
+    要在不展开别名的情况下插入空格，默认快捷键是 `ALT-SPACE`。
+  </TabItem>
+  <TabItem label="Linux">
+    当别名展开启用时，输入一个别名然后按 `SPACE` 将展开该别名。
+
+    要在不展开别名的情况下插入空格，默认快捷键是 `ALT-SPACE`。
+  </TabItem>
+</Tabs>
+
+:::note
+当展开形式的命令与别名本身相同时，别名将不会被展开。例如，如果您有别名 `ls='ls -G'`，`ls` 将不会在输入编辑器中被展开。
+:::
+
+## 如何访问
+
+别名展开默认禁用。有两种方式可以切换此功能的开和关：
+
+* 从设置：导航至 **设置** > **功能** > **终端输入**，然后切换"输入时展开别名"。
+* 从 [命令面板](/terminal/command-palette/#windows)：搜索"启用/禁用别名展开"选项，然后按 `ENTER`。
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/2267657c033e482890eea75a8a6c5373?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="别名展开演示" />

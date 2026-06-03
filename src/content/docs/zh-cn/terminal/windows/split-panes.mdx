@@ -1,0 +1,51 @@
+---
+title: 拆分窗格
+description: >-
+  拆分窗格功能允许您将标签分成多个矩形窗格，每个窗格都是一个唯一的终端会话。
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何使用拆分窗格
+
+<Tabs>
+  <TabItem label="macOS">
+    * 使用 `CMD-D` / `SHIFT-CMD-D` 向右/向下拆分窗格，或通过右键单击任何窗格向任意方向拆分。
+    * 使用 `CMD-[` / `CMD-]` 或通过点击窗格激活上一个/下一个窗格。
+    * 使用 `OPT-CMD-ARROW` 在拆分窗格之间导航，活动窗格将在左上角标记一个三角形。
+    * 使用 `CMD-SHIFT-ENTER` 切换最大化窗格。
+    * 使用 `CMD-W` 关闭活动窗格。
+    * 您还可以拖放窗格。单击并拖动窗格的标题在给定标签中移动，将窗格拖到标签栏以将其移动到另一个标签，或将其变成标签。
+  </TabItem>
+  <TabItem label="Windows">
+    * 使用 `CTRL-SHIFT-D` / `CTRL-SHIFT-E` 向右/向下拆分窗格，或通过右键单击任何窗格向任意方向拆分。
+    * 使用 `CTRL-SHIFT-{` / `CTRL-SHIFT-}` 或通过点击窗格激活上一个/下一个窗格。
+    * 使用 `CTRL-ALT-ARROW` 在拆分窗格之间导航，活动窗格将在左上角标记一个三角形。
+    * 使用 `CTRL-SHIFT-ENTER` 切换最大化窗格。
+    * 使用 `CTRL-SHIFT-W` 关闭活动窗格。
+    * 您还可以拖放窗格。单击并拖动窗格的标题在给定标签中移动，将窗格拖到标签栏以将其移动到另一个标签，或将其变成标签。
+  </TabItem>
+  <TabItem label="Linux">
+    * 使用 `CTRL-SHIFT-D` / `CTRL-SHIFT-E` 向右/向下拆分窗格，或通过右键单击任何窗格向任意方向拆分。
+    * 使用 `CTRL-SHIFT-{` / `CTRL-SHIFT-}` 或通过点击窗格激活上一个/下一个窗格。
+    * 使用 `CTRL-ALT-ARROW` 在拆分窗格之间导航，活动窗格将在左上角标记一个三角形。
+    * 使用 `CTRL-SHIFT-ENTER` 切换最大化窗格。
+    * 使用 `CTRL-SHIFT-W` 关闭活动窗格。
+    * 您还可以拖放窗格。单击并拖动窗格的标题在给定标签中移动，将窗格拖到标签栏以将其移动到另一个标签，或将其变成标签。
+  </TabItem>
+</Tabs>
+
+:::note
+您可以使用 [命令面板](/terminal/command-palette/) 快速找到所有 **窗格** 快捷键。您还可以根据自己的喜好重新映射快捷键。更多详情请参见 [自定义键盘快捷键](/getting-started/keyboard-shortcuts/#custom-keyboard-shortcuts)。
+:::
+
+### CTRL-TAB 行为
+
+`CTRL-TAB` 快捷键默认激活上一个/下一个 [标签](/terminal/windows/tabs/)。您可以在 **设置** > **功能** > **键** > **Ctrl-Tab 行为** 中配置快捷键以循环最近会话，包括任何拆分窗格。
+
+## 拆分窗格的工作原理
+
+<VideoEmbed url="https://www.loom.com/share/c1104b51cab848a9bef6792ec4fd8421?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="拆分窗格演示" />
+
+<DemoVideo src="/assets/terminal/split-panes-dragging-demo.mp4" label="拆分窗格拖放演示" />

@@ -1,0 +1,72 @@
+---
+title: 从 macOS 终端迁移到 Warp
+description: >-
+  从默认的 macOS 终端应用切换到 Warp。匹配你的设置，发现 Warp 在基础功能之外新增的能力。
+---
+
+Warp 为 Terminal.app 用户提供了他们已有的所有功能，包括 shell、主题、字体和提示符设置，此外还有分屏、标签页、块和智能体模式，以支持 AI 辅助工作流。本页将介绍智能体驱动的迁移和手动 GUI 步骤。
+
+## Warp 可以帮助迁移的内容
+
+Warp 没有一键导入 Terminal.app 的工具。由于 Terminal.app 将配置文件数据存储在 macOS 偏好设置中，Warp 的智能体可以使用 `defaults read com.apple.Terminal` 读取这些偏好设置，并将匹配的主题、字体和窗口设置翻译成 Warp 的 `settings.toml`。大多数 Terminal.app 用户使用接近默认的设置，因此无论哪种方式，迁移通常只需几分钟。
+
+## 使用 Warp 的智能体迁移设置（推荐）
+
+迁移 Terminal.app 主题的最快方式是让 Warp 的智能体直接翻译。Warp 自带一个 [`settings.toml` 文件](/terminal/settings/)和一个内置的 `modify-settings` 技能，让智能体读取你的 Terminal.app 偏好设置并将等效的值写入 Warp 的设置中，包括创建一个匹配的[自定义主题](/terminal/appearance/custom-themes/)。
+
+1. 在 Warp 应用中，打开一个新标签页，使用 `⌘+I` 切换到[智能体模式](/agent-platform/local-agents/overview/)。
+2. 将以下提示粘贴到智能体模式输入框中，然后按 `Enter`。
+
+   > 使用 `defaults read com.apple.Terminal` 读取我的 Terminal.app 偏好设置，并使用 `modify-settings` 技能将活动配置文件（主题、字体、窗口大小）移植到我的 Warp `settings.toml` 中。创建一个匹配的自定义主题。在应用前显示差异对比。
+
+3. 查看建议的差异对比，然后批准更改。Warp 会热重载 `settings.toml`。
+
+如果你希望通过设置 UI 手动配置每个设置，下面的步骤涵盖了最常见的情况。
+
+## 需要手动重新配置的内容
+
+### Shell
+
+Warp 在首次启动时会自动检测你的登录 shell。macOS 自 Catalina（2019 年）以来默认使用 `zsh`；如果你使用 `chsh` 更改了 shell，Warp 也会检测到。
+
+以后如需更改，请在 Warp 应用中打开**设置** > **功能** > **会话**，然后从**新会话的启动 shell**中选择一个 shell。
+
+### 主题和颜色
+
+Terminal.app 自带少量配置文件（Basic、Pro、Homebrew、Ocean 等）。在 Warp 中匹配它们：
+
+1. 在 Warp 应用中，打开**设置** > **外观** > **主题**。
+2. 选择一个预设主题。Warp 的内置库包含许多与 Terminal.app 默认主题相似的主题。
+3. 如需精确的颜色匹配，请使用 Terminal.app 中的 ANSI 颜色值[创建自定义主题](/terminal/appearance/custom-themes/)。在 Terminal.app 中，打开**设置**，选择**配置文件**，然后点击**文本**查看这些值。
+
+### 字体
+
+1. 在 Warp 应用中，打开**设置** > **外观** > **文本、字体和光标**，然后选择与你在 Terminal.app 中使用的字体族和大小匹配的选项。
+
+### 窗口大小和透明度
+
+在 Warp 应用中，从**设置** > **外观** > **大小、不透明度和模糊**配置窗口外观。请参阅[大小、不透明度和模糊](/terminal/appearance/size-opacity-blurring/)。
+
+### 提示符
+
+Terminal.app 使用你的 shell 的 PS1（或 zsh 的 PROMPT）定义的任何提示符。在 Warp 中，选择：
+
+1. [**Warp 提示符**](/terminal/appearance/prompt/#warp-prompt) - Warp 的原生提示符，支持拖放标签显示 git 分支、目录等。
+2. [**Shell 提示符 (PS1)**](/terminal/appearance/prompt/#custom-prompt) - 保持你现有的 shell 提示符，与在 Terminal.app 中显示完全一致。
+
+在 Warp 应用中，从**设置** > **外观** > **提示符**配置任一种提示符。
+
+## Warp 原生等效功能
+
+大多数 Terminal.app 功能在 Warp 中都有等效项，并附带了额外的功能：
+
+| Terminal.app 中的功能 | 在 Warp 中的对应项 |
+| --- | --- |
+| 配置文件 | [标签页配置](/terminal/windows/tab-configs/)用于布局和启动命令；[主题](/terminal/appearance/themes/)用于外观（Warp 没有单一的配置文件对象） |
+| 窗口组 / 排列 | [标签页配置](/terminal/windows/tab-configs/) |
+| 标签页 | [标签页](/terminal/windows/tabs/)、[垂直标签页](/terminal/windows/vertical-tabs/) |
+| 分屏 | [分屏窗格](/terminal/windows/split-panes/)（Terminal.app 不支持） |
+| 选中即复制 | **设置** > **功能** > **会话** |
+| 检查器 | [命令检查器](/terminal/editor/command-inspector/)（退出码、持续时间、工作目录） |
+
+在匹配 Terminal.app 之外，Warp 还增加了[智能体模式](/agent-platform/local-agents/overview/)用于自然语言命令、[块](/terminal/blocks/)用于结构化命令输出，以及 [Warp Drive](/knowledge-and-collaboration/warp-drive/) 用于共享工作流。刚接触 Warp？请从 [Warp 快速入门](/quickstart/)开始。

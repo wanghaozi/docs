@@ -1,0 +1,260 @@
+---
+title: 运行多个 AI 编码代理
+description: >-
+  在多个工作树、标签和云端编排中运行 Claude Code、Codex、Warp Agent 等编码代理，并拥有清晰的任务所有权。
+sidebar:
+  label: "运行多个 AI 编码代理"
+featured: true
+tags:
+  - "agents"
+
+---
+
+当工作可以拆分为独立任务、从不同分支进行审查、或委托给云端代理而你继续在本地工作时，可以使用多个编码代理，包括 Warp Agent、Claude Code、Codex 和其他 CLI 代理。在 Warp 中，你可以通过三种方式协调代理：
+
+* **本地并行会话**——在单独的标签或面板中运行 Warp Agent、Claude Code、Codex、OpenCode 或其他 CLI 代理。
+* **隔离的工作树**——让每个代理拥有自己的 Git 工作树和分支，从而避免并行编辑冲突。
+* **Oz 云端编排**——使用 `/orchestrate`、`/plan`、Oz CLI、Oz Web 应用或 Oz API 将工作分发给云端环境中的子代理。
+
+最佳的多代理工作流有一个共同点：每个代理拥有明确的工作切片，报告验证结果，并移交你可以审查的分支、差异、PR 或简洁的发现。
+
+本地设置约需 15 分钟。云端编排耗时更长，仅当你需要先创建或选择一个[环境](/agent-platform/cloud-agents/environments/)时。
+
+## 先决条件
+
+* **任何编码代理**——任何受支持代理的组合都能很好地工作：Warp Agent、[Claude Code](/guides/external-tools/how-to-set-up-claude-code/)、[Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/)、OpenCode、Gemini CLI、Amp、Pi、Droid 等。
+* **一个 Git 跟踪的项目**——通知和代码审查在 Git 仓库中效果最佳。
+
+## 选择多代理模式
+
+| 模式 | 何时使用 | 如何在 Warp 中运行 |
+| ------- | ----------- | --------------------- |
+| 相同任务，不同代理 | 你想比较方法或选择最佳实现。 | 在单独的标签和工作树中运行每个代理，然后在[代码审查面板](/code/code-review/)中比较差异。 |
+| 按文件或子系统拆分 | 一个功能跨越可以并行更改的独立模块。 | 为每个代理分配一个工作树、分支、文件边界和验证命令。 |
+| 构建者加审查者 | 一个代理实现，而另一个审查、编写测试或检查边缘情况。 | 将审查者放在只读或审查专用的标签中，或使用仅用于测试更改的单独分支。 |
+| 云端分发 | 工作量很大、很慢，或者可以在笔记本电脑之外运行。 | 使用[多代理编排](/agent-platform/cloud-agents/orchestration/)或[运行编排代理](/agent-platform/cloud-agents/orchestration/multi-agent-runs/)来生成云端子代理。 |
+| 可重复的工作组流程 | 你希望对每个 PR、问题、计划或发布使用相同的代理模式。 | 使用带有触发器、技能或 API 工作流的云代理，然后在[Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)中检查父代理和子代理的运行。 |
+
+## 在启动代理之前规划拆分
+
+在启动代理之前，决定：
+
+* **任务所有权**——每个代理拥有哪些文件、包、测试、问题或 PR。
+* **工作区所有权**——每个代理使用哪个分支或 Git 工作树。
+* **验证所有权**——哪个代理运行单元测试、类型检查、lint、冒烟测试或手动验证。
+* **移交格式**——每个代理应留下本地差异、分支、PR、补丁、摘要还是代码审查评论。
+* **合并策略**——是保留一个优胜者、挑选更改、合并多个分支还是单独打开 PR。
+
+使用能最小化重叠编辑的边界。例如，将一个代理分配给 `packages/api`，另一个分配给 `packages/web`，第三个负责测试或文档。如果两个代理必须触及相同的文件，让一个作为所有者，并要求另一个只审查或提议更改而不编辑。
+
+## 1. 切换到垂直标签
+
+垂直标签是多代理工作流的基础。与水平标签不同，它们为每个会话显示丰富的元数据：哪个代理正在运行、你在哪个分支上、哪个目录以及当前状态。
+
+启用垂直标签：
+1. 在 Warp 应用中，前往 **设置** > **外观** > **标签**。
+2. 选择 **使用垂直标签布局**。
+
+你可以配置每个标签显示的信息：
+* 正在运行的代理（Warp Agent、Claude Code、Codex 等）
+* 当前的 Git 分支
+* 工作目录
+* 状态指示器，显示代理是活跃、等待输入还是空闲
+
+<figure style={{ maxWidth: "375px" }}>
+![Warp 垂直标签侧边栏显示多个终端会话及分支元数据](../../../../../assets/terminal/vertical-tabs-multi-agent.png)
+<figcaption>垂直标签概览。</figcaption>
+</figure>
+
+## 2. 在单独的标签中启动代理
+
+为每个代理会话打开一个新标签。在每个标签内，导航到你的项目目录并启动一个代理：
+
+**标签 1 — Claude Code：**
+
+```bash
+cd ~/your-project
+claude
+```
+
+**标签 2 — Codex：**
+
+```bash
+cd ~/your-project
+codex
+```
+
+给每个代理分配不同的任务，或者给它们相同的任务以比较方法：
+
+```
+# Claude Code: 重构认证模块
+Refactor src/auth/ to use async/await instead of callbacks
+
+# Codex: 为同一模块编写测试
+Write comprehensive tests for src/auth/ covering edge cases
+```
+
+对于拆分工作，在每个提示中包含相同的操作契约：
+
+```
+You own src/auth/ and tests/auth/.
+Do not edit src/billing/ or src/api/payments/.
+Work on branch feature/auth-refactor-claude in ../your-project-claude.
+Run npm test -- auth and npm run typecheck before handing off.
+When done, report changed files, validation results, and any risks.
+```
+
+如果一个代理依赖于另一个代理，不要让它们同时编辑。请第一个代理完成并报告其分支、补丁或 PR，然后再开始依赖的工作。
+
+<figure style={{ maxWidth: "563px" }}>
+![Warp 垂直侧边栏中的多个代理标签，显示会话状态、分支和目录元数据](../../../../../assets/terminal/multi-agents.png)
+<figcaption>带有代理详情的垂直标签。</figcaption>
+</figure>
+
+## 3. 使用通知监控代理
+
+当你有多个代理在运行时，你不需要监视每个标签。当代理需要你的注意时，Warp 会发送通知，例如当它需要权限来运行命令或批准应用代码差异时。
+
+查看垂直侧边栏中标签上需要关注的指示器。点击标签直接跳转到需要输入的代理。
+
+通知设置因代理而异：
+
+* **Claude Code**——安装 [Warp 通知插件](https://github.com/warpdotdev/claude-code-warp)。当你首次运行 Claude Code 时，Warp 会显示一键安装标签，或者你可以手动安装。有关详细信息，请参阅 [Claude Code 指南](/guides/external-tools/how-to-set-up-claude-code/)。
+* **Codex**——当你首次运行 Codex 时，Warp 会自动设置通知。无需手动设置。
+* **OpenCode**——将 [Warp 通知插件](https://github.com/warpdotdev/opencode-warp) 添加到你的 `opencode.json` 配置中。
+
+:::note
+代理通知目前支持 Claude Code、Codex 和 OpenCode。有关设置详情，请参阅[代理通知](/agent-platform/capabilities/agent-notifications/)。有关每个代理支持哪些功能的完整分类，请参阅[第三方 CLI 代理功能矩阵](/agent-platform/cli-agents/overview/)。
+:::
+
+<figure style={{ maxWidth: "350px" }}>
+![Warp 通知弹窗显示代理请求编辑文件的权限](../../../../../assets/guides/tab-notification-indicator.png)
+<figcaption>代理审批通知。</figcaption>
+</figure>
+
+## 4. 比较不同代理的输出
+
+并行代理的一个实用场景是在不同的 Git 工作树中使用不同的代理运行相同的任务，以比较它们的方法。例如，向 Claude Code 和 Codex 都提出以下提示：
+
+```
+Optimize the database query in src/api/users.ts to reduce response time
+```
+
+两个代理都完成后，在每个标签中打开[代码审查面板](/code/code-review/)（`⌘+Shift++`）以并排比较它们的差异。你可能会发现一个代理生成的代码更整洁，而另一个捕获了第一个遗漏的边缘情况。
+
+## 5. 使用标签配置保存你的工作区
+
+如果你经常使用相同的多代理设置，可以将其保存为标签配置，以便一键重新创建：
+
+1. 悬停在标签上，点击右侧的三个点。
+2. 点击 **Save as new config**。
+
+<figure style={{ maxWidth: "375px" }}>
+![从 Warp 中的标签上下文菜单创建新的标签配置](../../../../../assets/terminal/save-new-tab-config.png)
+<figcaption>保存标签配置。</figcaption>
+</figure>
+
+标签配置是定义标签的目录、启动命令和布局的 TOML 文件。例如，你可以创建一个配置：
+
+* 并排打开两个面板
+* 自动进入项目仓库
+* 在一个面板中启动 Claude Code，在另一个面板中启动 Codex
+
+:::note
+标签配置与 [Git 工作树](/code/git-worktrees/)配合良好。为每个代理创建一个工作树，使它们能在隔离的分支上工作，然后合并最佳结果。
+:::
+
+## 6. 使用 Git 工作树实现隔离的代理工作区
+
+当多个代理修改相同的文件时，可能会产生冲突。Git 工作树为每个代理提供了仓库的独立副本，在单独的分支上工作。
+
+1. 为每个代理创建一个工作树，使每个代理拥有隔离的分支。
+
+   ```bash
+   git worktree add ../your-project-claude feature/claude-refactor
+   git worktree add ../your-project-codex feature/codex-refactor
+   ```
+2. 将每个代理标签指向其分配的工作树目录。
+3. 为每个工作树指定一个明确所有权的分支名称：
+   * `agent/claude-auth-refactor`
+   * `agent/codex-auth-tests`
+   * `agent/warp-review-pass`
+
+4. 在轻量级的位置（如你的父级 Warp Agent 对话或 PR 描述）保留合并说明：
+   * 每个代理拥有哪个分支。
+   * 每个代理运行了哪些测试。
+   * 哪个分支应首先合并。
+   * 哪些冲突或后续决策仍未解决。
+5. 两个代理都完成后，比较分支并合并最佳结果。
+   ```bash
+   git diff feature/claude-refactor..feature/codex-refactor
+   ```
+
+6. 合并或丢弃分支后删除工作树。
+   ```bash
+   git worktree remove ../your-project-claude
+   git worktree remove ../your-project-codex
+   ```
+
+## 7. 将工作分发给云端代理
+
+当工作需要长时间运行、资源密集、易于分片或最好在本地机器之外处理时，使用云端代理。例如：
+
+* 审查仓库中每个开放的 PR。
+* 跨多个包运行迁移。
+* 让每个服务的子代理检查日志、测试或事件。
+* 让父代理协调计划，同时子代理进行研究、实现或验证。
+
+1. 在 Warp 应用中使用 `/orchestrate` 启动，当你希望父代理提出子代理的拆分方案时。
+
+   ```text
+   /orchestrate Split this TypeScript monorepo migration by package. Use one child agent per package, require each child to run package tests, and summarize changed files and risks before merge.
+   ```
+
+2. 对于较大的更改，使用 `/plan`，以便在代理启动前审查计划、编排配置、子代理所有权和合并策略。
+3. 对于可重复或无人值守的工作流，从 Oz CLI、Oz Web 应用或 Oz API 启动父代理。有关启动选项，请参阅[运行编排代理](/agent-platform/cloud-agents/orchestration/multi-agent-runs/)。
+4. 从 [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)或 Warp 应用中的[代理管理面板](/agent-platform/cloud-agents/managing-cloud-agents/)检查父代理和子代理的运行。
+
+云端编排最适合以下需求：
+
+* **并行分发**到多个文件、包、PR、问题或服务。
+* **清晰的可见性**涵盖父代理和子代理的运行。
+* **持久的移交**通过子代理运行摘要、会话链接、工件、PR 或消息进行。
+* **团队级执行**来自 Slack、Linear、定时任务、GitHub Actions、CLI 或 API。
+
+## 8. 验证、合并和移交
+
+不要自动合并每个代理的输出。使用汇聚步骤：
+
+1. 审查每个代理的摘要、变更的的文件和验证结果。
+2. 对于本地分支打开[代码审查面板](/code/code-review/)，对于云端子代理检查云端运行工件和会话链接。
+3. 一次合并或挑选一个分支。
+4. 从最终集成的分支重新运行完整的验证套件。
+5. 为审查者附加上下文：代理会话链接、变更的文件、验证命令、已知风险和审查者请求。
+
+对于 GitHub 移交，请参阅[将代理会话上下文附加到 GitHub PR](/guides/agent-workflows/how-to-attach-agent-session-context-to-github-prs/)。关于审查生成的代码本身，请参阅[如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)。
+
+## 生产力技巧
+
+* **使用代理管理面板**——打开代理管理面板查看所有标签中的活动代理。这让你以仪表板视图了解哪些在运行、哪些在等待、哪些已完成。
+* **为标签着色**——为代理标签分配不同的主题或颜色，以便在垂直侧边栏中一目了然地进行视觉区分。
+* **使用 `Ctrl+G` 编写**——在编写第三方代理的提示词时，使用 Warp 的富文本输入编辑器（`Ctrl+G`）。这提供了点击编辑功能，而不是在原始 CLI 中使用箭头键导航。
+* **提交前审查所有更改**——运行多个代理后，打开代码审查面板查看所有文件的合并差异。使用"与 main 比较"视图查看分支上所有代理生成更改的完整范围。
+
+## 后续步骤
+
+你已经使用垂直标签设置了多代理工作区，并行启动了不同的代理，使用通知监控它们，比较了它们的输出，并学习了如何使用标签配置和 Git 工作树实现隔离、可重复的多代理工作流。
+
+探索相关指南和功能：
+
+* [如何审查 AI 生成的代码](/guides/agent-workflows/how-to-review-ai-generated-code/)——审查和完善你的代理生成的代码
+* [将代理会话上下文附加到 GitHub PR](/guides/agent-workflows/how-to-attach-agent-session-context-to-github-prs/)——向审查者提供 PR 背后的代理上下文
+* [多代理编排](/agent-platform/cloud-agents/orchestration/)——协调跨本地和云端运行的父代理和子代理
+* [运行编排代理](/agent-platform/cloud-agents/orchestration/multi-agent-runs/)——从 Warp、Oz CLI、Oz Web 应用或 Oz API 启动编排运行
+* [设置 Claude Code](/guides/external-tools/how-to-set-up-claude-code/) 或[设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/)——安装这两个代理（如果尚未安装）
+* [Warp 中的 Claude Code](https://www.warp.dev/agents/claude-code)——Warp 中 Claude Code 支持概述
+* [Warp 中的 Codex](https://www.warp.dev/agents/codex)——Warp 中 Codex 支持概述
+* [Warp 中的 Gemini CLI](https://www.warp.dev/agents/gemini-cli)——Warp 中 Gemini CLI 支持概述
+* [Warp 中的 OpenCode](https://www.warp.dev/agents/opencode)——Warp 中 OpenCode 支持概述
+* [第三方 CLI 代理](/agent-platform/cli-agents/overview/)——所有受支持代理和通用代理功能
+* [垂直标签](/terminal/windows/vertical-tabs/)——标签功能的完整参考

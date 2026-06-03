@@ -1,0 +1,29 @@
+---
+title: 自定义推理端点
+description: >-
+  将 Warp 的 Agent 连接到任何 OpenAI 兼容的推理端点——OpenRouter、LiteLLM、z.ai 或您已经运行的内部网关。
+---
+
+Warp 支持**自定义推理端点**，适用于希望使用任何 OpenAI 兼容推理端点——模型路由器、托管网关或他们已经运行的内部基础设施——为 Warp 的 Agent 提供动力的用户。
+
+这使您可以通过偏好的提供商路由 AI 请求、在您自己的网关后运行推理，或使用 OpenRouter 或 LiteLLM 等路由器，同时保持 Warp 内部的 Agent 体验。
+
+## 关键特性
+
+* **OpenAI 兼容** - 适用于实现 OpenAI Chat Completions API 的任何端点。
+* **提供商灵活性** - 使用模型路由器（OpenRouter、LiteLLM）、具有 OpenAI 兼容接口的模型提供商（z.ai）或您自己的内部网关。
+* **推理不消耗 AI 积分** - 推理直接由您的端点提供商计费。
+* **本地 API 密钥存储** - 端点 API 密钥仅存储在您的设备上。
+
+## 启用自定义推理端点
+
+1. 在 Warp 中，打开**设置**并搜索 `inference endpoint`
+2. 添加端点 URL 和任何所需的凭据（通常是 API 密钥）
+3. 指定要通过此端点路由的模型标识符
+4. 保存配置。添加后，您会在模型选择器中看到自定义模型
+
+## 使用本地模型
+
+Warp 通过其服务器路由推理请求，因此端点 URL 必须可公开访问。`localhost`、`127.0.0.1` 和其他私有或本地网络 URL 在配置自定义推理端点时被拒绝。
+
+要通过运行在您自己机器上的模型（例如 Ollama、LM Studio、vLLM、llama.cpp）路由，通过 ngrok 等隧道服务暴露它。

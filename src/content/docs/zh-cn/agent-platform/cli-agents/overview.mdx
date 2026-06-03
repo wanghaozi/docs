@@ -1,0 +1,82 @@
+---
+title: 第三方 CLI Agent 概述
+description: >-
+  Warp 为第三方 CLI 编码 agent 提供一流支持，包括丰富输入编辑器、通知、代码审查等。
+sidebar:
+  label: "概述"
+---
+
+Warp 自动检测受支持的 CLI agent，并使用 IDE 级功能增强它们——丰富输入编辑器、agent 通知、内联代码审查、远程会话控制等。在 Warp 中运行您偏好的编码 agent，开箱即用获得更好的体验。
+
+此功能集也称为**通用 agent 支持**。
+
+:::note
+Claude Code 和 Codex 也作为 Oz 中的 harness 受到支持，用于云编排。请参阅 [Oz 中的 Harnesses](/agent-platform/cloud-agents/harnesses/)。
+:::
+
+## 受支持的 Agent
+
+Warp 目前支持以下 CLI 编码 agent：
+
+* [**Claude Code**](/agent-platform/cli-agents/claude-code/) — Anthropic 的 CLI 编码 agent
+* [**OpenAI Codex**](/agent-platform/cli-agents/codex/) — OpenAI 的 CLI 编码 agent
+* [**OpenCode**](/agent-platform/cli-agents/opencode/) — 开源 CLI 编码 agent
+* **Amp** — Sourcegraph 的 CLI 编码 agent
+* **Auggie** — Augment Code 的 CLI 编码 agent
+* **Copilot CLI** — GitHub 的 CLI 编码 agent
+* **Cursor CLI** — Cursor 的 CLI 编码 agent
+* **Gemini CLI** — Google 的 CLI 编码 agent
+* **Droid** — Factory 的 CLI 编码 agent
+* **Pi** — 开源 CLI 编码 agent
+
+当您在 Warp 中启动受支持的 agent 时，**agent 工具带**会自动出现，让您快速访问 Warp 的增强功能。
+
+<figure>
+![当受支持的 CLI agent 在 Warp 中运行时，面板底部出现的 agent 工具带。](../../../../../assets/agent-platform/cli-agent-toolbelt.png)
+<figcaption>CLI agent 的 agent 工具带。</figcaption>
+</figure>
+
+## 功能支持
+
+并非每个 agent 都支持所有功能。下表显示当前支持情况。
+
+| 功能&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Claude Code | Codex | OpenCode | Amp | Auggie | Copilot CLI | Cursor | Gemini CLI | Droid | Pi |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 丰富输入编辑器 (`Ctrl-G`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Agent 通知 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 代码审查评论 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 附加代码作为上下文 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 垂直标签 + 元数据 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 标签配置 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 远程控制 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+:::note
+Agent 通知需要一次性设置。Claude Code 和 OpenCode 使用 Warp 通知插件。Codex 使用原生配置更改。请参阅各个 agent 页面获取设置说明。Amp、Auggie、Copilot CLI、Cursor、Gemini CLI、Droid 和 Pi 尚不支持通知。
+:::
+
+## 自定义工具带
+
+CLI agent 工具带上的芯片和按钮可以重新排序、隐藏或在左右两侧之间移动。您的布局会保存并在应用重启后持续存在。
+
+在 Warp 应用中，通过以下两种方式之一打开**编辑 CLI agent 工具带**模态框：
+
+* 当受支持的 CLI 编码 agent 正在运行时，右键单击输入区域并选择**编辑 CLI agent 工具带**。
+* 前往**设置** > **Agent** > **第三方 CLI agent**，然后单击**工具栏布局**预览。
+
+## 开始使用
+
+在 Warp 中运行受支持的 agent——就是这样。Warp 自动检测 agent 并激活包含所有可用功能的 agent 工具带。
+
+对于 **agent 通知**，每个 agent 需要一次性设置——通知插件或配置更改。请参阅各个 agent 页面获取说明。
+
+:::note
+如果您没有看到 agent 工具带，请确保您使用的是最新版本的 Warp。
+:::
+
+---
+
+## 相关页面
+
+* [Agent 通知](/agent-platform/capabilities/agent-notifications/)
+* [标签](/terminal/windows/tabs/)
+* [标签配置](/terminal/windows/tab-configs/)

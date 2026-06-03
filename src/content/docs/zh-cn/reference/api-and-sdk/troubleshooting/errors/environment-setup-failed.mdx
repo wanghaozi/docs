@@ -1,0 +1,65 @@
+---
+title: environment_setup_failed
+description: >-
+  云端代理的环境初始化失败。检查仓库 URL、设置命令和工作目录路径。
+---
+
+`environment_setup_failed` 错误发生在云端代理的运行时环境无法初始化时。这涵盖了环境设置任何阶段的失败，包括仓库克隆、设置命令执行、工作目录解析和 MCP 服务器启动。
+
+:::note
+虽然此错误返回 HTTP 500，但它被归类为**用户错误**（任务状态 → FAILED），因为失败是由环境配置引起的，而不是 Warp 的基础设施。
+:::
+
+---
+
+## 详情
+
+* **HTTP 状态：** `500 内部服务器错误`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当环境初始化过程的任何部分失败时返回此错误：
+
+* **Git 克隆失败** — 仓库 URL 不正确、分支不存在或代理没有访问该仓库的权限
+* **设置命令失败** — 环境设置命令列表中的命令执行出错（例如，缺少依赖、脚本错误）
+* **工作目录未找到** — 克隆后配置的工作目录不存在
+* **MCP 服务器启动失败** — 为环境配置的 MCP 服务器无法启动
+
+响应中的 `title` 字段将描述具体的设置失败原因。
+
+---
+
+## 示例响应
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/",
+  "title": "克隆仓库失败：在 acme/backend 中未找到分支 'main'",
+  "status": 500,
+  "instance": "/api/v1/agent/tasks",
+  "error": "克隆仓库失败：在 acme/backend 中未找到分支 'main'",
+  "retryable": false
+}
+```
+
+---
+
+## 解决方法
+
+1. **检查仓库配置** — 在您的[环境设置](/agent-platform/cloud-agents/environments/)中验证仓库 URL 和分支名称。确保仓库存在且可访问。
+2. **检查设置命令** — 在本地运行设置命令以确认它们正常工作。查找缺失的依赖、错误的路径或语法错误。
+3. **检查工作目录** — 确保工作目录路径相对于克隆的仓库根目录存在。
+4. **检查 MCP 服务器配置** — 验证 MCP 服务器启动命令以及任何必需的依赖或凭据是否可用。参见[代理的 MCP 服务器](/reference/cli/mcp-servers/)。
+5. **检查密钥** — 如果设置命令引用了来自[密钥](/agent-platform/cloud-agents/secrets/)的环境变量，请验证密钥是否已配置且在作用域内。
+
+---
+
+## 相关
+
+* [环境](/agent-platform/cloud-agents/environments/) — 配置云端代理环境
+* [密钥](/agent-platform/cloud-agents/secrets/) — 管理代理环境的凭据
+* [代理的 MCP 服务器](/reference/cli/mcp-servers/) — 配置 MCP 服务器

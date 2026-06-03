@@ -1,0 +1,58 @@
+---
+title: "使用 Warp 解释你的代码库（Rust 代码库）"
+description: >-
+  使用 Warp 的编码代理结合语义和符号搜索来探索、理解和修改不熟悉的代码库——以大型 Rust 项目为例进行演示。
+sidebar:
+  label: "使用 Warp 解释你的代码库"
+tags:
+  - "agents"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的代理来探索和理解大型、不熟悉的代码库——使用语义和符号级搜索。
+
+<VideoEmbed url="https://www.youtube.com/watch?v=11rz9OYQ8Hg" />
+
+---
+
+## 概述
+
+本演练展示了：
+
+* Warp 如何解释代码中未知的部分
+* 它如何结合语义和关键词搜索
+* 如何利用这些见解来修改 UI 组件
+
+---
+
+<Steps>
+
+1. #### 提示词
+
+   ```
+   Please explain how the agent popup code is structured,
+   where it lives in the codebase,
+   and how it is rendered and called.
+   I want to understand the full data flow and structure
+   so I can add a new agent button to it.
+   ```
+
+2. #### Warp 的代理如何搜索
+
+   Warp 首先使用**语义（向量化）搜索**来定位相关文件。\
+   一旦找到可能的匹配项（例如 `agent_management_popup.rs`），它就会切换到**符号搜索**（`grep` 和直接代码读取）。
+
+   Warp 智能地读取大文件（将其拆分为较小的块）以提取相关定义和渲染逻辑。
+
+3. #### 生成的解释
+
+   Warp 返回完整的分解说明：
+
+   * 弹出窗口定义所在的文件路径
+   * 它如何在工作区内渲染
+   * 哪些操作和 UI 组件触发它
+   * 数据在弹出窗口组件中流动的逐步视图
+
+</Steps>

@@ -1,0 +1,85 @@
+---
+title: 块分享
+description: >-
+  以永久链接或可嵌入的 HTML 片段与团队分享块。
+sidebar:
+  label: "块分享"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+此操作会将命令信息发送到我们的服务器，并且是明确选择加入的。在 [我们的隐私页面](https://www.warp.dev/privacy) 上阅读更多关于 Warp 隐私的信息。
+:::
+
+通过永久链接或 HTML 嵌入分享您的块。您可以通过打开上下文菜单并复制命令、输出或提示符来开始使用共享块。
+
+## 如何分享块
+
+<Tabs>
+  <TabItem label="macOS">
+    要分享您的块，请按照以下步骤操作：
+
+    1. 在已完成的块上，点击上下文菜单并选择 **分享...** 或选中块并按 `CMD-SHIFT-S`。
+    2. 将弹出一个模态框，让您为块命名，并通过选择要分享的块的部分（例如命令、输出、提示符等）来定制它。
+    3. 根据您想要分享块的方式，点击"创建链接"或"获取嵌入代码"。
+    4. 链接或嵌入代码片段将被复制到您的剪贴板。
+  </TabItem>
+  <TabItem label="Windows">
+    要分享您的块，请按照以下步骤操作：
+
+    1. 在已完成的块上，点击上下文菜单并选择 **分享...**，或在 **设置** > **键盘快捷键** 中为分享块设置快捷键。
+    2. 将弹出一个模态框，让您为块命名，并通过选择要分享的块的部分（例如命令、输出、提示符等）来定制它。
+    3. 根据您想要分享块的方式，点击"创建链接"或"获取嵌入代码"。
+    4. 链接或嵌入代码片段将被复制到您的剪贴板。
+  </TabItem>
+  <TabItem label="Linux">
+    要分享您的块，请按照以下步骤操作：
+
+    1. 在已完成的块上，点击上下文菜单并选择 **分享...**，或在 **设置** > **键盘快捷键** 中为分享块设置快捷键。
+    2. 将弹出一个模态框，让您为块命名，并通过选择要分享的块的部分（例如命令、输出、提示符等）来定制它。
+    3. 根据您想要分享块的方式，点击"创建链接"或"获取嵌入代码"。
+    4. 链接或嵌入代码片段将被复制到您的剪贴板。
+  </TabItem>
+</Tabs>
+
+:::note
+如果您遇到块分享的任何问题，请参阅我们的已知问题以获取 [故障排除步骤](/support-and-community/troubleshooting-and-support/known-issues/#online-features-dont-work)。
+:::
+
+<DemoVideo src="/assets/terminal/block-sharing-embed.mp4" label="块分享与嵌入演示" />
+
+## 永久链接
+
+创建并分享到您块的永久链接，以便与团队成员协作。这是 [网页永久链接](https://app.warp.dev/block/vzFATak939iqGWfNh7wsAP) 的示例，如下所示。
+
+![共享块](../../../../../assets/terminal/shared_block.png)
+
+## 嵌入块
+
+创建并将您的块嵌入到网页中，帮助读者跟随技术文档。读者可以像在 Warp 中一样与嵌入的块交互，包括上下文菜单和样式。当您点击"获取嵌入代码"时，Warp 会将一个 `iframe` 复制到您的剪贴板。以下是一个 `iframe` 示例：
+
+```html
+<iframe src="https://app.warp.dev/block/embed/qn0g1CqQnkYjEafPH5HCVT"
+title="服务器脚本错误" style="width: 712px; height: 397px; border:0;
+overflow:hidden;" allow="clipboard-read; clipboard-write"></iframe>
+```
+
+#### 网页上的嵌入块示例
+
+![嵌入块示例](../../../../../assets/terminal/embed.png)
+
+## 管理共享块
+
+您可以通过导航至 **设置** > **共享块** 来取消分享一个块。目前，任何拥有链接的人都可以访问共享块。
+
+## 链接预览
+
+共享的永久链接还将为每个链接显示代码预览，以便快速了解上下文。
+
+:::note
+兼容任何支持 Open Graph 或 Twitter 元标签的平台。例如 Slack、Twitter、Facebook、Telegram、Notion 等 ...
+:::
+
+<VideoEmbed url="https://www.loom.com/share/a78147fee8804c00b08a1decbc0d4e72?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="分享和展开块预览" />

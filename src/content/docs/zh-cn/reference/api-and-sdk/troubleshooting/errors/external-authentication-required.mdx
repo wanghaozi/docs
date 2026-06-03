@@ -1,0 +1,116 @@
+---
+title: external_authentication_required
+description: >-
+  任务需要访问尚未授权的外部服务（GitHub、Slack、Linear 等）。按照 auth_url 授予访问权限。
+---
+
+`external_authentication_required` 错误发生在云端代理任务需要访问用户尚未授权的外部服务时，或者 Warp GitHub App 没有访问所需仓库的权限时。
+
+---
+
+## 详情
+
+* **HTTP 状态：** `401 未授权`
+* **可重试：** 否
+* **任务状态：** FAILED
+
+---
+
+## 何时发生？
+
+当以下情况时返回此错误：
+
+* **GitHub 未连接** — 您的 Warp 账户未关联到 GitHub 账户，但任务的运行环境包含 GitHub 仓库
+* **仓库不可访问** — Warp GitHub App 未安装或无权访问任务环境所需的一个或多个仓库
+* **账户匹配失败** — 触发任务的 Slack 或 Linear 用户无法匹配到 Warp 账户
+
+---
+
+## 额外的元数据字段
+
+此错误包含超出标准响应格式的额外字段：
+
+* **`provider`** — 外部服务名称（例如 `"github"`、`"slack"`、`"linear"`）
+* **`auth_url`** — 完成授权流程的 URL（可用时）
+* **`inaccessible_repos`** — 代理无法访问的仓库名称列表（适用时）
+
+---
+
+## 示例响应
+
+### GitHub 用户未连接
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/",
+  "title": "用户未连接到 GitHub",
+  "status": 401,
+  "instance": "/api/v1/agent/tasks",
+  "error": "用户未连接到 GitHub。在此授权访问：https://...",
+  "retryable": false,
+  "provider": "github",
+  "auth_url": "https://github.com/login/oauth/authorize?..."
+}
+```
+
+### 仓库不可访问
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/",
+  "title": "用户没有访问环境中以下仓库的权限：acme/backend",
+  "status": 401,
+  "detail": "无法访问的仓库：acme/backend",
+  "instance": "/api/v1/agent/tasks",
+  "error": "用户没有访问环境中以下仓库的权限：acme/backend (无法访问的仓库：acme/backend)",
+  "retryable": false,
+  "provider": "github",
+  "auth_url": "https://github.com/apps/warp-dev/installations/new",
+  "inaccessible_repos": ["acme/backend"]
+}
+```
+
+### 账户匹配失败（Slack/Linear）
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/",
+  "title": "无法定位您的 Warp 账户",
+  "status": 401,
+  "instance": "/api/v1/agent/tasks",
+  "error": "无法定位您的 Warp 账户",
+  "retryable": false,
+  "provider": "slack"
+}
+```
+
+---
+
+## 解决方法
+
+### GitHub 未连接
+
+1. 按照响应中的 `auth_url` 将您的 GitHub 账户连接到 Warp。
+2. 完成 OAuth 授权流程。
+3. 重试任务。
+
+### 仓库不可访问
+
+1. 按照 `auth_url` 安装或重新配置 Warp GitHub App。
+2. 确保应用有权访问 `inaccessible_repos` 中列出的所有仓库。
+3. 重试任务。
+
+如果您使用的是绑定到[代理身份](/agent-platform/cloud-agents/agents/)的**团队 API 密钥**，请确保 Warp GitHub App 已安装在拥有这些仓库的组织上。
+
+### 账户匹配失败
+
+1. 确保您的 Slack 或 Linear 账户与您的 Warp 账户使用相同的电子邮件地址。
+2. 如果使用 Slack，请验证 Warp Slack 集成已安装在您的工作区中。
+3. 如果问题仍然存在，请联系您的团队管理员。
+
+---
+
+## 相关
+
+* [环境](/agent-platform/cloud-agents/environments/) — 为云端代理环境配置 GitHub 仓库
+* [集成](/agent-platform/cloud-agents/integrations/) — 设置 Slack 和 Linear 集成

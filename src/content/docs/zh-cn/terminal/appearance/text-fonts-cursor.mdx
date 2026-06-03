@@ -1,0 +1,58 @@
+---
+title: "文本、字体和光标"
+description: >-
+  Warp 支持自定义字体和文本显示方式。这有助于提高可读性和可用性。Warp 还支持禁用闪烁光标。
+sidebar:
+  label: "文本、字体和光标"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+在系统中安装新字体后，您需要重启 Warp 才能使其显示在选项列表中。您可能还需要选中"查看所有可用系统字体"才能看到新字体。
+:::
+
+## 如何使用
+
+### 文本和字体
+
+要访问此设置，请前往 **设置** > **外观** > **文本**
+
+从那里您可以自定义：
+
+* 字体类型
+* 字体粗细
+* 字体大小
+* 行高
+* 使用细描边
+  * 默认设置可防止文本在低 DPI 显示屏上模糊。
+
+:::caution
+在 Linux 上，Warp 不支持"使用细描边"功能。
+:::
+
+* 强制最小对比度
+  * 默认设置调整命名颜色以满足可访问性标准。
+* 在终端中显示连字
+
+:::note
+启用连字可能会降低性能。Warp 的默认字体 Hack 尚不支持连字。我们建议使用支持连字的字体（例如 [Fira Code](https://github.com/tonsky/FiraCode)）作为临时解决方案。
+:::
+
+### 光标
+
+要访问此设置，请前往 **设置** > **外观** > **光标**
+
+从那里您可以自定义：
+
+* 选择光标类型为竖线、方块或下划线。
+* 切换闪烁光标，或在 [命令面板](/terminal/command-palette/) 中输入"光标闪烁"并切换设置。
+
+:::note
+在 [Vim 键绑定](/terminal/editor/vim/)（vim 模式）激活时，光标类型偏好设置被禁用。
+:::
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/be2fa6ab10a3494a8c57a5431966905b?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="文本和字体演示" />
+
+<VideoEmbed url="https://www.loom.com/share/6ce3218472894763bb80a26b6c632c4d?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="光标演示" />

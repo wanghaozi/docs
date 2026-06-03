@@ -1,0 +1,59 @@
+---
+title: "创建生产就绪的 Docker 设置"
+description: >-
+  在 Warp 中使用代理生成优化的 Dockerfile、docker-compose 配置和 .dockerignore 文件，用于多阶段生产部署。
+sidebar:
+  label: "创建生产就绪的 Docker 设置"
+tags:
+  - "docker"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+了解如何使用 Warp 的 AI 自动构建干净、多阶段的 Docker 设置，适用于开发和生产环境。
+
+<VideoEmbed url="https://youtu.be/zdQdEauSF6Q?si=CoOdDjiffiw-et6r" />
+
+本教程展示如何在几分钟内使用 Warp 创建**完整的 Docker 环境**。\
+Warp 的 AI 可以分析你的整个代码库，生成 **Dockerfile**、**.dockerignore** 和 **docker-compose.yml**——全部针对小镜像大小和多服务编排进行了优化。
+
+虽然此示例使用通用的 Web 应用，但相同的模式适用于 **Python**、**Node.js**、**Go** 和其他生态系统。
+
+<Steps>
+
+1. #### 挑战
+
+   你构建了应用，然后突然意识到——它从一开始就应该容器化。\
+   手动配置 Docker 文件、镜像大小和环境变量既耗时又打断开发节奏。
+
+2. #### 提示词
+
+   在 Warp 的 AI 输入中使用此提示：
+
+   ```
+   "Analyze my entire project directory structure, package files, and configuration to generate a complete production-ready Docker setup. I need:
+
+   A multi-stage Dockerfile optimized for my specific language/framework with proper layer caching, security best practices, and minimal image size
+   A docker-compose.yml for both development and production environments with all necessary services, networks, volumes, and environment variable handling
+   A comprehensive .dockerignore file that excludes unnecessary files but keeps what's needed for the build
+   Startup scripts and health check configurations
+   Documentation explaining each Docker command and why specific choices were made
+
+   Please detect my project type automatically and configure everything accordingly. Include comments explaining the optimization decisions."
+
+   ```
+   Warp 将检测框架、推断服务并生成可直接运行的设置。
+
+3. #### 审查和自定义
+
+   Warp 输出：
+
+   * 优化的基础镜像
+   * 缓存的构建层
+   * 正确的依赖阶段
+   * 统一的环境管理
+
+   你可以轻松调整生成的 compose 文件中的服务名称或端口。
+
+</Steps>

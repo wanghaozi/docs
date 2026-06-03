@@ -1,0 +1,101 @@
+---
+title: Agent 身份
+description: >-
+  Agent 身份是团队作用域的机器人账户，拥有并执行云 agent 运行。分离工作流、限定凭据范围并归因自动化工作。
+sidebar:
+  label: "Agent 身份"
+---
+
+**Agent 身份**是一个团队作用域的身份，可以拥有并执行云 agent 运行。每个 Warp 团队从单个默认 agent 身份开始。创建额外的 agent 身份可以让您分离工作流、限定凭据范围并将自动化运行归因于特定的机器人账户而非个人。
+
+当您想要以下目标时，Agent 身份很有用：
+
+* **分离工作流** - 赋予部署机器人、依赖更新机器人和代码审查机器人不同的身份，以便更容易过滤和审计运行。
+* **限定凭据范围** - 将一组特定的管理密钥和技能附加到一个身份，使其运行仅接收该工作流所需的配置。
+* **归因自动化工作** - 将 API 密钥绑定到 agent 身份，以便 CI 流水线和 Webhook 在运行历史中显示为该机器人，而非团队成员。
+
+## Agent 身份如何工作
+
+每个团队有一个默认的 agent 身份。无头运行（如未指定身份的团队 API 密钥运行）在此默认身份下执行。用户触发的运行默认为以调用用户身份运行，在 Web 应用中显示为**快速运行**，除非您选择了特定的 agent 身份。您可以在默认身份之上创建额外的 agent 身份，并以其中任何一个身份运行。身份是团队作用域的，因此团队的每个成员都可以查看和使用同一组 agent 身份。
+
+您可以将以下配置附加到 agent 身份：
+
+* **描述** - 团队成员在选择身份时看到的简短、可读的摘要。
+* **管理密钥** - 对身份应有权访问的[团队管理密钥](/agent-platform/cloud-agents/secrets/)的引用（按名称）。
+* **技能** - 身份预加载的技能规范（例如 `org/repo:path/to/SKILL.md`）。当明确解析为团队云环境时，接受如 `repo:skill_name` 这样的简写规范。
+
+## 服务账户和 Agent 身份
+
+"Agent 身份"是面向用户的名称，Warp 的 CLI 和 REST API 内部将其建模为**服务账户**。这两个术语指的是相同的底层记录：
+
+* 当 `oz whoami` 报告 `service_account:<uid>` 主体时，该主体是您团队上的 agent 身份。
+* 当 [`oz federate issue-token`](/reference/cli/federate/) 发出类似 `service_account:my-sa-id` 的主题组件时，该值标识运行正在以哪个 agent 身份执行。
+
+在日常使用中，您不需要区分这两个术语。在 UI 中选择 agent 身份或将其 UID 传递给 API，CLI 就会显示对应的 `service_account:` 主体。
+
+## 支持多个 Agent 身份
+
+大多数团队从默认 agent 身份开始，随着自动化的成熟添加更多。当不同工作流具有显著不同的作用域时，创建额外的 agent 身份是值得的——例如，一个只需要只读仓库访问的 `ci-runner` 身份、一个持有生产部署凭据并仅限于事故手册的 `on-call` 身份，以及一个由计划清理任务使用的 `nightly-jobs` 身份。
+
+将每个身份限定到单个工作流为每次运行提供所需的最低凭据，保持审计跟踪可归因到正确的机器人，并允许您撤销或轮换一个工作流的访问权限而不影响其他工作流。
+
+## 计划限制
+
+每个团队从默认 agent 身份开始。额外的身份受基于计划的限制约束。请参阅 [warp.dev/pricing](https://warp.dev/pricing) 了解每个计划的当前限制。
+
+当团队超出计划限制时（例如降级后），额外的身份在列表中仍然可见，但标记为不可用。不可用的身份不能用于启动运行，不能为其生成新的 API 密钥，也不能编辑。
+
+## 管理 Agent 身份
+
+您可以通过公共 API 创建、列出、更新和删除 agent 身份。完整的请求和响应格式，包括错误代码，请参见 [API 参考](/api)页面；要查找的操作是 **agent** 标签下的 `createAgent`、`listAgents`、`updateAgent` 和 `deleteAgent`。
+
+端点的行为如下：
+
+* **创建** - `POST /agent/identities`，包含 `name` 和可选的 `description`、`secrets` 和 `skills`。返回 `201` 以及新身份的 `uid`、`name` 和 `available` 标志。
+* **列出** - `GET /agent/identities` 返回团队上的每个 agent 身份，包括默认身份。每个条目包括一个 `available` 标志，指示其是否在计划限制内。
+* **更新** - `PUT /agent/identities/{uid}` 替换个别字段。省略字段保留当前值；传递空字符串或空数组清除该字段。
+* **删除** - `DELETE /agent/identities/{uid}` 软删除身份并原子删除绑定到它的每个 API 密钥。默认 agent 身份不能删除。
+
+### 调用者要求
+
+每个端点都适用一些约束：
+
+* **团队作用域** - Agent 身份属于团队。调用者必须是恰好一个团队的成员。如果调用者属于零个或多个团队，请求将被拒绝。
+* **仅限人类调用者** - 只有人类用户可以创建、更新或删除 agent 身份。以 agent 身份自身身份验证的请求将被拒绝。
+* **可用性在使用时强制检查** - 超出计划限制的身份由列出端点返回，但不能用于更新字段、生成新密钥或启动新运行。
+
+## 绑定到 Agent 身份的 API 密钥
+
+团队 API 密钥可以在创建时绑定到特定的 agent 身份。使用该密钥进行的调用以所选身份运行。团队从身份自动解析，因此在生成密钥时无需指定团队。
+
+要创建绑定到 agent 身份的密钥，请在创建团队 API 密钥时选择该身份。请参阅 [API 密钥](/reference/cli/api-keys/)了解完整的密钥创建流程以及用户作用域和团队作用域密钥之间的区别。
+
+密钥存在后，CLI 和 SDK 每次调用都作为该 agent 身份进行身份验证。无需额外设置标志；绑定在密钥本身上。
+
+## 以 Agent 身份运行
+
+有两种方式以特定的 agent 身份运行云 agent：
+
+* **使用绑定到该身份的密钥进行身份验证** - 使用该密钥启动的每次运行都作为绑定的 agent 身份执行。这是 CI 流水线和计划工作的典型路径。
+* **在 `POST /agent/runs` 上传递 `agent_identity_uid`** - 对于一次性运行，在请求体中发送 agent 身份的 `uid`。该字段仅对团队拥有的运行有效。
+
+当两个路径都未使用时，无头运行（未指定身份的团队 API 密钥运行）在团队的默认 agent 身份下执行。用户触发的运行（Warp 应用、个人 API 密钥、Slack、Linear）以调用用户身份执行，在 Web 应用中显示为**快速运行**。
+
+## Agent 身份在产品中出现的位置
+
+Agent 身份在几个 Oz 界面中出现：
+
+* **Agent 页面** - [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/)中的 Agent 页面是团队查看、创建、编辑和删除 agent 身份的地方。同一页面列出了您团队可用的技能。
+* **Agent 选择器** - 启动新运行或计划的表单包括一个 **Agent** 下拉菜单。**快速运行**是默认选项（运行以调用用户身份执行）；选择 agent 身份则以该身份运行。
+* **运行过滤器和详情** - 运行视图让您按 agent 身份过滤，各个运行详情页面显示哪个身份执行了该运行。
+* **管理面板** - [管理面板](/knowledge-and-collaboration/admin-panel/)中的计费用途将 agent 身份运行消耗的积分归因于团队而非个人。
+
+## 相关页面
+
+* [云 agent 密钥](/agent-platform/cloud-agents/secrets/) - 管理您可以附加到 agent 身份的团队管理密钥。
+* [部署模式](/agent-platform/cloud-agents/deployment-patterns/) - 何时使用 agent 身份进行自动化与个人身份。
+* [Oz API & SDK](/reference/api-and-sdk/) - 对 agent 身份端点的编程访问。
+* [API 密钥](/reference/cli/api-keys/) - 创建绑定到特定 agent 身份的密钥。
+* [联合身份令牌](/reference/cli/federate/) - 从运行内部签发 OIDC 令牌，包括那些以 agent 身份执行的运行。
+* [Oz Web 应用](/agent-platform/cloud-agents/oz-web-app/) - 您在其中管理 agent 身份和检查其运行的 Web 界面。
+* [管理面板](/knowledge-and-collaboration/admin-panel/) - 团队级计费和访问控制。

@@ -1,0 +1,569 @@
+---
+title: 所有设置参考
+description: >-
+  Warp 的 settings.toml 文件中每个可用设置的完整参考，按部分组织，包含描述、类型、默认值和示例。
+---
+
+此页面列出了您可以在 [`settings.toml`](/terminal/settings/) 中配置的每个设置，按 TOML 部分组织。有关设置文件的介绍、如何打开它以及常见配置示例，请参见 [设置文件](/terminal/settings/)。
+
+设置被分组到对应于 TOML 表标题的部分中（例如 `[appearance.text]`）。只包含您想要更改的设置——Warp 对其他所有内容使用内置默认值。
+
+## 通用
+
+控制 Warp 启动行为、会话管理和窗口级偏好的顶级设置。
+
+**部分**：`[general]`
+
+* `default_session_mode` — 新终端会话的默认模式。类型：string。默认值：`"terminal"`。选项：`"terminal"`、`"agent"`、`"cloud_agent"`、`"tab_config"`、`"docker_sandbox"`。
+* `default_tab_config_path` — 当 `default_session_mode` 为 `"tab_config"` 时使用的标签配置路径。类型：string。默认值：`""`。
+* `link_tooltip` — 悬停在链接上时是否显示工具提示。类型：boolean。默认值：`true`。
+* `login_item` — 是否在登录时自动启动 Warp。类型：boolean。默认值：`true`。
+* `mouse_scroll_multiplier` — 鼠标滚轮事件的滚轮速度倍率。类型：number。默认值：`3.0`。
+* `new_tab_placement` — 新标签在标签栏中的放置位置。类型：string。默认值：`"after_current_tab"`。选项：`"after_current_tab"`、`"after_all_tabs"`。
+* `quit_on_last_window_closed` — 关闭最后一个窗口时是否退出 Warp。类型：boolean。默认值：`false`。
+* `restore_session` — 启动 Warp 时是否恢复上一个会话。类型：boolean。默认值：`true`。
+* `should_confirm_close_session` — 关闭会话时是否显示确认对话框。类型：boolean。默认值：`true`。
+* `show_changelog_after_update` — 更新后是否显示变更日志。类型：boolean。默认值：`true`。
+* `show_warning_before_quitting` — 退出 Warp 前是否显示警告对话框。类型：boolean。默认值：`true`。
+* `snackbar_enabled` — 是否显示 snackbar 通知。类型：boolean。默认值：`true`。
+* `user_native_preference` — 是否偏好原生桌面应用还是 Web 应用。类型：string。默认值：`"not_selected"`。选项：`"not_selected"`、`"web"`、`"desktop"`。
+
+### 撤销关闭
+
+**部分**：`[general.undo_close]`
+
+* `enabled` — 是否启用撤销关闭功能。类型：boolean。默认值：`true`。
+* `grace_period` — 关闭标签后可撤销关闭的时间（秒）。类型：integer。默认值：`60`。
+
+## 外观
+
+控制 Warp 外观的视觉设置，包括主题、字体、光标、标签、窗口和布局。
+
+**部分**：`[appearance]`
+
+* `spacing` — 控制终端块之间的间距。类型：string。默认值：`"normal"`。选项：`"normal"`、`"compact"`。
+
+### 主题
+
+**部分**：`[appearance.themes]`
+
+* `theme` — 颜色主题。类型：string。默认值：`"dark"`。选项：`"adeberry"`、`"phenomenon"`、`"dark"`、`"dracula"`、`"fancy_dracula"`、`"cyber_wave"`、`"solar_flare"`、`"solarized_dark"`、`"willow_dream"`、`"light"`、`"dark_city"`、`"gruvbox_dark"`、`"red_rock"`、`"jelly_fish"`、`"leafy"`、`"koi"`、`"solarized_light"`、`"snowy"`、`"gruvbox_light"`、`"pink_city"`、`"marble"`，或一个自定义主题对象。
+* `system_theme` — 是否匹配系统的浅色/深色主题。类型：boolean。默认值：`false`。
+* `selected_system_themes` — 系统浅色和深色模式使用的主题。类型：object。默认值：`{ dark = "dark", light = "light" }`。
+
+要使用自定义主题：
+
+```toml
+[appearance.themes]
+theme = { custom = { name = "My Theme", path = "~/.warp/themes/my-theme.yaml" } }
+```
+
+### 文本
+
+**部分**：`[appearance.text]`
+
+* `font_name` — 终端中使用的等宽字体。类型：string。默认值：`"Hack"`。
+* `font_size` — 终端中等宽字体的大小。类型：number。默认值：`13.0`。
+* `font_weight` — 等宽字体的粗细。类型：string。默认值：`"normal"`。选项：`"thin"`、`"extra_light"`、`"light"`、`"normal"`、`"medium"`、`"semibold"`、`"bold"`、`"extra_bold"`、`"black"`。
+* `line_height_ratio` — 终端文本的行高比例。类型：number。默认值：`1.2`。
+* `ligature_rendering_enabled` — 是否在终端中渲染字体连字。类型：boolean。默认值：`false`。
+* `ai_font_name` — AI 生成内容使用的字体。类型：string。默认值：`"Hack"`。
+* `match_ai_font` — AI 字体是否自动匹配终端字体。类型：boolean。默认值：`false`。
+* `notebook_font_size` — 笔记本中使用的字体大小。类型：number。默认值：`14.0`。
+* `match_notebook_to_monospace_font_size` — 笔记本字体大小是否匹配终端字体大小。类型：boolean。默认值：`true`。
+* `use_thin_strokes` — 是否在 macOS 上使用细字体描边。类型：string。默认值：`"on_high_dpi_displays"`。选项：`"never"`、`"on_low_dpi_displays"`、`"on_high_dpi_displays"`、`"always"`。
+* `enforce_minimum_contrast` — 是否强制文本使用最小对比度以提高可读性。类型：string。默认值：`"only_named_colors"`。选项：`"never"`、`"only_named_colors"`、`"always"`。
+
+### 光标
+
+**部分**：`[appearance.cursor]`
+
+* `cursor_display_type` — 光标的视觉样式。类型：string。默认值：`"bar"`。选项：`"bar"`、`"block"`、`"underline"`。
+* `cursor_blink` — 光标是否闪烁。类型：string。默认值：`"enabled"`。选项：`"enabled"`、`"disabled"`。
+
+### 块
+
+**部分**：`[appearance.blocks]`
+
+* `show_block_dividers` — 是否显示终端块之间的分隔线。类型：boolean。默认值：`true`。
+* `show_jump_to_bottom_of_block_button` — 是否在长命令输出中显示跳转到底部按钮。类型：boolean。默认值：`true`。
+* `should_show_bootstrap_block` — 引导块是否在终端中可见。类型：boolean。默认值：`false`。
+* `should_show_in_band_command_blocks` — 带内命令块是否可见。类型：boolean。默认值：`false`。
+* `should_show_ssh_block` — SSH 连接块是否可见。类型：boolean。默认值：`false`。
+
+### 标签
+
+**部分**：`[appearance.tabs]`
+
+* `workspace_decoration_visibility` — 工作区装饰（如标签栏）何时可见。类型：string。默认值：`"hide_fullscreen"`。选项：`"always_show"`、`"hide_fullscreen"`、`"on_hover"`。
+* `tab_close_button_position` — 标签上关闭按钮的位置。类型：string。默认值：`"right"`。选项：`"right"`、`"left"`。
+* `show_indicators_button` — 是否在标签上显示活动指示器。类型：boolean。默认值：`true`。
+* `preserve_active_tab_color` — 切换标签时是否保留活动标签的颜色。类型：boolean。默认值：`false`。
+* `header_toolbar_chip_selection` — 垂直标签面板标题中头部工具栏芯片的配置。类型：string 或 object。默认值：`"default"`。
+
+### 垂直标签
+
+**部分**：`[appearance.vertical_tabs]`
+
+* `enabled` — 是否垂直显示标签而不是水平显示。类型：boolean。默认值：`false`。
+* `view_mode` — 垂直标签栏的显示模式。类型：string。默认值：`"compact"`。选项：`"compact"`、`"expanded"`。
+* `primary_info` — 垂直标签上显示的主要信息。类型：string。默认值：`"command"`。选项：`"command"`、`"working_directory"`、`"branch"`。
+* `compact_subtitle` — 紧凑垂直标签上显示的副标题。类型：string。默认值：`"branch"`。选项：`"branch"`、`"working_directory"`、`"command"`。
+* `display_granularity` — 垂直标签面板中显示的行粒度。类型：string。默认值：`"panes"`。选项：`"panes"`、`"tabs"`。
+* `tab_item_mode` — 垂直标签中的标签项显示模式。类型：string。默认值：`"focused_session"`。选项：`"focused_session"`、`"summary"`。
+* `show_details_on_hover` — 悬停在垂直标签上时是否显示详细信息侧边窗口。类型：boolean。默认值：`true`。
+* `show_diff_stats` — 是否在垂直标签上显示差异统计。类型：boolean。默认值：`true`。
+* `show_pr_link` — 是否在垂直标签上显示 PR 链接。类型：boolean。默认值：`true`。
+* `use_latest_prompt_as_title` — 代理对话的垂直标签名称是否使用最新的用户提示。类型：boolean。默认值：`false`。
+
+### 窗格
+
+**部分**：`[appearance.panes]`
+
+* `focus_pane_on_hover` — 窗格悬停时是否聚焦。类型：boolean。默认值：`false`。
+* `should_dim_inactive_panes` — 非活动窗格是否视觉上变暗。类型：boolean。默认值：`false`。
+
+### 输入位置
+
+**部分**：`[appearance.input]`
+
+* `input_mode` — 终端输入的位置。类型：string。默认值：`"pinned_to_bottom"`。选项：`"pinned_to_bottom"`、`"pinned_to_top"`、`"waterfall"`。
+
+### 全屏应用
+
+**部分**：`[appearance.full_screen_apps]`
+
+* `alt_screen_padding` — 控制全屏终端应用周围的内边距。类型：string 或 object。默认值：`{ custom = { uniform_padding = 0.0 } }`。
+
+### 图标
+
+**部分**：`[appearance.icon]`
+
+* `app_icon` — Dock 中显示的应用图标。类型：string。默认值：`"default"`。选项：`"default"`、`"aurora"`、`"classic1"`、`"classic2"`、`"classic3"`、`"comets"`、`"cow"`、`"glass_sky"`、`"glitch"`、`"glow"`、`"holographic"`、`"mono"`、`"neon"`、`"original"`、`"starburst"`、`"sticker"`、`"warp_one"`。
+
+### 窗口
+
+**部分**：`[appearance.window]`
+
+* `override_opacity` — 窗口背景的不透明度，从 1 到 100 百分比。类型：integer。默认值：`100`。
+* `override_blur` — 应用于窗口背景的模糊半径。类型：integer。默认值：`1`。
+* `override_blur_texture` — 是否对窗口背景应用模糊纹理。类型：boolean。默认值：`false`。
+* `zoom_level` — 窗口的缩放级别，以百分比表示。类型：integer。默认值：`100`。
+* `open_windows_at_custom_size` — 是否以自定义大小而不是默认大小打开新窗口。类型：boolean。默认值：`false`。
+* `new_windows_num_columns` — 使用自定义大小时新窗口的列数。类型：integer。默认值：`80`。
+* `new_windows_num_rows` — 使用自定义大小时新窗口的行数。类型：integer。默认值：`40`。
+* `left_panel_visibility_across_tabs` — 左侧面板的可见性是否在所有标签之间共享。类型：boolean。默认值：`true`。
+
+## 终端
+
+控制终端行为、输入和事件处理的设置。
+
+**部分**：`[terminal]`
+
+* `copy_on_select` — 选择文本时是否自动复制到剪贴板。类型：boolean。默认值：`true`。
+* `focus_reporting_enabled` — 是否将焦点和失焦事件转发给全屏终端应用。类型：boolean。默认值：`true`。
+* `mouse_reporting_enabled` — 是否将鼠标事件转发给全屏终端应用。类型：boolean。默认值：`true`。
+* `scroll_reporting_enabled` — 是否将滚轮事件转发给全屏终端应用。类型：boolean。默认值：`true`。
+* `maximum_grid_size` — 终端网格的最大行数。类型：integer。默认值：`50000`。
+* `use_audible_bell` — 是否在终端响铃事件时播放可听铃声。类型：boolean。默认值：`false`。
+* `show_terminal_zero_state_block` — 是否在新终端会话中显示 AI 零状态块。类型：boolean。默认值：`true`。
+
+### 输入
+
+**部分**：`[terminal.input]`
+
+* `syntax_highlighting` — 终端输入中是否启用语法高亮。类型：boolean。默认值：`true`。
+* `honor_ps1` — 是否使用 shell 的 PS1 提示符而不是 Warp 提示符。类型：boolean。默认值：`false`。
+* `input_box_type_setting` — 终端输入样式。类型：string。默认值：`"classic"`。选项：`"universal"`（AI 优先输入）、`"classic"`（终端优先输入）。
+* `alias_expansion_enabled` — 输入中是否启用 shell 别名展开。类型：boolean。默认值：`false`。
+* `command_corrections` — 是否为拼写错误的命令建议命令纠正。类型：boolean。默认值：`true`。
+* `error_underlining_enabled` — 输入中是否给命令错误添加下划线。类型：boolean。默认值：`true`。
+* `completions_open_while_typing` — 输入时补全菜单是否自动打开。类型：boolean。默认值：`false`。
+* `classic_completions_mode` — 是否启用经典补全模式。类型：boolean。默认值：`false`。
+* `show_hint_text` — 终端输入中是否显示提示文本。类型：boolean。默认值：`true`。
+* `show_terminal_input_message_bar` — 是否显示终端输入消息栏。类型：boolean。默认值：`true`。
+* `enable_slash_commands_in_terminal` — 终端输入中是否可使用斜杠命令。类型：boolean。默认值：`true`。
+* `at_context_menu_in_terminal_mode` — 终端模式下 @ 上下文菜单是否可用。类型：boolean。默认值：`true`。
+* `outline_codebase_symbols_for_at_context_menu` — @ 上下文菜单中是否显示代码库符号。类型：boolean。默认值：`true`。
+* `middle_click_paste_enabled` — 中键点击是否从剪贴板粘贴。类型：boolean。默认值：`true`。
+* `extra_meta_keys` — 控制哪些额外按键被视为元键。类型：object。默认值：`{ left_alt = false, right_alt = false }`。
+
+#### 自动建议
+
+**部分**：`[terminal.input.autosuggestions]`
+
+* `enabled` — 是否显示命令自动建议。类型：boolean。默认值：`true`。
+* `keybinding_hint` — 是否显示自动建议的键位绑定提示。类型：boolean。默认值：`true`。
+* `show_ignore_button` — 是否显示自动建议的忽略按钮。类型：boolean。默认值：`false`。
+
+### 智能选择
+
+**部分**：`[terminal.smart_select]`
+
+* `enabled` — 是否启用双击智能选择以选择 URL、电子邮件、文件路径和标识符。类型：boolean。默认值：`true`。
+* `word_char_allowlist` — 当智能选择禁用时，被视为单词一部分的字符，用于双击选择。类型：string。默认值：`"-.~/\"`。
+
+## 会话
+
+控制新会话的 shell 选择和工作目录行为的设置。
+
+**部分**：`[session]`
+
+* `startup_shell_override` — Warp 启动时使用的 shell。类型：string 或 null。默认值：`null`（使用系统默认）。
+* `new_session_shell_override` — 打开新会话时使用的 shell。类型：string、object 或 null。默认值：`null`（使用系统默认）。选项：`"system_default"`、`{ executable = "/path/to/shell" }`、`{ custom = "command" }`。
+
+### 工作目录配置
+
+**部分**：`[session.working_directory_config]`
+
+* `advanced_mode` — 是否对每个会话源使用单独的设置。类型：boolean。默认值：`false`。
+
+当 `advanced_mode` 为 `false` 时，`[session.working_directory_config.global]` 表适用于所有会话源。当为 `true` 时，您可以独立配置每个源。
+
+**部分**：`[session.working_directory_config.global]`（以及 `.split_pane`、`.new_tab`、`.new_window`）
+
+* `mode` — 如何确定工作目录。类型：string。默认值：`"previous_dir"`。选项：`"home_dir"`、`"previous_dir"`、`"custom_dir"`。
+* `custom_dir` — 自定义目录路径，当模式为 `"custom_dir"` 时使用。类型：string。默认值：`""`。
+
+```toml
+# 为拆分窗格使用特定目录，为其他所有内容使用上一个目录
+[session.working_directory_config]
+advanced_mode = true
+
+[session.working_directory_config.global]
+mode = "previous_dir"
+custom_dir = ""
+
+[session.working_directory_config.split_pane]
+mode = "custom_dir"
+custom_dir = "~/projects"
+
+[session.working_directory_config.new_tab]
+mode = "previous_dir"
+custom_dir = ""
+
+[session.working_directory_config.new_window]
+mode = "home_dir"
+custom_dir = ""
+```
+
+## 代理
+
+Warp 代理的设置，包括模型行为、权限、知识、MCP 服务器和语音输入。
+
+**部分**：`[agents]`
+
+* `cloud_conversation_storage_enabled` — 对话是否存储在云端。类型：boolean。默认值：`true`。
+
+### 知识
+
+**部分**：`[agents.knowledge]`
+
+* `rules_enabled` — 代理在请求期间是否使用您保存的规则。类型：boolean。默认值：`true`。
+* `warp_drive_context_enabled` — AI 请求中是否包含 Warp Drive 上下文。类型：boolean。默认值：`true`。
+
+### MCP 服务器
+
+**部分**：`[agents.mcp_servers]`
+
+* `file_based_mcp_enabled` — 是否自动生成来自第三方代理的全局基于文件的 MCP 服务器。Warp 管理的全局 MCP 服务器无论此设置如何都会自动生成，项目范围的服务器必须手动启动。类型：boolean。默认值：`false`。
+
+### 配置文件（权限）
+
+**部分**：`[agents.profiles]`
+
+* `agent_mode_coding_permissions` — 代理的文件读取权限级别。类型：string。默认值：`"always_ask_before_reading"`。选项：`"always_ask_before_reading"`、`"always_allow_reading"`、`"allow_reading_specific_files"`。
+* `agent_mode_coding_file_read_allowlist` — 代理无需询问即可读取的文件路径。类型：字符串数组。默认值：`[]`。
+* `agent_mode_execute_readonly_commands` — 代理是否可以自动执行只读命令而无需询问。类型：boolean。默认值：`false`。
+* `agent_mode_command_execution_allowlist` — 代理无需显式权限即可执行的命令（正则表达式模式）。类型：字符串数组。默认值：`["cat(\\s.*)?", "echo(\\s.*)?", "find .*", "grep(\\s.*)?", "ls(\\s.*)?", "which .*"]`。
+* `agent_mode_command_execution_denylist` — 代理在执行前必须始终询问的命令（正则表达式模式）。类型：字符串数组。默认值：`["bash(\\s.*)?", "fish(\\s.*)?", "pwsh(\\s.*)?", "sh(\\s.*)?", "zsh(\\s.*)?", "curl(\\s.*)?", "eval(\\s.*)?", "exec(\\s.*)?", "source(\\s.*)?", "wget(\\s.*)?", "dig(\\s.*)?", "nslookup(\\s.*)?", "host(\\s.*)?", "ssh(\\s.*)?", "scp(\\s.*)?", "rsync(\\s.*)?", "telnet(\\s.*)?", "rm(\\s.*)?"]`。
+
+### Warp 代理（AI 功能）
+
+**部分**：`[agents.warp_agent]`
+
+* `is_any_ai_enabled` — 控制是否启用所有 AI 功能。类型：boolean。默认值：`true`。
+
+#### Active AI
+
+**部分**：`[agents.warp_agent.active_ai]`
+
+* `enabled` — 控制是否启用主动式 AI 功能（如建议）。类型：boolean。默认值：`true`。
+* `code_suggestions_enabled` — 控制是否启用 AI 代码建议。类型：boolean。默认值：`true`。
+* `intelligent_autosuggestions_enabled` — 控制是否启用 AI 驱动的智能自动建议。类型：boolean。默认值：`true`。
+* `agent_mode_query_suggestions_enabled` — 控制代理模式中是否显示提示建议。类型：boolean。默认值：`true`。
+* `shared_block_title_generation_enabled` — 控制分享块时是否自动生成标题。类型：boolean。默认值：`true`。
+
+#### 输入
+
+**部分**：`[agents.warp_agent.input]`
+
+* `ai_auto_detection_enabled` — 控制 AI 是否自动检测自然语言输入。类型：boolean。默认值：`true`。
+* `ai_command_denylist` — 要从 AI 自然语言自动检测中排除的命令。类型：string。默认值：`""`。
+* `nld_in_terminal_enabled` — 控制终端输入中是否启用自然语言检测。类型：boolean。默认值：`false`。
+* `show_model_selectors_in_prompt` — 是否在输入提示中显示 AI 模型选择器。类型：boolean。默认值：`true`。
+* `show_agent_tips` — 输入中是否显示代理提示。类型：boolean。默认值：`true`。
+* `include_agent_commands_in_history` — 代理执行的命令是否包含在命令历史中。类型：boolean。默认值：`false`。
+* `agent_toolbar_chip_selection_setting` — 控制代理模式工具栏中上下文芯片的布局。类型：string 或 object。默认值：`"default"`。
+
+#### 其他
+
+**部分**：`[agents.warp_agent.other]`
+
+* `thinking_display_mode` — 控制流式传输后代理思考轨迹的显示方式。类型：string。默认值：`"show_and_collapse"`。选项：`"show_and_collapse"`、`"always_show"`、`"never_show"`。
+* `open_conversation_layout_preference` — 是否在新标签或拆分窗格中打开代理对话。类型：string。默认值：`"new_tab"`。选项：`"new_tab"`、`"split_pane"`。
+* `show_conversation_history` — 对话历史是否显示在工具面板中。类型：boolean。默认值：`true`。
+* `show_agent_notifications` — 是否显示代理通知。类型：boolean。默认值：`true`。
+* `should_show_oz_updates_in_zero_state` — 代理视图中是否显示"新增内容"部分。类型：boolean。默认值：`true`。
+* `should_render_use_agent_toolbar_for_user_commands` — 是否为终端命令显示"使用代理"页脚。类型：boolean。默认值：`true`。
+* `cloud_agent_computer_use_enabled` — 云代理对话是否启用计算机使用。类型：boolean。默认值：`false`。
+
+### 代码审查自动生成
+
+控制代码审查对话框中的 AI 驱动自动生成。此设置目前位于 `[agents.oz.active_ai]` 下，而不是与其他 `[agents.warp_agent.active_ai]` 设置一起。
+
+**部分**：`[agents.oz.active_ai]`
+
+* `git_operations_autogen_enabled` — 控制 AI 是否在代码审查对话框中自动生成提交消息以及 PR 标题和正文。类型：boolean。默认值：`true`。
+
+### 第三方（CLI 代理）
+
+**部分**：`[agents.third_party]`
+
+* `should_render_cli_agent_toolbar` — 是否为编码代理命令显示 CLI 代理页脚。类型：boolean。默认值：`true`。
+* `auto_toggle_composer` — CLI 代理富输入是否根据代理的阻塞状态自动关闭和重新打开。类型：boolean。默认值：`true`。
+* `auto_open_composer_on_cli_agent_start` — CLI 代理会话启动时，CLI 代理富输入是否自动打开。类型：boolean。默认值：`false`。
+* `auto_dismiss_composer_after_submit` — 用户提交提示后，CLI 代理富输入是否自动关闭。类型：boolean。默认值：`false`。
+* `cli_agent_toolbar_chip_selection_setting` — 控制 CLI 代理工具栏中上下文芯片的布局。类型：string 或 object。默认值：`"default"`。
+* `cli_agent_toolbar_enabled_commands` — 将自定义工具栏命令模式映射到特定 CLI 代理。类型：object。默认值：`{}`。
+
+### 语音
+
+**部分**：`[agents.voice]`
+
+* `voice_input_enabled` — 控制 AI 交互是否启用语音输入。类型：boolean。默认值：`true`。
+* `voice_input_toggle_key` — 用于切换语音输入的按键。类型：string。默认值：`"none"`。选项：`"none"`、`"fn"`、`"alt_left"`、`"alt_right"`、`"control_left"`、`"control_right"`、`"super_left"`、`"super_right"`、`"shift_left"`、`"shift_right"`。
+
+## 代码
+
+Warp 内置代码编辑器、文件处理和代码库索引的设置。
+
+**部分**：`[code]`
+
+### 编辑器
+
+**部分**：`[code.editor]`
+
+* `open_file_editor` — 用于打开文件的编辑器。类型：string 或 object。默认值：`"system_default"`。选项：`"system_default"`、`"warp"`、`"env_editor"`，或外部编辑器对象，如 `{ external_editor = "v_s_code" }`。受支持的外部编辑器：VS Code (`v_s_code`)、VS Code Insiders (`v_s_code_insiders`)、PyCharm (`py_charm`)、IntelliJ IDEA (`intelli_j`)、CLion (`c_lion`)、RustRover (`rust_rover`)、Sublime Text 4 (`sublime4`)、Zed (`zed`)、Cursor (`cursor`)、Windsurf (`windsurf`) 等。
+* `open_code_panels_file_editor` — 用于从代码面板打开文件的编辑器。类型：string 或 object。默认值：`"warp"`。
+* `open_file_layout` — 在编辑器中打开文件时使用的布局。类型：string。默认值：`"split_pane"`。选项：`"split_pane"`、`"new_tab"`。
+* `prefer_markdown_viewer` — 打开 Markdown 文件时是否使用 Markdown 查看器。类型：boolean。默认值：`true`。
+* `prefer_tabbed_editor_view` — 是否优先在标签式编辑视图中打开文件。类型：boolean。默认值：`true`。
+* `show_code_review_button` — 是否在标签上显示代码审查按钮。类型：boolean。默认值：`true`。
+* `auto_open_code_review_pane_on_first_agent_change` — 代理进行第一次更改时是否自动打开代码审查窗格。类型：boolean。默认值：`false`。
+* `show_code_review_diff_stats` — 是否在代码审查按钮上显示添加/删除行数。类型：boolean。默认值：`true`。
+* `show_project_explorer` — 项目资源管理器是否显示在工具面板中。类型：boolean。默认值：`true`。
+* `show_global_search` — 全局文件搜索是否显示在工具面板中。类型：boolean。默认值：`true`。
+* `use_warp_as_default_editor` — Warp 是否用作默认代码编辑器。类型：boolean。默认值：`false`。
+
+### 索引
+
+**部分**：`[code.indexing]`
+
+* `agent_mode_codebase_context` — 是否向代理提供代码库上下文。类型：boolean。默认值：`true`。
+* `agent_mode_codebase_context_auto_indexing` — 是否启用自动代码库索引。类型：boolean。默认值：`false`。
+
+## 键
+
+键盘行为设置。
+
+**部分**：`[keys]`
+
+* `ctrl_tab_behavior_setting` — 控制 `Ctrl+Tab` 的行为。类型：string。默认值：`"activate_prev_next_tab"`。选项：`"activate_prev_next_tab"`、`"cycle_most_recent_session"`。
+
+## 通知
+
+控制桌面通知行为的设置。
+
+**部分**：`[notifications]`
+
+* `toast_duration_secs` — 通知 Toast 显示的时间（秒）。类型：integer。默认值：`8`。
+
+### 偏好
+
+**部分**：`[notifications.preferences]`
+
+* `mode` — 通知是启用、禁用还是未配置。类型：string。默认值：`"unset"`。选项：`"unset"`、`"dismissed"`、`"enabled"`、`"disabled"`。
+* `is_long_running_enabled` — 长时间运行的命令完成时是否通知。类型：boolean。默认值：`true`。
+* `long_running_threshold` — 长时间运行命令通知的阈值（秒）。类型：integer。默认值：`30`。
+* `is_agent_task_completed_enabled` — 代理任务完成时是否通知。类型：boolean。默认值：`true`。
+* `is_needs_attention_enabled` — 会话需要注意时是否通知。类型：boolean。默认值：`true`。
+* `is_password_prompt_enabled` — 检测到密码提示时是否通知。类型：boolean。默认值：`true`。
+* `play_notification_sound` — 通知是否播放声音。类型：boolean。默认值：`true`。
+
+## 隐私
+
+控制遥测、崩溃报告和秘密编辑的设置。
+
+**部分**：`[privacy]`
+
+* `telemetry_enabled` — 是否收集匿名使用遥测数据。类型：boolean。默认值：`true`。
+* `crash_reporting_enabled` — 是否发送崩溃报告。类型：boolean。默认值：`true`。
+* `custom_secret_regex_list` — 用于检测和编辑秘密的自定义正则表达式模式。类型：对象数组。默认值：`[]`。
+
+`custom_secret_regex_list` 中的每个项目格式如下：
+
+```toml
+[[privacy.custom_secret_regex_list]]
+pattern = "sk-[A-Za-z0-9]{48}"
+name = "OpenAI API 密钥"
+```
+
+### 秘密编辑
+
+**部分**：`[privacy.secret_redaction]`
+
+* `enabled` — 是否启用秘密编辑以检测和隐藏终端输出中的秘密。类型：boolean。默认值：`false`。
+* `hide_secrets_in_block_list` — 是否使用星号隐藏块列表中检测到的秘密。类型：boolean。默认值：`false`。
+* `secret_display_mode_setting` — 控制检测到的秘密的视觉显示方式。类型：string。默认值：`"strikethrough"`。选项：`"asterisks"`、`"strikethrough"`、`"always_show"`。
+
+## 系统
+
+底层系统和渲染设置。
+
+**部分**：`[system]`
+
+* `prefer_low_power_gpu` — 是否优先使用集成（低功耗）GPU。类型：boolean。默认值：`false`。
+* `preferred_graphics_backend` — 首选的图形后端（Windows）。类型：string 或 null。默认值：`null`。选项：`"dx12"`、`"vulkan"`、`"gl"`、`"metal"`、`null`。
+* `linux_selection_clipboard` — 是否使用 Linux 主选择剪贴板。类型：boolean。默认值：`true`。
+
+## 文本编辑
+
+控制输入编辑器中文本编辑行为的设置。
+
+**部分**：`[text_editing]`
+
+* `vim_mode_enabled` — 是否启用 Vim 键绑定。类型：boolean。默认值：`false`。
+* `vim_status_bar` — 是否显示 Vim 状态栏。类型：boolean。默认值：`true`。
+* `vim_unnamed_system_clipboard` — Vim 未命名寄存器是否使用系统剪贴板。类型：boolean。默认值：`false`。
+* `autocomplete_symbols` — 匹配符号（如括号和引号）是否自动补全。类型：boolean。默认值：`true`。
+
+## Warp Drive
+
+Warp Drive（共享工作流、笔记本和提示符）的设置。
+
+**部分**：`[warp_drive]`
+
+* `enabled` — 是否启用 Warp Drive。类型：boolean。默认值：`true`。
+* `sorting_choice` — Warp Drive 中项目的排序顺序。类型：string。默认值：`"by_object_type"`。选项：`"by_timestamp"`、`"alphabetical_descending"`、`"alphabetical_ascending"`、`"by_object_type"`。
+
+## Warpify
+
+SSH 会话和子 shell 中的 Warp 功能设置。
+
+### SSH
+
+**部分**：`[warpify.ssh]`
+
+* `enable_ssh_warpification` — 是否在 SSH 会话中启用 Warp 功能。类型：boolean。默认值：`true`。
+* `enable_legacy_ssh_wrapper` — SSH 会话的旧版 SSH 包装器是否启用。类型：boolean。默认值：`true`。
+* `use_ssh_tmux_wrapper` — 是否使用基于 tmux 的包装器进行 SSH Warpification。类型：boolean。默认值：`false`。
+* `ssh_extension_install_mode` — 控制 SSH 扩展安装行为。类型：string。默认值：`"always_ask"`。选项：`"always_ask"`（始终在安装前提示）、`"always_install"`（自动安装并连接，无需提示）、`"never_install"`（回退到旧版 Warpification）。
+* `ssh_hosts_denylist` — 不应触发 Warpification 提示的 SSH 主机。类型：字符串数组。默认值：`[]`。
+
+### 子 shell
+
+**部分**：`[warpify.subshells]`
+
+* `added_subshell_commands` — 应被识别为子 shell 的命令的其他正则表达式模式。类型：字符串数组。默认值：`[]`。
+* `subshell_commands_denylist` — 不应触发子 shell Warpification 提示的命令。类型：字符串数组。默认值：`[]`。
+
+## 工作流
+
+工作流行为的设置。
+
+**部分**：`[workflows]`
+
+* `show_global_workflows_in_universal_search` — 是否在通用搜索结果中显示全局工作流。类型：boolean。默认值：`false`。
+
+## 辅助功能
+
+屏幕阅读器支持的设置。
+
+**部分**：`[accessibility]`
+
+* `accessibility_verbosity` — 屏幕阅读器公告的详细程度。类型：string。默认值：`"verbose"`。选项：`"verbose"`（包括帮助字符串）、`"concise"`（仅值）。
+
+## 账户
+
+与您的 Warp 账户相关的设置。
+
+**部分**：`[account]`
+
+* `is_settings_sync_enabled` — 设置是否通过云端跨设备同步。类型：boolean。默认值：`false`。
+
+## 云平台
+
+第三方 API 密钥集成和云模型配置的设置。
+
+### 第三方 API 密钥
+
+**部分**：`[cloud_platform.third_party_api_keys]`
+
+* `aws_bedrock_credentials_enabled` — Warp 是否应使用您的本地 AWS 凭证进行 Bedrock 请求。类型：boolean。默认值：`false`。
+* `aws_bedrock_profile` — 用于 Bedrock 凭证的 AWS 配置文件名称。类型：string。默认值：`"default"`。
+* `aws_bedrock_auto_login` — Bedrock 凭证过期时是否自动运行 AWS 登录命令。类型：boolean。默认值：`false`。
+* `aws_bedrock_auth_refresh_command` — 用于刷新 Bedrock 的 AWS 凭证的命令。类型：string。默认值：`"aws login"`。
+* `can_use_warp_credits_with_byok` — 即使提供自己的 API 密钥，是否也可以使用 Warp 积分。类型：boolean。默认值：`false`。
+
+## 全局热键
+
+全局激活热键和专用热键窗口（Quake 模式）的设置。
+
+### 切换所有窗口
+
+**部分**：`[global_hotkey.toggle_all_windows]`
+
+* `enabled` — 切换所有窗口可见性的热键是否启用。与 `global_hotkey.dedicated_window.enabled` 互斥。类型：boolean。默认值：`false`。
+* `keybinding` — 全局激活热键的键位绑定。格式：修饰键和按键用 `-` 连接，例如 `"cmd-shift-a"` 或 `"alt-enter"`。类型：string 或 null。默认值：`null`。
+
+### 专用窗口（Quake 模式）
+
+**部分**：`[global_hotkey.dedicated_window]`
+
+* `enabled` — 专用热键窗口是否启用。与 `global_hotkey.toggle_all_windows.enabled` 互斥。类型：boolean。默认值：`false`。
+
+**部分**：`[global_hotkey.dedicated_window.settings]`
+
+* `active_pin_position` — 热键窗口固定到的屏幕边缘。类型：string。选项：`"top"`、`"bottom"`、`"left"`、`"right"`。
+* `hide_window_when_unfocused` — 是否在热键窗口失去焦点时隐藏它。类型：boolean。
+* `keybinding` — 切换热键窗口的键盘快捷键。类型：string 或 null。
+* `pin_screen` — 将热键窗口固定到的显示器。类型：string 或 object 或 null。选项：`"primary"`、`{ external = 1 }`、`null`。
+
+窗口大小百分比按固定位置配置：
+
+```toml
+[global_hotkey.dedicated_window]
+enabled = true
+
+[global_hotkey.dedicated_window.settings]
+active_pin_position = "top"
+hide_window_when_unfocused = true
+keybinding = "ctrl-`"
+
+[global_hotkey.dedicated_window.settings.pin_position_to_size_percentages.top]
+width = 100
+height = 30
+
+[global_hotkey.dedicated_window.settings.pin_position_to_size_percentages.bottom]
+width = 100
+height = 30
+
+[global_hotkey.dedicated_window.settings.pin_position_to_size_percentages.left]
+width = 40
+height = 100
+
+[global_hotkey.dedicated_window.settings.pin_position_to_size_percentages.right]
+width = 40
+height = 100
+```

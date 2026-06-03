@@ -1,0 +1,25 @@
+---
+title: 技术参考
+description: >-
+  Oz CLI、API 和 SDK 的技术参考文档。
+---
+
+Oz CLI、API 和 SDK 的技术参考文档。使用这些程序化接口，从 CI 流水线、脚本、后端服务和自定义工具中运行和管理代理，无需 Warp 桌面应用。
+
+## CLI
+
+[Oz CLI](/reference/cli/) 让你可以在任何环境中运行和配置代理——本地环境、CI 流水线或远程机器上。
+
+- [API 密钥](/reference/cli/api-keys/) - 创建和管理 API 密钥，无需人工交互即可认证 Oz CLI，适用于 CI 流水线、无头服务器和容器。
+- [代理配置文件](/reference/cli/agent-profiles/) - 使用代理配置文件控制代理可以访问的内容、行为方式以及可执行操作的范围，包括文件访问、命令执行和 MCP 服务器使用。
+- [MCP 服务器](/reference/cli/mcp-servers/) - 使用 `--mcp` 标志通过 UUID、内联 JSON 或文件路径将 MCP 服务器配置传递给代理运行。
+- [技能](/reference/cli/skills/) - 使用 `--skill` 标志从存储在仓库中的可重用指令集运行代理。
+- [Warp Drive 上下文](/reference/cli/warp-drive/) - 在 CLI 代理命令中直接引用 Warp Drive 中的已保存提示、笔记本、工作流和规则。
+- [集成设置](/reference/cli/integration-setup/) - 配置环境并连接 Slack 和 Linear 等外部工具，以便在终端之外触发代理。
+- [故障排除](/reference/cli/troubleshooting/) - 查找常见 CLI 错误的解决方案，包括认证问题、代理故障、环境问题和 Docker 镜像问题。
+
+## API 和 SDK
+
+[Oz API](/reference/api-and-sdk/) 让你可以通过 HTTP 创建和监控云端代理运行。官方的 [Python](https://github.com/warpdotdev/oz-sdk-python) 和 [TypeScript](https://github.com/warpdotdev/oz-sdk-typescript) SDK 提供了类型化客户端，内置重试和错误处理功能。
+
+- [演示：使用 SDK 进行 Sentry 监控](/reference/api-and-sdk/demo-sentry-monitoring-with-sdk/) - 集成示例

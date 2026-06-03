@@ -1,0 +1,178 @@
+---
+title: 设置文件
+description: >-
+  使用纯文本 TOML 设置文件配置 Warp。了解它在哪里、如何与设置面板配合使用，并查看常见配置示例。
+---
+
+Warp 将您的偏好存储在一个名为 `settings.toml` 的纯文本文件中。您可以在任何文本编辑器中直接编辑它，检入版本控制，或使用脚本生成。更改立即生效——无需重启。
+
+设置文件与图形设置面板协同工作。在任一处所做的更改都会反映在另一处。
+
+**主要功能：**
+
+* **热重载** — Warp 监听 `settings.toml` 的更改，并在您保存文件时立即应用它们。
+* **错误恢复** — 如果文件包含无效的 TOML 或无法识别的值，Warp 会显示一个警告横幅，并对受影响的设置回退到默认值。修复文件后，横幅会自动清除。
+* **自动迁移** — 当您升级到包含设置文件的 Warp 版本时，Warp 会自动将您现有的偏好迁移到 `settings.toml` 中。
+* **与设置 UI 双向同步** — Warp **设置** 面板中的更改（macOS 上为 `⌘+,`，Linux/Windows 上为 `Ctrl+,`）会写入 `settings.toml`，而手动编辑的文件也会反映在面板中。
+* **代理驱动的编辑** — 使用自然语言要求 Warp 的代理为您更改设置（例如"将我的字体大小增加到 16"）。捆绑的 `modify-settings` 技能会自动处理文件更新。
+
+## 打开您的设置文件
+
+有几种方法可以打开 `settings.toml`：
+
+* 在 Warp 应用中，前往 **设置** 并点击面板底部的 **打开设置文件**。
+* 直接在编辑器中打开文件，路径如下，适用于您的平台和 Warp 发布渠道。
+
+## 文件位置
+
+根据您的平台和 Warp 发布渠道，`settings.toml` 位于：
+
+* **macOS**
+  * Stable — `~/.warp/settings.toml`
+  * Preview — `~/.warp-preview/settings.toml`
+* **Linux**
+  * Stable — `~/.config/warp-terminal/settings.toml`
+  * Preview — `~/.config/warp-terminal-preview/settings.toml`
+* **Windows**
+  * Stable — `%LOCALAPPDATA%\warp\Warp\config\settings.toml`
+  * Preview — `%LOCALAPPDATA%\warp\WarpPreview\config\settings.toml`
+
+有关所有其他 Warp 文件的位置——主题、标签配置、键位绑定、日志、本地数据库等——请参见 [文件和文件夹位置](/terminal/settings/file-locations/)。
+
+## 设置文件格式
+
+该文件使用 [TOML v1.1](https://toml.io/en/v1.1.0) 语法。设置被组织成 **部分**（TOML 表），将相关选项分组——例如 `[appearance.text]` 包含字体设置，`[agents.profiles]` 包含代理权限设置。
+
+以下是一个显示结构的最小示例：
+
+```toml
+# 外观设置
+[appearance.text]
+font_name = "JetBrains Mono"
+font_size = 14.0
+line_height_ratio = 1.3
+
+[appearance.themes]
+theme = "dracula"
+
+# 终端行为
+[terminal.input]
+syntax_highlighting = true
+honor_ps1 = false
+
+# 代理权限
+[agents.profiles]
+agent_mode_execute_readonly_commands = true
+```
+
+### 部分如何映射到 TOML 表
+
+设置文件中的每个部分对应一个方括号中的 TOML 表标题。子部分使用点分隔路径：
+
+* `[general]` — 顶级通用设置，如会话恢复和标签放置
+* `[appearance]` — 视觉设置，带有 `[appearance.text]`、`[appearance.themes]`、`[appearance.cursor]` 等子部分
+* `[agents]` — 代理和 AI 设置，带有 `[agents.profiles]`、`[agents.warp_agent.input]` 等子部分
+* `[terminal]` — 终端行为设置，带有 `[terminal.input]` 等子部分
+
+有关每个可用设置的完整列表，请参见 [所有设置参考](/terminal/settings/all-settings/)。
+
+## 设置如何应用
+
+### 设置面板与文件之间的关系
+
+Warp 设置面板（macOS 上为 `⌘+,`，Linux/Windows 上为 `Ctrl+,`）和 `settings.toml` 表示相同的底层配置。在设置面板中更改开关会将新值写入 `settings.toml`。手动编辑 `settings.toml` 会在下次读取文件时更新设置面板。
+
+### 错误横幅
+
+当 `settings.toml` 有错误时，Warp 会在工作区顶部显示一个可关闭的警告横幅。横幅包含一个 **打开设置文件** 按钮，以便您直接跳转到文件并修复问题。一旦您保存更正后的文件，横幅会自动消失。
+
+## 常见配置
+
+### 更改主题和字体
+
+```toml
+[appearance.themes]
+theme = "cyber_wave"
+
+[appearance.text]
+font_name = "Fira Code"
+font_size = 15.0
+ligature_rendering_enabled = true
+font_weight = "normal"
+```
+
+### 配置代理权限
+
+```toml
+[agents.profiles]
+agent_mode_coding_permissions = "always_allow_reading"
+agent_mode_execute_readonly_commands = true
+agent_mode_command_execution_allowlist = [
+  "cat(\\s.*)?",
+  "echo(\\s.*)?",
+  "find .*",
+  "grep(\\s.*)?",
+  "ls(\\s.*)?",
+  "which .*",
+]
+```
+
+### 启用 Vim 键绑定
+
+```toml
+[text_editing]
+vim_mode_enabled = true
+vim_status_bar = true
+```
+
+## 从之前的设置迁移
+
+当您升级到包含设置文件的 Warp 版本时，Warp 会自动将您现有的偏好迁移到 `settings.toml` 中。无需操作——您的自定义设置会继承，并且该文件将成为后续所有设置的唯一真实来源。
+
+## 故障排除
+
+### "您的设置文件包含错误"横幅
+
+当 `settings.toml` 包含无效的 TOML 语法或无法识别的值时，会出现此横幅。点击横幅中的 **打开设置文件** 打开文件并检查：
+
+* **缺失引号** — 字符串值必须用双引号包裹：`font_name = "Hack"`，而不是 `font_name = Hack`。
+* **缺失括号** — 部分标题需要方括号：`[appearance.text]`。
+* **错误的值类型** — 检查数字是否是数字（`font_size = 13.0`），布尔值是否是 `true`/`false`，枚举值是否是有效的字符串。
+
+### 重置为默认值
+
+删除 `settings.toml`（或重命名它）并重启 Warp。Warp 对所有设置回退到内置默认值。下次您通过设置面板更改设置时，该文件会重新创建。
+
+```bash
+# 取消注释与平台和 Warp 发布渠道匹配的两行，
+# 然后运行它们以备份并删除 settings.toml。
+
+# Stable (macOS)
+# cp ~/.warp/settings.toml ~/.warp/settings.toml.bak
+# rm ~/.warp/settings.toml
+
+# Stable (Linux)
+# cp ~/.config/warp-terminal/settings.toml ~/.config/warp-terminal/settings.toml.bak
+# rm ~/.config/warp-terminal/settings.toml
+
+# Preview (macOS)
+# cp ~/.warp-preview/settings.toml ~/.warp-preview/settings.toml.bak
+# rm ~/.warp-preview/settings.toml
+
+# Preview (Linux)
+# cp ~/.config/warp-terminal-preview/settings.toml ~/.config/warp-terminal-preview/settings.toml.bak
+# rm ~/.config/warp-terminal-preview/settings.toml
+```
+
+### 设置未应用
+
+确认您正在为您的平台和 Warp 发布渠道编辑正确的文件（请参见上面的 [文件位置](#file-location)）。如果您运行多个 [Warp 发布渠道](/support-and-community/community/warp-preview-and-alpha-program/)，每个渠道都有自己的设置目录。
+
+## 相关页面
+
+* [所有设置参考](/terminal/settings/all-settings/) — 每个可用设置的完整列表，包含描述、类型和默认值
+* [文件和文件夹位置](/terminal/settings/file-locations/) — Warp 在 macOS、Windows 和 Linux 上存储每个配置、数据和状态文件的位置
+* [自定义 Warp](/getting-started/quickstart/customizing-warp/) — 所有自定义选项的概述
+* [自定义主题](/terminal/appearance/custom-themes/) — 创建和加载自定义 YAML 或 Base16 主题
+* [键盘快捷键](/getting-started/keyboard-shortcuts/) — 自定义键位绑定
+* [设置同步（Beta）](/terminal/more-features/settings-sync/) — 跨机器同步设置

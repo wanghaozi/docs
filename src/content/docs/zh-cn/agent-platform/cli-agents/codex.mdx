@@ -1,0 +1,53 @@
+---
+title: Warp 中的 Codex CLI
+sidebar:
+  label: "Codex"
+description: >-
+  在 Warp 中设置 Codex，支持通知、丰富输入、代码审查等功能。
+---
+
+Codex 是 OpenAI 的开源编码 agent，可在终端中运行。它可以编写和编辑代码、执行命令以及通过自然语言浏览您的代码库。有关完整文档，请参阅 [Codex GitHub 仓库](https://github.com/openai/codex)。
+
+当您运行 Codex 时，Warp 会自动检测它，使您能够使用丰富的输入控件、代码审查和其他集成功能。有关产品概述，请参阅 [Warp 中的 Codex](https://www.warp.dev/agents/codex)。
+
+有关安装、身份验证、项目配置和生产效率提示，请参阅[如何设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/) 指南。
+
+:::note
+Codex 也可作为 Oz 中的 harness 用于云编排。请参阅 [Codex 与 Oz](/agent-platform/cloud-agents/harnesses/codex/)。
+:::
+
+## 设置通知
+
+Codex 支持原生通知，Warp 以应用内和桌面提醒的形式呈现——例如当 Codex 完成任务、遇到错误或需要您的输入时。
+
+首先，将 Codex 更新到最新版本——对此设置的支持是最近添加的。请参阅 [Codex 升级说明](https://developers.openai.com/codex/cli#upgrade)。
+
+然后将以下内容添加到 `~/.codex/config.toml`：
+
+```toml
+[tui]
+notification_condition = "always"
+```
+
+然后重启 Codex。如果未设置此配置，Warp 会在终端中显示一个设置芯片，提供您可以直接遵循的说明。
+
+## 受支持的 Warp 功能
+
+Codex 支持 Warp 的全套 agent 集成功能：
+
+* **Agent 通知** - 当 Codex 需要您的关注时接收应用内和桌面提醒。需要一次性的配置更改（请参阅[设置通知](#setting-up-notifications)）。
+* **丰富输入编辑器** - 按下 `Ctrl-G` 打开扩展输入编辑器以编写更长的提示。
+* **代码审查** - 从 Warp 的代码审查面板直接发送内联审查评论给 agent。
+* **附加代码作为上下文** - 选择代码并将其作为上下文发送给 agent。
+* **带有 agent 元数据的垂直标签** - 在 Warp 的标签栏中使用状态指示器监控 Codex 会话。
+* **标签配置** - 保存和恢复 Codex 会话配置。
+* **远程控制** - 通过会话共享与团队成员共享您的 Codex 会话。
+
+## 相关页面
+
+* [如何设置 Codex CLI](/guides/external-tools/how-to-set-up-codex-cli/) — 逐步设置指南
+* [Warp 中的 Codex](https://www.warp.dev/agents/codex) — 产品概述
+* [第三方 CLI Agent 概述](/agent-platform/cli-agents/overview/) — 受支持的 CLI agent 集成
+* [Codex 与 Oz](/agent-platform/cloud-agents/harnesses/codex/) — Codex 作为云 harness
+* [Claude Code](/agent-platform/cli-agents/claude-code/) — Warp 中的 Claude Code
+* [OpenCode](/agent-platform/cli-agents/opencode/) — Warp 中的 OpenCode

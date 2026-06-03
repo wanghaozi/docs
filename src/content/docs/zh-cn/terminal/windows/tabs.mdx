@@ -1,0 +1,88 @@
+---
+title: 标签
+description: >-
+  使用可自定义的标签（带有标题和 ANSI 颜色）将您的窗口组织成多个终端会话。
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+:::note
+新标签将默认为活动标签当前的 [工作目录](/terminal/more-features/working-directory/)，实际颜色值将自动从您的 Warp [主题](/terminal/appearance/themes/) 派生。
+:::
+
+## 如何使用标签
+
+<Tabs>
+  <TabItem label="macOS">
+    * 右键单击新标签按钮 `+` 以创建新标签、恢复已关闭的标签或运行已保存的 [启动配置](/terminal/sessions/launch-configurations/)。
+    * 使用 `CMD-T` 或点击顶部栏中的 `+` 打开新标签。
+    * 使用 `CMD-W` 或悬停在标签上时点击 `X` 关闭当前标签。
+    * 使用 `SHIFT-CMD-T` 重新打开已关闭的标签。
+    * 使用 `CTRL-SHIFT-LEFT` / `CTRL-SHIFT-RIGHT` 或通过点击并拖动标签向左/向右移动标签。
+    * 使用 `SHIFT-CMD-{` / `SHIFT-CMD-}` 或通过点击标签激活上一个/下一个标签。
+    * 使用 `CMD-1` 到 `CMD-8` 激活第一到第八个标签。
+    * 使用 `CMD-9` 切换到最后一个标签。
+    * 双击标签以重命名它。
+    * 右键单击标签会显示更多选项，您可以在 [命令面板](/terminal/command-palette/) 或 [键盘快捷键](/getting-started/keyboard-shortcuts/#fundamentals) 中探索。
+  </TabItem>
+  <TabItem label="Windows">
+    * 右键单击新标签按钮 `+` 以创建新标签、恢复已关闭的标签或运行已保存的 [启动配置](/terminal/sessions/launch-configurations/)。
+    * 使用 `CTRL-SHIFT-T` 或点击顶部栏中的 `+` 打开新标签。
+    * 使用 `CTRL-SHIFT-W` 或悬停在标签上时点击 `x` 关闭当前标签。
+    * 使用 `CTRL-ALT-T` 重新打开已关闭的标签。
+    * 使用 `CTRL-SHIFT-LEFT` / `CTRL-SHIFT-RIGHT` 或通过点击并拖动标签向左/向右移动标签。
+    * 使用 `CTRL-PGUP` / `CTRL-PGDN` 或通过点击标签激活上一个/下一个标签。
+    * 使用 `CTRL-1` 到 `CTRL-8` 激活第一到第八个标签。
+    * 使用 `CTRL-9` 切换到最后一个标签。
+    * 双击标签以重命名它。
+    * 右键单击标签会显示更多选项，您可以在 [命令面板](/terminal/command-palette/) 或 [键盘快捷键](/getting-started/keyboard-shortcuts/#fundamentals) 中探索。
+  </TabItem>
+  <TabItem label="Linux">
+    * 右键单击新标签按钮 `+` 以创建新标签、恢复已关闭的标签或运行已保存的 [启动配置](/terminal/sessions/launch-configurations/)。
+    * 使用 `CTRL-SHIFT-T` 或点击顶部栏中的 `+` 打开新标签。
+    * 使用 `CTRL-SHIFT-W` 或悬停在标签上时点击 `x` 关闭当前标签。
+    * 使用 `CTRL-ALT-T` 重新打开已关闭的标签。
+    * 使用 `CTRL-SHIFT-LEFT` / `CTRL-SHIFT-RIGHT` 或通过点击并拖动标签向左/向右移动标签。
+    * 使用 `CTRL-PGUP` / `CTRL-PGDN` 或通过点击标签激活上一个/下一个标签。
+    * 使用 `CTRL-1` 到 `CTRL-8` 激活第一到第八个标签。
+    * 使用 `CTRL-9` 切换到最后一个标签。
+    * 双击标签以重命名它。
+    * 右键单击标签会显示更多选项，您可以在 [命令面板](/terminal/command-palette/) 或 [键盘快捷键](/getting-started/keyboard-shortcuts/#fundamentals) 中探索。
+  </TabItem>
+</Tabs>
+
+:::tip
+**终端技巧**\
+在 macOS 或 Linux 上使用您的 `.zshrc` 或 `.bashrc` 文件，您可以设置新的标签名称：
+
+```bash
+# 设置名称，其中 MyTabName 可以是您想在标签中看到的任何内容（固定字符串、$PWD 或其他）
+function set_name () {
+  export WARP_DISABLE_AUTO_TITLE=true
+  echo -ne "\033]0;MyTabName\007"
+}
+# 在 Zsh 或 Bash 中将函数添加到环境变量
+if [ -n "$ZSH_VERSION" ]; then
+  preexec_functions+=(set_name)
+elif [ -n "$BASH_VERSION" ]; then
+  PROMPT_COMMAND='set_name'
+fi
+```
+了解更多关于标签名称的信息 [此处](https://learn.microsoft.com/en-us/windows/terminal/tutorials/tab-title#set-the-shells-title)。
+:::
+
+### 标签恢复
+
+标签恢复使您可以在最多 60 秒内重新打开最近关闭的标签。在 **设置** > **功能** > **会话** > **启用重新打开已关闭的会话** 中配置此功能。
+
+### CTRL-TAB 行为
+
+`CTRL-TAB` 快捷键默认激活上一个/下一个标签。您可以在 **设置** > **功能** > **键** > **Ctrl-Tab 行为** 中配置快捷键以循环最近会话，包括任何 [拆分窗格](/terminal/windows/split-panes/)。
+
+### 标签行为
+
+请参见我们的 [外观 > 标签行为](/terminal/appearance/tabs-behavior/) 文档以获取更多标签相关设置。
+
+### 标签工作原理
+
+<VideoEmbed url="https://www.loom.com/share/84d15cc7eb5a4a668bb86be9e827f261?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="标签演示" />

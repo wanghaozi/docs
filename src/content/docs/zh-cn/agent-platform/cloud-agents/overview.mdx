@@ -1,0 +1,51 @@
+---
+title: 云 Agent 概述
+description: >-
+  从事件、计划或集成中运行后台云 Agent，具有团队级可观测性。
+sidebar:
+  label: "云 Agent 概述"
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+云 Agent 是自主、后台的 Agent，运行在 Warp 的云基础设施或您自己的基础设施上，由系统事件、计划或 Slack 和 GitHub 等集成触发。它们以完全可观测性执行任务——每次运行都被跟踪、可检查和跨团队共享。
+
+**刚接触云 Agent？** 从[云 Agent 快速入门](/agent-platform/cloud-agents/quickstart/)开始，在大约 10 分钟内运行您的第一个云 Agent。
+
+### 监控、检查和共享云 Agent 运行
+
+要了解云 Agent 做了什么，从 Warp 应用中的 [Agent 管理面板](/agent-platform/cloud-agents/managing-cloud-agents/)或 Oz Web 应用中的 [Runs 页面](/agent-platform/cloud-agents/oz-web-app/#runs)开始。从那里，您可以按来源、状态、触发器或所有者查找运行；打开运行记录；检查提示、计划、命令、日志和输出；并与团队成员共享会话链接以进行审查。
+
+### 云 Agent 的设计目标
+
+云 Agent 设计用于以下情况：
+
+* **您需要 Agent 响应系统事件。**
+* **您希望跨团队或系统对 Agent 活动具有可观测性。**
+* **您需要比本地执行通常允许的更多并行性。**
+* **您希望 Agent 作为工程基础设施持续运行。**
+
+### 什么是云 Agent 运行？
+
+云 Agent 运行表示为 agent 任务。当触发器触发（例如 Webhook 事件或计划）或用户显式启动运行时创建任务。
+
+每个任务包括：
+
+* **输入**：提示，通常还有来自触发系统的额外上下文
+* **执行上下文（可选）**：定义 agent 应使用的仓库、镜像和启动命令的[环境](/agent-platform/cloud-agents/environments/)
+* **生命周期状态**：已创建 → 运行中 → 已完成 / 失败
+* **持久记录**：状态、元数据和可在任务完成后审查的会话记录
+
+### 云 Agent 如何工作
+
+云 Agent 在 [Oz Platform](/agent-platform/cloud-agents/platform/) 上运行，它提供了触发工作、编排任务、执行 Agent（可选在环境中）、注入密钥和检查结果的原语。
+
+### 您默认获得的功能
+
+* **代码库上下文** - 云 Agent 运行自动受益于[代码库上下文](/agent-platform/capabilities/codebase-context/)
+* **可观测性和可引导性** - 云 Agent 任务设计为可供团队检查
+* **集中配置** - 共享配置如 MCP 服务器、规则、已保存提示和密钥
+* **API 访问任务** - Oz Platform 通过 Oz API 和 SDK 暴露任务可见性
+
+### 有或没有 Warp 应用使用云 Agent
+
+云 Agent 不需要 Warp 应用。团队可以通过 Oz CLI、Oz Web 应用、Agent 会话共享、Agent 管理面板和 API/SDK 部署和操作它们。

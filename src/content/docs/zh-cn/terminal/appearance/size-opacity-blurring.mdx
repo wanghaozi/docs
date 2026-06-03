@@ -1,0 +1,63 @@
+---
+title: "尺寸、不透明度和模糊"
+description: >-
+  配置窗口尺寸、不透明度和背景模糊，以匹配您的视觉偏好。
+sidebar:
+  label: "尺寸、不透明度和模糊"
+---
+import DemoVideo from '@components/DemoVideo.astro';
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 如何使用
+
+### 窗口尺寸
+
+要访问尺寸设置，请前往 **设置** > **外观** > **窗口**。
+
+* 启用"使用自定义尺寸打开新窗口"，然后配置您的首选列数和行数。
+
+:::note
+如果启用了 [会话恢复](/terminal/sessions/session-restoration/)，Warp 将在您退出应用时恢复最后关闭的窗口的大小。请确保自定义尺寸的窗口是最后关闭的窗口，或禁用会话恢复以确保 Warp 以自定义尺寸窗口启动。
+:::
+
+### 窗口不透明度
+
+要访问此设置，请前往 **设置** > **外观** > **窗口**
+
+* 滑块支持在 `1` 到 `100` 之间设置不透明度值，其中 `100` 为完全不透明或实心。
+
+### 窗口模糊
+
+降低不透明度（将滑块移动到小于 `100` 的值）后，您还可以模糊背景。
+
+* 在 macOS 上，使用模糊滑块完成此操作。增加滑块会增加应用于背景图像的模糊半径。
+* 在 Windows 上，通过打开或关闭亚克力背景纹理来完成此操作。
+
+:::caution
+在 macOS 上，较大的模糊半径可能会影响性能，尤其是在 Retina 显示屏上。
+
+在 Linux 上，不支持窗口模糊。
+
+在 Windows 上，某些显卡驱动程序可能不支持渲染透明或半透明窗口。有关故障排除提示，请参阅下文。
+:::
+
+## 工作原理
+
+<DemoVideo src="/assets/terminal/window_size_demo.mp4" label="窗口尺寸演示" />
+
+<VideoEmbed url="https://www.loom.com/share/22c9ef25392e4a5e80f9e01394c84dc4?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="窗口不透明度和模糊演示" />
+
+### Windows 上的透明度故障排除
+
+:::note
+目前，Warp for Windows 上的窗口不透明度在以下情况下 **不生效**：
+
+* 使用 DirectX 12 作为渲染后端时
+* 在使用 Nvidia GPU 且 NVIDIA 控制面板 > 管理 3D 设置中"Vulkan/OpenGL 呈现方法"选择了"自动"或"首选分层"时
+:::
+
+某些显卡驱动程序和渲染后端可能不支持渲染透明窗口。
+
+您可以在设置菜单中，在 `功能` > `系统` > `首选图形后端` 下选择 Vulkan 或 OpenGL 图形后端来渲染新的 Warp 窗口。
+
+您还可以选择使用集成 GPU 渲染新的 Warp 窗口，位于 `功能` > `系统` > `优先使用集成 GPU（低功耗）渲染新窗口`。

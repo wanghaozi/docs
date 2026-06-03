@@ -1,0 +1,67 @@
+---
+title: 全屏应用
+description: >-
+  运行 Vim、Emacs 和其他全屏应用，支持可配置的鼠标报告和内边距。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 鼠标和滚动报告
+
+Warp 支持配置如何处理鼠标和滚动事件。它们可以发送到当前正在运行的应用（例如 `vim`），或由 Warp 保留和处理。
+
+:::note
+必须启用鼠标报告才能同时切换滚动报告。
+:::
+
+鼠标报告启用后，Warp 将使用 ANSI 转义序列将鼠标事件传达给正在运行的应用。
+
+:::note
+如果您希望鼠标事件转到 Warp（例如用于文本选择），而不禁用鼠标报告，您可以按住 `SHIFT` 键。
+:::
+
+### 如何访问
+
+* 从设置面板，**设置** > **功能** > **终端** > **启用鼠标报告**
+  * 在切换 **启用鼠标报告** 后可以启用滚动报告
+* 从 [命令面板](/terminal/command-palette/)，搜索"切换鼠标报告"
+* 从 macOS 菜单，**视图** > **切换鼠标报告**
+
+### 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/a918696b002148d3beafd545b233c1be?hideEmbedTopBar=true&hide_owner=true&hide_share=true&hide_title=true" title="鼠标和滚动报告演示" />
+
+## 内边距
+
+Warp 支持配置全屏应用周围的内边距。默认是 0 像素填充，但可以更改为自定义填充量或匹配块列表中的填充。
+
+:::note
+Warp 允许您按单元格宽度/高度的分数缩放终端。当您的终端大小未与单元格宽度/高度完美对齐时，多余的空间会显示为右侧/底部的填充。
+:::
+
+### 如何访问
+
+* 前往 **设置** > **外观** > **全屏应用**，或从 [命令面板](/terminal/command-palette/) 搜索"外观"
+  * `在替代屏幕中使用自定义内边距` 默认启用，您可以禁用它以匹配块列表填充
+    * 设置所需的统一内边距（像素），默认设置为 0px
+
+:::caution
+某些全屏应用在调整大小时表现不佳。如果您遇到全屏应用的渲染问题，请尝试关闭此设置。这将确保全屏应用在启动时无需调整大小。
+:::
+
+<figure style={{ maxWidth: "375px" }}>
+![替代屏幕内边距设置](../../../../../assets/terminal/padding-settings.png)
+<figcaption>外观首选项中的替代屏幕内边距设置。</figcaption>
+</figure>
+
+## Kitty 键盘协议
+
+Warp 支持 [Kitty 键盘协议](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)（CSI u 渐进增强），因此全屏应用可以读取传统终端转义序列无法表示的按键——例如，区分 `Ctrl+I` 和 `Tab`，捕获仅修饰键事件，或检测按键释放事件。
+
+当正在运行的应用声明支持该协议时，Warp 会自动发出扩展的转义序列。无需配置。
+
+* **支持于**：Vim、Neovim、Emacs、tmux、helix 和其他选择加入 CSI u 的现代 TUI 应用。
+* **回退到传统编码**：当正在运行的应用不请求渐进增强时，保持旧程序不变继续工作。
+
+:::note
+如果 TUI 应用在升级 Warp 后报告意外的按键事件，请确认应用本身支持 Kitty 键盘协议。大多数应用需要明确选择加入（例如 Neovim 中的 `:set keyprotocol`）。
+:::

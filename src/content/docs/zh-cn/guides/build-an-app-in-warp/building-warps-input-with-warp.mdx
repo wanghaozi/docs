@@ -1,0 +1,62 @@
+---
+title: 用 Warp 构建 Warp 的输入组件
+description: >-
+  观看 Warp 设计师如何使用 Warp 自身的代理在大型 Rust 代码库中定位、修改和测试 UI 组件更改。
+sidebar:
+  label: "构建 Warp 的输入组件"
+tags:
+  - "build-app"
+  - "frontend"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+_主讲人：Dave，Warp 产品设计主管_
+
+<VideoEmbed url="https://youtu.be/ySzUj7kMZ64?si=MBhB4s_6lMDWHeS6" />
+
+### 挑战
+
+重新设计输入组件很棘手，因为它是开发者每天使用的首要界面。\
+每个人对它应该看起来和如何表现都有自己的看法和期望。
+
+所以，Peter（我团队中的产品设计师）和我使用 Figma 迭代了多个设计。
+
+当我们确定了喜欢的版本后，我们在内部进行了分享。\
+大多数人都很兴奋，但工程资源紧张——专注于改进代理模式质量和准备智能开发环境。
+
+所以我想：_"何不用 Warp 自己来做？"_
+
+#### 第 1 步：定位 Git Diff 标签代码
+
+在通用输入组件内部，有一个小的 Git Diff 标签——它显示当前分支和开放的更改。它高了一个像素。那个微小的视觉错误让我抓狂，所以我用 Warp 来找到它所在的位置。
+
+Warp 搜索了整个代码库，并在以下文件中找到了引用：
+
+* `displaychip.rs`
+* 相关的渲染和配置文件
+
+它结合使用了语义搜索、代码索引和传统的 grep 来精确定位确切的实现。
+
+---
+
+#### 第 2 步：修改字体大小
+
+Warp 定位到实现后，我要求它将字体大小减小 1 像素。
+
+Warp 自动编辑了相关行：
+
+* 找到了当前设置（`system_font_size - 1`）
+* 调整为（`system_font_size - 2`）
+
+我审查了差异以确认一切正常。
+
+---
+
+#### 第 3 步：构建和测试更改
+
+接下来，我使用以下命令重建了应用：
+
+```bash
+cargo run
+```

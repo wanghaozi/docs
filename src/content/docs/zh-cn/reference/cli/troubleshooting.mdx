@@ -1,0 +1,185 @@
+---
+title: CLI 故障排除
+description: >-
+  常见 Oz CLI 错误的解决方案——包括认证问题、代理故障、环境、GitHub 访问和 Docker 镜像问题。
+---
+
+常见 Oz CLI 错误的解决方案，包括认证问题、代理故障、环境配置、GitHub 访问问题和 Docker 镜像兼容性。使用 `oz help` 查看任何命令的内置文档。
+
+## 获取帮助
+
+CLI 包含所有命令的内置文档：
+
+```bash
+# 查看所有可用命令
+oz help
+
+# 获取特定命令的详情
+oz help agent run
+
+# 探索 MCP 相关命令
+oz help mcp
+```
+
+## 常见错误
+
+**命令未找到 / CLI 未正确安装**\
+验证您的安装路径并确认 CLI 版本：
+
+```bash
+oz --version
+```
+
+**认证问题**
+
+* 交互式登录：确保您已通过 `oz login` 完成基于浏览器的流程。
+* API 密钥：确认密钥有效、未过期且导出正确。无效、过期或缺失的密钥可能返回 [`authentication_required` 错误](/reference/api-and-sdk/troubleshooting/errors/authentication-required/)。
+
+**代理或 MCP 错误**\
+确保您的代理配置文件和 [MCP 服务器](/agent-platform/capabilities/mcp/)配置正确，具有适当的权限。详情请参见 [MCP 服务器](/reference/cli/mcp-servers/)和[代理配置文件](/reference/cli/agent-profiles/)。
+
+---
+
+## 环境
+
+#### 如何查看我的集成正在使用哪个环境？
+
+列出您的集成：
+
+```
+oz integration list
+```
+
+这显示每个集成、其 ID 以及链接到的环境。在进行更改之前，使用此命令确认要检查或更新的环境。
+
+#### 如何查看环境内部的内容？
+
+知道环境 ID 后，运行：
+
+```
+oz environment get <ENV_ID>
+```
+
+这将打印完整的配置，包括：
+
+* **环境 ID**（用于其他命令）
+* **名称**
+* **Docker 镜像**
+* 关联的**仓库**
+
+这是验证代理运行时将看到什么的最可靠方法。
+
+#### 如何添加或移除仓库和设置命令？
+
+使用 `oz environment update`。您可以增量修改环境，无需重新创建。
+
+**添加仓库：**
+
+```
+oz environment update <ENV_ID> --repo owner/repo
+```
+
+**移除仓库：**
+
+```
+oz environment update <ENV_ID> --remove-repo owner/repo
+```
+
+**添加设置命令：**
+
+```
+oz environment update <ENV_ID> --setup-command "您的命令"
+```
+
+**移除设置命令（必须完全匹配）：**
+
+```
+oz environment update <ENV_ID> --remove-setup-command "完全匹配的命令"
+```
+
+注意：
+
+* 添加仓库时，Warp 可能会提示您调整 GitHub 应用权限。
+* 设置命令按定义顺序运行。
+
+#### **如何删除环境？**
+
+如果环境不再需要：
+
+```
+oz environment delete <ID>
+```
+
+添加 `--force` 跳过对集成使用环境的确认检查。
+
+仅在确认没有活跃集成依赖该环境时才执行此操作。如果集成指向已删除的环境，从 Slack/Linear 发出的请求将失败，并返回 [`resource_not_found` 错误](/reference/api-and-sdk/troubleshooting/errors/resource-not-found/)，直到您使用有效的环境创建新集成。
+
+### 集成
+
+#### **如何确定我的集成正在使用哪个环境？**
+
+列出您的集成：
+
+```
+oz integration list
+```
+
+这显示每个集成、其 ID 以及附加到的环境。当您不确定要更新或删除哪个环境时，请使用此命令。
+
+#### **我创建了一个新环境，但在运行 oz integration create 时看不到它**
+
+检查：
+
+1. 环境存在且健康：`oz environment list`
+2. 您在正确的 Warp 团队中。确保您的本地 CLI 已登录到创建环境时的同一团队。
+   1. 如果两者都正确但环境仍然不显示，请重新创建并确认创建期间没有错误。
+
+## GitHub 和仓库访问问题
+
+#### **创建/使用环境时被要求授权 GitHub**
+
+这种情况发生在：
+
+* 您添加了 Warp 尚未有访问权限的仓库，或
+* 您个人尚未授予 Warp GitHub 应用对该仓库的权限。
+
+请按照 GitHub 弹窗流程安装/调整 Warp GitHub 应用。缺少外部授权可能返回 [`external_authentication_required` 错误](/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/)。
+
+#### **代理无法打开 PR 或推送更改到我的仓库**
+
+检查以下内容：
+
+1. **仓库是您环境的一部分**。
+   1. 确保仓库列在：`oz environment get <id>`
+2. **Warp GitHub 应用有权访问该仓库**
+   1. 在 GitHub 的设置中，确认 Warp 应用已安装且该仓库已被选中。
+3. **您拥有写入权限**
+   1. 代理继承您的 GitHub 权限。如果您只有读取权限，Warp 无法代表您打开 PR 或推送分支，运行可能返回 [`not_authorized` 错误](/reference/api-and-sdk/troubleshooting/errors/not-authorized/)。
+
+### Docker 镜像和环境故障
+
+#### **我看到类似"拉取访问被拒绝"或"仓库不存在"的错误**
+
+检查：
+
+1. Docker 镜像名称和标签是否正确。
+2. 镜像是否在 Docker Hub 上公开。
+3. 您能否在本地拉取：`docker pull <image_name>`
+
+如果本地 docker pull 失败，首先修复镜像的可见性/名称，然后使用可用的镜像重新创建或更新环境。镜像拉取和设置失败可能表现为 [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/)。
+
+#### **代理在环境中找不到工具或运行时**
+
+这通常意味着 Docker 镜像缺少必需的依赖项。通过以下方式修复：
+
+* 更新用于构建镜像的 Dockerfile，然后推送新版本到 Docker Hub 并更新环境为新镜像，或
+* 添加额外的设置命令来安装缺失的工具：`oz environment update --setup-command "apt-get update && apt-get install -y "`
+
+#### **我看到"代理运行前虚拟机已失败。这很可能是您的 Docker 镜像问题"**
+
+这通常意味着您的 Docker 镜像使用的是 musl libc 而不是 glibc。Alpine Linux 和其他基于 musl 的镜像与代理运行时不兼容，这可能表现为 [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/)。
+
+修复：
+
+* 切换到基于 glibc 的镜像，如 Debian、Ubuntu 或官方 Docker Hub 镜像的默认（非 Alpine）变体（例如 `node`、`python`、`rust`）。
+* 如果您使用的是 Alpine 变体，如 `node:20-alpine`，请将其替换为默认标签（例如 `node:20`）。

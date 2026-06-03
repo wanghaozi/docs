@@ -1,0 +1,72 @@
+---
+title: "GitHub MCP：总结开放的 PR 并创建 GitHub 问题"
+description: >-
+  将 GitHub MCP 服务器连接到 Warp，以总结开放的 PR、从 TODO 注释创建问题并自动化仓库管理。
+sidebar:
+  label: "GitHub MCP：总结开放的 PR 并创建 GitHub 问题"
+tags:
+  - "mcp"
+  - "code-review"
+
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+<VideoEmbed url="https://youtu.be/rrxfS9u1XRA?si=wDU42iXPhGlVn2RM&t=30" />
+
+GitHub MCP 服务器让 Warp 代理能够直接在你的 GitHub 仓库中读取、写入和自动执行任务——无需手动切换标签。
+
+---
+
+### 2. 设置
+
+#### 第 1 步：获取 GitHub 个人访问令牌
+
+1. 前往 **GitHub → 设置 → 开发者设置 → 个人访问令牌**
+2. 创建一个新令牌并启用：
+   * ✅ `repo`
+   * ✅ `read:user`
+
+---
+
+#### 第 2 步：在 Warp 中添加服务器
+
+1. 通过命令面板（`Cmd + P`）打开 **MCP 面板**
+2. 点击**添加服务器**
+3. 粘贴你的 JSON 配置和访问令牌
+4. 保存——你将立即看到可用的端点
+
+---
+
+### 3. 工作流 1——总结所有开放的 PR
+
+使用 Warp 的代理总结拉取请求：
+
+在幕后，MCP 服务器：
+
+* 列出 PR
+* 获取评论和审查
+* 编译带有可点击链接的摘要
+
+非常适合日常 PR 分类或站会。
+
+---
+
+### 4. 工作流 2——从 TODO 创建 GitHub 问题
+
+使用已保存提示自动创建问题。
+
+Warp：
+
+1. 扫描你的代码库查找 TODO 注释
+2. 通过 MCP 为每个 TODO 调用 `create_issue`
+3. 生成新问题的链接列表
+
+这能将分散的笔记即时转化为可追踪的工单。
+
+---
+
+### 5. 为什么有用
+
+* 每次会话节省 20-30 分钟
+* 自动保持仓库同步
+* 实现 PR 摘要、问题跟踪和自动化——全部在 Warp 内完成。

@@ -1,0 +1,90 @@
+---
+title: 具有 Warp 功能的 SSH
+description: >-
+  在远程 macOS 和 Linux 主机上使用 Warp 的 SSH 扩展，以获得真实的文件树、可靠的补全和原生的代码编辑功能。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+Warp 的 **SSH 扩展** 将本地 Warp 体验带到远程 macOS 和 Linux 主机。在首次连接时选择加入后，您将获得由远程文件系统支持的真实文件树、通过单个多路复用 SSH 连接实现的更可靠的补全，以及使用 Warp 原生差异工具应用编辑的编码代理，而不是回退到 `sed`。
+
+<VideoEmbed url="https://www.loom.com/share/466d88a1968842c68f66a3b66b94f146" title="SSH 扩展演示" />
+
+## 通过 SSH 获得的功能
+
+一旦 SSH 扩展安装在远程主机上，以下功能与本地工作方式相同：
+
+* **文件树（项目资源管理器）** - 左侧面板反映远程项目的结构，并在您 `cd` 切换目录或更改文件时更新。参见 [文件树](/code/code-editor/file-tree/)。
+* **可靠的补全和自动建议** - 生成器通过单个多路复用连接并行运行，而不是为每个命令打开一个新的 SSH 会话，因此补全不再触及远程主机的 `MaxSessions` 上限，也不再偶尔向您的块中注入错误。
+* **原生文件读取和代码差异** - 代理通过 Warp 内置的差异工具读取文件和应用编辑。代码更改显示为内联差异，您可以审查和批准，而不是通过 `sed` 或其他 shell 命令应用。参见 [代码差异](/agent-platform/local-agents/code-diffs/)。
+* **所有核心终端功能** - 输入编辑器、块、命令历史、自动建议和历史搜索的行为与本地会话相同。
+
+有关 SSH 下哪些功能可用、哪些不可用的完整细分，请参见 [通过 SSH 的功能支持](/code/ssh-feature-support/)。
+
+![Warp 提示对刚连接的 SSH 会话进行 Warpify。](../../../../../assets/terminal/warpify_ssh_prompt.png)
+
+## 安装 SSH 扩展
+
+在首次连接到尚未安装 SSH 扩展的主机时，Warp 会在块内显示提示，提供两个选项：
+
+* **安装 Warp 的 SSH 扩展** - 推荐。Warp 下载与远程 OS 和架构匹配的远程服务器扩展，将其安装在 `~/.warp/remote-server`（或 Preview 构建中的 `~/.warp-preview/remote-server`）下，启动它，并完成握手。随后连接到同一主机将跳过提示并重用已安装的二进制文件。
+* **继续而不安装** - 跳过为此连接安装扩展。会话将无 SSH 扩展继续，因此文件树、原生文件读取和原生代码差异在安装之前不可用。您可以随时重新连接并安装。
+
+未经您的明确同意，Warp 永远不会在远程主机上安装任何内容，并且安装仅写入 `~/.warp*/` 下。
+
+:::note
+扩展二进制文件跟踪您的客户端的发布渠道。Stable Warp 在 `~/.warp/remote-server` 下安装扩展，Preview 在 `~/.warp-preview/remote-server` 下安装，因此两个渠道可以在同一远程主机上共存。
+:::
+
+### 管理安装提示
+
+在 Warp 应用中，前往 **设置** > **Warpify** 来控制提示的行为：
+
+* **始终询问**（默认） - 在您首次连接到每个主机时显示安装提示。
+* **始终安装** - 跳过提示，在扩展缺失时自动安装。
+* **从不安装** - 跳过提示，在不安装 SSH 扩展的情况下连接到主机。
+
+同样的设置也可以从安装提示中内联更改，方法是点击任一按钮前选择 **不再问我此内容**。底层的 TOML 键是 `warpify.ssh.ssh_extension_install_mode`——参见 [所有设置参考](/terminal/settings/all-settings/#ssh) 获取与 SSH 相关的设置的完整列表，包括用于您永远不希望在其上启用 Warpification 的主机的 `ssh_hosts_denylist`。
+
+## 旧版：基于 tmux 的 Warpification
+
+:::caution
+基于 tmux 的 Warpification 是 SSH 扩展的旧版替代方案，正在被弃用。尽可能使用上述 SSH 扩展。基于 tmux 的 Warpification 目前仍适用于尚未提供 SSH 扩展的客户端（例如 Windows 客户端）。
+:::
+
+基于 tmux 的 Warpification 是一种较旧的、在 SSH 会话中启用 Warp 功能的方法。它使用 [`tmux`](#why-do-i-need-tmux-on-the-remote-machine) 通过您的 SSH 连接多路复用命令，并提供块、补全、输入编辑器和历史搜索。
+
+### 常见问题
+
+#### Warpifying 一个远程 SSH 会话是否会对远程机器进行更改？
+
+仅在有您的明确许可时。SSH 扩展在 `~/.warp*/remote-server` 下安装远程服务器扩展。旧版基于 tmux 的 Warpification 安装 [`tmux`](#why-do-i-need-tmux-on-the-remote-machine)（一个流行的开源终端复用器），如果它尚未存在。两种流程都会准确地向您展示将要运行什么，您始终可以拒绝并继续使用 SSH，不使用这些功能。
+
+#### 为什么我需要在远程机器上安装 `tmux`？
+
+`tmux` 仅由旧版基于 tmux 的 Warpification 路径需要；SSH 扩展不需要它。[tmux](https://github.com/tmux/tmux/wiki) 是一个流行的开源终端复用器，允许您在一个 SSH 连接中运行多个会话。它只需要最少的权限，并被广泛采用（GitHub 上 ⭐ 35k+）。旧版路径使用 [tmux 控制模式](https://github.com/tmux/tmux/wiki/Control-Mode) 来运行诸如自动补全 `cd` 命令或填充自定义提示符内容等临时后台任务。SSH 扩展通过在单个 SSH 连接上使用长度分隔的协议来取代此功能。
+
+#### 我可以 SSH 到我不想 Warpify 的远程机器吗？
+
+可以。取消提示以在没有 Warp 功能的情况下继续，或将主机添加到拒绝列表（**设置** > **Warpify** > **SSH 主机拒绝列表**），这样您就不会再被提示。
+
+#### 我每次都需要手动 Warpify 吗？
+
+在您成功手动 Warpify 一个 SSH 连接后，Warp 会提供一个简短的脚本，您可以运行以在 shell 的 rcfile 末尾附加一个标记。这有助于 Warp 知道您的远程 shell 何时准备好被 Warpify。将代码片段放在 rcfile 的底部以获得最佳效果。
+
+![设置自动 Warpify](../../../../../assets/terminal/warpify_ssh_auto_script.png)
+
+#### 支持哪些 shell 和操作系统？
+
+Warp 支持 macOS 和大多数 Linux 发行版作为远程主机，适用于 SSH 扩展和旧版基于 tmux 的 Warpification。受支持的 shell 是 `bash` 和 `zsh`。Windows 远程主机尚不支持。
+
+#### 如果 Warp 未能检测到我的 SSH 会话怎么办？
+
+如果您在远程 SSH 会话中而 Warp 没有检测到它，您可以通过打开 [命令面板](/terminal/command-palette/) 并搜索"Warpify SSH 会话"来手动 Warpify。
+
+#### 什么会触发 SSH 会话检测以进行 Warpification？
+
+启用 SSH 会话检测后，Warp 会监视 `ssh` 命令，其参数表明是交互式会话。如果您已经为 `ssh` 设置了别名或将其作为脚本的一部分运行，Warp 不会执行 SSH 会话检测。
+
+一旦 Warp 确信您已成功认证（通过检测 `Last login:` 或类似基本提示符的内容），它会提示您 Warpify 活动中的 SSH 会话。
+
+如果 SSH 会话检测没有检测到您的会话，您仍然可以 [手动 Warpify](#what-if-warp-fails-to-detect-my-ssh-session)。

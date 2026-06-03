@@ -1,0 +1,89 @@
+---
+title: 错误概述
+description: >-
+  Oz 平台 API 返回的所有错误码的参考。每个错误包含 HTTP 状态、机器可读的错误码和可操作的处理步骤。
+---
+
+当 Oz 平台 API 遇到错误时，它返回一个结构化的 JSON 响应，遵循 [RFC 7807（HTTP API 的问题详情）](https://datatracker.ietf.org/doc/html/rfc7807)。每个错误响应包含一个机器可读的错误码、一条人类可读的消息以及帮助您诊断和解决问题的元数据。
+
+---
+
+## 响应格式
+
+所有错误响应共享此结构：
+
+```json
+{
+  "type": "/reference/api-and-sdk/troubleshooting/errors/invalid-request/",
+  "title": "请求包含无效或缺失的参数。",
+  "status": 400,
+  "detail": "schedule_id 是必需的",
+  "instance": "/api/v1/agent/tasks",
+  "error": "请求包含无效或缺失的参数。(schedule_id 是必需的)",
+  "retryable": false,
+  "trace_id": "abc123def456..."
+}
+```
+
+错误响应使用 RFC 7807 定义的 `application/problem+json` 内容类型。
+
+### 字段参考
+
+* **`type`** — 标识错误类型的 URI。链接到该错误的文档页面。
+* **`title`** — 问题的简短人类可读摘要。
+* **`status`** — 此响应的 HTTP 状态码。
+* **`detail`** — 特定于此次错误的附加上下文。并非始终存在。
+* **`instance`** — 产生错误的请求路径。
+* **`error`** — 向后兼容的字段，组合了 `title` 和 `detail`（适用于旧客户端）。当 `detail` 存在时，格式为 `"title (detail)"`。
+* **`retryable`** — 此请求是否可以重试。如果为 `true`，平台可能会自动重试该操作。
+* **`trace_id`** — OpenTelemetry 跟踪 ID，可用时包含。联系支持时请引用此 ID。
+
+某些错误包含额外的元数据字段（例如 `auth_url`、`provider` 或 `inaccessible_repos`）。这些在每个错误的页面中都有记录。
+
+---
+
+## 错误分类
+
+根据导致失败的原因，错误分为两类：
+
+### 用户错误
+
+这些表示调用方需要修复的问题。当云端代理任务遇到用户错误时，任务会转换为 **FAILED** 状态。
+
+* [`insufficient_credits`](/reference/api-and-sdk/troubleshooting/errors/insufficient-credits/) — 团队没有剩余的附加积分
+* [`feature_not_available`](/reference/api-and-sdk/troubleshooting/errors/feature-not-available/) — 当前计划中不包含的功能
+* [`external_authentication_required`](/reference/api-and-sdk/troubleshooting/errors/external-authentication-required/) — 需要外部服务授权
+* [`not_authorized`](/reference/api-and-sdk/troubleshooting/errors/not-authorized/) — 操作权限不足
+* [`invalid_request`](/reference/api-and-sdk/troubleshooting/errors/invalid-request/) — 格式错误的请求或无效参数
+* [`resource_not_found`](/reference/api-and-sdk/troubleshooting/errors/resource-not-found/) — 引用的资源不存在
+* [`budget_exceeded`](/reference/api-and-sdk/troubleshooting/errors/budget-exceeded/) — 消费预算已达到上限
+* [`integration_disabled`](/reference/api-and-sdk/troubleshooting/errors/integration-disabled/) — 集成已被禁用
+* [`integration_not_configured`](/reference/api-and-sdk/troubleshooting/errors/integration-not-configured/) — 集成设置不完整
+* [`operation_not_supported`](/reference/api-and-sdk/troubleshooting/errors/operation-not-supported/) — 此资源或状态不支持该操作
+* [`environment_setup_failed`](/reference/api-and-sdk/troubleshooting/errors/environment-setup-failed/) — 云端代理环境初始化失败
+* [`content_policy_violation`](/reference/api-and-sdk/troubleshooting/errors/content-policy-violation/) — 任务被内容策略检查标记
+* [`conflict`](/reference/api-and-sdk/troubleshooting/errors/conflict/) — 请求与当前资源状态冲突（可重试）
+
+### 平台错误
+
+这些表示 Warp 侧的问题。当云端代理任务遇到平台错误时，任务会转换为 **ERROR** 状态。可重试的错误会在任务标记为失败之前自动重试。
+
+* [`authentication_required`](/reference/api-and-sdk/troubleshooting/errors/authentication-required/) — API 密钥无效或已过期
+* [`resource_unavailable`](/reference/api-and-sdk/troubleshooting/errors/resource-unavailable/) — 临时性基础设施问题（可重试）
+* [`internal_error`](/reference/api-and-sdk/troubleshooting/errors/internal-error/) — 意外的服务器端错误（可重试）
+* [`infrastructure_timeout`](/reference/api-and-sdk/troubleshooting/errors/infrastructure-timeout/) — 任务因超过最大允许运行时间而终止
+* [`agent_process_failed`](/reference/api-and-sdk/troubleshooting/errors/agent-process-failed/) — 代理进程在任务执行期间意外退出
+
+---
+
+## 使用 `trace_id`
+
+当错误响应包含 `trace_id` 时，您可以在[联系 Warp 支持](/support-and-community/troubleshooting-and-support/sending-us-feedback/)时提供它，以帮助团队在内部日志中定位特定的请求。这对 `internal_error` 和 `resource_unavailable` 错误特别有用。
+
+---
+
+## 相关
+
+* [Oz API & SDK](/reference/api-and-sdk/) — 创建和管理代理任务的 API 参考
+* [云端代理概述](/agent-platform/cloud-agents/overview/) — 云端代理的工作原理
+* [访问、计费和身份](/agent-platform/cloud-agents/team-access-billing-and-identity/) — 计划要求和计费详情

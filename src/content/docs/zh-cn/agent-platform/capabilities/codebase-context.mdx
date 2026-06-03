@@ -1,0 +1,151 @@
+---
+title: 代码库上下文
+description: >-
+  Warp 索引您的 Git 追踪代码库，帮助 Agent 理解您的代码并生成准确、感知上下文的响应。代码不会存储在 Warp 服务器上。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+代码库上下文通过索引您的本地代码库帮助 Agent 理解您的项目。这使 Agent 能够生成更准确的补全、建议上下文化编辑，并使用您代码的真实知识回答问题。
+
+## 开始使用
+
+索引一个项目，几分钟内即可看到 agent 响应的差异。
+
+:::note
+**没有可以尝试的项目？** 克隆一个流行的开源仓库来测试代码库索引：
+```bash
+git clone https://github.com/vercel/next.js.git && cd next.js
+```
+:::
+
+1. **在 Warp 中打开项目文件夹。** 使用 `cd` 导航到 Git 仓库或从文件树打开文件夹。Warp 自动检测 Git 仓库并开始索引。
+2. **验证索引状态。** 在 Warp 中，转到**设置** > **代码** > **索引和项目**，检查"已初始化/已索引文件夹"下的状态。状态显示**已同步**后，您的代码库就准备好了。
+3. **向 Agent 询问关于代码的问题。** 开始 Agent 对话（macOS 上为 `⌘+Enter`，Windows/Linux 上为 `Ctrl+Shift+Enter`）并尝试类似以下提示：
+   * "解释这个项目的架构"
+   * "主要的入口点有哪些？"
+   * "带我了解最重要的模块"
+4. **看看不同之处。** Agent 将其响应基于代码库中的实际文件、函数和行号，产生更准确、上下文化的答案。
+
+---
+
+## 索引您的代码库
+
+当您在 Warp 中打开目录时，我们会检查它是否是 Git 仓库的一部分。如果是，Warp 开始索引源代码以为 Agent 提供丰富的上下文。Warp 还会检测 [Git worktree](/code/git-worktrees/) 检出——每个 worktree 作为自己的仓库被索引，因此 Agent 始终拥有您正在处理的分支的准确上下文。&#x20;
+
+:::note
+使用代码库上下文索引的代码永远不会存储在我们的服务器上。代码库上下文适用于本地 agent 会话和[云 agent 运行](/agent-platform/cloud-agents/overview/)。未启用代码库上下文时，agent 仍可使用终端命令（如 `grep`、`sed`）浏览您的代码。
+:::
+
+:::caution
+**代码库上下文（语义索引和搜索）在 SSH 或 WSL 会话中尚不可用。**
+
+功能请求：
+
+* SSH：[GitHub #6831](https://github.com/warpdotdev/Warp/issues/6831)
+* WSL：[GitHub #6744](https://github.com/warpdotdev/Warp/issues/6744)
+:::
+
+<figure>
+![Warp 中的代码库索引设置。轻松跟踪同步状态并管理哪些文件夹被索引以实现 AI 驱动的上下文和建议。](../../../../../assets/agent-platform/codebase-context-main.png)
+<figcaption>代码库索引设置。</figcaption>
+</figure>
+
+**代码库索引间隔和触发条件：**
+
+* 初始启用代码库上下文时。
+* Warp 定期自动触发代码库索引。
+* 每当新的 Agent 对话开始时。
+* 当您在**设置** > **代码** > **索引和项目**中点击同步 🔄 按钮时。
+
+**此嵌入索引帮助 Agent：**
+
+* 理解您的项目结构并引用相关代码
+* 生成匹配您风格和模式的补全
+* 基于真实上下文在正确位置建议编辑
+
+对于大型项目，索引可能需要几分钟。Agent 在索引完成之前不会使用代码库上下文，但 **agent 编码功能在此期间仍然完全可用**。
+
+:::note
+您可以在**设置** > **代码** > **索引和项目**的"已初始化/已索引文件夹"下查看和管理您的索引代码库。您还可以选择是否在浏览新文件夹时自动索引它们。
+:::
+
+<VideoEmbed url="https://youtu.be/11rz9OYQ8Hg" />
+
+### **代码库索引状态**
+
+在 Warp 中查看**设置** > **代码** > **索引和项目**下的已索引代码库时，您可能会看到不同的状态指示器：
+
+* **已同步（Synced）** — 索引已完成，代码库已准备好作为上下文使用。
+* **正在发现文件（Discovering files）** – Warp 正在扫描和索引代码库中的文件。
+* **失败（Failed）** – 索引失败。常见原因包括无法读取的 `.git` 目录或损坏的仓库。尝试重新克隆仓库并再次同步。
+* **代码库太大（Codebase too large）** – 代码库中的文件数超过了当前计划的限制。您可以使用 `.warpindexingignore` 减少被索引的文件数量，或[联系销售](https://www.warp.dev/contact-sales)以获得更大代码库的支持。
+
+<figure>
+![查看和管理您在 Warp 中代码库的索引状态。轻松查看哪些项目已同步、正在处理或需要关注。](../../../../../assets/agent-platform/codebase-context-statuses.png)
+<figcaption>代码库索引状态概览。</figcaption>
+</figure>
+
+### 代码库同步何时发生？
+
+Warp 在初始启动时和定期自动触发代码库同步，当您在**设置** > **代码** > **索引和项目**中点击同步 🔄 按钮时，或当您开始新的 Agent 对话时。但是，如果许多文件已更改或网络速度慢，同步可能在 Agent 尝试访问上下文之前无法完成。
+
+:::note
+在大型项目中（例如分支切换后），Agent 引用过时或旧文件可能会有短暂延迟。
+:::
+
+### 文件和代码库限制
+
+您可以索引的代码库数量以及每个代码库的最大文件数因计划而异。所有计划支持每个代码库索引**至少 5,000 个文件**，更高级别包括对更多文件和附加代码库的支持。
+
+有关完整详情，请访问我们的[定价页面](https://www.warp.dev/pricing)。
+
+### 忽略文件
+
+对于大型代码库，Warp 支持多个忽略文件，让您控制哪些内容被索引。这使每个开发人员可以将上下文集中在与其工作最相关的代码库部分。
+
+Warp 遵循以下忽略文件：
+
+* `.gitignore`
+* `.warpindexingignore`
+* `.cursorignore`
+* `.cursorindexingignore`
+* `.codeiumignore`
+
+使用这些文件跳过对文件夹、生成文件或任何您不希望 agent 引用的内容的索引。这可以提高性能和结果质量。
+
+:::note
+被忽略规则排除的文件**不计入**您的代码库文件限制。
+:::
+
+## 云 agent 运行中的代码库上下文
+
+代码库上下文在所有云 agent 运行中可用——包括从 CLI、API/SDK、集成（Slack、Linear、GitHub Actions）和调度触发的运行——只要您的账户已启用代码库上下文。
+
+**无需额外配置。** 如果代码库上下文已启用，云 agent 会自动使用它。
+
+## 多仓库上下文
+
+Warp 支持跨多个已索引仓库引用上下文。请注意，您无需在特定仓库中，agent 即可使用其上下文。&#x20;
+
+**这在以下情况下特别有用：**
+
+* 跨多个仓库实现功能，例如跨客户端和服务器的全栈工作
+* 在一个仓库中构建时以另一个为参考，例如："将仓库 A 的实现复制到我的仓库 B 中"
+
+Agent 仅在已索引的情况下引用其他仓库。在跨仓库任务期间，Warp 的 Agent 可以访问所有已索引仓库的文件路径。当您在提示中提及仓库的确切名称时，使用跨仓库上下文的可能性更大。
+
+## 演示：用 Warp 解释我的代码库
+
+以下是来自 [Warp Guides](/guides/) 的示例，Zach 演示了 Warp 如何使用代码库上下文搜索和使用相关文件作为上下文：
+
+<VideoEmbed url="https://www.youtube.com/watch?v=11rz9OYQ8Hg" />
+
+---
+
+## 后续步骤
+
+代码库索引完成后，您可以直接在 Warp 中浏览您的项目，并开始让 agent 对您的代码执行操作。
+
+* **[文件树](/code/code-editor/file-tree/)** - 在 Warp 的侧边栏中浏览项目结构并直接打开文件。
+* **[代码编辑器](/code/code-editor/)** - 使用语法高亮、LSP 支持和查找替换编辑文件，无需离开 Warp。
+* **[Agent 配置文件和权限](/agent-platform/capabilities/agent-profiles-permissions/)** - 配置 agent 在处理您的代码时拥有多少自主权。

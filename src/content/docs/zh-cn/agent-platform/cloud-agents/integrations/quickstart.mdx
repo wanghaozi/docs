@@ -1,0 +1,56 @@
+---
+title: 集成快速入门
+description: >-
+  在大约 15 分钟内从 Slack 触发您的第一个 Agent 并在线程中获取结果。
+sidebar:
+  label: "快速入门"
+---
+
+Oz 集成让您直接从团队已在使用的工具中触发云 Agent。此指南引导您将 Oz 连接到 Slack。设置完成后，团队中的任何人都可以在消息或线程中标记 @Oz 以启动运行任务并将结果发布回对话的云 Agent。
+
+:::note
+**想改为连接 Linear？** 设置相同——只需在 CLI 命令中将 `slack` 替换为 `linear`，或在 Oz Web 应用中选择 Linear。请参阅 [Linear](/agent-platform/cloud-agents/integrations/linear/) 了解详情。
+:::
+
+---
+
+## 前提条件
+
+* **符合条件的计划** - Slack 集成需要 Build、Max 或 Business 计划上的 Warp 团队，并至少有 20 个可用积分。
+* **云环境** - Agent 在包含仓库和其他依赖项的已配置环境中运行。
+* **GitHub 授权** - Warp 需要访问您的仓库以克隆代码和打开 PR。
+
+---
+
+## 1. 连接 Slack 集成
+
+最简单的设置方式是**使用 Oz Web 应用**：
+
+1. 导航到 Oz Web 应用 [oz.warp.dev/integrations](https://oz.warp.dev/integrations)。
+2. 点击 **Slack**。
+3. 按照引导流程选择您的环境并在 Slack 工作区中授权 Oz。
+
+您的 Warp 团队的所有成员现在都可以使用该集成。
+
+**使用 Oz CLI 代替：**
+
+```bash
+oz integration create slack --environment <ENV_ID>
+```
+
+## 2. 在 Slack 中标记 @Oz
+
+在 Slack 工作区的任何频道或线程中，用任务标记 @Oz：
+
+> @Oz 扫描认证模块的安全问题并总结发现
+
+Oz 立即确认请求并在云端启动 agent 运行。您将在线程中看到进度更新。
+
+## 3. 观看运行
+
+Agent 工作时，进度更新直接出现在 Slack 线程中。要更详细地检查运行：
+
+* **点击会话链接** - Oz 在线程中发布链接以打开 agent 的实时终端视图。
+* **前往 [oz.warp.dev/runs](https://oz.warp.dev/runs)** - 查看完整运行记录。
+
+任务完成时，Oz 将摘要发布回原始 Slack 线程。

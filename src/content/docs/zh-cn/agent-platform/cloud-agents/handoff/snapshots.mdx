@@ -1,0 +1,230 @@
+---
+title: 自定义工作区快照
+description: >-
+  自定义 Warp 在云 agent 运行结束时快照哪些仓库和文件，以便交接在打包的云 agent 映像之外继续工作。
+sidebar:
+  label: "快照"
+---
+
+工作区快照是[交接](/agent-platform/cloud-agents/handoff/)跨云 agent 运行传递仓库更改和其他工作区状态的方式。在每个云 agent 运行结束时，Warp 询问一个小型的声明脚本要快照哪些仓库和文件，然后上传生成的 git 差异和文件内容，以便下一个云 agent 运行可以应用它们。
+
+Warp 打包的云 agent 映像附带一个声明脚本，可以快照 agent 工作区下的每个 git 仓库，因此大多数云 agent 运行不需要配置。此页面适用于需要自定义快照内容的情况——例如，在自定义 Docker 映像上运行云 agent、在自托管的 [Direct 后端](/agent-platform/cloud-agents/self-hosting/managed-direct/)上运行，或作为 CI 中的[非托管](/agent-platform/cloud-agents/self-hosting/unmanaged/) `oz agent run`。
+
+## 何时自定义快照
+
+默认快照行为涵盖了最常见的情况：在打包的云 agent 映像内部快照 agent 处理的每个 git 仓库。在以下情况下自定义快照：
+
+* **您在打包映像之外运行** — 例如自定义 Docker 基础映像、自托管的 Direct 后端或非托管 `oz agent run` 调用——其中 Warp 的默认 `snapshot-declarations.sh` 不在磁盘上。
+* **您希望快照 agent 工作区之外的仓库或文件** — 例如 agent 读取但未 `cd` 进入的兄弟仓库，或 agent 写入 `/tmp` 的日志文件。
+* **您想要动态快照行为** — 因为声明文件是由 Warp 运行的脚本生成的，您可以编写任何想要的逻辑（按 git 状态过滤、针对基线去重、发出固定列表等），而不限于静态路径集。
+
+如果您在这些情况下都不自定义快照，运行仍然完成——Warp 只是不上传任何内容，下一个运行中的交接在没有先前会话的未提交更改的情况下启动。
+
+## 快照的工作原理
+
+有两种方式告诉 Warp 在云 agent 运行结束时快照什么：
+
+* **脚本驱动**（打包映像中的默认方式） - Warp 调用一个声明脚本（通过 `OZ_SNAPSHOT_DECLARATIONS_SCRIPT` 环境变量配置），该脚本为要快照的每个仓库或文件发出一行 JSON。当仓库集合不是事先固定的（例如 agent 可能在其工作中 `git init` 新目录）或当您希望任何其他动态逻辑决定要快照什么时使用此方式。
+* **静态** - 您自己预先填充声明文件（在 `OZ_SNAPSHOT_DECLARATIONS_FILE` 给定的路径）并跳过脚本。当每次运行应快照相同的仓库和文件集时使用此方式。
+
+### 脚本驱动流程
+
+1. **Warp 调用您的声明脚本。** 脚本路径来自 `OZ_SNAPSHOT_DECLARATIONS_SCRIPT` 环境变量。Warp 使用 agent 的工作区作为当前目录运行它。
+2. **Warp 传递每次运行的输出文件。** Warp 将 `OZ_SNAPSHOT_DECLARATIONS_FILE` 设置为脚本必须写入的绝对路径。每次运行都有自己的文件，因此并发运行不会互相覆盖。
+3. **Warp 读取声明文件。** Warp 解析 JSONL 输出（下文描述）并上传列出的仓库和文件。
+
+有关完整模式，请参阅[编写自定义声明脚本](#write-a-custom-declarations-script)。
+
+### 静态流程
+
+将 `OZ_SNAPSHOT_DECLARATIONS_FILE` 设置为您已经填充的路径，并保持 `OZ_SNAPSHOT_DECLARATIONS_SCRIPT` 未设置。Warp 直接读取文件，无需脚本调用。有关完整模式，请参阅[使用静态声明文件](#use-a-static-declarations-file)。
+
+在这两种流程中，当云对话启用时，云 agent 运行的快照会自动启用，并且可以通过 `--no-snapshot` 按运行关闭。请参阅下面的[禁用快照](#disable-snapshots)。
+
+## 环境变量
+
+* **`OZ_SNAPSHOT_DECLARATIONS_SCRIPT`** - Warp 在每个云 agent 运行结束时调用的脚本的绝对路径。打包的云 agent 映像会自动设置此项。在打包映像之外运行时自己设置它。
+* **`OZ_SNAPSHOT_DECLARATIONS_FILE`** - 脚本写入（和 Warp 读取）的 JSONL 文件的绝对路径。当设置了 `OZ_SNAPSHOT_DECLARATIONS_SCRIPT` 时，Warp 默认选择每次运行的路径并将其导出给脚本。当您希望 Warp 从静态、预填充的声明文件读取而不是运行脚本时，或在您希望 Warp 和脚本都使用您控制的特定路径时，自己设置或覆盖此变量。
+
+## 声明文件格式
+
+声明文件是 UTF-8 JSONL——每个非空行一个 JSON 对象：
+
+```json title="snapshot-declarations.jsonl"
+{"version":1,"kind":"repo","path":"/workspace/my-repo"}
+{"version":1,"kind":"file","path":"/tmp/agent-output.log"}
+```
+
+每行恰好包含这些字段：
+
+* **`version`** - 始终为 `1`。为未来的架构版本保留。
+* **`kind`** - 要么是 `"repo"`，要么是 `"file"`。
+* **`path`** - 非空绝对路径。
+
+编写声明时要遵循的几条规则：
+
+* **路径必须是绝对的。** 相对路径会被拒绝并记录为格式错误。
+* **对于仓库内的路径，优先使用 `repo` 而非 `file`。** Warp 为每个 `repo` 条目生成 git 差异（已跟踪更改加上未跟踪、非 git 忽略的文件），因此该仓库内的单个 `file` 条目是多余的，会在上传前删除。包含 `repo` 条目也比枚举文件更具可扩展性。
+* **仓库是差异化的，而不是整体复制的。** 每个 `repo` 条目只上传更改过的文件，因此当 agent 的更改很小时，列出大型仓库的成本很低。
+* **`file` 条目用于任何声明的仓库之外的路径**——例如 agent 写入 `/tmp` 的日志或 `$HOME` 中的临时文件。
+
+格式错误的行（无效 JSON、缺少字段、未知的 `kind`、非绝对路径）会被记录为警告并跳过；它们永远不会中止上传。
+
+:::caution
+**声明的路径会上传到 Warp。** `file` 条目逐字上传文件内容，`repo` 条目上传仓库的 git 差异（已跟踪更改加上未跟踪、非 git 忽略的文件）。在将日志、临时文件或其他 agent 输出声明为 `file` 条目之前，确保它们不包含密钥、凭据、API 令牌或其他敏感数据。
+:::
+
+## 编写自定义声明脚本
+
+自定义脚本为每个希望 Warp 快照的仓库或文件写入一行 JSON，然后退出。最小模式如下所示：
+
+```bash title="snapshot-declarations.sh"
+#!/bin/bash
+set -euo pipefail
+
+# Warp 将其设置为每次运行的输出路径。如果缺失则大声失败，
+# 这样配置错误的运行器就不会静默覆盖共享文件。
+if [ -z "${OZ_SNAPSHOT_DECLARATIONS_FILE:-}" ]; then
+  echo "OZ_SNAPSHOT_DECLARATIONS_FILE must be set" >&2
+  exit 1
+fi
+
+mkdir -p "$(dirname "$OZ_SNAPSHOT_DECLARATIONS_FILE")"
+
+# 查找 agent 工作区下的每个 git 仓库并为每个
+# 发出 JSONL 仓库声明。在写入前转义路径中的反斜杠和双引号，
+# 以免包含这些字符的路径产生格式错误的 JSON（Warp 会跳过并发出警告）。
+find "$PWD" -type d -name .git -prune -print 2>/dev/null \
+  | while IFS= read -r git_dir; do
+      repo_root="$(cd "$(dirname "$git_dir")" && pwd)"
+      repo_json="$(printf '%s' "$repo_root" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+      printf '{"version":1,"kind":"repo","path":"%s"}\n' "$repo_json" \
+        >> "$OZ_SNAPSHOT_DECLARATIONS_FILE"
+    done
+```
+
+然后通过将 `OZ_SNAPSHOT_DECLARATIONS_SCRIPT` 导出到云 agent 运行的环境中指向 Warp：
+
+```bash
+export OZ_SNAPSHOT_DECLARATIONS_SCRIPT=/path/to/snapshot-declarations.sh
+```
+
+对于托管的 [Direct 后端](/agent-platform/cloud-agents/self-hosting/managed-direct/) worker，通过 worker 的 `environment` 配置进行设置，使其在 agent 进程启动时存在。
+
+### 完整的打包脚本
+
+供参考，这是 Warp 在打包的云 agent 映像内部调用的规范声明脚本。它是上述最小示例的增强版本：尊重冒号分隔的 `OZ_SNAPSHOT_SCAN_ROOTS` 覆盖（供需要扫描默认工作区外仓库的操作员使用），使用 `jq` 进行规范 JSON 编码（为您处理 `"` 和 `\` 转义），并针对同一运行中已写入的仓库声明进行去重，以便重复调用保持累加。
+
+:::note
+打包脚本默认 `OZ_SNAPSHOT_JQ` 为 `/agent/tools/jq`，该路径仅存在于 Warp 的云 agent 映像内。如果您为不同的映像或非托管 `oz agent run` 改编此脚本，将 `jq` 放在 `PATH` 上或将 `OZ_SNAPSHOT_JQ` 设置为其绝对路径。
+:::
+
+```bash title="snapshot-declarations.sh"
+#!/bin/bash
+# 生成由运行结束快照上传管道使用的声明文件。
+#
+# 扫描一个或多个根目录查找 `.git` 目录，并为每个
+# 新发现的仓库向声明文件追加一个 JSON 对象。
+#
+# 扫描根目录选择（优先级顺序）：
+#   - OZ_SNAPSHOT_SCAN_ROOTS: 冒号分隔的绝对路径列表。操作员可以使用此
+#     选项定位默认工作区外的仓库。
+#   - $PWD: Rust 驱动程序在调用脚本前通过 `Command::current_dir`
+#     将此设置为 agent 的工作区，因此默认扫描根目录始终是指定的工作区。
+#
+# 输出文件：
+#   - OZ_SNAPSHOT_DECLARATIONS_FILE 必须设置。Rust 驱动程序将其设置为每次运行的路径，
+#     以便并发运行不会互相覆盖。
+#   - 如果文件不存在则创建，如果已存在则追加。现有行从不会被重写，
+#     因此操作员编写的声明得以保留。
+#   - 单次运行内的重复调用跳过已发出的仓库声明，以便
+#     上传管道可以保持累加而不复制相同的生成条目。
+
+set -euo pipefail
+
+SCAN_ROOTS_RAW="${OZ_SNAPSHOT_SCAN_ROOTS:-$PWD}"
+IFS=':' read -r -a SCAN_ROOTS <<< "$SCAN_ROOTS_RAW"
+
+if [ -z "${OZ_SNAPSHOT_DECLARATIONS_FILE:-}" ]; then
+    echo "OZ_SNAPSHOT_DECLARATIONS_FILE must be set" >&2
+    exit 1
+fi
+
+DECL_FILE="$OZ_SNAPSHOT_DECLARATIONS_FILE"
+JQ="${OZ_SNAPSHOT_JQ:-/agent/tools/jq}"
+mkdir -p "$(dirname "$DECL_FILE")"
+touch "$DECL_FILE"
+
+# 去重集合。从此脚本已发出的仓库声明中种子填充，以便在同一运行中
+# 重复调用不会重新发出它之前发现的仓库。
+# 保留完整的规范 JSON 行作为键；这让我们可以逐字保留不相关的 JSONL 条目，
+# 同时确保相同的生成声明最多发出一次。
+SEEN_FILE="$(mktemp)"
+trap 'rm -f "$SEEN_FILE"' EXIT
+"$JQ" --raw-input --compact-output '
+    fromjson?
+    | select(
+        type == "object"
+        and (. | keys_unsorted | sort == ["kind", "path", "version"])
+        and .version == 1
+        and .kind == "repo"
+        and (.path | type == "string")
+    )
+    | { version: 1, kind: "repo", path: .path }
+' "$DECL_FILE" > "$SEEN_FILE"
+
+repo_declaration_for_path() {
+    "$JQ" --compact-output --null-input \
+        --arg path "$1" \
+        '{ version: 1, kind: "repo", path: $path }'
+}
+
+for root in "${SCAN_ROOTS[@]}"; do
+    [ -d "$root" ] || continue
+    while IFS= read -r git_dir; do
+        repo_root="$(cd "$(dirname "$git_dir")" && pwd)"
+        repo_declaration="$(repo_declaration_for_path "$repo_root")"
+        if grep -Fxq -- "$repo_declaration" "$SEEN_FILE"; then
+            continue
+        fi
+        printf '%s\n' "$repo_declaration" >> "$SEEN_FILE"
+        printf '%s\n' "$repo_declaration" >> "$DECL_FILE"
+    done < <(find "$root" -type d -name .git -prune -print 2>/dev/null)
+done
+```
+
+## 使用静态声明文件
+
+如果每次运行应快照相同的仓库或文件集（例如，在已知检出上操作的非托管 GitHub Actions 作业），您可以完全跳过脚本并预先填充 JSONL 文件：
+
+```json title="/etc/oz/snapshot-declarations.jsonl"
+{"version":1,"kind":"repo","path":"/workspace/my-repo"}
+{"version":1,"kind":"repo","path":"/workspace/shared-libs"}
+```
+
+然后直接指向 Warp：
+
+```bash
+export OZ_SNAPSHOT_DECLARATIONS_FILE=/etc/oz/snapshot-declarations.jsonl
+# 在此模式下不设置 OZ_SNAPSHOT_DECLARATIONS_SCRIPT
+```
+
+Warp 在运行结束时读取文件并上传列出的仓库和文件。由于每次运行文件相同，这最适合工作区布局固定的环境。
+
+## 禁用快照
+
+要为单次运行选择退出快照，向 CLI 传递 `--no-snapshot`：
+
+```bash
+oz agent run-cloud --prompt "Fix the failing test" --no-snapshot
+```
+
+当团队禁用云对话时，快照也会自动跳过。
+
+## 相关页面
+
+* [本地到云端交接](/agent-platform/cloud-agents/handoff/local-to-cloud/) - 将本地对话提升为云运行；工作区快照是传递未提交更改的载体。
+* [云端到云端交接](/agent-platform/cloud-agents/handoff/cloud-to-cloud/) - 继续已完成的云运行；先前会话的工作区快照会被恢复。
+* [自托管概述](/agent-platform/cloud-agents/self-hosting/) - 自托管 worker 的架构决策指南，这是自定义快照最常见的地方。
+* [非托管架构](/agent-platform/cloud-agents/self-hosting/unmanaged/) - 在打包映像之外的 CI、Kubernetes 或开发环境中运行 `oz agent run`。
+* [Oz CLI](/reference/cli/) - `oz agent run` 和 `oz agent run-cloud` 的完整参考。

@@ -1,0 +1,25 @@
+---
+title: 终端退出警告
+description: >-
+  Warp 的退出警告功能是一项重要的预防措施，可防止意外数据丢失或长时间运行作业的进度丢失。
+---
+import VideoEmbed from '@components/VideoEmbed.astro';
+
+## 什么是退出警告
+
+退出警告功能确保在退出应用程序时如果有正在运行的进程，您会收到警告，从而允许您保存工作并避免任何意外的数据丢失。\
+如果您退出应用程序或关闭包含有正在运行进程的会话的窗口，您将看到警报，并且需要在继续之前确认操作。如果您不确定正在运行哪些进程，还可以选择显示这些进程。
+
+## 如何访问
+
+* 打开 **设置** > **功能** > **通用**，那里您可以切换"退出前显示警告"。
+* 您也可以在 [命令面板](/terminal/command-palette/) 中切换退出警告功能，搜索 `退出警告`。
+* 如果启用，当您尝试关闭 Warp 时，您将看到一个弹出窗口，其中包含以下一些选项：
+  * 是，退出，将关闭所有 Warp 会话和正在运行的进程。
+  * 显示正在运行的进程，将打开 [会话导航](/terminal/sessions/session-navigation/) 面板，并过滤正在运行的进程。
+  * 取消，将阻止 Warp 关闭。
+  * 不再询问，是一个您可以勾选的框，用于禁用退出警告功能。
+
+## 工作原理
+
+<VideoEmbed url="https://www.loom.com/share/bacb9d1c1e3947dca8365e15231cfcd3?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true" title="退出警告模态框演示" />

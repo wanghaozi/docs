@@ -1,0 +1,176 @@
+---
+title: 支持的 Shell
+description: >-
+  Warp 在 macOS、Windows 和 Linux 上支持 bash、zsh、fish、PowerShell 和 WSL2。
+sidebar:
+  label: "支持的 Shell"
+---
+
+Warp 在 macOS、Windows 和 Linux 上支持 bash、zsh、fish 和 PowerShell (pwsh)，默认加载你的登录 shell。你可以按会话更改默认 shell，自定义每个 shell 的配置文件和环境变量，并在 macOS 上安装 fish 或 PowerShell 等额外的 shell。
+
+## Warp 默认 shell
+
+Warp 默认尝试加载你的登录 shell。目前，Warp 支持 bash、fish、zsh 和 PowerShell (pwsh)。如果你的登录 shell 设置为其他内容（例如 Nushell），Warp 将显示一条提示信息表明不支持该 shell，并加载下面列出的默认 shell：
+
+* 在 macOS 上，zsh 是默认 shell。
+* 在 Windows 上，PowerShell (pwsh) 是默认 shell。
+* 在 Linux 上，bash 是默认 shell。
+
+:::note
+如果在 Warp 中配置 RC 文件（`~/.bashrc`、`~/.zshrc`、`config.fish`、`Microsoft.PowerShell_profile.ps1`）时遇到问题，请参阅[配置和调试 RC 文件](/support-and-community/troubleshooting-and-support/known-issues/#configuring-and-debugging-your-rc-files)。
+:::
+
+### 更改 Warp 使用的 shell
+
+要更改默认 shell，我们建议你在 Warp 中进入**设置** > **功能**并滚动到"会话"部分，然后选择"新会话的启动 shell"。
+
+:::note
+对 shell 的更改只有在启动新会话时才会生效。
+:::
+
+## 自定义 shell 环境
+
+### 自定义 zsh shell 环境
+
+Zsh 可以通过 `~/.zshrc` 文件进行自定义，该文件每当新会话启动（窗口、标签页或窗格）时运行。使用它来设置环境变量、别名和自定义[提示符](/terminal/appearance/prompt/)。
+
+#### 编辑 .zshrc 文件
+
+使用 `nano ~/.zshrc` 或 `vi ~/.zshrc` 编辑 `~/.zshrc`。
+
+:::note
+以点（`.`）开头的文件默认是隐藏的。请检查你的文件浏览器设置以显示隐藏文件。
+:::
+
+#### 重新加载 zshrc 文件
+
+运行 `source ~/.zshrc` 或重启 Warp/打开新会话来应用更改。
+
+### 自定义 Bash shell 环境
+
+Bash 预装在 macOS 上，可以使用 `~/.bashrc`（用于非登录 shell）或 `~/.bash_profile`（用于登录 shell）进行自定义。使用这些文件来设置环境变量、别名和自定义[提示符](/terminal/appearance/prompt/)。
+
+#### 编辑 .bashrc 文件
+
+使用 `nano ~/.bashrc` 或 `vi ~/.bashrc` 编辑 `~/.bashrc`。
+
+#### 重新加载 bashrc 文件
+
+运行 `source ~/.bashrc` 或重启 Warp/打开新会话来应用更改。
+
+:::note
+以点（`.`）开头的文件默认是隐藏的。请检查你的文件浏览器设置以显示隐藏文件。
+:::
+
+### 自定义 Fish shell 环境
+
+Fish 是一个用户友好的 shell，具有自动建议和语法高亮功能。其配置文件为 `~/.config/fish/config.fish`。
+
+#### 编辑 config.fish 文件
+
+使用 `nano ~/.config/fish` 编辑 `~/.config/fish/config.fish`。使用它来设置环境变量、别名和函数。
+
+#### 重新加载 config.fish 文件
+
+运行 `source ~/.config/fish` 或重启 Warp/打开新会话来应用更改。
+
+:::note
+与 Bash 和 Zsh 不同，Fish 不使用 `export VAR=value`。使用 `set -Ux VAR value` 来设置持久环境变量。
+:::
+
+### 自定义 PowerShell shell 环境
+
+PowerShell 可以通过其配置文件脚本进行自定义，位于 `$PROFILE`。使用 `Test-Path $PROFILE` 检查它是否存在，如果需要则使用 `New-Item -Path $PROFILE -ItemType File -Force` 创建。
+
+#### 编辑 PowerShell 配置文件
+
+使用 `code $PROFILE` 编辑配置文件，并使用它来设置环境变量、别名、自定义提示符和脚本。
+
+#### 重新加载 PowerShell 配置文件
+
+重启 Warp 或打开新会话来应用更改。
+
+:::note
+PowerShell 的执行策略可能会阻止脚本。使用以下命令启用配置文件执行：
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+:::
+
+## macOS 的额外 shell 指导
+
+#### 在 Warp 上设置 zsh
+
+默认情况下，macOS 预装了位于 `/bin/zsh` 的 [zsh](https://zsh.sourceforge.io/Doc/Release/zsh_toc.html)。你可以通过在 Warp 中输入 `which zsh` 来确认此位置。你也可以通过输入以下内容来检查系统上安装的 zsh 版本：
+
+`$ zsh --version`
+
+### 在 macOS 上的 Warp 中使用 fish shell
+
+#### 步骤 1：安装 fish
+
+虽然 bash 和 zsh 在 macOS 系统上预装，但 fish shell 没有。因此在 Warp 中使用 fish 之前，你需要安装它。使用以下方法之一安装 fish 3.6 或更高版本：
+
+1. 使用 Homebrew：如果你已经安装了 homebrew，只需输入 `brew install fish`，然后按照说明操作。
+2. 在 [fishshell.com](https://fishshell.com/) 下载安装程序。
+
+#### 步骤 2：将 fish 切换为默认 shell
+
+在你的计算机上安装 fish 后，你可以将其设置为默认 shell，这样每次打开新标签页、窗格或窗口时，Warp 都会使用它。你可以通过会话设置（**设置** > **功能** > **会话**）仅将 fish 设为 Warp 的默认 shell，或将其设为你的用户账户的默认 shell。要更改账户的默认 shell，你需要运行两个命令。
+
+**如果你使用 Homebrew 安装了 fish，或者使用了 fishshell.com 上的 macOS 安装程序**，请在 Warp 中输入以下两个命令：
+
+```
+echo $(which fish) | sudo tee -a /etc/shells
+chsh -s $(which fish)
+```
+
+:::note
+如果你愿意，也可以使用你选择的编辑器手动编辑 `/etc/shells` 文件（你可能需要 sudo 权限）。
+:::
+
+:::note
+**为什么位置不同？** fish 的位置取决于它的安装方式。Homebrew 在装有 Intel 处理器的 macOS 上将程序安装在 `/usr/local` 下，但在装有 Apple Silicon 的 macOS 上安装在 `/opt/homebrew` 下。因此，如果你使用 Homebrew 在装有 Apple Silicon 的 macOS 上安装了 fish，可执行文件的位置是 `/opt/homebrew/bin/fish`。\
+你可以通过运行 `which fish` 来确认 fish 的安装位置。
+:::
+
+### 在 macOS 上的 Warp 中使用 PowerShell (pwsh)
+
+#### 步骤 1：安装 PowerShell
+
+虽然 bash 和 zsh 在 macOS 系统上预装，但 PowerShell shell 没有。因此在 Warp 中使用 PowerShell 之前，你需要安装它。使用以下方法之一安装 PowerShell 7.0 或更高版本：
+
+1. 使用 Homebrew：如果你已经安装了 homebrew，只需输入 `brew install powershell/tap/powershell`，然后按照说明操作。
+2. 从[官方 Microsoft 网站](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)下载。
+
+#### 步骤 2：将 pwsh 切换为默认 shell
+
+在你的计算机上安装 PowerShell 后，你可以将其设置为默认 shell，这样每次打开新标签页、窗格或窗口时，Warp 都会使用它。你可以通过会话设置（**设置** > **功能** > **会话**）仅将 pwsh 设为 Warp 的默认 shell，或将其设为你的用户账户的默认 shell。要更改账户的默认 shell，你需要运行两个命令。
+
+```
+echo $(which pwsh) | sudo tee -a /etc/shells
+chsh -s $(which pwsh)
+```
+
+:::note
+如果你愿意，也可以使用你选择的编辑器手动编辑 `/etc/shells` 文件（你可能需要 sudo 权限）。
+:::
+
+:::note
+**为什么位置不同？** pwsh 的位置取决于它的安装方式。Homebrew 在装有 Intel 处理器的 macOS 上将程序安装在 `/usr/local` 下，但在装有 Apple Silicon 的 macOS 上安装在 `/opt/homebrew` 下。因此，如果你使用 Homebrew 在装有 Apple Silicon 的 macOS 上安装了 pwsh，可执行文件的位置是 `/opt/homebrew/bin/pwsh`。\
+你可以通过运行 `which pwsh` 来确认 pwsh 的安装位置。
+:::
+
+## 在 Windows 上使用 Warp 与 shell
+
+在 Windows 上，Warp 的默认 shell 是 PowerShell 7 (pwsh)。Windows 版 Warp 支持多种 shell：
+
+* PowerShell 7（默认）
+* PowerShell 5
+* Windows Subsystem for Linux (WSL2)
+* Git Bash
+
+:::note
+Windows 命令提示符 (cmd.exe) 目前不受支持。有关 cmd.exe 支持的更多信息和更新，请参阅[此 GitHub issue](https://github.com/warpdotdev/Warp/issues/5882)。
+:::
